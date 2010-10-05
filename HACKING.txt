@@ -1,0 +1,2 @@
+
+* The WZM, Mesh and Pie are meant to be standalone and should not depend on libraries such as Qt.

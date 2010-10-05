@@ -1,0 +1,7 @@
+-Add more getters and setters, possibly replacing friendship with them (e.g. WZM<-PIE3, PIE3<-PIE2)
+-Set floatfield flags on streams to align floating point numbers
+-Some of the "types" are defined using typedefs, and implicit conversion happens only because they are both defined by the same thing
+	since I piggy-backed of of that some things will break easily if said types are converted to struct/class.
+-Clean up istream /iostream/ostream includes.
+-Replace reasonable assumptions with checking. (Particularly on the texture arrays.)
+-Typedef stuff to shorten other stuff?
