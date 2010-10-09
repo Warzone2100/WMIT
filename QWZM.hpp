@@ -20,9 +20,9 @@
 #ifndef QWZM_HPP
 #define QWZM_HPP
 
-#include "WZM.hpp"
+#include "GLee.h"
 
-#include <GL/gl.h>
+#include "WZM.hpp"
 
 #include "IGLRenderable.hpp"
 #include "TexturedRenderable.hpp"
@@ -34,7 +34,7 @@ class IGLTextureManager;
 class QWZM : public WZM, public ATCMaskRenderable, public IAnimatable
 {
 public:
-	QWZM();
+    QWZM();
 	QWZM(const Pie3Model& p3);
 
 	~QWZM();

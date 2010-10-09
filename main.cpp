@@ -22,13 +22,6 @@
 #include <QTextCodec>
 #include "MainWindow.hpp"
 
-#ifdef __GNUC__
-# ifdef WARNMORE
-#  pragma  GCC diagnostic warning "-Weffc++"
-#  pragma  GCC diagnostic warning "-Wconversion"
-# endif
-#endif
-
 int main(int argc, char *argv[])
 {
 	QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());

@@ -26,8 +26,6 @@
 #include <QGLShaderProgram>
 #include <QtDebug>
 
-#include <GL/gl.h>
-
 #include <QGLViewer/vec.h>
 
 #include "TexturedRenderable.hpp"

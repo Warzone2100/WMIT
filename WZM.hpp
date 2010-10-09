@@ -25,13 +25,6 @@
 
 #include "Mesh.hpp"
 
-#ifdef __GNUC__
-# ifdef WARNMORE
-#  pragma  GCC diagnostic warning "-Weffc++"
-#  pragma  GCC diagnostic warning "-Wconversion"
-# endif
-#endif
-
 class Pie3Model;
 
 class WZM

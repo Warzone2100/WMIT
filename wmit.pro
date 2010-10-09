@@ -24,7 +24,8 @@ HEADERS += MainWindow.hpp \
     QWZM.hpp \
     ExportDialog.hpp \
     ITCMaskProvider.hpp \
-    TCMaskRenderable.hpp
+    TCMaskRenderable.hpp \
+    GLee.h
 SOURCES += main.cpp \
     MainWindow.cpp \
     ImportDialog.cpp \
@@ -42,7 +43,8 @@ SOURCES += main.cpp \
     GLTexture.cpp \
     Util.cpp \
     QWZM.cpp \
-    ExportDialog.cpp
+    ExportDialog.cpp \
+    GLee.c
 FORMS += MainWindow.ui \
     ImportDialog.ui \
     UVEditor.ui \
@@ -52,12 +54,12 @@ FORMS += MainWindow.ui \
     ExportDialog.ui
 QT += opengl \
     xml
-
 OTHER_FILES += TODO.txt \
-	COPYING.txt \
-	HACKING.txt	\
-	tcmask.vert \
-	tcmask.frag
+    COPYING.txt \
+    HACKING.txt \
+    tcmask.vert \
+    tcmask.frag \
+    COPYING.nongpl
 
 # If your system uses different paths for QGLViewer, create a file named
 # "config" and override the necessary variables below (with "=").
@@ -74,7 +76,8 @@ OBJECTS_DIR = bin
 
 # QMAKE_CXX = g++-4.5
 # QMAKE_CC = gcc-4.5
-QMAKE_CXXFLAGS += -pipe \ # -std=c++0x \
+QMAKE_CXXFLAGS += -pipe \
+    -std=c++0x \
     -fno-nonansi-builtins \
     -ffor-scope \
     -fno-exceptions \
@@ -92,6 +95,6 @@ QMAKE_CXXFLAGS_WARN_ON += -pedantic \
     -Wnon-virtual-dtor \
     -Wno-long-long \
     -Wold-style-cast \
-    -Wredundant-decls # -DWARNMORE # if you want more warnings to quash
+    -Wredundant-decls
 QMAKE_CFLAGS_DEBUG += -fstack-protector-all
 QMAKE_CXXFLAGS_DEBUG += -fstack-protector-all

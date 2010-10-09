@@ -107,7 +107,7 @@ protected:
 	void clear();
 	std::string m_name;
 	std::vector<Frame> m_frameArray;
-	std::vector<WZMVertex > m_vertexArray;
+	std::vector<WZMVertex> m_vertexArray;
 	std::vector<TexArray> m_textureArrays;
 	std::vector<IndexedTri> m_indexArray;
 	std::list<WZMConnector> m_connectors;

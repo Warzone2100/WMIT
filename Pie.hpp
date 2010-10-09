@@ -28,13 +28,6 @@
 
 #include "WZM.hpp" // for friends
 
-#ifdef __GNUC__
-# ifdef WARNMORE
-#  pragma  GCC diagnostic warning "-Weffc++"
-#  pragma  GCC diagnostic warning "-Wconversion"
-# endif
-#endif
-
 /**
   * Templates used to remove tedious code
   * duplication.

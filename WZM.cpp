@@ -185,7 +185,7 @@ bool WZM::importFromOBJ(std::istream& in)
 	/* Note: This program tolerates imperfect .obj files
 	 * because it accepts any whitespace as a space.
 	 */
-
+	
 	while (!(in.eof()|| in.fail()))
 	{
 		std::getline(in, str);

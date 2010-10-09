@@ -82,14 +82,14 @@ void ImportDialog::scanForTextures(const QStringList& dirs)
 
 void ImportDialog::changeEvent(QEvent *e)
 {
-	QDialog::changeEvent(e);
-	switch (e->type()) {
-	case QEvent::LanguageChange:
+    QDialog::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::LanguageChange:
 		ui->retranslateUi(this);
-		break;
-	default:
-		break;
-	}
+        break;
+    default:
+        break;
+    }
 }
 
 inline void ImportDialog::lw_autoFoundTextures_clearSelection()

@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_UVEditor(new UVEditor(this))
 {
 	ui->setupUi(this);
-	QSettings settings("WMIT", "WMIT");
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope,"WMIT", "WMIT");
 
 	// A work around to add actions in the order we want
 	ui->menuBar->clear();
@@ -93,22 +93,21 @@ MainWindow::~MainWindow()
 
 void MainWindow::changeEvent(QEvent *e)
 {
-	QMainWindow::changeEvent(e);
+    QMainWindow::changeEvent(e);
 	switch (e->type())
 	{
-	case QEvent::LanguageChange:
+    case QEvent::LanguageChange:
 		ui->retranslateUi(this);
-		break;
-	default:
-		break;
-	}
+        break;
+    default:
+        break;
+    }
 }
 
 void MainWindow::s_fileOpen()
 {
 	QFileInfo modelFileNfo(importDialog->modelFilePath());
 	std::ifstream f;
-
 	if (!modelFileNfo.exists())
 	{
 		return;
@@ -146,8 +145,8 @@ void MainWindow::s_fileOpen()
 		model.importFromOBJ(f);
 	}
 
-	setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
 	model.setRenderTexture(importDialog->textureFilePath());
+	setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
 
 	if (importDialog->tcmaskChecked() && !importDialog->tcmaskFilePath().isEmpty())
 	{
@@ -179,7 +178,7 @@ void MainWindow::s_fileOpen()
 void MainWindow::s_updateTexSearchDirs(const QList<QPair<bool,QString> >& changes)
 {
 	bool changed = false;
-	QSettings settings;
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope,"WMIT", "WMIT");
 	typedef QPair<bool,QString> t_change; // Work around foreach macro 3 argument error
 	foreach (t_change change, changes)
 	{
