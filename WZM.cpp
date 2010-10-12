@@ -173,7 +173,7 @@ bool WZM::importFromOBJ(std::istream& in)
 	OBJUV uv;
 	Mesh mesh;
 
-	unsigned i;
+	unsigned i, pos;
 
 	clear();
 
@@ -244,34 +244,37 @@ bool WZM::importFromOBJ(std::istream& in)
 
 			for (i = 0; itVStr != vertices.end(); ++itVStr, ++i)
 			{
-				if ((i % 3 == 0) && i != 0)
+				if (i <= 2)
 				{
-					 /* Don't overwrite the first vertex
-					  * since we're converting from triangle fans
-					  */
-					continue;
+					pos = i;
+				}
+				else
+				{
+					tri.uvs.operator [](1) = tri.uvs.operator [](2);
+					tri.tri.operator [](1) = tri.tri.operator [](2);
+					pos = 2;
 				}
 
 				indices = split(*itVStr, '/');
 
 				ss.str(indices[0]), ss.clear(), ss.seekg(0);
 
-				ss >> tri.tri.operator [](i % 3);
+				ss >> tri.tri.operator [](pos);
 
 				if (indices.size() >= 2 && !indices[1].empty())
 				{
 					ss.str(indices[1]), ss.clear(), ss.seekg(0);
-					ss >> tri.uvs.operator [](i % 3);
+					ss >> tri.uvs.operator [](pos);
 				}
 				else
 				{
-					tri.uvs.operator [](i % 3) = -1;
+					tri.uvs.operator [](pos) = -1;
 				}
 
 				if (indices.size() == 3 && !indices[2].empty())
 				{} // ignoring normals
 
-				if (i % 3 == 2)
+				if (i >= 2)
 				{
 					groupedFaces.push_back(tri);
 				}
