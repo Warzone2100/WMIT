@@ -294,6 +294,9 @@ Mesh::operator Pie3Level() const
 	for (itTri = m_indexArray.begin(); itTri != m_indexArray.end(); ++itTri)
 	{
 		Pie3Polygon p3Poly;
+		Pie3UV	p3UV;
+
+		p3Poly.m_flags = 0x200;
 
 		for (i = 0; i < 3; ++i)
 		{
@@ -312,9 +315,12 @@ Mesh::operator Pie3Level() const
 			{
 				p3Poly.m_indices[i] = std::distance(p3.m_points.begin(), itPV);
 			}
-#pragma message "unfinished"
-			// TODO: deal with UV's now (incase you didn't know)
 
+#pragma message "unfinished"
+			// TODO: deal with UV animation
+			p3UV.u() = m_textureArrays[0][(*itTri)[i]].u();
+			p3UV.v() = m_textureArrays[0][(*itTri)[i]].v();
+			p3Poly.m_texCoords[i] = p3UV;
 		}
 		p3.m_polygons.push_back(p3Poly);
 	}

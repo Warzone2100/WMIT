@@ -61,6 +61,7 @@ WZM::WZM(const Pie3Model &p3)
 WZM::operator Pie3Model() const
 {
 	Pie3Model p3;
+	p3.m_type = 0x10200;
 	p3.m_texture = m_texName;
 	std::transform(m_meshes.begin(), m_meshes.end(),
 				   back_inserter(p3.m_levels), Mesh::backConvert);
