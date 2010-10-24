@@ -84,26 +84,26 @@ void PiePolygon<U, S, MAX>::write(std::ostream& out) const
 {
 	unsigned i;
 
-	out << std::hex << m_flags << std::dec << '\t';
-	out << m_vertices << '\t';
+	out << std::hex << m_flags << std::dec << ' ';
+	out << m_vertices << ' ';
 
 	for (i = 0; i < m_vertices; ++i)
 	{
-		out << m_indices[i] << '\t';
+		out << m_indices[i] << ' ';
 	}
 
 	if (m_flags & 0x4000)
 	{
-		out << m_frames << '\t'
-				<< m_playbackRate << '\t'
-				<< m_width	<< '\t'
-				<< m_height	<< '\t';
+		out << m_frames << ' '
+				<< m_playbackRate << ' '
+				<< m_width	<< ' '
+				<< m_height	<< ' ';
 	}
 
 	for (i = 0; i < m_vertices; ++i)
 	{
-		out << m_texCoords[i].u() << '\t'
-				<< m_texCoords[i].v() << "\t\t";
+		out << m_texCoords[i].u() << ' '
+				<< m_texCoords[i].v() << ' ';
 	}
 	out << '\n';
 }

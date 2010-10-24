@@ -131,9 +131,9 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 	out << "POINTS\t" << points() << '\n';
 	for (ptIt = m_points.begin(); ptIt != m_points.end(); ++ptIt)
 	{
-		out << '\t' << ptIt->x()
-				<< '\t' << ptIt->y()
-				<< '\t' << ptIt->z() << '\n';
+		out << ' ' << ptIt->x()
+				<< ' ' << ptIt->y()
+				<< ' ' << ptIt->z() << '\n';
 	}
 
 	out << "POLYGONS\t" << polygons() << '\n';
@@ -209,8 +209,8 @@ bool PieConnector<V>::read(std::istream& in)
 template <typename V>
 void PieConnector<V>::write(std::ostream& out) const
 {
-	out << pos.x() << '\t'
-			<< pos.y() << '\t'
+	out << pos.x() << ' '
+			<< pos.y() << ' '
 			<< pos.z() << '\n';
 }
 
