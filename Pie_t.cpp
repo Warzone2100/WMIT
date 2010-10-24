@@ -128,15 +128,15 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 	typename std::vector<P>::const_iterator polyIt;
 	typename std::list<C>::const_iterator cIt;
 
-	out << "POINTS\t" << points() << '\n';
+	out << "POINTS " << points() << '\n';
 	for (ptIt = m_points.begin(); ptIt != m_points.end(); ++ptIt)
 	{
-		out << ' ' << ptIt->x()
+		out << '\t' << ptIt->x()
 				<< ' ' << ptIt->y()
 				<< ' ' << ptIt->z() << '\n';
 	}
 
-	out << "POLYGONS\t" << polygons() << '\n';
+	out << "POLYGONS " << polygons() << '\n';
 	for (polyIt = m_polygons.begin(); polyIt != m_polygons.end(); ++polyIt)
 	{
 		out << "\t";
@@ -145,7 +145,7 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 
 	if (connectors() != 0)
 	{
-		out << "CONNECTORS\t" << connectors() << '\n';
+		out << "CONNECTORS " << connectors() << '\n';
 		for (cIt = m_connectors.begin(); cIt != m_connectors.end(); ++cIt)
 		{
 			out << "\t";
@@ -301,19 +301,19 @@ void APieModel<L>::write(std::ostream& out) const
 	typename std::vector<L>::const_iterator it;
 	unsigned i = 1;
 
-	out << "PIE\t"	<< version() << '\n';
+	out << "PIE "	<< version() << '\n';
 
-	out << "TYPE\t"	<< m_type	<< '\n';
+	out << "TYPE "	<< std::hex << m_type << std::dec << '\n';
 
-	out <<  "TEXTURE\t0\t" << m_texture << "\t"
-			<< textureWidth() << "\t"
+	out <<  "TEXTURE 0 " << m_texture << ' '
+			<< textureWidth() << ' '
 			<< textureHeight() << '\n';
 
-	out << "LEVELS\t" << levels() << '\n';
+	out << "LEVELS " << levels() << '\n';
 
 	for (it = m_levels.begin(); it != m_levels.end(); ++it, ++i)
 	{
-		out << "LEVEL\t" << i << '\n';
+		out << "LEVEL " << i << '\n';
 		it->write(out);
 	}
 }
