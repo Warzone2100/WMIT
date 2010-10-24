@@ -47,10 +47,14 @@ WZM::WZM()
 WZM::WZM(const Pie3Model &p3)
 {
 	std::vector<Pie3Level>::const_iterator it;
+	std::stringstream ss;
 	m_texName = p3.m_texture;
 	for (it = p3.m_levels.begin(); it != p3.m_levels.end(); ++it)
 	{
 		m_meshes.push_back(*it);
+		ss << m_meshes.size();
+		m_meshes.back().setName(ss.str());
+		ss.str(std::string());
 	}
 }
 
@@ -185,7 +189,7 @@ bool WZM::importFromOBJ(std::istream& in)
 	/* Note: This program tolerates imperfect .obj files
 	 * because it accepts any whitespace as a space.
 	 */
-	
+
 	while (!(in.eof()|| in.fail()))
 	{
 		std::getline(in, str);
