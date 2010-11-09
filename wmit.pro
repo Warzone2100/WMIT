@@ -81,11 +81,9 @@ QMAKE_CXXFLAGS += -pipe \
     -fno-nonansi-builtins \
     -ffor-scope \
     -fno-exceptions \
-    -fno-rtti \
     -fno-signed-zeros \
     -fno-math-errno
-CONFIG -= rtti \
-    exceptions
+CONFIG -= exceptions
 CONFIG += warn_on \
     sse2 \
     mmx
