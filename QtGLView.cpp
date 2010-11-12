@@ -301,12 +301,21 @@ GLTexture QtGLView::createTexture(const QString& fileName)
 
 			textureUpdater.addPath(fileName);
 
-			// Remove some old textures now
-			for (texIt = m_textures.begin(); texIt != m_textures.end(); ++texIt)
+			if (m_textures.size() > 2)
 			{
-				if (m_textures.size() > 2 && texIt->users == 0)
+				// Remove some old textures now
+				texIt = m_textures.begin();
+				while (texIt != m_textures.end())
 				{
-					_deleteTexture(texIt);
+					if (texIt->users <= 0)
+					{
+						_deleteTexture(texIt);
+
+					}
+					else
+					{
+						++texIt;
+					}
 				}
 			}
 
@@ -346,7 +355,7 @@ void QtGLView::deleteTexture(GLuint id)
 	{
 		if (texIt->id() == id)
 		{
-			texIt->users = std::min(texIt->users - 1, 0);
+			texIt->users = std::max(texIt->users - 1, 0);
 			if ( m_textures.size() > 2 && texIt->users == 0)
 			{
 				_deleteTexture(texIt);
