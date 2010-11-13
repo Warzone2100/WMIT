@@ -116,7 +116,7 @@ Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
 
 			if (!foundMatch)
 			{
-				unsigned frames2Do = std::max(itL->m_frames, m_textureArrays.size());
+				unsigned frames2Do = std::max<size_t>(itL->m_frames, m_textureArrays.size());
 				vIdx = m_vertexArray.size();
 				// add the vertex to both the multimap and the vertex array
 				m_vertexArray.push_back(wzmVert);
