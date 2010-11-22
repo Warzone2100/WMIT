@@ -19,6 +19,11 @@
 
 #include "QtGLView.hpp"
 
+#ifdef Q_OS_MAC
+# include <CoreFoundation/CoreFoundation.h>
+# include <CoreFoundation/CFURL.h>
+#endif
+
 #include <QPixmap>
 #include <QImage>
 #include <QApplication>
@@ -104,6 +109,27 @@ void QtGLView::init()
 
 		if (QGLShaderProgram::hasOpenGLShaderPrograms(context()))
 		{
+			QString tcm_vert_path, tcm_frag_path;
+#ifdef Q_OS_MAC
+			char resourcePath[256];
+			CFURLRef resourceURL = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+			if (!CFURLGetFileSystemRepresentation(resourceURL, true, (UInt8 *) resourcePath, 256))
+			{
+				qWarning() << "Could not get bundle resource path";
+				emit viewerInitialized();
+				return;
+			}
+			tcm_frag_path = tcm_vert_path = resourcePath;
+			tcm_vert_path.append("/tcmask.vert");
+			tcm_frag_path.append("/tcmask.frag");
+			if (resourceURL != NULL)
+			{
+				CFRelease(resourceURL);
+			}
+#else
+			tcm_vert_path = "./tcmask.vert";
+			tcm_frag_path = "./tcmask.frag";
+#endif
 			if (m_tcmaskShader != NULL)
 			{
 				m_tcmaskShader->removeAllShaders();
@@ -113,13 +139,13 @@ void QtGLView::init()
 				m_tcmaskShader = new QGLShaderProgram(this);
 			}
 
-			if (!m_tcmaskShader->addShaderFromSourceFile(QGLShader::Vertex,"./tcmask.vert"))
+			if (!m_tcmaskShader->addShaderFromSourceFile(QGLShader::Vertex, tcm_vert_path))
 			{
 				qWarning() << QString("QtGLView::init - Error loading vertex shader:\n%1").arg(m_tcmaskShader->log());
 				delete m_tcmaskShader;
 				m_tcmaskShader = NULL;
 			}
-			else if (!m_tcmaskShader->addShaderFromSourceFile(QGLShader::Fragment,"./tcmask.frag"))
+			else if (!m_tcmaskShader->addShaderFromSourceFile(QGLShader::Fragment, tcm_frag_path))
 			{
 				qWarning() << QString("QtGLView::init - Error loading fragment shader:\n%1").arg(m_tcmaskShader->log());
 				delete m_tcmaskShader;

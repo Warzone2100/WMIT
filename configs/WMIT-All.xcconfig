@@ -1,0 +1,10 @@
+// Warzone Model Importer Tool settings for all configuration
+
+
+INSTALL_PATH = $(HOME)/Applications
+PREBINDING = NO
+INFOPLIST_FILE = Resources/Warzone Model Importer Tool-Info.plist
+PRODUCT_NAME = Warzone Model Importer Tool
+ALWAYS_SEARCH_USER_PATHS = YES
+FRAMEWORK_SEARCH_PATHS = $(inherited)
+HEADER_SEARCH_PATHS = $(inherited) $(QTGUI_QUOTED) $(QTOPENGL_QUOTED) $(QTXML_QUOTED)

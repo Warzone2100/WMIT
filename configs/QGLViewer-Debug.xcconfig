@@ -1,0 +1,6 @@
+// QGLViewer settings for Debug configuration
+
+#include "QGLViewer-All.xcconfig"
+
+
+GCC_ENABLE_FIX_AND_CONTINUE = YES

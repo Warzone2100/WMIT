@@ -1,0 +1,7 @@
+// lib3ds settings for Release configuration
+
+#include "lib3ds-All.xcconfig"
+
+
+GCC_ENABLE_FIX_AND_CONTINUE = NO
+ZERO_LINK = NO

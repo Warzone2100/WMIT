@@ -20,7 +20,7 @@
 #ifndef TCMASKRENDERABLE_HPP
 #define TCMASKRENDERABLE_HPP
 
-#include <GL/gl.h>
+#include <QtOpengl/qgl.h>
 
 #include "TexturedRenderable.hpp"
 #include "ITCMaskProvider.hpp"

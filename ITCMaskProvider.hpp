@@ -20,7 +20,7 @@
 #ifndef ITCMASKPROVIDER_HPP
 #define ITCMASKPROVIDER_HPP
 
-#include <GL/gl.h>
+#include <QtOpengl/qgl.h>
 
 enum TCMaskMethod
 {
