@@ -243,6 +243,7 @@ void MainWindow::on_actionSave_As_triggered()
 	enum { WZM = 0, PIE, _3DS, OBJ, NONE} type;
 
 	fDialog->setFileMode(QFileDialog::AnyFile);
+	fDialog->setAcceptMode(QFileDialog::AcceptSave);
 	fDialog->setFilter("All Compatible (*.wzm *.pie *.3ds *.obj);;"
 					  "WZM models (*.wzm);;"
 					  "PIE models (*.pie);;"
