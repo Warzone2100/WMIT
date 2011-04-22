@@ -29,9 +29,13 @@
 
 #include <sstream>
 
+#ifdef LIB3DS_VERSION_1
 #include <lib3ds/file.h>
 #include <lib3ds/mesh.h>
 #include <lib3ds/material.h>
+#else
+#include <lib3ds.h>
+#endif
 
 #include "Generic.hpp"
 #include "Util.hpp"
@@ -394,9 +398,14 @@ void WZM::exportToOBJ(std::ostream &out) const
 
 bool WZM::importFrom3DS(std::string fileName)
 {
+#ifdef LIB3DS_VERSION_1
 	Lib3dsFile *f = lib3ds_file_load(fileName.c_str());
 	Lib3dsMaterial *material;
 	Lib3dsMesh *ps3dsMesh;
+#else
+	Lib3dsFile *f = lib3ds_file_open(fileName.c_str());
+	int i;
+#endif
 
 	if (f == NULL)
 	{
@@ -406,8 +415,8 @@ bool WZM::importFrom3DS(std::string fileName)
 
 	clear();
 
+#ifdef LIB3DS_VERSION_1
 	material = f->materials;
-
 	// Grab texture name
 	if (material != NULL)
 	{
@@ -417,11 +426,24 @@ bool WZM::importFrom3DS(std::string fileName)
 			std::cout << "WZM::importFrom3ds - Multiple textures not supported!\n";
 		}
 	}
-
 	for (ps3dsMesh = f->meshes; ps3dsMesh != NULL; ps3dsMesh = ps3dsMesh->next)
 	{
 		m_meshes.push_back(*ps3dsMesh);
 	}
+#else
+	if (f->nmaterials >= 0)
+	{
+		m_texName = (*f->materials)->texture1_map.name;
+		if (f->nmaterials > 1)
+		{
+			std::cout << "WZM::importFrom3ds - Multiple textures not supported!\n";
+		}
+	}
+	for (i = 0; i < f->nmeshes; ++i)
+	{
+		m_meshes.push_back(*f->meshes[i]);
+	}
+#endif
 
 	lib3ds_file_free(f);
 	return true;
@@ -431,16 +453,21 @@ bool WZM::importFrom3DS(std::string fileName)
 bool WZM::exportTo3DS(std::string fileName) const
 {
 	Lib3dsFile* f = lib3ds_file_new();
-	Lib3dsBool retVal;
+#ifdef LIB3DS_VERSION_1
 	Lib3dsMaterial* material = lib3ds_material_new();
+	Lib3dsBool retVal;
+#else
+	Lib3dsMaterial* material = lib3ds_material_new("default");
+	int retVal;
+#endif
 
 	std::vector<Mesh>::const_iterator itM;
 	unsigned i;
 
 	i = m_texName.copy(material->texture1_map.name, 64 - 1);
 	material->texture1_map.name[i] = '\0';
+#ifdef LIB3DS_VERSION_1
 	lib3ds_file_insert_material(f, material);
-
 	for (itM = m_meshes.begin(); itM != m_meshes.end(); ++itM)
 	{
 		/* FIXME 3DS meshes have unique names,
@@ -448,6 +475,14 @@ bool WZM::exportTo3DS(std::string fileName) const
 		 */
 		lib3ds_file_insert_mesh(f, *itM);
 	}
+#else
+	lib3ds_file_insert_material(f, material, 0);
+	for (itM = m_meshes.begin(), i = 0; itM != m_meshes.end(); ++itM, ++i)
+	{
+		lib3ds_file_insert_mesh(f, *itM, i);
+	}
+	
+#endif
 
 	retVal = lib3ds_file_save (f, fileName.c_str());
 	delete f;

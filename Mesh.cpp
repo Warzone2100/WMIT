@@ -28,10 +28,14 @@
 
 #include <sstream>
 
+#ifdef LIB3DS_VERSION_1
 #include <lib3ds/mesh.h>
 #include <lib3ds/vector.h>
 #include <lib3ds/matrix.h>
 #include <lib3ds/material.h>
+#else
+#include <lib3ds.h>
+#endif
 
 #include "Generic.hpp"
 #include "Util.hpp"
@@ -174,24 +178,35 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	WZMVertex tmpVert;
 	WZMUV tmpUV;
 
-	m_vertexArray.reserve(mesh3ds.points);
-
-	m_indexArray.reserve(mesh3ds.faces);
-
 	m_textureArrays.push_back(TexArray()); // only one supported from 3DS
+#ifdef LIB3DS_VERSION_1
+	m_vertexArray.reserve(mesh3ds.points);
 	m_textureArrays[0].reserve(mesh3ds.points);
+	m_indexArray.reserve(mesh3ds.faces);
+#else
+	m_vertexArray.reserve(mesh3ds.nvertices);
+	m_textureArrays[0].reserve(mesh3ds.nvertices);
+	m_indexArray.reserve(mesh3ds.nfaces);
+#endif
 
 	if (isValidWzName(mesh3ds.name))
 	{
 		m_name = mesh3ds.name;
 	}
 
+#ifdef LIB3DS_VERSION_1
 	for (i = 0; i < mesh3ds.faces; ++i)
 	{
 		Lib3dsFace* face = &mesh3ds.faceL[i];
+#else
+	for (i = 0; i < mesh3ds.nfaces; ++i)
+	{
+		Lib3dsFace* face = &mesh3ds.faces[i];
+#endif
 
 		for (j = 0; j < 3; ++j)
 		{
+#ifdef LIB3DS_VERSION_1
 			Lib3dsVector pos;
 
 			if (transform)
@@ -205,6 +220,21 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 				lib3ds_vector_copy(pos,
 								   mesh3ds.pointL[face->points[j]].pos);
 			}
+#else
+			float pos[3];
+
+			if (transform)
+			{
+				lib3ds_vector_transform(pos,
+										const_cast<float (*)[4]>(mesh3ds.matrix),
+										mesh3ds.vertices[face->index[j]]);
+			}
+			else
+			{
+				lib3ds_vector_copy(pos,
+								   mesh3ds.vertices[face->index[j]]);
+			}
+#endif
 
 			if (swapYZ)
 			{
@@ -219,6 +249,7 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 				tmpVert.z() = pos[2];
 			}
 
+#ifdef LIB3DS_VERSION_1
 			if (mesh3ds.points == mesh3ds.texels)
 			{
 				tmpUV.u() = mesh3ds.texelL[face->points[j]][0];
@@ -235,6 +266,17 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 			{
 				tmpUV = WZMUV();
 			}
+#else
+			tmpUV.u() = mesh3ds.texcos[face->index[j]][0];
+			if (invertV)
+			{
+				tmpUV.v() = 1.0f - mesh3ds.texcos[face->index[j]][1];
+			}
+			else
+			{
+				tmpUV.v() = mesh3ds.texcos[face->index[j]][1];
+			}
+#endif
 
 			inResult = pairSet.insert(make_mypair(tmpVert,
 												  tmpUV,
@@ -730,6 +772,7 @@ Mesh::operator Lib3dsMesh*() const
 		mesh = lib3ds_mesh_new(m_name.c_str());
 	}
 
+#ifdef LIB3DS_VERSION_1
 	lib3ds_mesh_new_point_list(mesh, m_vertexArray.size());
 	lib3ds_mesh_new_texel_list(mesh, m_vertexArray.size());
 
@@ -777,6 +820,54 @@ Mesh::operator Lib3dsMesh*() const
 			mesh->faceL[i].points[2] = m_indexArray[i].c();
 		}
 	}
+#else
+	lib3ds_mesh_resize_vertices(mesh, m_vertexArray.size(), 1, 0);
+
+	for (i = 0; i < mesh->nvertices; ++i)
+	{
+		if (swapYZ)
+		{
+			mesh->vertices[i][0] = m_vertexArray[i].x();
+			mesh->vertices[i][2] = m_vertexArray[i].y();
+			mesh->vertices[i][1] = m_vertexArray[i].z();
+		}
+		else
+		{
+			mesh->vertices[i][0] = m_vertexArray[i].x();
+			mesh->vertices[i][1] = m_vertexArray[i].y();
+			mesh->vertices[i][2] = m_vertexArray[i].z();
+		}
+		
+		mesh->texcos[i][0] = m_textureArrays[0][i].u();
+		if (invertV)
+		{
+			mesh->texcos[i][1] = 1.0f - m_textureArrays[0][i].v();
+		}
+		else
+		{
+			mesh->texcos[i][1] = m_textureArrays[0][i].v();
+		}
+		
+	}
+
+	lib3ds_mesh_resize_faces(mesh, m_indexArray.size());
+
+	for (i = 0; i < mesh->nfaces; ++i)
+	{
+		if (reverseWinding)
+		{
+			mesh->faces[i].index[2] = m_indexArray[i].a();
+			mesh->faces[i].index[1] = m_indexArray[i].b();
+			mesh->faces[i].index[0] = m_indexArray[i].c();
+		}
+		else
+		{
+			mesh->faces[i].index[0] = m_indexArray[i].a();
+			mesh->faces[i].index[1] = m_indexArray[i].b();
+			mesh->faces[i].index[2] = m_indexArray[i].c();
+		}
+	}
+#endif
 
 	return mesh;
 }

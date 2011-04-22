@@ -24,8 +24,12 @@
 #include <QFileInfo>
 #include <QTextStream>
 
+#ifdef LIB3DS_VERSION_1
 #include <lib3ds/file.h>
 #include <lib3ds/material.h>
+#else
+#include <lib3ds.h>
+#endif
 
 #include "Pie.hpp"
 
@@ -150,25 +154,29 @@ inline QString getPIETextureName(const QString& filePath)
 
 inline QString get3DSTextureName(const QString& filePath)
 {
+#ifdef LIB3DS_VERSION_1
 	Lib3dsFile *f = lib3ds_file_load(filePath.toLocal8Bit().constData());
-	Lib3dsMaterial *material;
-
+#else
+	Lib3dsFile *f = lib3ds_file_open(filePath.toLocal8Bit().constData());
+#endif
+	
 	if (f == NULL)
 	{
 		std::cerr << "Loading 3DS file failed.\n";
 		return QString();
 	}
-
-	material = f->materials;
-
-	// Grab texture name
-	if (material != NULL)
+	
+#ifdef LIB3DS_VERSION_1
+	if (f->materials != NULL)
 	{
-		if (material->next != NULL)
-		{
-			std::cout << "WZM::importFrom3ds - Multiple textures not supported!\n";
-		}
-		return material->texture1_map.name;
+		return f->materials->texture1_map.name;
 	}
+#else
+	if (f->nmaterials >= 0)
+	{
+		return (*f->materials)->texture1_map.name;
+	}
+#endif
+	return QString();
 }
 
