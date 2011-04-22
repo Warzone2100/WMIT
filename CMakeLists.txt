@@ -33,6 +33,7 @@ include(${QT_USE_FILE})
 
 if (BUILD_QGLVIEWER OR BUILD_LIB3DS)
   add_subdirectory(3rdparty)
+  add_definitions (-DDLIB3DS_VERSION_${LIB3DS_VERSION})
 endif ()
 
 if (NOT BUILD_QGLVIEWER)
