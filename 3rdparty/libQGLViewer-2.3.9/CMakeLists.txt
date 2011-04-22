@@ -92,7 +92,22 @@ if (NOT QGLV_MOC_FILES)
   endforeach ()
 endif ()
 qt_wrap_cpp (qglviewer QGLVIEWER_MOC_OUTPUTS ${QGLV_MOC_FILES})
+
 QT4_WRAP_UI (QGLVIEWER_UI_HEADERS ${QGLVIEWER_FORMS})
+foreach (form ${QGLVIEWER_FORMS}) # Fix the extensions
+  unset (TMP_FORM)
+  string (REGEX MATCH "[^\\.]+\\.[^\\.]+\\.ui" HAS_DOUBLE_EXT ${form})
+  if (HAS_DOUBLE_EXT)
+    string (REGEX REPLACE ".*/([^\\.]+\\.[^\\.]+)\\.ui" "ui_\\1.h" UI_FORM1 ${form})
+    string (REGEX REPLACE ".*/([^\\.]+)\\.[^\\.]+\\.ui" "ui_\\1.h" UI_FORM2 ${form})
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${UI_FORM1}
+                       COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${UI_FORM2} ${CMAKE_CURRENT_BINARY_DIR}/${UI_FORM1}
+                       MAIN_DEPENDENCY ${UI_FORM2}
+    )
+    list (REMOVE_ITEM QGLVIEWER_UI_HEADERS ${CMAKE_CURRENT_BINARY_DIR}/${UI_FORM2})
+    list (APPEND QGLVIEWER_UI_HEADERS ${CMAKE_CURRENT_BINARY_DIR}/${UI_FORM1})
+  endif ()
+endforeach ()
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/QGLViewer)
 include_directories (${CMAKE_CURRENT_BINARY_DIR})
