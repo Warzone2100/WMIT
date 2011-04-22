@@ -1,0 +1,12 @@
+Extract the source files into the proper directories such that:
+
+If choosing lib3ds-2.0.0 RC1 (lib3ds-20080909.zip)
+then the directory structure is:
+3rdparty -> lib3ds-2.0.0 -> lib3ds -> lib3ds.h
+
+If choosing lib3ds-1.3.0 (lib3ds-1.3.0.zip)
+then the directory structure is:
+3rdparty -> lib3ds-1.3.0 -> src -> mesh.h
+
+If build QGLViewer then:
+3rdparty -> libQGLViewer-2.3.9 -> QGLViewer -> qglviewer.h
