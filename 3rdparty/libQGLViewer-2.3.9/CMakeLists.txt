@@ -1,6 +1,5 @@
-find_package (Qt4 4.4.0 COMPONENTS QtXml QtOpenGL REQUIRED)
+find_package (Qt4 4.4.0 COMPONENTS QtCore QtGui QtXml QtOpenGL REQUIRED)
 include(${QT_USE_FILE})
-include_directories(${QT_INCLUDES}) # Hack around problematic includes
 find_package(OpenGL REQUIRED)
 if (NOT OPENGL_GLU_FOUND)
   message (FATAL_ERROR "GLUT not found!")

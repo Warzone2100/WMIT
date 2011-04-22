@@ -28,9 +28,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
 endif ()
 
 # Look for dependencies
-find_package (Qt4 4.4.0 COMPONENTS QtXml QtOpenGL REQUIRED)
+find_package (Qt4 4.4.0 COMPONENTS QtCore QtGui QtXml QtOpenGL REQUIRED)
 include(${QT_USE_FILE})
-include_directories(${QT_INCLUDES}) # Hack around problematic includes FIXME
 
 if (BUILD_QGLVIEWER OR BUILD_LIB3DS)
   add_subdirectory(3rdparty)
