@@ -214,9 +214,11 @@ endif()
 
 add_executable (wmit ${SOURCES} ${MOC_OUTPUTS} ${UI_HEADERS})
 
-set_target_properties (wmit
-  PROPERTIES COMPILE_FLAGS ${WMIT_CXX_FLAGS}
-)
+if (WMIT_CXX_FLAGS)
+  set_target_properties (wmit
+    PROPERTIES COMPILE_FLAGS ${WMIT_CXX_FLAGS}
+  )
+endif ()
 
 target_link_libraries (wmit m ${LIB3DS_LIB} ${QGLVIEWER_LIB} ${QT_LIBRARIES})
 
