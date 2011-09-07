@@ -32,6 +32,9 @@
 #include "TCMaskRenderable.hpp"
 #include "IGLRenderable.hpp"
 
+#define WMIT_SHADER_DEFPATH_TCM_VERT ":/data/shaders/tcmask.vert"
+#define WMIT_SHADER_DEFPATH_TCM_FRAG ":/data/shaders/tcmask.frag"
+
 QtGLView::QtGLView(QWidget *parent) :
 		QGLViewer(parent),
 		m_tcmaskShader(NULL),
@@ -113,13 +116,13 @@ void QtGLView::init()
 				m_tcmaskShader = new QGLShaderProgram(this);
 			}
 
-			if (!m_tcmaskShader->addShaderFromSourceFile(QGLShader::Vertex,"./tcmask.vert"))
+			if (!m_tcmaskShader->addShaderFromSourceFile(QGLShader::Vertex, WMIT_SHADER_DEFPATH_TCM_VERT))
 			{
 				qWarning() << QString("QtGLView::init - Error loading vertex shader:\n%1").arg(m_tcmaskShader->log());
 				delete m_tcmaskShader;
 				m_tcmaskShader = NULL;
 			}
-			else if (!m_tcmaskShader->addShaderFromSourceFile(QGLShader::Fragment,"./tcmask.frag"))
+			else if (!m_tcmaskShader->addShaderFromSourceFile(QGLShader::Fragment, WMIT_SHADER_DEFPATH_TCM_FRAG))
 			{
 				qWarning() << QString("QtGLView::init - Error loading fragment shader:\n%1").arg(m_tcmaskShader->log());
 				delete m_tcmaskShader;

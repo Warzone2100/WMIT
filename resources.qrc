@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>data/shaders/tcmask.frag</file>
+        <file>data/shaders/tcmask.vert</file>
+    </qresource>
+</RCC>

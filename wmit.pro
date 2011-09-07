@@ -88,3 +88,6 @@ INCLUDEPATH += $$QGLVIEWER_INCL
 LIBS += -l3ds \
     -lm \
     $$QGLVIEWER_LIBS
+
+RESOURCES += \
+    resources.qrc
