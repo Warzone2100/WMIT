@@ -117,6 +117,7 @@ void ImportDialog::on_tb_seekFileName_clicked()
 	{
 		ui->le_fileName->setText(fileDialog->selectedFiles().first());
 		on_pb_autoTex_clicked();
+		on_pb_autoTCM_clicked();
 	}
 	delete fileDialog;
 }
