@@ -60,6 +60,8 @@ public:
 
 	bool isValid() const;
 
+	void scale(GLfloat x, GLfloat y, GLfloat z);
+
 protected:
 	void clear();
 	std::vector<Mesh> m_meshes;

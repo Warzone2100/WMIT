@@ -1027,3 +1027,14 @@ void Mesh::clear()
 	m_connectors.clear();
 	m_teamColours = false;
 }
+
+void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
+{
+	std::vector<WZMVertex>::iterator vertIt;
+	for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt )
+	{
+		vertIt->scale(x, y, z);
+	}
+
+#pragma message "TODO: Mesh::scale - Frames and connectors"
+}

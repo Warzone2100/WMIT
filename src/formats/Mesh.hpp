@@ -103,6 +103,8 @@ public:
 	unsigned frames() const;
 
 	bool isValid() const;
+
+	void scale(GLfloat x, GLfloat y, GLfloat z);
 protected:
 	void clear();
 	std::string m_name;

@@ -38,18 +38,23 @@ signals:
 	void scaleZChanged(double);
 	void reverseWindings();
 
+	void applyTransformations();
+
 protected:
     void changeEvent(QEvent *e);
 
 private:
     Ui::TransformDock *ui;
 	double scale_all, scale_xyz[3];
+	double scale_all_prev, scale_xyz_prev[3];
+	bool reverse_winding, reverse_winding_prev;
 
 private slots:
 	void on_comboBox_currentIndexChanged(int index);
 	void on_horizontalSlider_valueChanged(int value);
 	void on_doubleSpinBox_valueChanged(double );
 	void on_pb_revWindings_clicked();
+	void on_pbApplyTransform_clicked();
 };
 
 #endif // TRANSFORMDOCK_HPP

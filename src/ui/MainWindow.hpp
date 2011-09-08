@@ -70,6 +70,7 @@ private slots:
 	void _on_scaleYChanged(double);
 	void _on_scaleZChanged(double);
 	void _on_reverseWindings();
+	void _on_applyTransformations();
 
 private:
 	Ui::MainWindow* ui;

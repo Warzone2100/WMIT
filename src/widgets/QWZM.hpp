@@ -56,6 +56,8 @@ public:
 	void setScaleZ(GLfloat z);
 	void reverseWindings();
 
+	void applyTransformations();
+
 private:
 	void defaultConstructor();
 

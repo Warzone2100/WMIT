@@ -81,6 +81,12 @@ struct Vertex : public Vector<T,3>
 	inline T z() const {
 		return this->operator [](2);
 	}
+
+	inline void scale(T xfac, T yfac, T zfac) {
+		this->operator [](0) *= xfac;
+		this->operator [](1) *= yfac;
+		this->operator [](2) *= zfac;
+	}
 };
 
 #endif // VERTEXTYPES_HPP

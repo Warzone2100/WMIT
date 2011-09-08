@@ -568,3 +568,13 @@ void WZM::clear()
 	m_meshes.clear();
 	m_texName = std::string();
 }
+
+void WZM::scale(GLfloat x, GLfloat y, GLfloat z)
+{
+	std::vector<Mesh>::iterator it;
+
+	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+	{
+		it->scale(x, y, z);
+	}
+}

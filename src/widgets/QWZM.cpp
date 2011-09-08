@@ -232,3 +232,8 @@ void QWZM::reverseWindings()
 		winding = GL_CCW;
 	}
 }
+
+void QWZM::applyTransformations()
+{
+	scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+}
