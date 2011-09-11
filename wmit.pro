@@ -69,25 +69,29 @@ OTHER_FILES += \
     HACKING.txt \
     COPYING.nongpl
 
-QMAKE_CXXFLAGS += \
-    -std=c++0x
+# turn off c++0x support on win32 till decent compiler is available out-of-the-box
+!win32 {
+    QMAKE_CXXFLAGS += -std=c++0x
+    DEFINES += CPP0X_AVAILABLE
+}
+    
+LIBS += -l3ds -lm
+
+RESOURCES += \
+    resources.qrc
 
 # If your system uses different paths for QGLViewer, create a file named
 # "config.pri" and override the necessary variables below (with "=").
 QGLVIEWER_INCL = /usr/include/QGLViewer
 QGLVIEWER_LIBS = -lQGLViewer
 
-include("config.pri")
+
 
 UI_DIR = ui
 MOC_DIR = moc
 OBJECTS_DIR = bin
 
+include("config.pri")
+
 INCLUDEPATH += $$QGLVIEWER_INCL
-
-LIBS += -l3ds \
-    -lm \
-    $$QGLVIEWER_LIBS
-
-RESOURCES += \
-    resources.qrc
+LIBS += $$QGLVIEWER_LIBS

@@ -23,6 +23,12 @@
 
 #include "IGLTextureManager.hpp"
 
+#ifdef CPP0X_AVAILABLE
+#  define CPP0X_FEATURED(x) x
+#else
+#  define CPP0X_FEATURED(x) do {} while (0)
+#endif
+
 QWZM::QWZM()
 {
 	defaultConstructor();
@@ -99,7 +105,7 @@ void QWZM::render()
 
 	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
 	{
-		static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat.");
+		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
 		glTexCoordPointer(2, GL_FLOAT, 0, &it->m_textureArrays[0][0]);
 
 		if (currentTCMaskMode() == FixedPipeline)
@@ -109,10 +115,10 @@ void QWZM::render()
 			glClientActiveTexture(GL_TEXTURE1);
 		}
 
-		static_assert(sizeof(WZMVertex) == sizeof(GLfloat)*3, "WZMVertex has become fat.");
+		CPP0X_FEATURED(static_assert(sizeof(WZMVertex) == sizeof(GLfloat)*3, "WZMVertex has become fat."));
 		glVertexPointer(3, GL_FLOAT, 0, &it->m_vertexArray[0]);
 
-		static_assert(sizeof(IndexedTri) == sizeof(GLushort)*3, "IndexedTri has become fat.");
+		CPP0X_FEATURED(static_assert(sizeof(IndexedTri) == sizeof(GLushort)*3, "IndexedTri has become fat."));
 		glDrawElements(GL_TRIANGLES, it->m_indexArray.size() * 3, GL_UNSIGNED_SHORT, &it->m_indexArray[0]);
 	}
 
