@@ -101,42 +101,42 @@ inline void ImportDialog::lw_autoFoundTextures_clearSelection()
 
 void ImportDialog::on_tb_seekFileName_clicked()
 {
-	static QString lastDir = QDir::currentPath();
 	QFileDialog* fileDialog = new QFileDialog(this,
-								 tr("Select File to open"),
-								 lastDir,
-								 tr("All Compatible (*.wzm *.pie *.3ds *.obj);;"
-									"WZM models (*.wzm);;"
-									"PIE models (*.pie);;"
-									"3DS files (*.3ds);;"
-									"OBJ files (*.obj)"));
+						  tr("Select File to open"),
+						  m_workingDir,
+						  tr("All Compatible (*.wzm *.pie *.3ds *.obj);;"
+						     "WZM models (*.wzm);;"
+						     "PIE models (*.pie);;"
+						     "3DS files (*.3ds);;"
+						     "OBJ files (*.obj)"));
 	fileDialog->setFileMode(QFileDialog::ExistingFile);
 	fileDialog->exec();
-	lastDir = fileDialog->directory().absolutePath();
 	if (fileDialog->result() == QDialog::Accepted)
 	{
 		ui->le_fileName->setText(fileDialog->selectedFiles().first());
 		on_pb_autoTex_clicked();
 		on_pb_autoTCM_clicked();
+		m_workingDir = fileDialog->directory().absolutePath();
 	}
 	delete fileDialog;
 }
 
 void ImportDialog::on_tb_seekTextureFName_clicked()
 {
-	static QString lastDir = QDir::currentPath();
+	static QString lastDir = m_workingDir;
 	QFileDialog* fileDialog = new QFileDialog(this,
-											  tr("Select texture to use"),
-											  lastDir,
-											  tr("WZ Compatible (*.png);;"
-												 "WMIT Compatible (*.bmp *.jpg *.jpeg *.png)"));
+						  tr("Select texture to use"),
+						  lastDir,
+						  tr("WZ Compatible (*.png);;"
+						     "WMIT Compatible (*.bmp *.jpg *.jpeg *.png)"));
 	fileDialog->setFileMode(QFileDialog::ExistingFile);
 	fileDialog->exec();
-	lastDir = fileDialog->directory().absolutePath();
+
 	if (fileDialog->result() == QDialog::Accepted)
 	{
 		ui->le_textureFName->setText(fileDialog->selectedFiles().first());
 		lw_autoFoundTextures_clearSelection();
+		lastDir = fileDialog->directory().absolutePath();
 	}
 	delete fileDialog;
 }
@@ -181,17 +181,18 @@ void ImportDialog::on_pb_autoTex_clicked()
 
 void ImportDialog::on_tb_seekTcmFName_clicked()
 {
-	static QString lastDir = QDir::currentPath();
+	static QString lastDir = m_workingDir;
 	QFileDialog* fileDialog = new QFileDialog(this,
-											  tr("Select tcmask to use"),
-											  lastDir,
-											  tr("WZ Compatible (*.png);;"));
+						  tr("Select tcmask to use"),
+						  lastDir,
+						  tr("WZ Compatible (*.png);;"));
 	fileDialog->setFileMode(QFileDialog::ExistingFile);
 	fileDialog->exec();
-	lastDir = fileDialog->directory().absolutePath();
+
 	if (fileDialog->result() == QDialog::Accepted)
 	{
 		ui->le_tcmFName->setText(fileDialog->selectedFiles().first());
+		lastDir = fileDialog->directory().absolutePath();
 	}
 	delete fileDialog;
 }
@@ -220,4 +221,14 @@ void ImportDialog::on_pb_autoTCM_clicked()
 			}
 		}
 	}
+}
+
+void ImportDialog::setWorkingDir(const QString& path)
+{
+	m_workingDir = path;
+}
+
+QString ImportDialog::getWorkingDir() const
+{
+	return m_workingDir;
 }

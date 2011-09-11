@@ -39,6 +39,9 @@ public:
 	bool tcmaskChecked() const;
 	QString tcmaskFilePath() const;
 
+	void setWorkingDir(const QString& path);
+	QString getWorkingDir() const;
+
 public slots:
 	void scanForTextures(const QStringList&);
 
@@ -49,6 +52,7 @@ private:
 	Ui::ImportDialog* ui;
 	QStringList m_textures;
 	QListWidgetItem* lw_autoFoundTextures_previous;
+	QString m_workingDir;
 
 	void setModelFileName(QString fileName);
 	void lw_autoFoundTextures_clearSelection();

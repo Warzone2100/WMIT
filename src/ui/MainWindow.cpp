@@ -29,6 +29,7 @@
 
 #include <QFileInfo>
 #include <QFileDialog>
+#include <QDir>
 
 #include <QtDebug>
 #include <QVariant>
@@ -56,6 +57,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->menuBar->addMenu(ui->menuTeam_Colours);
 	ui->menuBar->addAction(ui->actionTransformWidget);
 //	ui->menuBar->addAction(ui->actionUVEditor);
+
+	m_pathImport = m_settings->value(WMIT_SETTINGS_IMPORTVAL, QDir::currentPath()).toString();
+	importDialog->setWorkingDir(m_pathImport);
+
+	m_pathExport = m_settings->value(WMIT_SETTINGS_EXPORTVAL, QDir::currentPath()).toString();
 
 	configDialog->hide();
 
@@ -91,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
 	delete ui;
+
 	delete m_settings;
 }
 
@@ -115,6 +122,10 @@ void MainWindow::s_fileOpen()
 	{
 		return;
 	}
+
+	// refresh import working dir
+	m_pathImport = importDialog->getWorkingDir();
+	m_settings->setValue(WMIT_SETTINGS_IMPORTVAL, m_pathImport);
 
 	if (modelFileNfo.completeSuffix().compare(QString("wzm"), Qt::CaseInsensitive) == 0)
 	{

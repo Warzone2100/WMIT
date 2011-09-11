@@ -84,6 +84,7 @@ private:
 	QSettings* m_settings;
 
 	QSet<QString> textureSearchDirs;
+	QString m_pathImport, m_pathExport;
 
 	QWZM model;
 };
