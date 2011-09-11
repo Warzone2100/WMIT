@@ -53,6 +53,7 @@ WZM::WZM(const Pie3Model &p3)
 	std::vector<Pie3Level>::const_iterator it;
 	std::stringstream ss;
 	m_texName = p3.m_texture;
+	m_texName_NormalMap = p3.m_normalmap_texture;
 	for (it = p3.m_levels.begin(); it != p3.m_levels.end(); ++it)
 	{
 		m_meshes.push_back(*it);
@@ -67,6 +68,7 @@ WZM::operator Pie3Model() const
 	Pie3Model p3;
 	p3.m_type = 0x10200;
 	p3.m_texture = m_texName;
+	p3.m_normalmap_texture = m_texName_NormalMap;
 	std::transform(m_meshes.begin(), m_meshes.end(),
 				   back_inserter(p3.m_levels), Mesh::backConvert);
 	return p3;
@@ -508,6 +510,27 @@ std::string WZM::getTextureName() const
 {
 	return m_texName;
 }
+
+void WZM::setTextureName_TCMask(const std::string& name)
+{
+	m_texName_TCMask = name;
+}
+
+std::string WZM::getTextureName_TCMask() const
+{
+	return m_texName_TCMask;
+}
+
+void WZM::setTextureName_NormalMap(const std::string& name)
+{
+	m_texName_NormalMap = name;
+}
+
+std::string WZM::getTextureName_NormalMap() const
+{
+	return m_texName_NormalMap;
+}
+
 
 Mesh& WZM::getMesh(int index)
 {

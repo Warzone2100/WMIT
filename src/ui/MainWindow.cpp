@@ -161,11 +161,20 @@ void MainWindow::s_fileOpen()
 
 	// Use overriden name for texture or leave it as is if none selected
 	{
+		QFileInfo textureFileNfo;
 		QString selectedTextureFilePath = importDialog->textureFilePath();
 		if (!selectedTextureFilePath.isEmpty())
 		{
-			QFileInfo textureFileNfo(selectedTextureFilePath);
+			textureFileNfo.setFile(selectedTextureFilePath);
 			model.setTextureName(textureFileNfo.fileName().toStdString());
+
+		}
+
+		selectedTextureFilePath = importDialog->tcmaskFilePath();
+		if (importDialog->tcmaskChecked() && !selectedTextureFilePath.isEmpty())
+		{
+			textureFileNfo.setFile(selectedTextureFilePath);
+			model.setTextureName_TCMask(textureFileNfo.fileName().toStdString());
 
 		}
 

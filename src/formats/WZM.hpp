@@ -51,6 +51,12 @@ public:
 	void setTextureName(std::string name);
 	std::string getTextureName() const;
 
+	void setTextureName_TCMask(const std::string& name);
+	std::string getTextureName_TCMask() const;
+
+	void setTextureName_NormalMap(const std::string& name);
+	std::string getTextureName_NormalMap() const;
+
 	bool couldHaveTCArrays() const;
 
 	/// might throw out_of_range exception? not decided yet
@@ -66,6 +72,8 @@ protected:
 	void clear();
 	std::vector<Mesh> m_meshes;
 	std::string m_texName;
+	std::string m_texName_TCMask;
+	std::string m_texName_NormalMap;
 };
 
 #endif // WZM_HPP

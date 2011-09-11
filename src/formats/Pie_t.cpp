@@ -359,6 +359,7 @@ bool APieModel<L>::readLevelsBlock(std::istream& in)
 	return true;
 }
 
+//FIXME add PIE2 specialization (no NM!)
 template <typename L>
 void APieModel<L>::write(std::ostream& out) const
 {
@@ -372,6 +373,11 @@ void APieModel<L>::write(std::ostream& out) const
 	out << PIE_MODEL_DIRECTIVE_TEXTURE << " 0 " << m_texture << ' '
 			<< textureWidth() << ' '
 			<< textureHeight() << '\n';
+
+	if (!m_normalmap_texture.empty())
+	{
+		out << PIE_MODEL_DIRECTIVE_NORMALMAP << " 0 " << m_normalmap_texture << '\n';
+	}
 
 	out << PIE_MODEL_DIRECTIVE_LEVELS << " " << levels() << '\n';
 
