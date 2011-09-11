@@ -31,7 +31,7 @@ int pieVersion(std::istream& in)
 
 	// PIE %u
 	in >> pie >> version;
-	if (in.good() && pie.compare("PIE") == 0)
+	if (in.good() && pie.compare(PIE_MODEL_SIGNATURE) == 0)
 	{
 		in.seekg(start);
 		if (version >= 2 || version <= 3)
@@ -41,6 +41,10 @@ int pieVersion(std::istream& in)
 	}
 	return -1;
 }
+
+/**********************************************
+  Pie version 2
+  *********************************************/
 
 Pie2Model::Pie2Model()
 {
@@ -64,6 +68,11 @@ unsigned Pie2Model::textureWidth() const
 {
 	return 256;
 }
+
+/**********************************************
+  Pie version 3
+  *********************************************/
+
 Pie3UV::Pie3UV()
 {
 }

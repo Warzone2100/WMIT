@@ -33,6 +33,12 @@
   * duplication.
   */
 
+#define PIE_MODEL_SIGNATURE "PIE"
+#define PIE_MODEL_DIRECTIVE_TYPE "TYPE"
+#define PIE_MODEL_DIRECTIVE_TEXTURE "TEXTURE"
+#define PIE_MODEL_DIRECTIVE_NORMALMAP "NORMALMAP"
+#define PIE_MODEL_DIRECTIVE_LEVELS "LEVELS"
+
 template<typename V, typename P, typename C>
 class APieLevel
 {
@@ -83,7 +89,16 @@ protected:
 	virtual unsigned textureHeight() const =0;
 	virtual unsigned textureWidth() const =0;
 
+	virtual bool readHeaderBlock(std::istream& in);
+
+	virtual bool readTexturesBlock(std::istream& in);
+	virtual bool readTextureDirective(std::istream& in);
+	virtual bool readNormalmapDirective(std::istream& in);
+
+	virtual bool readLevelsBlock(std::istream& in);
+
 	std::string m_texture;
+	std::string m_normalmap_texture;
 	std::vector<L> m_levels;
 	unsigned long m_type;
 };
@@ -141,6 +156,7 @@ public:
 	unsigned textureHeight() const;
 	unsigned textureWidth() const;
 };
+
 /**********************************************
   Pie version 3
   *********************************************/
@@ -217,7 +233,8 @@ public:
 	operator Pie2Model() const;
 
 	bool setType(int type);
-private:
+
+protected:
 	unsigned textureHeight() const;
 	unsigned textureWidth() const;
 };

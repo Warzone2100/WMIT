@@ -16,7 +16,9 @@
 	You should have received a copy of the GNU General Public License
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifdef PIE_T_CPP
+//#ifdef PIE_T_CPP
+
+#pragma once
 
 #include "Generic.hpp"
 #include "Util.hpp"
@@ -232,54 +234,117 @@ APieModel<L>::~APieModel()
 
 }
 
+#define streamfail() do {\
+	clearAll();	\
+	in.clear();	\
+	in.seekg(start);	\
+	return false; } while(0)
+
 // TODO: Write error messages to std::cerr
 template <typename L>
 bool APieModel<L>::read(std::istream& in)
 {
-	std::string str;
-	unsigned uint;
-
 	std::streampos start = in.tellg();
 
 	clearAll();
 
-	#define streamfail() do {\
-		clearAll();	\
-		in.clear();	\
-		in.seekg(start);	\
-		return false; } while(0)
+	if (readHeaderBlock(in) && readTexturesBlock(in) && readLevelsBlock(in))
+	{
+		return true;
+	}
+
+	// do error macro
+	streamfail();
+}
+
+#undef streamfail
+
+template <typename L>
+bool APieModel<L>::readHeaderBlock(std::istream& in)
+{
+	std::string str;
+	unsigned uint;
 
 	// PIE %u
 	in >> str >> uint;
-	if ( in.fail() || str.compare("PIE") != 0)
+	if ( in.fail() || str.compare(PIE_MODEL_SIGNATURE) != 0)
 	{
-		streamfail();
+		return false;
 	}
 
 	// TYPE %x
 	in >> str >> m_type;
-	if ( in.fail() || str.compare("TYPE") != 0)
+	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_TYPE) != 0)
 	{
-		streamfail();
+		return false;
 	}
+
+	return true;
+}
+
+template <typename L>
+bool APieModel<L>::readTexturesBlock(std::istream& in)
+{
+	return readTextureDirective(in) && readNormalmapDirective(in);
+}
+
+// PIE2 specialization
+template <>
+inline bool APieModel<Pie2Level>::readTexturesBlock(std::istream& in)
+{
+	return readTextureDirective(in);
+}
+
+template <typename L>
+bool APieModel<L>::readTextureDirective(std::istream& in)
+{
+	std::string str;
+	unsigned uint;
 
 	// TEXTURE 0 %s %u %u
 	in >> str >> uint >> m_texture >> uint >> uint;
-	if ( in.fail() || str.compare("TEXTURE") != 0)
+	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_TEXTURE) != 0)
 	{
-		streamfail();
+		return false;
 	}
 
 	if (!isValidWzName(m_texture))
 	{
-		streamfail();
+		return false;
 	}
+
+	return true;
+}
+
+template <typename L>
+bool APieModel<L>::readNormalmapDirective(std::istream& in)
+{
+	std::string str;
+	unsigned uint;
+
+	// NORMALMAP 0 %s
+	in >> str >> uint >> m_normalmap_texture;
+	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_NORMALMAP) != 0)
+	{
+		return false;
+	}
+
+	// no constraits for normalmap name afaik
+
+	return true;
+}
+
+template <typename L>
+bool APieModel<L>::readLevelsBlock(std::istream& in)
+{
+	std::string str;
+	unsigned uint;
 
 	// LEVELS %u
 	in >> str >> uint;
-	if ( in.fail() || str.compare("LEVELS") != 0)
+	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_LEVELS) != 0)
 	{
-		streamfail();
+		return false;
 	}
 
 	for (; uint > 0; --uint)
@@ -287,12 +352,11 @@ bool APieModel<L>::read(std::istream& in)
 		L lvl;
 		if (!lvl.read(in))
 		{
-			streamfail();
+			return false;
 		}
 		m_levels.push_back(lvl);
 	}
 	return true;
-#undef streamfail
 }
 
 template <typename L>
@@ -301,15 +365,15 @@ void APieModel<L>::write(std::ostream& out) const
 	typename std::vector<L>::const_iterator it;
 	unsigned i = 1;
 
-	out << "PIE "	<< version() << '\n';
+	out << PIE_MODEL_SIGNATURE << " " << version() << '\n';
 
-	out << "TYPE "	<< std::hex << m_type << std::dec << '\n';
+	out << PIE_MODEL_DIRECTIVE_TYPE << " " << std::hex << m_type << std::dec << '\n';
 
-	out <<  "TEXTURE 0 " << m_texture << ' '
+	out << PIE_MODEL_DIRECTIVE_TEXTURE << " 0 " << m_texture << ' '
 			<< textureWidth() << ' '
 			<< textureHeight() << '\n';
 
-	out << "LEVELS " << levels() << '\n';
+	out << PIE_MODEL_DIRECTIVE_LEVELS << " " << levels() << '\n';
 
 	for (it = m_levels.begin(); it != m_levels.end(); ++it, ++i)
 	{
@@ -344,4 +408,4 @@ bool APieModel<L>::isValid() const
 	return true;
 }
 
-#endif //PIE_T_CPP
+//#endif //PIE_T_CPP
