@@ -35,7 +35,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -136,7 +136,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Fixed Pipeline</string>
+    <string>Fixed Pipeline (obsolete)</string>
    </property>
   </action>
   <action name="actionShaders">

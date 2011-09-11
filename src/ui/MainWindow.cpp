@@ -276,12 +276,17 @@ void MainWindow::on_actionSave_As_triggered()
 					  "OBJ files (*.obj)");
 	fDialog->setWindowTitle(tr("Choose output file"));
 	fDialog->selectNameFilter("All Compatible (*.wzm *.pie *.3ds *.obj)");
+	fDialog->setDirectory(m_pathExport);
 	fDialog->exec();
 
 	if (fDialog->result() != QDialog::Accepted)
 	{
 		return;
 	}
+
+	// refresh export working dir
+	m_pathExport = fDialog->directory().absolutePath();
+	m_settings->setValue(WMIT_SETTINGS_EXPORTVAL, m_pathExport);
 
 	nfo.setFile(fDialog->selectedFiles().first());
 
