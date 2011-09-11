@@ -105,7 +105,7 @@ void PiePolygon<U, S, MAX>::write(std::ostream& out) const
 		out << m_texCoords[i].u() << ' '
 				<< m_texCoords[i].v();
 		// last pair is w/o trailing space
-		if (i < (m_vertices - 1))
+		if (i < (unsigned)(m_vertices - 1))
 			out << ' ';
 	}
 
