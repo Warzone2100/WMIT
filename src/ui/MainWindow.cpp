@@ -29,11 +29,12 @@
 
 #include <QFileInfo>
 #include <QFileDialog>
-#include <QSettings>
+
 #include <QtDebug>
 #include <QVariant>
 
 #include "Pie.hpp"
+#include "wmit.h"
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -42,10 +43,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	importDialog(new ImportDialog(this)),
 	exportDialog(NULL),
 	transformDock(new TransformDock(this)),
-	m_UVEditor(new UVEditor(this))
+	m_UVEditor(new UVEditor(this)),
+	m_settings(new QSettings(QSettings::IniFormat, QSettings::UserScope, WMIT_ORG, WMIT_APPNAME))
 {
 	ui->setupUi(this);
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope,"WMIT", "WMIT");
 
 	// A work around to add actions in the order we want
 	ui->menuBar->clear();
@@ -80,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(transformDock, SIGNAL(reverseWindings()), this, SLOT(_on_reverseWindings()));
 	connect(transformDock, SIGNAL(applyTransformations()), this, SLOT(_on_applyTransformations()));
 
-	textureSearchDirs = QSet<QString>::fromList(settings.value("textureSearchDirs", QStringList()).toStringList());
+	textureSearchDirs = QSet<QString>::fromList(m_settings->value("textureSearchDirs", QStringList()).toStringList());
 	if (!textureSearchDirs.empty())
 	{
 		emit textureSearchDirsChanged(textureSearchDirs.toList());
@@ -90,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
 	delete ui;
+	delete m_settings;
 }
 
 void MainWindow::changeEvent(QEvent *e)
@@ -191,7 +193,6 @@ void MainWindow::s_fileOpen()
 void MainWindow::s_updateTexSearchDirs(const QList<QPair<bool,QString> >& changes)
 {
 	bool changed = false;
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope,"WMIT", "WMIT");
 	typedef QPair<bool,QString> t_change; // Work around foreach macro 3 argument error
 	foreach (t_change change, changes)
 	{
@@ -219,7 +220,7 @@ void MainWindow::s_updateTexSearchDirs(const QList<QPair<bool,QString> >& change
 		emit textureSearchDirsChanged(textureSearchDirs.toList());
 	}
 
-	settings.setValue("textureSearchDirs", QVariant(textureSearchDirs.toList()));
+	m_settings->setValue("textureSearchDirs", QVariant(textureSearchDirs.toList()));
 }
 
 void MainWindow::on_actionConfig_triggered()
@@ -294,6 +295,7 @@ void MainWindow::on_actionSave_As_triggered()
 		type = NONE;
 	}
 
+/* Disabled till ready
 	if (type == PIE)
 	{
 		exportDialog = new PieExportDialog(this);
@@ -316,6 +318,7 @@ void MainWindow::on_actionSave_As_triggered()
 	}
 	delete exportDialog;
 	exportDialog = NULL;
+*/
 
 	if (type == WZM)
 	{

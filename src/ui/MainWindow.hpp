@@ -26,6 +26,8 @@
 #include <QSet>
 #include <QPair>
 
+#include <QSettings>
+
 #include "QWZM.hpp"
 
 class TransformDock;
@@ -79,6 +81,7 @@ private:
 	ExportDialog* exportDialog;
 	TransformDock* transformDock;
 	UVEditor* m_UVEditor;
+	QSettings* m_settings;
 
 	QSet<QString> textureSearchDirs;
 

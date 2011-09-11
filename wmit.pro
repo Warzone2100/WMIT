@@ -31,7 +31,8 @@ HEADERS += \
     src/basic/GLTexture.hpp \
     3rdparty/GLee/GLee.h \
     src/widgets/QWZM.hpp \
-    src/widgets/QtGLView.hpp
+    src/widgets/QtGLView.hpp \
+    src/wmit.h
     
 SOURCES += \
     src/formats/WZM.cpp \
