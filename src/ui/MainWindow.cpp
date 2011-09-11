@@ -146,7 +146,19 @@ void MainWindow::s_fileOpen()
 		model.importFromOBJ(f);
 	}
 
+	// Use overriden name for texture or leave it as is if none selected
+	{
+		QString selectedTextureFilePath = importDialog->textureFilePath();
+		if (!selectedTextureFilePath.isEmpty())
+		{
+			QFileInfo textureFileNfo(selectedTextureFilePath);
+			model.setTextureName(textureFileNfo.fileName().toStdString());
+
+		}
+
+	}
 	model.setRenderTexture(importDialog->textureFilePath());
+
 	setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
 
 	if (importDialog->tcmaskChecked() && !importDialog->tcmaskFilePath().isEmpty())
@@ -251,7 +263,7 @@ void MainWindow::on_actionSave_As_triggered()
 					  "3DS files (*.3ds);;"
 					  "OBJ files (*.obj)");
 	fDialog->setWindowTitle(tr("Choose output file"));
-	fDialog->selectFilter("WZM models (*.wzm)");
+	fDialog->selectNameFilter("All Compatible (*.wzm *.pie *.3ds *.obj)");
 	fDialog->exec();
 
 	if (fDialog->result() != QDialog::Accepted)
