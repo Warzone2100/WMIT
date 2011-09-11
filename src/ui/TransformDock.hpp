@@ -47,7 +47,6 @@ private:
     Ui::TransformDock *ui;
 	double scale_all, scale_xyz[3];
 	double scale_all_prev, scale_xyz_prev[3];
-	bool reverse_winding, reverse_winding_prev;
 
 private slots:
 	void on_comboBox_currentIndexChanged(int index);

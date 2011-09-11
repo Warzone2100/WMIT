@@ -26,7 +26,6 @@ TransformDock::TransformDock(QWidget *parent) :
 {
 	 scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
 	 scale_all_prev = scale_xyz_prev[0] = scale_xyz_prev[1] = scale_xyz_prev[2] = 1.;
-	 reverse_winding = reverse_winding_prev = false;
 
 	 ui->setupUi(this);
 	 ui->doubleSpinBox->setValue(scale_all);
@@ -53,7 +52,6 @@ void TransformDock::changeEvent(QEvent *e)
 
 void TransformDock::on_pb_revWindings_clicked()
 {
-	reverse_winding != reverse_winding;
 	emit reverseWindings();
 }
 
@@ -137,7 +135,6 @@ void TransformDock::on_pbApplyTransform_clicked()
 	scale_xyz_prev[0] = scale_xyz[0];
 	scale_xyz_prev[1] = scale_xyz[1];
 	scale_xyz_prev[2] = scale_xyz[2];
-	reverse_winding_prev = reverse_winding;
 
 	emit applyTransformations();
 }
