@@ -27,6 +27,9 @@
 #include <QDir>
 
 #include "Util.hpp"
+#include "wmit.h"
+
+#define WMIT_IMPORT_TCMASK_SUFFIX "_tcmask.png"
 
 ImportDialog::ImportDialog(QWidget *parent) :
 	QDialog(parent),
@@ -72,7 +75,7 @@ void ImportDialog::scanForTextures(const QStringList& dirs)
 		foreach (QString texture, textures)
 		{
 			m_textures.append(dir.absoluteFilePath(texture));
-			if (!texture.endsWith("tcmask.png", Qt::CaseInsensitive))
+			if (!texture.endsWith(WMIT_IMPORT_TCMASK_SUFFIX, Qt::CaseInsensitive))
 			{
 				ui->lw_autoFoundTextures->addItem(dir.absoluteFilePath(texture));
 			}
@@ -199,13 +202,13 @@ void ImportDialog::on_tb_seekTcmFName_clicked()
 
 void ImportDialog::on_pb_autoTCM_clicked()
 {
-	QRegExp pageNoRegX("page\\-(\\d+)");
+	QRegExp pageNoRegX(WMIT_WZ_TEXPAGE_REMASK);
 
 	if (pageNoRegX.indexIn(ui->le_textureFName->text()) != -1)
 	{
 		QFileInfo nfo(ui->le_textureFName->text());
 
-		nfo.setFile(QDir(nfo.absolutePath()), pageNoRegX.cap(0).append("_tcmask.png"));
+		nfo.setFile(QDir(nfo.absolutePath()), pageNoRegX.cap(0).append(WMIT_IMPORT_TCMASK_SUFFIX));
 
 		if (nfo.exists())
 		{
@@ -214,7 +217,7 @@ void ImportDialog::on_pb_autoTCM_clicked()
 		}
 		foreach (QString texture, m_textures)
 		{
-			if (texture.endsWith(pageNoRegX.cap(0).append("_tcmask.png"), Qt::CaseInsensitive))
+			if (texture.endsWith(pageNoRegX.cap(0).append(WMIT_IMPORT_TCMASK_SUFFIX), Qt::CaseInsensitive))
 			{
 				ui->le_tcmFName->setText(texture);
 				return;
