@@ -20,7 +20,9 @@
 #include <QtGui/QApplication>
 #include <QCoreApplication>
 #include <QTextCodec>
+
 #include "MainWindow.hpp"
+#include "wmit.h"
 
 int main(int argc, char *argv[])
 {
@@ -30,8 +32,8 @@ int main(int argc, char *argv[])
 	//		TODO: Command line functionality
 	//	else // gui mode1
 	QApplication a(argc, argv);
-	a.setApplicationName("WMIT");
-	a.setOrganizationName("WMIT");
+	a.setApplicationName(WMIT_APPNAME);
+	a.setOrganizationName(WMIT_ORG);
 	MainWindow w;
 	w.show();
 	return a.exec();
