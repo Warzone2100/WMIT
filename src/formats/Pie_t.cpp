@@ -221,6 +221,10 @@ void APieModel<L>::clearAll()
 {
 	m_levels.clear();
 	m_type = 0;
+
+	m_texture.clear();
+	m_texture_tcmask.clear();
+	m_texture_normalmap.clear();
 }
 
 template <typename L>
@@ -232,6 +236,30 @@ template <typename L>
 APieModel<L>::~APieModel()
 {
 
+}
+
+template <typename L>
+unsigned APieModel<L>::getType() const
+{
+	unsigned type;
+
+	if (!m_texture.empty())
+	{
+		type |= PIE_MODEL_FEATURE_TEXTURED;
+	}
+
+	if (!m_texture_tcmask.empty())
+	{
+		type |= PIE_MODEL_FEATURE_TCMASK;
+	}
+
+	return type;
+}
+
+template <typename L>
+inline bool APieModel<L>::isFeatureSet(unsigned feature) const
+{
+	return (m_type & feature);
 }
 
 #define streamfail() do {\
@@ -273,7 +301,7 @@ bool APieModel<L>::readHeaderBlock(std::istream& in)
 	}
 
 	// TYPE %x
-	in >> str >> m_type;
+	in >> str >> std::hex >> m_type >> std::dec;
 	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_TYPE) != 0)
 	{
 		return false;
@@ -313,6 +341,11 @@ bool APieModel<L>::readTextureDirective(std::istream& in)
 		return false;
 	}
 
+	if (isFeatureSet(PIE_MODEL_FEATURE_TCMASK))
+	{
+		m_texture_tcmask = makeWzTCMaskName(m_texture);
+	}
+
 	return true;
 }
 
@@ -323,7 +356,7 @@ bool APieModel<L>::readNormalmapDirective(std::istream& in)
 	unsigned uint;
 
 	// NORMALMAP 0 %s
-	in >> str >> uint >> m_normalmap_texture;
+	in >> str >> uint >> m_texture_normalmap;
 	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_NORMALMAP) != 0)
 	{
 		return false;
@@ -368,15 +401,15 @@ void APieModel<L>::write(std::ostream& out) const
 
 	out << PIE_MODEL_SIGNATURE << " " << version() << '\n';
 
-	out << PIE_MODEL_DIRECTIVE_TYPE << " " << std::hex << m_type << std::dec << '\n';
+	out << PIE_MODEL_DIRECTIVE_TYPE << " " << std::hex << getType() << std::dec << '\n';
 
 	out << PIE_MODEL_DIRECTIVE_TEXTURE << " 0 " << m_texture << ' '
 			<< textureWidth() << ' '
 			<< textureHeight() << '\n';
 
-	if (!m_normalmap_texture.empty())
+	if (!m_texture_normalmap.empty())
 	{
-		out << PIE_MODEL_DIRECTIVE_NORMALMAP << " 0 " << m_normalmap_texture << '\n';
+		out << PIE_MODEL_DIRECTIVE_NORMALMAP << " 0 " << m_texture_normalmap << '\n';
 	}
 
 	out << PIE_MODEL_DIRECTIVE_LEVELS << " " << levels() << '\n';

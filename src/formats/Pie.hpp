@@ -39,6 +39,12 @@
 #define PIE_MODEL_DIRECTIVE_NORMALMAP "NORMALMAP"
 #define PIE_MODEL_DIRECTIVE_LEVELS "LEVELS"
 
+#define PIE_MODEL_FEATURE_TEXTURED 0x200
+#define PIE_MODEL_FEATURE_TCMASK 0x10000
+
+#define PIE_MODEL_TEXPAGE_PREFIX "page-"
+#define PIE_MODEL_TCMASK_SUFFIX "_tcmask"
+
 template<typename V, typename P, typename C>
 class APieLevel
 {
@@ -77,11 +83,13 @@ public:
 	virtual void write(std::ostream& out) const;
 
 	unsigned levels() const;
-	unsigned long getType() const;
+	virtual unsigned getType() const;
 
 	bool isValid() const;
 
-//	virtual bool setType(int type) = 0;
+	//virtual bool addFeature(unsigned feature);
+	//virtual bool removeFeature(unsigned feature);
+	virtual bool isFeatureSet(unsigned feature) const;
 protected:
 
 	void clearAll();
@@ -98,9 +106,11 @@ protected:
 	virtual bool readLevelsBlock(std::istream& in);
 
 	std::string m_texture;
-	std::string m_normalmap_texture;
+	std::string m_texture_normalmap;
+	std::string m_texture_tcmask;
 	std::vector<L> m_levels;
-	unsigned long m_type;
+
+	unsigned m_type; // FIXME used as helper for 2->3 conversion, ignored for write
 };
 
 template <typename V>

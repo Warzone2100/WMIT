@@ -315,10 +315,11 @@ Pie3Model::Pie3Model()
 Pie3Model::Pie3Model(const Pie2Model& p2)
 {
 	m_texture = p2.m_texture;
+	m_texture_tcmask = p2.m_texture_tcmask;
 	std::transform(p2.m_levels.begin(), p2.m_levels.end(),
 				   back_inserter(m_levels), Pie3Level::upConvert);
-	m_type = p2.m_type; // FIXME: need to check whether these flags are supported
-#pragma message "FIXME"
+	m_type = p2.m_type;
+#pragma message "FIXME: need to check whether these type flags are supported"
 }
 
 Pie3Model::~Pie3Model()
@@ -334,10 +335,12 @@ Pie3Model::operator Pie2Model() const
 {
 	Pie2Model p2;
 	p2.m_texture = m_texture;
+	p2.m_texture_tcmask = m_texture_tcmask;
 	std::transform(m_levels.begin(), m_levels.end(),
 				   back_inserter(p2.m_levels), Pie3Level::backConvert);
-	p2.m_type = m_type; // FIXME: need to check whether these flags are supported
+	p2.m_type = m_type;
 	return p2;
+#pragma message "FIXME: need to check whether these type flags are supported"
 }
 
 unsigned Pie3Model::textureHeight() const

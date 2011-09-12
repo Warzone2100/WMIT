@@ -23,6 +23,7 @@
 #include <QString>
 
 bool isValidWzName(const std::string name);
+std::string makeWzTCMaskName(const std::string& name);
 
 QString getTextureName(const QString& filePath);
 

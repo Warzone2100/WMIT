@@ -23,6 +23,7 @@
 
 #include <QFileInfo>
 #include <QTextStream>
+#include <QRegExp>
 
 #ifdef LIB3DS_VERSION_1
 #include <lib3ds/file.h>
@@ -32,6 +33,7 @@
 #endif
 
 #include "Pie.hpp"
+#include "wmit.h"
 
 bool isValidWzName(const std::string name)
 {
@@ -44,6 +46,37 @@ bool isValidWzName(const std::string name)
 		return true;
 	}
 	return false;
+}
+
+std::string makeWzTCMaskName(const std::string& name)
+{
+/* Should add suffix before file ext, but wz waits for texpage mask
+	std::string tcmask;
+	std::string::size_type dotfound = name.find_last_of('.');
+
+	if (dotfound != std::string::npos)
+	{
+		tcmask = name;
+		tcmask.insert(dotfound, PIE_MODEL_TCMASK_SUFFIX);
+	}
+
+	return tcmask;
+*/
+
+	QString tcmask(QString::fromStdString(name));
+	QRegExp pageNoRegX(WMIT_WZ_TEXPAGE_REMASK);
+
+	if ((pageNoRegX.indexIn(tcmask) != -1) && tcmask.contains("."))
+	{
+		tcmask = pageNoRegX.cap(0).append(PIE_MODEL_TCMASK_SUFFIX) +
+				tcmask.right(tcmask.size() - tcmask.lastIndexOf("."));
+	}
+	else
+	{
+		tcmask.clear();
+	}
+
+	return tcmask.toStdString();
 }
 
 inline QString getWZMTextureName(const QString& filePath);
