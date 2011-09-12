@@ -274,17 +274,16 @@ void MainWindow::on_actionSave_As_triggered()
 	std::ofstream out;
 	QFileInfo nfo;
 
-	enum { WZM = 0, PIE, _3DS, OBJ, NONE} type;
+	wmit_filetype_t type;
 
 	fDialog->setFileMode(QFileDialog::AnyFile);
 	fDialog->setAcceptMode(QFileDialog::AcceptSave);
-	fDialog->setFilter("All Compatible (*.wzm *.pie *.3ds *.obj);;"
-					  "WZM models (*.wzm);;"
-					  "PIE models (*.pie);;"
-					  "3DS files (*.3ds);;"
-					  "OBJ files (*.obj)");
+	fDialog->setFilter("PIE models (*.pie);;"
+			   "WZM models (*.wzm);;"
+			   "3DS files (*.3ds);;"
+			   "OBJ files (*.obj)");
 	fDialog->setWindowTitle(tr("Choose output file"));
-	fDialog->selectNameFilter("All Compatible (*.wzm *.pie *.3ds *.obj)");
+	fDialog->setDefaultSuffix("pie");
 	fDialog->setDirectory(m_pathExport);
 	fDialog->exec();
 
@@ -301,23 +300,19 @@ void MainWindow::on_actionSave_As_triggered()
 
 	if (nfo.completeSuffix().compare(QString("wzm"), Qt::CaseInsensitive) == 0)
 	{
-		type = WZM;
-	}
-	else if (nfo.completeSuffix().compare(QString("pie"), Qt::CaseInsensitive) == 0)
-	{
-		type = PIE;
+		type = WMIT_FT_WZM;
 	}
 	else if (nfo.completeSuffix().compare(QString("3ds"), Qt::CaseInsensitive) == 0)
 	{
-		type = _3DS;
+		type = WMIT_FT_3DS;
 	}
 	else if (nfo.completeSuffix().compare(QString("obj"), Qt::CaseInsensitive) == 0)
 	{
-		type = OBJ;
+		type = WMIT_FT_OBJ;
 	}
 	else
 	{
-		type = NONE;
+		type = WMIT_FT_PIE;
 	}
 
 /* Disabled till ready
@@ -345,25 +340,25 @@ void MainWindow::on_actionSave_As_triggered()
 	exportDialog = NULL;
 */
 
-	if (type == WZM)
+	if (type == WMIT_FT_WZM)
 	{
 		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
 		model.write(out);
 	}
-	else if(type == PIE)
+	else if(type == WMIT_FT_3DS)
+	{
+		model.exportTo3DS(std::string(nfo.absoluteFilePath().toLocal8Bit().constData()));
+	}
+	else if(type == WMIT_FT_OBJ)
+	{
+		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
+		model.exportToOBJ(out);
+	}
+	else //if(type == WMIT_FT_PIE)
 	{
 		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
 		Pie3Model p3 = model;
 		p3.write(out);
-	}
-	else if(type == _3DS)
-	{
-		model.exportTo3DS(std::string(nfo.absoluteFilePath().toLocal8Bit().constData()));
-	}
-	else if(type == OBJ)
-	{
-		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
-		model.exportToOBJ(out);
 	}
 }
 

@@ -5,3 +5,5 @@
 
 #define WMIT_SETTINGS_IMPORTVAL "importFolder"
 #define WMIT_SETTINGS_EXPORTVAL "exportFolder"
+
+enum wmit_filetype_t { WMIT_FT_PIE = 0, WMIT_FT_WZM, WMIT_FT_3DS, WMIT_FT_OBJ};
