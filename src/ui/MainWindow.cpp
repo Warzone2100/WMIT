@@ -71,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	m_UVEditor->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	m_UVEditor->hide();
-	this->addDockWidget(Qt::RightDockWidgetArea, m_UVEditor, Qt::Horizontal);
+	this->addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
 	connect(ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(_on_viewerInitialized()));
 	connect(importDialog, SIGNAL(accepted()), this, SLOT(s_fileOpen()));
