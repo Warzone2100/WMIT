@@ -105,6 +105,7 @@ public:
 	bool isValid() const;
 
 	void scale(GLfloat x, GLfloat y, GLfloat z);
+	void reverseWinding();
 protected:
 	void clear();
 	std::string m_name;

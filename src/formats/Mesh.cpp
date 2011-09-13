@@ -1038,3 +1038,12 @@ void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
 
 #pragma message "TODO: Mesh::scale - Frames and connectors"
 }
+
+void Mesh::reverseWinding()
+{
+	std::vector<IndexedTri>::iterator it;
+	for (it = m_indexArray.begin(); it != m_indexArray.end(); ++it)
+	{
+		std::swap((*it).b(), (*it).c());
+	}
+}

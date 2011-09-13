@@ -63,8 +63,9 @@ private:
 
 	GLuint m_texture, m_tcm;
 
+	int transformedMesh;
 	GLfloat scale_all, scale_xyz[3];
-	GLint winding;
+	static const GLint winding;
 };
 
 #endif // QWZM_HPP

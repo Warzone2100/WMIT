@@ -597,12 +597,43 @@ void WZM::clear()
 	m_texName = std::string();
 }
 
-void WZM::scale(GLfloat x, GLfloat y, GLfloat z)
+void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)
 {
-	std::vector<Mesh>::iterator it;
-
-	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+	// All or a single mesh
+	if (mesh < 0)
 	{
-		it->scale(x, y, z);
+		std::vector<Mesh>::iterator it;
+		for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+		{
+			it->scale(x, y, z);
+		}
 	}
+	else
+	{
+		if (m_meshes.size() > (std::vector<Mesh>::size_type)mesh)
+		{
+			m_meshes[(std::vector<Mesh>::size_type)mesh].scale(x, y, z);
+		}
+	}
+}
+
+void WZM::reverseWinding(int mesh)
+{
+	// All or a single mesh
+	if (mesh < 0)
+	{
+		std::vector<Mesh>::iterator it;
+		for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+		{
+			it->reverseWinding();
+		}
+	}
+	else
+	{
+		if (m_meshes.size() > (std::vector<Mesh>::size_type)mesh)
+		{
+			m_meshes[(std::vector<Mesh>::size_type)mesh].reverseWinding();
+		}
+	}
+
 }

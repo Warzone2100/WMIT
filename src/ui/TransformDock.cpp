@@ -49,6 +49,30 @@ void TransformDock::changeEvent(QEvent *e)
     }
 }
 
+void TransformDock::acceptTransformations()
+{
+	// save and apply
+	scale_all_prev = scale_all;
+	scale_xyz_prev[0] = scale_xyz[0];
+	scale_xyz_prev[1] = scale_xyz[1];
+	scale_xyz_prev[2] = scale_xyz[2];
+
+	emit applyTransformations();
+
+	// reset preview values
+	scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
+
+	emit scaleXYZChanged(scale_all);
+	emit scaleXChanged(scale_xyz[0]);
+	emit scaleYChanged(scale_xyz[1]);
+	emit scaleZChanged(scale_xyz[2]);
+}
+
+void TransformDock::closeEvent(QCloseEvent *event)
+{
+	acceptTransformations();
+	event->accept();
+}
 
 void TransformDock::on_pb_revWindings_clicked()
 {
@@ -127,14 +151,4 @@ void TransformDock::on_comboBox_currentIndexChanged(int index)
 		ui->horizontalSlider->blockSignals(false);
 		break;
 	}
-}
-
-void TransformDock::on_pbApplyTransform_clicked()
-{
-	scale_all_prev = scale_all;
-	scale_xyz_prev[0] = scale_xyz[0];
-	scale_xyz_prev[1] = scale_xyz[1];
-	scale_xyz_prev[2] = scale_xyz[2];
-
-	emit applyTransformations();
 }

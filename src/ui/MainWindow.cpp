@@ -65,9 +65,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	configDialog->hide();
 
-	transformDock->setAllowedAreas(Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea);
+	transformDock->setAllowedAreas(Qt::RightDockWidgetArea);
 	transformDock->hide();
-	this->addDockWidget(Qt::BottomDockWidgetArea, transformDock, Qt::Horizontal);
+	this->addDockWidget(Qt::RightDockWidgetArea, transformDock, Qt::Horizontal);
 
 	m_UVEditor->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	m_UVEditor->hide();

@@ -66,7 +66,8 @@ public:
 
 	bool isValid() const;
 
-	void scale(GLfloat x, GLfloat y, GLfloat z);
+	void scale(GLfloat x, GLfloat y, GLfloat z, int mesh = -1);
+	void reverseWinding(int mesh = -1);
 
 protected:
 	void clear();

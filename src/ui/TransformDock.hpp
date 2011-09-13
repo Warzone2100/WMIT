@@ -20,6 +20,7 @@
 #define TRANSFORMDOCK_HPP
 
 #include <QDockWidget>
+#include <QCloseEvent>
 
 namespace Ui {
     class TransformDock;
@@ -29,8 +30,8 @@ class TransformDock : public QDockWidget
 {
     Q_OBJECT
 public:
-    TransformDock(QWidget *parent = 0);
-    ~TransformDock();
+	TransformDock(QWidget *parent = 0);
+	~TransformDock();
 signals:
 	void scaleXYZChanged(double);
 	void scaleXChanged(double);
@@ -41,19 +42,21 @@ signals:
 	void applyTransformations();
 
 protected:
-    void changeEvent(QEvent *e);
+	void changeEvent(QEvent *e);
+	virtual void closeEvent(QCloseEvent *event);
 
 private:
-    Ui::TransformDock *ui;
+	Ui::TransformDock *ui;
 	double scale_all, scale_xyz[3];
 	double scale_all_prev, scale_xyz_prev[3];
+
+	void acceptTransformations();
 
 private slots:
 	void on_comboBox_currentIndexChanged(int index);
 	void on_horizontalSlider_valueChanged(int value);
 	void on_doubleSpinBox_valueChanged(double );
 	void on_pb_revWindings_clicked();
-	void on_pbApplyTransform_clicked();
 };
 
 #endif // TRANSFORMDOCK_HPP

@@ -29,6 +29,8 @@
 #  define CPP0X_FEATURED(x) do {} while (0)
 #endif
 
+const GLint QWZM::winding = GL_CW;
+
 QWZM::QWZM()
 {
 	defaultConstructor();
@@ -78,10 +80,12 @@ void QWZM::render()
 
 	glPushMatrix();
 
+	// check for desired
 	if (frontFace != winding)
 	{
 		glFrontFace(winding);
 	}
+
 	glScalef(-1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
 
 	glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
@@ -124,9 +128,10 @@ void QWZM::render()
 
 	resetTCMaskEnvironment();
 
+	// set it back
 	if (frontFace != winding)
 	{
-		glFrontFace(GL_CCW);
+		glFrontFace(frontFace);
 	}
 
 	glPopMatrix();
@@ -188,11 +193,13 @@ inline void QWZM::defaultConstructor()
 {
 	m_texture = 0;
 	m_tcm = 0;
+
+	transformedMesh = -1;
+
 	scale_all = 1.f;
 	scale_xyz[0] = 1.f;
 	scale_xyz[1] = 1.f;
 	scale_xyz[2] = 1.f;
-	winding = GL_CW;
 }
 
 QWZM::~QWZM()
@@ -229,17 +236,10 @@ void QWZM::setScaleZ(GLfloat z)
 
 void QWZM::reverseWindings()
 {
-	if (winding == GL_CCW)
-	{
-		winding = GL_CW;
-	}
-	else
-	{
-		winding = GL_CCW;
-	}
+	reverseWinding(transformedMesh);
 }
 
 void QWZM::applyTransformations()
 {
-	scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+	scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2], transformedMesh);
 }

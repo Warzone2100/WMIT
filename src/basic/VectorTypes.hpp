@@ -56,9 +56,9 @@ struct Vertex : public Vector<T,3>
 
 	Vertex (T x, T y, T z)
 	{
-		x() = x;
-		y() = y;
-		z() = z;
+		this->x() = x;
+		this->y() = y;
+		this->z() = z;
 	}
 
 	inline T& x() {
