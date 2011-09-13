@@ -241,7 +241,7 @@ APieModel<L>::~APieModel()
 template <typename L>
 unsigned APieModel<L>::getType() const
 {
-	unsigned type;
+	unsigned type = 0;
 
 	if (!m_texture.empty())
 	{
