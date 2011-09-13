@@ -594,7 +594,9 @@ bool WZM::isValid() const
 void WZM::clear()
 {
 	m_meshes.clear();
-	m_texName = std::string();
+	m_texName.clear();
+	m_texName_TCMask.clear();
+	m_texName_NormalMap.clear();
 }
 
 void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)
