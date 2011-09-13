@@ -349,17 +349,25 @@ bool APieModel<L>::readTextureDirective(std::istream& in)
 	return true;
 }
 
+// Optional directive
 template <typename L>
 bool APieModel<L>::readNormalmapDirective(std::istream& in)
 {
 	std::string str;
 	unsigned uint;
+	std::streampos entrypoint = in.tellg();
 
 	// NORMALMAP 0 %s
 	in >> str >> uint >> m_texture_normalmap;
-	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_NORMALMAP) != 0)
+	if ( in.fail())
 	{
 		return false;
+	}
+
+	if (str.compare(PIE_MODEL_DIRECTIVE_NORMALMAP) != 0)
+	{
+		m_texture_normalmap.clear();
+		in.seekg(entrypoint);
 	}
 
 	// no constraits for normalmap name afaik
