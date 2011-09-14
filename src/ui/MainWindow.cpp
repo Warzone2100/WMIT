@@ -101,17 +101,27 @@ MainWindow::~MainWindow()
 	delete m_settings;
 }
 
+void MainWindow::clear()
+{
+	model.clear();
+	m_currentFile.clear();
+
+	setWindowTitle(WMIT_APPNAME);
+
+	ui->actionClose->setDisabled(true);
+}
+
 void MainWindow::changeEvent(QEvent *e)
 {
-    QMainWindow::changeEvent(e);
+	QMainWindow::changeEvent(e);
 	switch (e->type())
 	{
-    case QEvent::LanguageChange:
+	case QEvent::LanguageChange:
 		ui->retranslateUi(this);
-        break;
-    default:
-        break;
-    }
+		break;
+	default:
+		break;
+	}
 }
 
 void MainWindow::s_fileOpen()
@@ -123,6 +133,8 @@ void MainWindow::s_fileOpen()
 		return;
 	}
 
+	bool read_success = false;
+
 	// refresh import working dir
 	m_pathImport = importDialog->getWorkingDir();
 	m_settings->setValue(WMIT_SETTINGS_IMPORTVAL, m_pathImport);
@@ -130,7 +142,7 @@ void MainWindow::s_fileOpen()
 	if (modelFileNfo.completeSuffix().compare(QString("wzm"), Qt::CaseInsensitive) == 0)
 	{
 		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in);
-		model.read(f);
+		read_success = model.read(f);
 	}
 	else if(modelFileNfo.completeSuffix().compare(QString("pie"), Qt::CaseInsensitive) == 0)
 	{
@@ -139,53 +151,54 @@ void MainWindow::s_fileOpen()
 		if (version == 3)
 		{
 			Pie3Model p3;
-			p3.read(f);
-			model = WZM(p3);
+			read_success = p3.read(f);
+			if (read_success)
+				model = WZM(p3);
 		}
 		else if (version == 2)
 		{
 			Pie2Model p2;
-			p2.read(f);
-			model = WZM(Pie3Model(p2));
+			read_success = p2.read(f);
+			if (read_success)
+				model = WZM(Pie3Model(p2));
 		}
 	}
 	else if(modelFileNfo.completeSuffix().compare(QString("3ds"), Qt::CaseInsensitive) == 0)
 	{
-		model.importFrom3DS(std::string(modelFileNfo.absoluteFilePath().toLocal8Bit().constData()));
+		read_success = model.importFrom3DS(std::string(modelFileNfo.absoluteFilePath().toLocal8Bit().constData()));
 	}
 	else if(modelFileNfo.completeSuffix().compare(QString("obj"), Qt::CaseInsensitive) == 0)
 	{
 		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in);
-		model.importFromOBJ(f);
+		read_success = model.importFromOBJ(f);
 	}
 
-	// Use overriden name for texture or leave it as is if none selected
+
+	// Bail out on error, clear app state
+	if (!read_success)
 	{
-		QFileInfo textureFileNfo;
-		QString selectedTextureFilePath = importDialog->textureFilePath();
-		if (!selectedTextureFilePath.isEmpty())
-		{
-			textureFileNfo.setFile(selectedTextureFilePath);
-			model.setTextureName(textureFileNfo.fileName().toStdString());
-
-		}
-
-		selectedTextureFilePath = importDialog->tcmaskFilePath();
-		if (importDialog->tcmaskChecked() && !selectedTextureFilePath.isEmpty())
-		{
-			textureFileNfo.setFile(selectedTextureFilePath);
-			model.setTextureName_TCMask(textureFileNfo.fileName().toStdString());
-
-		}
-
+		clear();
+		return;
 	}
-	model.setRenderTexture(importDialog->textureFilePath());
 
-	setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
+	m_currentFile = modelFileNfo.absoluteFilePath();
 
-	if (importDialog->tcmaskChecked() && !importDialog->tcmaskFilePath().isEmpty())
+	QFileInfo textureFileNfo;
+	QString selectedTextureFilePath = importDialog->textureFilePath();
+	if (!selectedTextureFilePath.isEmpty())
 	{
-		model.setTCMaskTexture(importDialog->tcmaskFilePath());
+		textureFileNfo.setFile(selectedTextureFilePath);
+		model.setTextureName(textureFileNfo.fileName().toStdString());
+		model.setRenderTexture(selectedTextureFilePath);
+	}
+
+	selectedTextureFilePath = importDialog->tcmaskFilePath();
+	if (importDialog->tcmaskChecked() && !selectedTextureFilePath.isEmpty())
+	{
+		textureFileNfo.setFile(selectedTextureFilePath);
+		model.setTextureName_TCMask(textureFileNfo.fileName().toStdString());
+		model.setTCMaskTexture(selectedTextureFilePath);
+
 		if (ui->centralWidget->tcmaskSupport() & FixedPipeline)
 		{
 			ui->actionFixed_Pipeline->setEnabled(true);
@@ -208,6 +221,9 @@ void MainWindow::s_fileOpen()
 	{
 		ui->actionTexture_Frames->setEnabled(true);
 	}
+
+	setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
+	ui->actionClose->setEnabled(true);
 }
 
 void MainWindow::s_updateTexSearchDirs(const QList<QPair<bool,QString> >& changes)
@@ -248,9 +264,9 @@ void MainWindow::on_actionConfig_triggered()
 	configDialog->show();
 }
 
-void MainWindow::on_actionTransformWidget_toggled(bool show)
+void MainWindow::on_actionTransformWidget_triggered()
 {
-	show ? transformDock->show() : transformDock->hide();
+	transformDock->isVisible() ? transformDock->hide() : transformDock->show();
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -432,4 +448,9 @@ void MainWindow::on_actionShaders_toggled(bool checked)
 			ui->centralWidget->setTCMaskMode(None);
 		}
 	}
+}
+
+void MainWindow::on_actionClose_triggered()
+{
+	clear();
 }

@@ -41,28 +41,34 @@ namespace Ui {
 }
 
 class MainWindow : public QMainWindow {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    MainWindow(QWidget *parent = 0);
+	MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
+	void clear();
+
 protected:
-    void changeEvent(QEvent *e);
+	void changeEvent(QEvent *e);
 
 signals:
 	void textureSearchDirsChanged(QStringList);
 
 private slots:
 	void on_actionShaders_toggled(bool );
- void on_actionFixed_Pipeline_toggled(bool );
- void on_actionSave_As_triggered();
+	void on_actionFixed_Pipeline_toggled(bool );
+
+	void on_actionOpen_triggered();
+	void on_actionSave_As_triggered();
 	void on_actionSave_triggered();
+	void on_actionClose_triggered();
+
+	void on_actionConfig_triggered();
+	void on_actionTransformWidget_triggered();
+	void on_actionUVEditor_toggled(bool );
+
 	void s_fileOpen();
 	void s_updateTexSearchDirs(const QList<QPair<bool,QString> >&);
-	void on_actionUVEditor_toggled(bool );
-	void on_actionOpen_triggered();
-	void on_actionConfig_triggered();
-	void on_actionTransformWidget_toggled(bool );
 
 	void _on_viewerInitialized();
 
@@ -84,7 +90,7 @@ private:
 	QSettings* m_settings;
 
 	QSet<QString> textureSearchDirs;
-	QString m_pathImport, m_pathExport;
+	QString m_pathImport, m_pathExport, m_currentFile;
 
 	QWZM model;
 };

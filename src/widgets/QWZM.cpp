@@ -44,14 +44,8 @@ QWZM::QWZM(const Pie3Model& p3)
 
 void QWZM::operator =(const WZM& wzm)
 {
-	if (m_texture != 0)
-	{
-		deleteTexture(m_texture);
-	}
-	if (m_tcm != 0)
-	{
-		deleteTexture(m_texture);
-	}
+	clearRenderTexture();
+	clearTCMaskTexture();
 	WZM::operator=(wzm);
 }
 
@@ -144,13 +138,29 @@ void QWZM::animate()
 
 }
 
+void QWZM::clear()
+{
+	WZM::clear();
+
+	clearRenderTexture();
+	clearTCMaskTexture();
+
+	defaultConstructor();
+}
+
 void QWZM::setRenderTexture(QString fileName)
 {
-	if (m_texture != 0)
+	clearRenderTexture();
+	m_texture = createTexture(fileName).id();
+}
+
+void QWZM::clearRenderTexture()
+{
+	if (m_texture)
 	{
 		deleteTexture(m_texture);
+		m_texture = 0;
 	}
-	m_texture = createTexture(fileName).id();
 }
 
 void QWZM::setTextureManager(IGLTextureManager * manager)
@@ -176,17 +186,23 @@ void QWZM::setTextureManager(IGLTextureManager * manager)
 	}
 	if (m_tcm != 0)
 	{
-		m_texture = createTexture(tcm_fileName).id();
+		m_tcm = createTexture(tcm_fileName).id();
 	}
 }
 
 void QWZM::setTCMaskTexture(QString fileName)
 {
-	if (m_tcm != 0)
+	clearTCMaskTexture();
+	m_tcm = createTexture(fileName).id();
+}
+
+void QWZM::clearTCMaskTexture()
+{
+	if (m_tcm)
 	{
 		deleteTexture(m_tcm);
+		m_tcm = 0;
 	}
-	m_tcm = createTexture(fileName).id();
 }
 
 inline void QWZM::defaultConstructor()
@@ -204,14 +220,7 @@ inline void QWZM::defaultConstructor()
 
 QWZM::~QWZM()
 {
-	if (m_texture != 0)
-	{
-		deleteTexture(m_texture);
-	}
-	if (m_tcm != 0)
-	{
-		deleteTexture(m_texture);
-	}
+	clear();
 }
 
 void QWZM::setScaleXYZ(GLfloat xyz)

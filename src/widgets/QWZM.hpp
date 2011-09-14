@@ -46,8 +46,10 @@ public:
 
 	void setRenderTexture(QString fileName);
 	void setTextureManager(IGLTextureManager * manager);
+	void clearRenderTexture();
 
 	void setTCMaskTexture(QString fileName);
+	void clearTCMaskTexture();
 	bool hasTCMaskTexture() const;
 
 	void setScaleXYZ(GLfloat xyz);
@@ -57,6 +59,7 @@ public:
 	void reverseWindings();
 
 	void applyTransformations();
+	void clear();
 
 private:
 	void defaultConstructor();
