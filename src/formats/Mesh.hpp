@@ -39,10 +39,12 @@ typedef std::vector<WZMUV> TexArray;
 class WZMConnector
 {
 public:
-	WZMConnector(){}
+	WZMConnector(GLfloat x = 0., GLfloat y = 0., GLfloat z = 0.);
 	virtual ~WZMConnector(){}
+
+	const WZMVertex& getPos() const;
 private:
-	Vertex<GLfloat> m_pos;
+	WZMVertex m_pos;
 	///TODO: Types for wzm connectors
 #pragma message "TODO"
 };

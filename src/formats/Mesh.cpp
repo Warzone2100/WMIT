@@ -42,6 +42,17 @@
 #include "Pie.hpp"
 #include "Vector.hpp"
 
+
+WZMConnector::WZMConnector(GLfloat x, GLfloat y, GLfloat z):
+	m_pos(Vertex<GLfloat>(x, y, z))
+{
+}
+
+const WZMVertex& WZMConnector::getPos() const
+{
+	return m_pos;
+}
+
 Mesh::Mesh()
 {
 	defaultConstructor();
@@ -149,6 +160,14 @@ Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
 		}
 
 		m_indexArray.push_back(iTri);
+	}
+
+	std::list<Pie3Connector>::const_iterator itC;
+
+	// For each pie3 connector
+	for (itC = p3.m_connectors.begin(); itC != p3.m_connectors.end(); ++itC)
+	{
+		addConnector(WZMConnector((*itC).pos[0], (*itC).pos[1], (*itC).pos[2]));
 	}
 }
 
@@ -365,6 +384,18 @@ Mesh::operator Pie3Level() const
 			p3Poly.m_texCoords[i] = p3UV;
 		}
 		p3.m_polygons.push_back(p3Poly);
+	}
+
+	std::list<WZMConnector>::const_iterator itC;
+
+	// For each WZM connector
+	for (itC = m_connectors.begin(); itC != m_connectors.end(); ++itC)
+	{
+		Pie3Connector conn;
+		conn.pos[0] = (*itC).getPos()[0];
+		conn.pos[1] = (*itC).getPos()[1];
+		conn.pos[2] = (*itC).getPos()[2];
+		p3.m_connectors.push_back(conn);
 	}
 
 	return p3;
@@ -1013,13 +1044,13 @@ bool Mesh::isValid() const
 
 void Mesh::defaultConstructor()
 {
-	m_name = std::string();
+	m_name.clear();
 	m_teamColours = false;
 }
 
 void Mesh::clear()
 {
-	m_name = std::string();
+	m_name.clear();
 	m_frameArray.clear();
 	m_vertexArray.clear();
 	m_textureArrays.clear();
