@@ -141,12 +141,12 @@ void MainWindow::s_fileOpen()
 
 	if (modelFileNfo.completeSuffix().compare(QString("wzm"), Qt::CaseInsensitive) == 0)
 	{
-		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in);
+		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in | std::ios::binary);
 		read_success = model.read(f);
 	}
 	else if(modelFileNfo.completeSuffix().compare(QString("pie"), Qt::CaseInsensitive) == 0)
 	{
-		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in);
+		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in | std::ios::binary);
 		int version = pieVersion(f);
 		if (version == 3)
 		{
@@ -169,7 +169,7 @@ void MainWindow::s_fileOpen()
 	}
 	else if(modelFileNfo.completeSuffix().compare(QString("obj"), Qt::CaseInsensitive) == 0)
 	{
-		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in);
+		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in | std::ios::binary);
 		read_success = model.importFromOBJ(f);
 	}
 
@@ -358,7 +358,7 @@ void MainWindow::on_actionSave_As_triggered()
 
 	if (type == WMIT_FT_WZM)
 	{
-		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
+		out.open(nfo.absoluteFilePath().toLocal8Bit().constData(), std::ios::out | std::ios::trunc | std::ios::binary);
 		model.write(out);
 	}
 	else if(type == WMIT_FT_3DS)
@@ -367,12 +367,12 @@ void MainWindow::on_actionSave_As_triggered()
 	}
 	else if(type == WMIT_FT_OBJ)
 	{
-		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
+		out.open(nfo.absoluteFilePath().toLocal8Bit().constData(), std::ios::out | std::ios::trunc | std::ios::binary);
 		model.exportToOBJ(out);
 	}
 	else //if(type == WMIT_FT_PIE)
 	{
-		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
+		out.open(nfo.absoluteFilePath().toLocal8Bit().constData(), std::ios::out | std::ios::trunc | std::ios::binary);
 		Pie3Model p3 = model;
 		p3.write(out);
 	}
