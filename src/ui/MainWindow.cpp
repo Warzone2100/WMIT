@@ -359,7 +359,7 @@ void MainWindow::on_actionSave_As_triggered()
 
 	if (type == WMIT_FT_WZM)
 	{
-		out.open(nfo.absoluteFilePath().toLocal8Bit().constData(), std::ios::out | std::ios::trunc | std::ios::binary);
+		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
 		model.write(out);
 	}
 	else if(type == WMIT_FT_3DS)
@@ -368,12 +368,12 @@ void MainWindow::on_actionSave_As_triggered()
 	}
 	else if(type == WMIT_FT_OBJ)
 	{
-		out.open(nfo.absoluteFilePath().toLocal8Bit().constData(), std::ios::out | std::ios::trunc | std::ios::binary);
+		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
 		model.exportToOBJ(out);
 	}
 	else //if(type == WMIT_FT_PIE)
 	{
-		out.open(nfo.absoluteFilePath().toLocal8Bit().constData(), std::ios::out | std::ios::trunc | std::ios::binary);
+		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
 		Pie3Model p3 = model;
 		p3.write(out);
 	}
