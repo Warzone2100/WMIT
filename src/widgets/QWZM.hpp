@@ -20,6 +20,10 @@
 #ifndef QWZM_HPP
 #define QWZM_HPP
 
+#include <QString>
+#include <QStringList>
+#include <QObject>
+
 #include "GLee.h"
 
 #include "WZM.hpp"
@@ -31,13 +35,12 @@
 
 class IGLTextureManager;
 
-class QWZM : public WZM, public ATCMaskRenderable, public IAnimatable
+class QWZM : public QObject, public WZM, public ATCMaskRenderable, public IAnimatable
 {
+	Q_OBJECT
 public:
-    QWZM();
-	QWZM(const Pie3Model& p3);
-
-	~QWZM();
+	explicit QWZM(QObject *parent = 0);
+	virtual ~QWZM();
 
 	void operator=(const WZM& wzm);
 
@@ -56,17 +59,28 @@ public:
 	void setScaleX(GLfloat x);
 	void setScaleY(GLfloat y);
 	void setScaleZ(GLfloat z);
-	void reverseWindings();
 
-	void applyTransformations();
+	void applyTransformations(int mesh = -1);
+
 	void clear();
 
+	QStringList getMeshNames();
+
+	// mesh control wrappers
+	void addMesh (const Mesh& mesh);
+	void rmMesh (int index);
+	bool importFromOBJ(std::istream& in);
+	bool importFrom3DS(std::string fileName);
+
+signals:
+	void meshCountChanged(int, QStringList);
+
 private:
+	Q_DISABLE_COPY(QWZM)
 	void defaultConstructor();
 
 	GLuint m_texture, m_tcm;
 
-	int transformedMesh;
 	GLfloat scale_all, scale_xyz[3];
 	static const GLint winding;
 };

@@ -31,22 +31,21 @@
 
 const GLint QWZM::winding = GL_CW;
 
-QWZM::QWZM()
+QWZM::QWZM(QObject *parent): QObject(parent)
 {
 	defaultConstructor();
 }
 
-QWZM::QWZM(const Pie3Model& p3)
-	: WZM(p3)
+QWZM::~QWZM()
 {
-	defaultConstructor();
+	clear();
 }
 
-void QWZM::operator =(const WZM& wzm)
+void QWZM::operator=(const WZM& wzm)
 {
-	clearRenderTexture();
-	clearTCMaskTexture();
+	clear();
 	WZM::operator=(wzm);
+	meshCountChanged(meshes(), getMeshNames());
 }
 
 void QWZM::render()
@@ -82,6 +81,7 @@ void QWZM::render()
 
 	glScalef(-1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
 
+	//FIXME: preview should be mesh-based
 	glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 
 	if (tcmask)
@@ -146,6 +146,8 @@ void QWZM::clear()
 	clearTCMaskTexture();
 
 	defaultConstructor();
+
+	meshCountChanged(meshes(), getMeshNames());
 }
 
 void QWZM::setRenderTexture(QString fileName)
@@ -210,17 +212,10 @@ inline void QWZM::defaultConstructor()
 	m_texture = 0;
 	m_tcm = 0;
 
-	transformedMesh = -1;
-
 	scale_all = 1.f;
 	scale_xyz[0] = 1.f;
 	scale_xyz[1] = 1.f;
 	scale_xyz[2] = 1.f;
-}
-
-QWZM::~QWZM()
-{
-	clear();
 }
 
 void QWZM::setScaleXYZ(GLfloat xyz)
@@ -243,12 +238,54 @@ void QWZM::setScaleZ(GLfloat z)
 	scale_xyz[2] = z;
 }
 
-void QWZM::reverseWindings()
+void QWZM::applyTransformations(int mesh)
 {
-	reverseWinding(transformedMesh);
+	scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2], mesh);
 }
 
-void QWZM::applyTransformations()
+QStringList QWZM::getMeshNames()
 {
-	scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2], transformedMesh);
+	QStringList names;
+	std::vector<Mesh>::const_iterator it;
+
+	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+	{
+		names.append(QString::fromStdString(it->getName()));
+	}
+
+	return names;
+}
+
+/************** mesh control wrappers *****************/
+
+void QWZM::addMesh(const Mesh& mesh)
+{
+	WZM::addMesh(mesh);
+	meshCountChanged(meshes(), getMeshNames());
+}
+
+void QWZM::rmMesh(int index)
+{
+	WZM::rmMesh(index);
+	meshCountChanged(meshes(), getMeshNames());
+}
+
+bool QWZM::importFromOBJ(std::istream& in)
+{
+	if (WZM::importFromOBJ(in))
+	{
+		meshCountChanged(meshes(), getMeshNames());
+		return true;
+	}
+	return false;
+}
+
+bool QWZM::importFrom3DS(std::string fileName)
+{
+	if (WZM::importFrom3DS(fileName))
+	{
+		meshCountChanged(meshes(), getMeshNames());
+		return true;
+	}
+	return false;
 }
