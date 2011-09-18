@@ -78,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(this, SIGNAL(textureSearchDirsChanged(QStringList)), importDialog, SLOT(scanForTextures(QStringList)));
 	connect(configDialog, SIGNAL(updateTextureSearchDirs(QList<QPair<bool,QString> >)), this, SLOT(s_updateTexSearchDirs(const QList<QPair<bool,QString> >&)));
 	connect(this, SIGNAL(textureSearchDirsChanged(QStringList)), configDialog, SLOT(setTextureSearchDirs(QStringList)));
+	connect(transformDock, SIGNAL(visibilityChanged(bool)), this, SLOT(_on_transformDockVisibilityChange(bool)));
 
 	// transformations
 	connect(transformDock, SIGNAL(scaleXYZChanged(double)), this, SLOT(_on_scaleXYZChanged(double)));
@@ -383,6 +384,11 @@ void MainWindow::on_actionSave_As_triggered()
 void MainWindow::_on_viewerInitialized()
 {
 	ui->centralWidget->addToRenderList(&model);
+}
+
+void MainWindow::_on_transformDockVisibilityChange(bool visible)
+{
+	ui->menuBar->setEnabled(!visible);
 }
 
 void MainWindow::_on_scaleXYZChanged(double val)

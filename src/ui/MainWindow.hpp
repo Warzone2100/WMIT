@@ -71,6 +71,7 @@ private slots:
 	void s_updateTexSearchDirs(const QList<QPair<bool,QString> >&);
 
 	void _on_viewerInitialized();
+	void _on_transformDockVisibilityChange(bool);
 
 	// transformations
 	void _on_scaleXYZChanged(double);
