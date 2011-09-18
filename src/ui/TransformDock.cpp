@@ -21,8 +21,8 @@
 #include "ui_TransformDock.h"
 
 TransformDock::TransformDock(QWidget *parent) :
-    QDockWidget(parent),
-    ui(new Ui::TransformDock)
+	QDockWidget(parent),
+	ui(new Ui::TransformDock), m_selected_mesh(-1)
 {
 	 scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
 	 scale_all_prev = scale_xyz_prev[0] = scale_xyz_prev[1] = scale_xyz_prev[2] = 1.;
@@ -30,23 +30,50 @@ TransformDock::TransformDock(QWidget *parent) :
 	 ui->setupUi(this);
 	 ui->doubleSpinBox->setValue(scale_all);
 	 ui->horizontalSlider->setValue(scale_all);
+
+	 ui->cbMeshIdx->setEditable(false);
 }
 
 TransformDock::~TransformDock()
 {
-    delete ui;
+	delete ui;
+}
+
+void TransformDock::setMeshCount(int value, QStringList names)
+{
+	int selected = ui->cbMeshIdx->currentIndex();
+
+	ui->cbMeshIdx->blockSignals(true);
+
+	ui->cbMeshIdx->clear();
+	ui->cbMeshIdx->addItem("All");
+	for (int i = 1; i <= value; ++i)
+	{
+		ui->cbMeshIdx->addItem(QString::number(i) + " [" + names.value(i - 1) + "]");
+	}
+
+	if (selected <= value)
+	{
+		if (selected < 0)
+		{
+			selected = 0;
+		}
+		ui->cbMeshIdx->setCurrentIndex(selected);
+	}
+
+	ui->cbMeshIdx->blockSignals(false);
 }
 
 void TransformDock::changeEvent(QEvent *e)
 {
-    QDockWidget::changeEvent(e);
-    switch (e->type()) {
-    case QEvent::LanguageChange:
-        ui->retranslateUi(this);
-        break;
-    default:
-        break;
-    }
+	QDockWidget::changeEvent(e);
+	switch (e->type()) {
+	case QEvent::LanguageChange:
+		ui->retranslateUi(this);
+		break;
+	default:
+		break;
+	}
 }
 
 void TransformDock::acceptTransformations()
@@ -57,7 +84,7 @@ void TransformDock::acceptTransformations()
 	scale_xyz_prev[1] = scale_xyz[1];
 	scale_xyz_prev[2] = scale_xyz[2];
 
-	emit applyTransformations();
+	emit applyTransformations(m_selected_mesh);
 
 	// reset preview values
 	scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
@@ -76,7 +103,7 @@ void TransformDock::closeEvent(QCloseEvent *event)
 
 void TransformDock::on_pb_revWindings_clicked()
 {
-	emit reverseWindings();
+	emit reverseWindings(m_selected_mesh);
 }
 
 void TransformDock::on_doubleSpinBox_valueChanged(double value)
@@ -151,4 +178,14 @@ void TransformDock::on_comboBox_currentIndexChanged(int index)
 		ui->horizontalSlider->blockSignals(false);
 		break;
 	}
+}
+
+void TransformDock::on_cbMeshIdx_currentIndexChanged(int index)
+{
+	if (index < 0)
+		return;
+
+	m_selected_mesh = index - 1; // all is 0, 1st is 1 and so on... -1 to corresponding mesh
+
+	acceptTransformations();
 }

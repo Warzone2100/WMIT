@@ -37,9 +37,12 @@ signals:
 	void scaleXChanged(double);
 	void scaleYChanged(double);
 	void scaleZChanged(double);
-	void reverseWindings();
+	void reverseWindings(int mesh);
 
-	void applyTransformations();
+	void applyTransformations(int mesh);
+
+public slots:
+	void setMeshCount(int value, QStringList names);
 
 protected:
 	void changeEvent(QEvent *e);
@@ -47,6 +50,7 @@ protected:
 
 private:
 	Ui::TransformDock *ui;
+	int m_selected_mesh;
 	double scale_all, scale_xyz[3];
 	double scale_all_prev, scale_xyz_prev[3];
 
@@ -57,6 +61,7 @@ private slots:
 	void on_horizontalSlider_valueChanged(int value);
 	void on_doubleSpinBox_valueChanged(double );
 	void on_pb_revWindings_clicked();
+	void on_cbMeshIdx_currentIndexChanged(int index);
 };
 
 #endif // TRANSFORMDOCK_HPP

@@ -84,8 +84,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(transformDock, SIGNAL(scaleXChanged(double)), this, SLOT(_on_scaleXChanged(double)));
 	connect(transformDock, SIGNAL(scaleYChanged(double)), this, SLOT(_on_scaleYChanged(double)));
 	connect(transformDock, SIGNAL(scaleZChanged(double)), this, SLOT(_on_scaleZChanged(double)));
-	connect(transformDock, SIGNAL(reverseWindings()), this, SLOT(_on_reverseWindings()));
-	connect(transformDock, SIGNAL(applyTransformations()), this, SLOT(_on_applyTransformations()));
+	connect(transformDock, SIGNAL(reverseWindings(int)), this, SLOT(_on_reverseWindings(int)));
+	connect(transformDock, SIGNAL(applyTransformations(int)), this, SLOT(_on_applyTransformations(int)));
+	connect(&model, SIGNAL(meshCountChanged(int,QStringList)), transformDock, SLOT(setMeshCount(int,QStringList)));
 
 	textureSearchDirs = QSet<QString>::fromList(m_settings->value("textureSearchDirs", QStringList()).toStringList());
 	if (!textureSearchDirs.empty())
@@ -407,15 +408,15 @@ void MainWindow::_on_scaleZChanged(double val)
 	ui->centralWidget->updateGL();
 }
 
-void MainWindow::_on_reverseWindings()
+void MainWindow::_on_reverseWindings(int mesh)
 {
-	model.reverseWindings();
+	model.reverseWinding(mesh);
 	ui->centralWidget->updateGL();
 }
 
-void MainWindow::_on_applyTransformations()
+void MainWindow::_on_applyTransformations(int mesh)
 {
-	model.applyTransformations();
+	model.applyTransformations(mesh);
 }
 
 void MainWindow::on_actionFixed_Pipeline_toggled(bool checked)
