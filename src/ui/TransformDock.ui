@@ -10,14 +10,20 @@
     <height>437</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>170</width>
+    <height>242</height>
+   </size>
+  </property>
   <property name="features">
-   <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
+   <set>QDockWidget::AllDockWidgetFeatures</set>
   </property>
   <property name="allowedAreas">
    <set>Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea</set>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>Transformations</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">

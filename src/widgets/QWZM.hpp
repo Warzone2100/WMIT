@@ -55,13 +55,6 @@ public:
 	void clearTCMaskTexture();
 	bool hasTCMaskTexture() const;
 
-	void setScaleXYZ(GLfloat xyz);
-	void setScaleX(GLfloat x);
-	void setScaleY(GLfloat y);
-	void setScaleZ(GLfloat z);
-
-	void applyTransformations(int mesh = -1);
-
 	void clear();
 
 	QStringList getMeshNames();
@@ -75,6 +68,15 @@ public:
 signals:
 	void meshCountChanged(int, QStringList);
 
+public slots:
+	void setScaleXYZ(GLfloat xyz);
+	void setScaleX(GLfloat x);
+	void setScaleY(GLfloat y);
+	void setScaleZ(GLfloat z);
+
+	void setActiveMesh(int mesh = -1);
+	void applyTransformations();
+
 private:
 	Q_DISABLE_COPY(QWZM)
 	void defaultConstructor();
@@ -83,6 +85,8 @@ private:
 
 	GLfloat scale_all, scale_xyz[3];
 	static const GLint winding;
+
+	int m_active_mesh;
 };
 
 #endif // QWZM_HPP

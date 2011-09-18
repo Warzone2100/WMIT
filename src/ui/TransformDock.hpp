@@ -39,7 +39,8 @@ signals:
 	void scaleZChanged(double);
 	void reverseWindings(int mesh);
 
-	void applyTransformations(int mesh);
+	void applyTransformations();
+	void setActiveMeshIdx(int);
 
 public slots:
 	void setMeshCount(int value, QStringList names);

@@ -32,6 +32,7 @@ TransformDock::TransformDock(QWidget *parent) :
 	 ui->horizontalSlider->setValue(scale_all);
 
 	 ui->cbMeshIdx->setEditable(false);
+	 setMeshCount(0, QStringList());
 }
 
 TransformDock::~TransformDock()
@@ -84,7 +85,7 @@ void TransformDock::acceptTransformations()
 	scale_xyz_prev[1] = scale_xyz[1];
 	scale_xyz_prev[2] = scale_xyz[2];
 
-	emit applyTransformations(m_selected_mesh);
+	emit applyTransformations();
 
 	// reset preview values
 	scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
@@ -185,7 +186,9 @@ void TransformDock::on_cbMeshIdx_currentIndexChanged(int index)
 	if (index < 0)
 		return;
 
+	acceptTransformations();
+
 	m_selected_mesh = index - 1; // all is 0, 1st is 1 and so on... -1 to corresponding mesh
 
-	acceptTransformations();
+	emit setActiveMeshIdx(m_selected_mesh);
 }

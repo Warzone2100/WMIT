@@ -41,19 +41,10 @@ QWZM::~QWZM()
 	clear();
 }
 
-void QWZM::operator=(const WZM& wzm)
-{
-	clear();
-	WZM::operator=(wzm);
-	meshCountChanged(meshes(), getMeshNames());
-}
-
 void QWZM::render()
 {
 	const GLfloat tcColour[4] = {160/255.f,32/255.f,240/255.f,255/255.f}; // temporary...
 	const bool tcmask = currentTCMaskMode() != None && m_tcm != 0;
-
-	std::vector<Mesh>::iterator it;
 
 	GLint frontFace;
 	glGetIntegerv(GL_FRONT_FACE, &frontFace);
@@ -82,7 +73,10 @@ void QWZM::render()
 	glScalef(-1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
 
 	//FIXME: preview should be mesh-based
-	glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+	if (m_active_mesh < 0)
+	{
+		glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+	}
 
 	if (tcmask)
 	{
@@ -101,23 +95,35 @@ void QWZM::render()
 		glBindTexture(GL_TEXTURE_2D, m_tcm);
 	}
 
-	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+	for (int i = 0; i < m_meshes.size(); ++i)
 	{
+		const Mesh& msh = m_meshes.at(i);
+		if (m_active_mesh == i)
+		{
+			glPushMatrix();
+			glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+		}
+
 		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
-		glTexCoordPointer(2, GL_FLOAT, 0, &it->m_textureArrays[0][0]);
+		glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArrays[0][0]);
 
 		if (currentTCMaskMode() == FixedPipeline)
 		{
 			glClientActiveTexture(GL_TEXTURE0);
-			glTexCoordPointer(2, GL_FLOAT, 0, &it->m_textureArrays[0][0]);
+			glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArrays[0][0]);
 			glClientActiveTexture(GL_TEXTURE1);
 		}
 
 		CPP0X_FEATURED(static_assert(sizeof(WZMVertex) == sizeof(GLfloat)*3, "WZMVertex has become fat."));
-		glVertexPointer(3, GL_FLOAT, 0, &it->m_vertexArray[0]);
+		glVertexPointer(3, GL_FLOAT, 0, &msh.m_vertexArray[0]);
 
 		CPP0X_FEATURED(static_assert(sizeof(IndexedTri) == sizeof(GLushort)*3, "IndexedTri has become fat."));
-		glDrawElements(GL_TRIANGLES, it->m_indexArray.size() * 3, GL_UNSIGNED_SHORT, &it->m_indexArray[0]);
+		glDrawElements(GL_TRIANGLES, msh.m_indexArray.size() * 3, GL_UNSIGNED_SHORT, &msh.m_indexArray[0]);
+
+		if (m_active_mesh == i)
+		{
+			glPopMatrix();
+		}
 	}
 
 	resetTCMaskEnvironment();
@@ -216,7 +222,24 @@ inline void QWZM::defaultConstructor()
 	scale_xyz[0] = 1.f;
 	scale_xyz[1] = 1.f;
 	scale_xyz[2] = 1.f;
+
+	m_active_mesh = -1;
 }
+
+QStringList QWZM::getMeshNames()
+{
+	QStringList names;
+	std::vector<Mesh>::const_iterator it;
+
+	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+	{
+		names.append(QString::fromStdString(it->getName()));
+	}
+
+	return names;
+}
+
+/*********** SLOTS ************/
 
 void QWZM::setScaleXYZ(GLfloat xyz)
 {
@@ -238,25 +261,25 @@ void QWZM::setScaleZ(GLfloat z)
 	scale_xyz[2] = z;
 }
 
-void QWZM::applyTransformations(int mesh)
+void QWZM::applyTransformations()
 {
-	scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2], mesh);
+	scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2], m_active_mesh);
 }
 
-QStringList QWZM::getMeshNames()
+void QWZM::setActiveMesh(int mesh)
 {
-	QStringList names;
-	std::vector<Mesh>::const_iterator it;
-
-	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
-	{
-		names.append(QString::fromStdString(it->getName()));
-	}
-
-	return names;
+	m_active_mesh = mesh;
 }
 
-/************** mesh control wrappers *****************/
+/************** Mesh control wrappers *****************/
+
+
+void QWZM::operator=(const WZM& wzm)
+{
+	clear();
+	WZM::operator=(wzm);
+	meshCountChanged(meshes(), getMeshNames());
+}
 
 void QWZM::addMesh(const Mesh& mesh)
 {
@@ -277,6 +300,8 @@ bool QWZM::importFromOBJ(std::istream& in)
 		meshCountChanged(meshes(), getMeshNames());
 		return true;
 	}
+
+	clear();
 	return false;
 }
 
@@ -287,5 +312,7 @@ bool QWZM::importFrom3DS(std::string fileName)
 		meshCountChanged(meshes(), getMeshNames());
 		return true;
 	}
+
+	clear();
 	return false;
 }

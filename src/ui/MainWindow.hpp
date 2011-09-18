@@ -78,7 +78,6 @@ private slots:
 	void _on_scaleYChanged(double);
 	void _on_scaleZChanged(double);
 	void _on_reverseWindings(int mesh);
-	void _on_applyTransformations(int mesh);
 
 private:
 	Ui::MainWindow* ui;
