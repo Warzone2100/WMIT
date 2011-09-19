@@ -197,7 +197,7 @@ void MainWindow::s_fileOpen()
 	}
 
 	selectedTextureFilePath = importDialog->tcmaskFilePath();
-	if (importDialog->tcmaskChecked() && !selectedTextureFilePath.isEmpty())
+	if (!selectedTextureFilePath.isEmpty())
 	{
 		textureFileNfo.setFile(selectedTextureFilePath);
 		model.setTextureName_TCMask(textureFileNfo.fileName().toStdString());

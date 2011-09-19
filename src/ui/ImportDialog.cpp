@@ -167,17 +167,35 @@ void ImportDialog::on_lw_autoFoundTextures_itemClicked(QListWidgetItem* item)
 void ImportDialog::on_pb_autoTex_clicked()
 {
 	QString fileTexName = getTextureName(ui->le_fileName->text());
-	if (fileTexName.isNull())
+	if (!fileTexName.isNull())
 	{
-		return;
-	}
-	foreach(QString filePath, m_textures)
-	{
-		if (fileTexName.compare(QFileInfo(filePath).fileName(), Qt::CaseSensitive) == 0)
+		// Pre-configured search
+		foreach(QString filePath, m_textures)
 		{
-			ui->le_textureFName->setText(filePath);
+			if (fileTexName.compare(QFileInfo(filePath).fileName(), Qt::CaseSensitive) == 0)
+			{
+				ui->le_textureFName->setText(filePath);
+				return;
+			}
+		}
+
+		// Local guess 1
+		QFileInfo nfo(ui->le_fileName->text());
+		nfo.setFile(nfo.absolutePath() + "/" + fileTexName);
+		if (nfo.exists())
+		{
+			ui->le_textureFName->setText(nfo.filePath());
 			return;
 		}
+	}
+
+	// Local guess 2
+	if (!ui->le_fileName->text().isEmpty())
+	{
+		QFileInfo nfo(ui->le_fileName->text());
+		nfo.setFile(nfo.absolutePath() + "/" + nfo.completeBaseName() + ".png");
+		if (nfo.exists())
+			ui->le_textureFName->setText(nfo.filePath());
 	}
 }
 
