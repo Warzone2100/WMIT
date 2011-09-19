@@ -89,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(transformDock, SIGNAL(applyTransformations()), &model, SLOT(applyTransformations()));
 	connect(&model, SIGNAL(meshCountChanged(int,QStringList)), transformDock, SLOT(setMeshCount(int,QStringList)));
 	connect(transformDock, SIGNAL(setActiveMeshIdx(int)), &model, SLOT(setActiveMesh(int)));
+	connect(transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(_on_mirrorAxis(int)));
 
 	textureSearchDirs = QSet<QString>::fromList(m_settings->value("textureSearchDirs", QStringList()).toStringList());
 	if (!textureSearchDirs.empty())
@@ -418,6 +419,12 @@ void MainWindow::_on_scaleZChanged(double val)
 void MainWindow::_on_reverseWindings(int mesh)
 {
 	model.reverseWinding(mesh);
+	ui->centralWidget->updateGL();
+}
+
+void MainWindow::_on_mirrorAxis(int axis)
+{
+	model.slotMirrorAxis(axis);
 	ui->centralWidget->updateGL();
 }
 

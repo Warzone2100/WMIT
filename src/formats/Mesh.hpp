@@ -36,8 +36,11 @@ typedef Vertex<GLfloat> WZMVertex;
 typedef UV<GLclampf> WZMUV;
 typedef std::vector<WZMUV> TexArray;
 
+class Mesh;
+
 class WZMConnector
 {
+	friend class Mesh;
 public:
 	WZMConnector(GLfloat x = 0., GLfloat y = 0., GLfloat z = 0.);
 	virtual ~WZMConnector(){}
@@ -107,9 +110,12 @@ public:
 	bool isValid() const;
 
 	void scale(GLfloat x, GLfloat y, GLfloat z);
+	void mirrorUsingLocalCenter(int axis); // x == 0, y == 1, z == 2
+	void mirrorFromPoint(const WZMVertex& point, int axis); // x == 0, y == 1, z == 2
 	void reverseWinding();
+
+	WZMVertex calculateCenterPoint() const;
 protected:
-	void clear();
 	std::string m_name;
 	std::vector<Frame> m_frameArray;
 	std::vector<WZMVertex> m_vertexArray;
@@ -117,6 +123,10 @@ protected:
 	std::vector<IndexedTri> m_indexArray;
 	std::list<WZMConnector> m_connectors;
 	bool m_teamColours;
+
+	WZMVertex m_mesh_center;
+
+	void clear();
 private:
 	void defaultConstructor();
 };

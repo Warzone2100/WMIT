@@ -192,3 +192,18 @@ void TransformDock::on_cbMeshIdx_currentIndexChanged(int index)
 
 	emit setActiveMeshIdx(m_selected_mesh);
 }
+
+void TransformDock::on_pbMirrorX_clicked()
+{
+	emit mirrorAxis(0);
+}
+
+void TransformDock::on_pbMirrorY_clicked()
+{
+	emit mirrorAxis(1);
+}
+
+void TransformDock::on_pbMirrorZ_clicked()
+{
+	emit mirrorAxis(2);
+}

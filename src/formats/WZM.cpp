@@ -619,6 +619,55 @@ void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)
 	}
 }
 
+void WZM::mirror(int axis, int mesh)
+{
+	if (axis < 0 || axis > 5 || mesh >= (int)m_meshes.size())
+		return;
+
+	// All or a single mesh
+	if (mesh < 0)
+	{
+		WZMVertex center = calculateCenterPoint();
+
+		std::vector<Mesh>::iterator it;
+		for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+		{
+			switch (axis)
+			{
+			case 3:
+				it->scale(-1., 1., 1.);
+				break;
+			case 4:
+				it->scale(1., -1., 1.);
+				break;
+			case 5:
+				it->scale(1., 1., -1.);
+				break;
+			default:
+				it->mirrorFromPoint(center, axis);
+			}
+		}
+	}
+	else
+	{
+		Mesh& meshobj = m_meshes[(std::vector<Mesh>::size_type)mesh];
+		switch (axis)
+		{
+		case 3:
+			meshobj.scale(-1., 1., 1.);
+			break;
+		case 4:
+			meshobj.scale(1., -1., 1.);
+			break;
+		case 5:
+			meshobj.scale(1., 1., -1.);
+			break;
+		default:
+			meshobj.mirrorUsingLocalCenter(axis);
+		}
+	}
+}
+
 void WZM::reverseWinding(int mesh)
 {
 	// All or a single mesh
@@ -638,4 +687,27 @@ void WZM::reverseWinding(int mesh)
 		}
 	}
 
+}
+
+WZMVertex WZM::calculateCenterPoint() const
+{
+	WZMVertex center, meshcenter;
+
+	if (!m_meshes.size())
+		return center;
+
+	std::vector<Mesh>::const_iterator it;
+	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+	{
+		meshcenter = it->calculateCenterPoint();
+		center.x() += meshcenter.x();
+		center.y() += meshcenter.y();
+		center.z() += meshcenter.z();
+	}
+
+	center.x() /= m_meshes.size();
+	center.y() /= m_meshes.size();
+	center.z() /= m_meshes.size();
+
+	return center;
 }

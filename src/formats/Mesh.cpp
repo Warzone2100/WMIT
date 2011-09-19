@@ -1067,7 +1067,53 @@ void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
 		vertIt->scale(x, y, z);
 	}
 
-#pragma message "TODO: Mesh::scale - Frames and connectors"
+	std::list<WZMConnector>::iterator itC;
+	for (itC = m_connectors.begin(); itC != m_connectors.end(); ++itC)
+	{
+		itC->m_pos.scale(x, y, z);
+	}
+
+#pragma message "TODO: Mesh::scale - Frames"
+}
+
+void Mesh::mirrorUsingLocalCenter(int axis)
+{
+	mirrorFromPoint(calculateCenterPoint(), axis);
+}
+
+void Mesh::mirrorFromPoint(const WZMVertex& point, int axis)
+{
+	std::vector<WZMVertex>::iterator vertIt;
+	for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt )
+	{
+		switch (axis)
+		{
+		case 0:
+			vertIt->x() = -vertIt->x() + 2 * point.x();
+			break;
+		case 1:
+			vertIt->y() = -vertIt->y() + 2 * point.y();
+			break;
+		default:
+			vertIt->z() = -vertIt->z() + 2 * point.z();
+		}
+	}
+
+	std::list<WZMConnector>::iterator itC;
+	for (itC = m_connectors.begin(); itC != m_connectors.end(); ++itC)
+	{
+		switch (axis)
+		{
+		case 0:
+			itC->m_pos[0] = -itC->m_pos[0] + 2 * point.x();
+			break;
+		case 1:
+			itC->m_pos[1] = -itC->m_pos[1] + 2 * point.y();
+			break;
+		default:
+			itC->m_pos[2] = -itC->m_pos[2] + 2 * point.z();
+		}
+	}
 }
 
 void Mesh::reverseWinding()
@@ -1077,4 +1123,26 @@ void Mesh::reverseWinding()
 	{
 		std::swap((*it).b(), (*it).c());
 	}
+}
+
+WZMVertex Mesh::calculateCenterPoint() const
+{
+	WZMVertex center;
+
+	if (!m_vertexArray.size())
+		return center;
+
+	std::vector<WZMVertex>::const_iterator vertIt;
+	for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt )
+	{
+		center.x() += vertIt->x();
+		center.y() += vertIt->y();
+		center.z() += vertIt->z();
+	}
+
+	center.x() /= m_vertexArray.size();
+	center.y() /= m_vertexArray.size();
+	center.z() /= m_vertexArray.size();
+
+	return center;
 }

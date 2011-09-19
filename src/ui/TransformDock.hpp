@@ -38,6 +38,7 @@ signals:
 	void scaleYChanged(double);
 	void scaleZChanged(double);
 	void reverseWindings(int mesh);
+	void mirrorAxis(int);
 
 	void applyTransformations();
 	void setActiveMeshIdx(int);
@@ -63,6 +64,9 @@ private slots:
 	void on_doubleSpinBox_valueChanged(double );
 	void on_pb_revWindings_clicked();
 	void on_cbMeshIdx_currentIndexChanged(int index);
+	void on_pbMirrorX_clicked();
+	void on_pbMirrorY_clicked();
+	void on_pbMirrorZ_clicked();
 };
 
 #endif // TRANSFORMDOCK_HPP

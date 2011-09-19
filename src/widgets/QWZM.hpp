@@ -46,6 +46,7 @@ public:
 
 	void render();
 	void animate();
+	//void setCenterPointState(bool draw = true);
 
 	void setRenderTexture(QString fileName);
 	void setTextureManager(IGLTextureManager * manager);
@@ -73,6 +74,7 @@ public slots:
 	void setScaleX(GLfloat x);
 	void setScaleY(GLfloat y);
 	void setScaleZ(GLfloat z);
+	void slotMirrorAxis(int axis);
 
 	void setActiveMesh(int mesh = -1);
 	void applyTransformations();
@@ -80,6 +82,7 @@ public slots:
 private:
 	Q_DISABLE_COPY(QWZM)
 	void defaultConstructor();
+	void drawCenterPoint();
 
 	GLuint m_texture, m_tcm;
 

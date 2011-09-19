@@ -72,10 +72,10 @@ void QWZM::render()
 
 	glScalef(-1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
 
-	//FIXME: preview should be mesh-based
 	if (m_active_mesh < 0)
 	{
 		glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+		drawCenterPoint();
 	}
 
 	if (tcmask)
@@ -102,6 +102,7 @@ void QWZM::render()
 		{
 			glPushMatrix();
 			glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+			drawCenterPoint();
 		}
 
 		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
@@ -137,6 +138,44 @@ void QWZM::render()
 	glPopMatrix();
 	glPopClientAttrib();
 	glPopAttrib();
+}
+
+void QWZM::drawCenterPoint()
+{
+#ifdef _DEBUG
+	WZMVertex center;
+
+	if (m_active_mesh < 0)
+	{
+		center = calculateCenterPoint();
+	}
+	else
+	{
+		center = m_meshes.at(m_active_mesh).calculateCenterPoint();
+	}
+
+	const float lineLength = 40.0;
+	GLfloat x, y, z;
+	x = center.x();
+	y = center.y();
+	z = center.z();
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LINE_SMOOTH);
+	glLineWidth(2);
+	glColor3f(1.f, 1.f, 1.f);
+
+	glBegin(GL_LINES);
+	glVertex3f(-lineLength + x, y, z);
+	glVertex3f(lineLength + x, y, z);
+	glVertex3f(x, -lineLength + y, z);
+	glVertex3f(x, lineLength + y, z);
+	glVertex3f(x, y, -lineLength + z);
+	glVertex3f(x, y, lineLength + z);
+	glEnd();
+
+	glEnable(GL_TEXTURE_2D);
+#endif
 }
 
 void QWZM::animate()
@@ -259,6 +298,11 @@ void QWZM::setScaleY(GLfloat y)
 void QWZM::setScaleZ(GLfloat z)
 {
 	scale_xyz[2] = z;
+}
+
+void QWZM::slotMirrorAxis(int axis)
+{
+	mirror(axis, m_active_mesh);
 }
 
 void QWZM::applyTransformations()
