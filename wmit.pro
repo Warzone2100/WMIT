@@ -70,6 +70,12 @@ OTHER_FILES += \
     HACKING.txt \
     COPYING.nongpl
 
+CONFIG(debug, debug|release) {
+    DEFINES *= DEBUG _DEBUG
+} else {
+    DEFINES *= NDEBUG
+}
+
 # turn off c++0x support on win32 till decent compiler is available out-of-the-box
 !win32 {
     QMAKE_CXXFLAGS += -std=c++0x
