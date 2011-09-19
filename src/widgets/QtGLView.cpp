@@ -188,8 +188,9 @@ void QtGLView::postDraw()
 		glPopMatrix();
 	}
 
-	/* Grid end
-	 * Axis begin  - Copied from QGLViewer source then modified */
+	/* Axis begin  - Copied from QGLViewer source then modified
+	 * WZ models use negative Z axis as "front", hence X, Y and -Z
+	 */
 	if (axisIsDrawn())
 	{
 		const float length =camera()->sceneRadius();
@@ -217,13 +218,16 @@ void QtGLView::postDraw()
 		glVertex3f(0.f,        charShift, 0.f);
 		glVertex3f(0.f,        charShift, 0.f);
 		glVertex3f(0.f,        charShift, -charHeight);
-		// The Z
-		glVertex3f(-charWidth,  charHeight, charShift);
-		glVertex3f( charWidth,  charHeight, charShift);
-		glVertex3f( charWidth,  charHeight, charShift);
-		glVertex3f(-charWidth, -charHeight, charShift);
-		glVertex3f(-charWidth, -charHeight, charShift);
-		glVertex3f( charWidth, -charHeight, charShift);
+		// The Z (part of -Z)
+		glVertex3f(-charWidth,  charHeight, -charShift);
+		glVertex3f( charWidth,  charHeight, -charShift);
+		glVertex3f( charWidth,  charHeight, -charShift);
+		glVertex3f(-charWidth, -charHeight, -charShift);
+		glVertex3f(-charWidth, -charHeight, -charShift);
+		glVertex3f( charWidth, -charHeight, -charShift);
+		// The - (part of -Z)
+		glVertex3f(-charWidth*2, 0.f, -charShift);
+		glVertex3f(-charWidth,   0.f, -charShift);
 		glEnd();
 
 		glEnable(GL_LIGHTING);
@@ -231,12 +235,13 @@ void QtGLView::postDraw()
 		float color[4];
 		color[0] = 0.7f;  color[1] = 0.7f;  color[2] = 1.0f;  color[3] = 1.0f;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+		glRotatef(180.0, 0.0, 1.0, 0.0);
 		QGLViewer::drawArrow(length, 0.003*length);
 
 		color[0] = 1.0f;  color[1] = 0.7f;  color[2] = 0.7f;  color[3] = 1.0f;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 		glPushMatrix();
-		glRotatef(-90.0, 0.0, 1.0, 0.0);
+		glRotatef(90.0, 0.0, 1.0, 0.0);
 		QGLViewer::drawArrow(length, 0.003*length);
 		glPopMatrix();
 
