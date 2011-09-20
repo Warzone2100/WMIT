@@ -1128,6 +1128,9 @@ void Mesh::mirrorFromPoint(const WZMVertex& point, int axis)
 		}
 	}
 
+	// for convenience
+	reverseWinding();
+
 	recalculateBoundData();
 }
 
