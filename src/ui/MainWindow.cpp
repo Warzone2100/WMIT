@@ -191,7 +191,7 @@ void MainWindow::s_fileOpen()
 	if (!selectedTextureFilePath.isEmpty())
 	{
 		textureFileNfo.setFile(selectedTextureFilePath);
-		model.setTextureName(textureFileNfo.fileName().toStdString());
+		model.setTextureName(WZM_TEX_DIFFUSE, textureFileNfo.fileName().toStdString());
 		model.setRenderTexture(selectedTextureFilePath);
 	}
 
@@ -199,7 +199,7 @@ void MainWindow::s_fileOpen()
 	if (!selectedTextureFilePath.isEmpty())
 	{
 		textureFileNfo.setFile(selectedTextureFilePath);
-		model.setTextureName_TCMask(textureFileNfo.fileName().toStdString());
+		model.setTextureName(WZM_TEX_TCMASK, textureFileNfo.fileName().toStdString());
 		model.setTCMaskTexture(selectedTextureFilePath);
 
 		if (ui->centralWidget->tcmaskSupport() & FixedPipeline)

@@ -22,10 +22,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "Mesh.hpp"
 
 class Pie3Model;
+
+enum wzm_texture_type_t {WZM_TEX_DIFFUSE = 0, WZM_TEX_TCMASK, WZM_TEX_NORMALMAP};
 
 class WZM
 {
@@ -48,14 +51,8 @@ public:
 	int version() const;
 	int meshes() const;
 
-	void setTextureName(std::string name);
-	std::string getTextureName() const;
-
-	void setTextureName_TCMask(const std::string& name);
-	std::string getTextureName_TCMask() const;
-
-	void setTextureName_NormalMap(const std::string& name);
-	std::string getTextureName_NormalMap() const;
+	void setTextureName(wzm_texture_type_t type, std::string name);
+	std::string getTextureName(wzm_texture_type_t type) const;
 
 	bool couldHaveTCArrays() const;
 
@@ -75,9 +72,7 @@ public:
 protected:
 	void clear();
 	std::vector<Mesh> m_meshes;
-	std::string m_texName;
-	std::string m_texName_TCMask;
-	std::string m_texName_NormalMap;
+	std::map<wzm_texture_type_t, std::string> m_textures;
 };
 
 #endif // WZM_HPP

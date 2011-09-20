@@ -53,9 +53,9 @@ WZM::WZM(const Pie3Model &p3)
 	std::vector<Pie3Level>::const_iterator it;
 	std::stringstream ss;
 
-	m_texName = p3.m_texture;
-	m_texName_NormalMap = p3.m_texture_normalmap;
-	m_texName_TCMask = p3.m_texture_tcmask;
+	setTextureName(WZM_TEX_DIFFUSE, p3.m_texture);
+	setTextureName(WZM_TEX_NORMALMAP, p3.m_texture_normalmap);
+	setTextureName(WZM_TEX_TCMASK, p3.m_texture_tcmask);
 
 	for (it = p3.m_levels.begin(); it != p3.m_levels.end(); ++it)
 	{
@@ -70,9 +70,9 @@ WZM::operator Pie3Model() const
 {
 	Pie3Model p3;
 
-	p3.m_texture = m_texName;
-	p3.m_texture_normalmap = m_texName_NormalMap;
-	p3.m_texture_tcmask = m_texName_TCMask;
+	p3.m_texture = getTextureName(WZM_TEX_DIFFUSE);
+	p3.m_texture_normalmap = getTextureName(WZM_TEX_NORMALMAP);
+	p3.m_texture_tcmask = getTextureName(WZM_TEX_TCMASK);
 
 	std::transform(m_meshes.begin(), m_meshes.end(),
 				   back_inserter(p3.m_levels), Mesh::backConvert);
@@ -111,11 +111,11 @@ bool WZM::read(std::istream& in)
 		std::cerr << "WZM::read - Expected TEXTURE directive but got" << str;
 		return false;
 	}
-	in >> m_texName;
+	in >> m_textures[WZM_TEX_DIFFUSE];
 	if (in.fail())
 	{
 		std::cerr << "WZM::read - Error reading WZM version";
-		m_texName = std::string();
+		m_textures[WZM_TEX_DIFFUSE].clear();
 		return false;
 	}
 
@@ -145,10 +145,12 @@ bool WZM::read(std::istream& in)
 void WZM::write(std::ostream& out) const
 {
 	std::vector<Mesh>::const_iterator it;
+
 	out << "WZM\t" << version() << '\n';
-	if (!m_texName.empty())
+
+	if (!getTextureName(WZM_TEX_DIFFUSE).empty())
 	{
-		out << "TEXTURE " << m_texName << '\n';
+		out << "TEXTURE " << getTextureName(WZM_TEX_DIFFUSE) << '\n';
 	}
 	else
 	{
@@ -370,9 +372,9 @@ void WZM::exportToOBJ(std::ostream &out) const
 	std::vector<OBJUV>::iterator	itUV;
 	std::stringstream* pSSS;
 
-	if (!m_texName.empty())
+	if (!getTextureName(WZM_TEX_DIFFUSE).empty())
 	{
-		out << "# texture: " << m_texName << '\n';
+		out << "# texture: " << getTextureName(WZM_TEX_DIFFUSE) << '\n';
 	}
 
 	for (itM = m_meshes.begin(); itM != m_meshes.end(); ++itM)
@@ -427,7 +429,7 @@ bool WZM::importFrom3DS(std::string fileName)
 	// Grab texture name
 	if (material != NULL)
 	{
-		m_texName = material->texture1_map.name;
+		setTextureName(WZM_TEX_DIFFUSE, material->texture1_map.name);
 		if (material->next != NULL)
 		{
 			std::cout << "WZM::importFrom3ds - Multiple textures not supported!\n";
@@ -440,7 +442,7 @@ bool WZM::importFrom3DS(std::string fileName)
 #else
 	if (f->nmaterials >= 0)
 	{
-		m_texName = (*f->materials)->texture1_map.name;
+		setTextureName(WZM_TEX_DIFFUSE, *f->materials)->texture1_map.name);
 		if (f->nmaterials > 1)
 		{
 			std::cout << "WZM::importFrom3ds - Multiple textures not supported!\n";
@@ -471,7 +473,7 @@ bool WZM::exportTo3DS(std::string fileName) const
 	std::vector<Mesh>::const_iterator itM;
 	unsigned i;
 
-	i = m_texName.copy(material->texture1_map.name, 64 - 1);
+	i = getTextureName(WZM_TEX_DIFFUSE).copy(material->texture1_map.name, 64 - 1);
 	material->texture1_map.name[i] = '\0';
 #ifdef LIB3DS_VERSION_1
 	lib3ds_file_insert_material(f, material);
@@ -506,36 +508,21 @@ int WZM::meshes() const
 	return m_meshes.size();
 }
 
-void WZM::setTextureName(std::string name)
+void WZM::setTextureName(wzm_texture_type_t type, std::string name)
 {
-	m_texName = name;
+	m_textures[type] = name;
 }
 
-std::string WZM::getTextureName() const
+std::string WZM::getTextureName(wzm_texture_type_t type) const
 {
-	return m_texName;
-}
+	std::map<wzm_texture_type_t, std::string>::const_iterator it;
 
-void WZM::setTextureName_TCMask(const std::string& name)
-{
-	m_texName_TCMask = name;
-}
+	it = m_textures.find(type);
+	if (it != m_textures.end())
+		return it->second;
 
-std::string WZM::getTextureName_TCMask() const
-{
-	return m_texName_TCMask;
+	return std::string();
 }
-
-void WZM::setTextureName_NormalMap(const std::string& name)
-{
-	m_texName_NormalMap = name;
-}
-
-std::string WZM::getTextureName_NormalMap() const
-{
-	return m_texName_NormalMap;
-}
-
 
 Mesh& WZM::getMesh(int index)
 {
@@ -576,7 +563,7 @@ bool WZM::isValid() const
 {
 	std::vector<Mesh>::const_iterator it;
 
-	if (!isValidWzName(m_texName))
+	if (!isValidWzName(getTextureName(WZM_TEX_DIFFUSE)))
 	{
 		return false;
 	}
@@ -594,9 +581,7 @@ bool WZM::isValid() const
 void WZM::clear()
 {
 	m_meshes.clear();
-	m_texName.clear();
-	m_texName_TCMask.clear();
-	m_texName_NormalMap.clear();
+	m_textures.clear();
 }
 
 void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)
