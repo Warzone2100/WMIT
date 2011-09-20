@@ -18,6 +18,7 @@
 */
 
 #include "QWZM.hpp"
+#include "Pie.hpp"
 
 #include <QString>
 
@@ -97,7 +98,7 @@ void QWZM::render()
 		glBindTexture(GL_TEXTURE_2D, m_tcm);
 	}
 
-	for (int i = 0; i < m_meshes.size(); ++i)
+	for (int i = 0; i < (int)m_meshes.size(); ++i)
 	{
 		const Mesh& msh = m_meshes.at(i);
 		if (m_active_mesh == i)
@@ -324,6 +325,11 @@ void QWZM::operator=(const WZM& wzm)
 	clear();
 	WZM::operator=(wzm);
 	meshCountChanged(meshes(), getMeshNames());
+}
+
+QWZM::operator Pie3Model() const
+{
+	return WZM::operator Pie3Model();
 }
 
 void QWZM::addMesh(const Mesh& mesh)

@@ -34,8 +34,9 @@
 #include "IAnimatable.hpp"
 
 class IGLTextureManager;
+class Pie3Model;
 
-class QWZM : public QObject, public WZM, public ATCMaskRenderable, public IAnimatable
+class QWZM : public QObject, protected WZM, public ATCMaskRenderable, public IAnimatable
 {
 	Q_OBJECT
 public:
@@ -60,11 +61,25 @@ public:
 
 	QStringList getMeshNames();
 
-	// mesh control wrappers
+public: // WZM interface - mesh control border
+	virtual operator Pie3Model() const;
+	inline bool read(std::istream& in) {return WZM::read(in);}
+	inline void write(std::ostream& out) const {WZM::write(out);}
+
+	bool importFromOBJ(std::istream& in);
+	inline void exportToOBJ(std::ostream& out) const {WZM::exportToOBJ(out);}
+
+	bool importFrom3DS(std::string fileName);
+	inline bool exportTo3DS(std::string fileName) const {return WZM::exportTo3DS(fileName);}
+
+	inline void setTextureName(wzm_texture_type_t type, std::string name) {WZM::setTextureName(type, name);}
+	inline std::string getTextureName(wzm_texture_type_t type) const {return WZM::getTextureName(type);}
+
+	inline bool couldHaveTCArrays() const {return WZM::couldHaveTCArrays();}
+	inline void reverseWinding(int mesh = -1) {WZM::reverseWinding(mesh);}
+
 	void addMesh (const Mesh& mesh);
 	void rmMesh (int index);
-	bool importFromOBJ(std::istream& in);
-	bool importFrom3DS(std::string fileName);
 
 signals:
 	void meshCountChanged(int, QStringList);
