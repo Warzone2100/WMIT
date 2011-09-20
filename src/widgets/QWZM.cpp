@@ -72,10 +72,12 @@ void QWZM::render()
 
 	glScalef(-1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
 
+	drawCenterPoint();
+
 	if (m_active_mesh < 0)
 	{
 		glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
-		drawCenterPoint();
+
 	}
 
 	if (tcmask)
@@ -102,7 +104,6 @@ void QWZM::render()
 		{
 			glPushMatrix();
 			glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
-			drawCenterPoint();
 		}
 
 		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
@@ -151,14 +152,14 @@ void QWZM::drawCenterPoint()
 	}
 	else
 	{
-		center = m_meshes.at(m_active_mesh).calculateCenterPoint();
+		center = m_meshes.at(m_active_mesh).getCenterPoint();
 	}
 
 	const float lineLength = 40.0;
 	GLfloat x, y, z;
-	x = center.x();
-	y = center.y();
-	z = center.z();
+	x = center.x() * scale_all * scale_xyz[0];
+	y = center.y() * scale_all * scale_xyz[1];
+	z = center.z() * scale_all * scale_xyz[2];
 
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_LINE_SMOOTH);
@@ -315,8 +316,8 @@ void QWZM::setActiveMesh(int mesh)
 	m_active_mesh = mesh;
 }
 
-/************** Mesh control wrappers *****************/
 
+/************** Mesh control wrappers *****************/
 
 void QWZM::operator=(const WZM& wzm)
 {

@@ -699,7 +699,7 @@ WZMVertex WZM::calculateCenterPoint() const
 	std::vector<Mesh>::const_iterator it;
 	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
 	{
-		meshcenter = it->calculateCenterPoint();
+		meshcenter = it->getCenterPoint();
 		center.x() += meshcenter.x();
 		center.y() += meshcenter.y();
 		center.z() += meshcenter.z();

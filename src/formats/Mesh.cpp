@@ -169,6 +169,8 @@ Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
 	{
 		addConnector(WZMConnector((*itC).pos[0], (*itC).pos[1], (*itC).pos[2]));
 	}
+
+	recalculateBoundData();
 }
 
 Mesh::Mesh(const Lib3dsMesh& mesh3ds)
@@ -324,6 +326,8 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 
 		m_indexArray.push_back(idx);
 	}
+
+	recalculateBoundData();
 
 	// TODO: Check if 3DS animation data can be used with our Frames
 }
@@ -585,6 +589,8 @@ bool Mesh::read(std::istream& in)
 		}
 	}
 
+	recalculateBoundData();
+
 	return true;
 }
 
@@ -712,6 +718,9 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 		}
 		m_indexArray.push_back(tmpTri);
 	}
+
+	recalculateBoundData();
+
 	return true;
 }
 
@@ -926,9 +935,9 @@ void Mesh::setTeamColours(bool tc)
 	m_teamColours = tc;
 }
 
-WZMConnector& Mesh::getConnector(int index)
+const WZMConnector& Mesh::getConnector(int index) const
 {
-	std::list<WZMConnector>::iterator pos;
+	std::list<WZMConnector>::const_iterator pos;
 	std::advance(pos, index);
 	return *pos;
 }
@@ -1073,12 +1082,16 @@ void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
 		itC->m_pos.scale(x, y, z);
 	}
 
+	m_mesh_weightcenter.scale(x, y, z);
+	m_mesh_aabb_min.scale(x, y, z);
+	m_mesh_aabb_max.scale(x, y, z);
+
 #pragma message "TODO: Mesh::scale - Frames"
 }
 
 void Mesh::mirrorUsingLocalCenter(int axis)
 {
-	mirrorFromPoint(calculateCenterPoint(), axis);
+	mirrorFromPoint(getCenterPoint(), axis);
 }
 
 void Mesh::mirrorFromPoint(const WZMVertex& point, int axis)
@@ -1114,6 +1127,8 @@ void Mesh::mirrorFromPoint(const WZMVertex& point, int axis)
 			itC->m_pos[2] = -itC->m_pos[2] + 2 * point.z();
 		}
 	}
+
+	recalculateBoundData();
 }
 
 void Mesh::reverseWinding()
@@ -1125,24 +1140,45 @@ void Mesh::reverseWinding()
 	}
 }
 
-WZMVertex Mesh::calculateCenterPoint() const
+void Mesh::recalculateBoundData()
+{
+	WZMVertex weight, min, max;
+
+	if (m_vertexArray.size())
+	{
+		std::vector<WZMVertex>::const_iterator vertIt;
+		for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt )
+		{
+			weight.x() += vertIt->x();
+			weight.y() += vertIt->y();
+			weight.z() += vertIt->z();
+
+			if (min.x() > vertIt->x()) min.x() = vertIt->x();
+			if (min.y() > vertIt->y()) min.y() = vertIt->y();
+			if (min.z() > vertIt->z()) min.z() = vertIt->z();
+
+			if (max.x() < vertIt->x()) max.x() = vertIt->x();
+			if (max.y() < vertIt->y()) max.y() = vertIt->y();
+			if (max.z() < vertIt->z()) max.z() = vertIt->z();
+		}
+
+		weight.x() /= m_vertexArray.size();
+		weight.y() /= m_vertexArray.size();
+		weight.z() /= m_vertexArray.size();
+	}
+
+	m_mesh_weightcenter = weight;
+	m_mesh_aabb_min = min;
+	m_mesh_aabb_max = max;
+}
+
+WZMVertex Mesh::getCenterPoint() const
 {
 	WZMVertex center;
 
-	if (!m_vertexArray.size())
-		return center;
-
-	std::vector<WZMVertex>::const_iterator vertIt;
-	for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt )
-	{
-		center.x() += vertIt->x();
-		center.y() += vertIt->y();
-		center.z() += vertIt->z();
-	}
-
-	center.x() /= m_vertexArray.size();
-	center.y() /= m_vertexArray.size();
-	center.z() /= m_vertexArray.size();
+	center.x() = (m_mesh_aabb_max.x() + m_mesh_aabb_min.x()) / 2;
+	center.y() = (m_mesh_aabb_max.y() + m_mesh_aabb_min.y()) / 2;
+	center.z() = (m_mesh_aabb_max.z() + m_mesh_aabb_min.z()) / 2;
 
 	return center;
 }

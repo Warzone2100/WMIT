@@ -92,7 +92,7 @@ public:
 	bool teamColours() const;
 	void setTeamColours(bool tc);
 
-	WZMConnector& getConnector(int index);
+	const WZMConnector& getConnector(int index) const;
 	void addConnector (const WZMConnector& conn);
 	void rmConnector (int index);
 	int connectors() const;
@@ -114,7 +114,7 @@ public:
 	void mirrorFromPoint(const WZMVertex& point, int axis); // x == 0, y == 1, z == 2
 	void reverseWinding();
 
-	WZMVertex calculateCenterPoint() const;
+	WZMVertex getCenterPoint() const;
 protected:
 	std::string m_name;
 	std::vector<Frame> m_frameArray;
@@ -124,9 +124,10 @@ protected:
 	std::list<WZMConnector> m_connectors;
 	bool m_teamColours;
 
-	WZMVertex m_mesh_center;
+	WZMVertex m_mesh_weightcenter, m_mesh_aabb_min, m_mesh_aabb_max;
 
 	void clear();
+	void recalculateBoundData();
 private:
 	void defaultConstructor();
 };
