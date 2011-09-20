@@ -77,6 +77,9 @@
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="doubleSpinBox">
+          <property name="accelerated">
+           <bool>true</bool>
+          </property>
           <property name="decimals">
            <number>5</number>
           </property>
@@ -87,7 +90,7 @@
            <double>10000.000000000000000</double>
           </property>
           <property name="singleStep">
-           <double>0.250000000000000</double>
+           <double>0.010000000000000</double>
           </property>
           <property name="value">
            <double>1.000000000000000</double>
@@ -156,9 +159,6 @@
          <widget class="QPushButton" name="pb_revWindings">
           <property name="text">
            <string>Reverse Winding</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
           </property>
          </widget>
         </item>
