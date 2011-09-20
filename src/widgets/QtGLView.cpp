@@ -166,7 +166,7 @@ void QtGLView::postDraw()
 	/* Grid begin - Copied from QGLViewer source then modified */
 	if (gridIsDrawn())
 	{
-		glColor3f(.7f, 1.f, .7f);
+		glColor3f(.4f, .4f, .4f);
 		glPushMatrix();
 
 		glRotatef(90.0f, 1.f, 0.f, 0.f);
