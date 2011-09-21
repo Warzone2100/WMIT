@@ -289,10 +289,6 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::on_actionSave_As_triggered()
 {
-	// FIXME: Apply any transformations left active with this hack
-	transformDock->hide();
-	//
-
 	QFileDialog* fDialog = new QFileDialog();
 	std::ofstream out;
 	QFileInfo nfo;

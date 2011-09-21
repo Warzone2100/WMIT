@@ -64,13 +64,13 @@ public:
 public: // WZM interface - mesh control border
 	virtual operator Pie3Model() const;
 	inline bool read(std::istream& in) {return WZM::read(in);}
-	inline void write(std::ostream& out) const {WZM::write(out);}
+	void write(std::ostream& out) const;
 
 	bool importFromOBJ(std::istream& in);
-	inline void exportToOBJ(std::ostream& out) const {WZM::exportToOBJ(out);}
+	void exportToOBJ(std::ostream& out) const;
 
 	bool importFrom3DS(std::string fileName);
-	inline bool exportTo3DS(std::string fileName) const {return WZM::exportTo3DS(fileName);}
+	bool exportTo3DS(std::string fileName) const;
 
 	inline void setTextureName(wzm_texture_type_t type, std::string name) {WZM::setTextureName(type, name);}
 	inline std::string getTextureName(wzm_texture_type_t type) const {return WZM::getTextureName(type);}
@@ -99,12 +99,17 @@ private:
 	void defaultConstructor();
 	void drawCenterPoint();
 
+	void applyPendingChangesToModel(WZM& model) const;
+	void resetAllPendingChanges();
+
 	GLuint m_texture, m_tcm;
 
 	GLfloat scale_all, scale_xyz[3];
 	static const GLint winding;
 
 	int m_active_mesh;
+
+	bool m_pending_changes;
 };
 
 #endif // QWZM_HPP

@@ -259,12 +259,9 @@ inline void QWZM::defaultConstructor()
 	m_texture = 0;
 	m_tcm = 0;
 
-	scale_all = 1.f;
-	scale_xyz[0] = 1.f;
-	scale_xyz[1] = 1.f;
-	scale_xyz[2] = 1.f;
-
 	m_active_mesh = -1;
+
+	resetAllPendingChanges();
 }
 
 QStringList QWZM::getMeshNames()
@@ -285,21 +282,25 @@ QStringList QWZM::getMeshNames()
 void QWZM::setScaleXYZ(GLfloat xyz)
 {
 	scale_all = xyz;
+	m_pending_changes = true;
 }
 
 void QWZM::setScaleX(GLfloat x)
 {
 	scale_xyz[0] = x;
+	m_pending_changes = true;
 }
 
 void QWZM::setScaleY(GLfloat y)
 {
 	scale_xyz[1] = y;
+	m_pending_changes = true;
 }
 
 void QWZM::setScaleZ(GLfloat z)
 {
 	scale_xyz[2] = z;
+	m_pending_changes = true;
 }
 
 void QWZM::slotMirrorAxis(int axis)
@@ -310,6 +311,9 @@ void QWZM::slotMirrorAxis(int axis)
 void QWZM::applyTransformations()
 {
 	scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2], m_active_mesh);
+
+	// reset values
+	resetAllPendingChanges();
 }
 
 void QWZM::setActiveMesh(int mesh)
@@ -317,6 +321,19 @@ void QWZM::setActiveMesh(int mesh)
 	m_active_mesh = mesh;
 }
 
+void QWZM::applyPendingChangesToModel(WZM &model) const
+{
+	if (m_pending_changes)
+	{
+		model.scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2], m_active_mesh);
+	}
+}
+
+void QWZM::resetAllPendingChanges()
+{
+	scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
+	m_pending_changes = false;
+}
 
 /************** Mesh control wrappers *****************/
 
@@ -325,11 +342,6 @@ void QWZM::operator=(const WZM& wzm)
 	clear();
 	WZM::operator=(wzm);
 	meshCountChanged(meshes(), getMeshNames());
-}
-
-QWZM::operator Pie3Model() const
-{
-	return WZM::operator Pie3Model();
 }
 
 void QWZM::addMesh(const Mesh& mesh)
@@ -366,4 +378,54 @@ bool QWZM::importFrom3DS(std::string fileName)
 
 	clear();
 	return false;
+}
+
+// apply any pending transformations to temp object on export
+
+QWZM::operator Pie3Model() const
+{
+	if (m_pending_changes)
+	{
+		WZM res = *this;
+		applyPendingChangesToModel(res);
+		return Pie3Model(res);
+	}
+
+	return WZM::operator Pie3Model();
+}
+
+void QWZM::write(std::ostream& out) const
+{
+	if (m_pending_changes)
+	{
+		WZM res = *this;
+		applyPendingChangesToModel(res);
+		res.write(out);
+	}
+
+	WZM::write(out);
+}
+
+void QWZM::exportToOBJ(std::ostream& out) const
+{
+	if (m_pending_changes)
+	{
+		WZM res = *this;
+		applyPendingChangesToModel(res);
+		res.exportToOBJ(out);
+	}
+
+	WZM::exportToOBJ(out);
+}
+
+bool QWZM::exportTo3DS(std::string fileName) const
+{
+	if (m_pending_changes)
+	{
+		WZM res = *this;
+		applyPendingChangesToModel(res);
+		res.exportTo3DS(fileName);
+	}
+
+	return WZM::exportTo3DS(fileName);
 }
