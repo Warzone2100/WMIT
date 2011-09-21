@@ -32,6 +32,9 @@ class TransformDock : public QDockWidget
 public:
 	TransformDock(QWidget *parent = 0);
 	~TransformDock();
+
+	void reset(bool reset_prev_values = false);
+
 signals:
 	void scaleXYZChanged(double);
 	void scaleXChanged(double);
@@ -57,6 +60,7 @@ private:
 	double scale_all_prev, scale_xyz_prev[3];
 
 	void acceptTransformations();
+	void setScaleValueOnUI(double value);
 
 private slots:
 	void on_comboBox_currentIndexChanged(int index);

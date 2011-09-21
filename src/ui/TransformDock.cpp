@@ -24,20 +24,28 @@ TransformDock::TransformDock(QWidget *parent) :
 	QDockWidget(parent),
 	ui(new Ui::TransformDock), m_selected_mesh(-1)
 {
-	 scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
-	 scale_all_prev = scale_xyz_prev[0] = scale_xyz_prev[1] = scale_xyz_prev[2] = 1.;
-
 	 ui->setupUi(this);
-	 ui->doubleSpinBox->setValue(scale_all);
-	 ui->horizontalSlider->setValue(scale_all);
 
 	 ui->cbMeshIdx->setEditable(false);
 	 setMeshCount(0, QStringList());
+
+	 reset(true);
 }
 
 TransformDock::~TransformDock()
 {
 	delete ui;
+}
+
+void TransformDock::reset(bool reset_prev_values)
+{
+	// reset preview values
+	scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
+	if (reset_prev_values)
+		scale_all_prev = scale_xyz_prev[0] = scale_xyz_prev[1] = scale_xyz_prev[2] = 1.;
+
+	// UI
+	setScaleValueOnUI(scale_all);
 }
 
 void TransformDock::setMeshCount(int value, QStringList names)
@@ -47,7 +55,7 @@ void TransformDock::setMeshCount(int value, QStringList names)
 	ui->cbMeshIdx->blockSignals(true);
 
 	ui->cbMeshIdx->clear();
-	ui->cbMeshIdx->addItem("All");
+	ui->cbMeshIdx->addItem("All meshes");
 	for (int i = 1; i <= value; ++i)
 	{
 		ui->cbMeshIdx->addItem(QString::number(i) + " [" + names.value(i - 1) + "]");
@@ -87,13 +95,18 @@ void TransformDock::acceptTransformations()
 
 	emit applyTransformations();
 
-	// reset preview values
-	scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
+	// reset now
+	reset();
+}
 
-	emit scaleXYZChanged(scale_all);
-	emit scaleXChanged(scale_xyz[0]);
-	emit scaleYChanged(scale_xyz[1]);
-	emit scaleZChanged(scale_xyz[2]);
+void TransformDock::setScaleValueOnUI(double value)
+{
+	ui->doubleSpinBox->blockSignals(true);
+	ui->doubleSpinBox->setValue(value);
+	ui->doubleSpinBox->blockSignals(false);
+	ui->horizontalSlider->blockSignals(true);
+	ui->horizontalSlider->setValue(value);
+	ui->horizontalSlider->blockSignals(false);
 }
 
 void TransformDock::closeEvent(QCloseEvent *event)
@@ -147,36 +160,16 @@ void TransformDock::on_comboBox_currentIndexChanged(int index)
 	switch(index)
 	{
 	case 0: //XYZ
-		ui->doubleSpinBox->blockSignals(true);
-		ui->doubleSpinBox->setValue(scale_all);
-		ui->doubleSpinBox->blockSignals(false);
-		ui->horizontalSlider->blockSignals(true);
-		ui->horizontalSlider->setValue(scale_all);
-		ui->horizontalSlider->blockSignals(false);
+		setScaleValueOnUI(scale_all);
 		break;
 	case 1: // X
-		ui->doubleSpinBox->blockSignals(true);
-		ui->doubleSpinBox->setValue(scale_xyz[0]);
-		ui->doubleSpinBox->blockSignals(false);
-		ui->horizontalSlider->blockSignals(true);
-		ui->horizontalSlider->setValue(scale_xyz[0]);
-		ui->horizontalSlider->blockSignals(false);
+		setScaleValueOnUI(scale_xyz[0]);
 		break;
 	case 2: // Y
-		ui->doubleSpinBox->blockSignals(true);
-		ui->doubleSpinBox->setValue(scale_xyz[1]);
-		ui->doubleSpinBox->blockSignals(false);
-		ui->horizontalSlider->blockSignals(true);
-		ui->horizontalSlider->setValue(scale_xyz[1]);
-		ui->horizontalSlider->blockSignals(false);
+		setScaleValueOnUI(scale_xyz[1]);
 		break;
 	case 3: // Z
-		ui->doubleSpinBox->blockSignals(true);
-		ui->doubleSpinBox->setValue(scale_xyz[2]);
-		ui->doubleSpinBox->blockSignals(false);
-		ui->horizontalSlider->blockSignals(true);
-		ui->horizontalSlider->setValue(scale_xyz[2]);
-		ui->horizontalSlider->blockSignals(false);
+		setScaleValueOnUI(scale_xyz[2]);
 		break;
 	}
 }
