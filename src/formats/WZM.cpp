@@ -442,7 +442,7 @@ bool WZM::importFrom3DS(std::string fileName)
 #else
 	if (f->nmaterials >= 0)
 	{
-		setTextureName(WZM_TEX_DIFFUSE, *f->materials)->texture1_map.name);
+		setTextureName(WZM_TEX_DIFFUSE, (*f->materials)->texture1_map.name);
 		if (f->nmaterials > 1)
 		{
 			std::cout << "WZM::importFrom3ds - Multiple textures not supported!\n";
