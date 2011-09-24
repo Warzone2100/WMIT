@@ -1149,6 +1149,8 @@ void Mesh::recalculateBoundData()
 
 	if (m_vertexArray.size())
 	{
+		min = max = m_vertexArray.at(0);
+
 		std::vector<WZMVertex>::const_iterator vertIt;
 		for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt )
 		{
