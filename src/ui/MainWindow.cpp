@@ -192,7 +192,7 @@ void MainWindow::s_fileOpen()
 	{
 		textureFileNfo.setFile(selectedTextureFilePath);
 		model.setTextureName(WZM_TEX_DIFFUSE, textureFileNfo.fileName().toStdString());
-		model.setRenderTexture(selectedTextureFilePath);
+		model.loadGLRenderTexture(WZM_TEX_DIFFUSE, selectedTextureFilePath);
 	}
 
 	selectedTextureFilePath = importDialog->tcmaskFilePath();
@@ -200,9 +200,9 @@ void MainWindow::s_fileOpen()
 	{
 		textureFileNfo.setFile(selectedTextureFilePath);
 		model.setTextureName(WZM_TEX_TCMASK, textureFileNfo.fileName().toStdString());
-		model.setTCMaskTexture(selectedTextureFilePath);
+		model.loadGLRenderTexture(WZM_TEX_TCMASK, selectedTextureFilePath);
 
-		if (ui->centralWidget->tcmaskSupport() & FixedPipeline)
+		/*if (ui->centralWidget->tcmaskSupport() & FixedPipeline)
 		{
 			ui->actionFixed_Pipeline->setEnabled(true);
 		}
@@ -218,7 +218,7 @@ void MainWindow::s_fileOpen()
 		else if (ui->actionFixed_Pipeline->isEnabled())
 		{
 			ui->actionFixed_Pipeline->setChecked(true);
-		}
+		}*/
 	}
 	else if (model.couldHaveTCArrays())
 	{
@@ -384,6 +384,19 @@ void MainWindow::on_actionSave_As_triggered()
 void MainWindow::_on_viewerInitialized()
 {
 	ui->centralWidget->addToRenderList(&model);
+
+	// Only do it AFTER model was set to new render context
+	if (ui->centralWidget->loadShader(WZ_SHADER_PIE3, WMIT_SHADER_PIE3_DEFPATH_VERT, WMIT_SHADER_PIE3_DEFPATH_FRAG))
+	{
+		model.setActiveShader(WZ_SHADER_PIE3);
+	}
+
+	// FIXME: check for frag file too
+	QFileInfo finfo("./pie3.vert");
+	if (finfo.exists() && ui->centralWidget->loadShader(WZ_SHADER_PIE3_USER, "./pie3.vert", "./pie3.frag"))
+	{
+		model.setActiveShader(WZ_SHADER_PIE3_USER);
+	}
 }
 
 void MainWindow::_on_scaleXYZChanged(double val)
@@ -424,7 +437,7 @@ void MainWindow::_on_mirrorAxis(int axis)
 
 void MainWindow::on_actionFixed_Pipeline_toggled(bool checked)
 {
-	if (checked)
+/*	if (checked)
 	{
 		ui->actionShaders->setChecked(false);
 		ui->centralWidget->setTCMaskMode(FixedPipeline);
@@ -435,12 +448,12 @@ void MainWindow::on_actionFixed_Pipeline_toggled(bool checked)
 		{
 			ui->centralWidget->setTCMaskMode(None);
 		}
-	}
+	}*/
 }
 
 void MainWindow::on_actionShaders_toggled(bool checked)
 {
-	if (checked)
+/*	if (checked)
 	{
 		ui->actionFixed_Pipeline->setChecked(false);
 		ui->centralWidget->setTCMaskMode(Shaders);
@@ -451,7 +464,7 @@ void MainWindow::on_actionShaders_toggled(bool checked)
 		{
 			ui->centralWidget->setTCMaskMode(None);
 		}
-	}
+	}*/
 }
 
 void MainWindow::on_actionClose_triggered()

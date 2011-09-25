@@ -20,10 +20,6 @@
 #include "QWZM.hpp"
 #include "Pie.hpp"
 
-#include <QString>
-
-#include "IGLTextureManager.hpp"
-
 #ifdef CPP0X_AVAILABLE
 #  define CPP0X_FEATURED(x) x
 #else
@@ -32,7 +28,7 @@
 
 const GLint QWZM::winding = GL_CW;
 
-QWZM::QWZM(QObject *parent): QObject(parent)
+QWZM::QWZM(QObject *parent): QObject(parent), m_tcmaskColour(0, 0x60, 0, 0xFF)
 {
 	defaultConstructor();
 }
@@ -44,26 +40,27 @@ QWZM::~QWZM()
 
 void QWZM::render()
 {
-	const GLfloat tcColour[4] = {160/255.f,32/255.f,240/255.f,255/255.f}; // temporary...
-	const bool tcmask = currentTCMaskMode() != None && m_tcm != 0;
-
 	GLint frontFace;
 	glGetIntegerv(GL_FRONT_FACE, &frontFace);
 
-
+	glPushMatrix();
 	glPushAttrib(GL_TEXTURE_BIT);
 	glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
 
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glScalef(-1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
+
+	// before shaders
+	drawCenterPoint();
+
+	glColor3f(1.f, 1.f, 1.f);
+
+	if (setupTextureUnits(m_active_shader))
+		bindShader(m_active_shader);
 
 	glClientActiveTexture(GL_TEXTURE0);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-
-	glPushMatrix();
 
 	// check for desired
 	if (frontFace != winding)
@@ -71,31 +68,9 @@ void QWZM::render()
 		glFrontFace(winding);
 	}
 
-	glScalef(-1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
-
-	drawCenterPoint();
-
 	if (m_active_mesh < 0)
 	{
 		glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
-
-	}
-
-	if (tcmask)
-	{
-		setTCMaskEnvironment(tcColour);
-
-		if (currentTCMaskMode() == FixedPipeline)
-		{
-			glClientActiveTexture(GL_TEXTURE1);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		}
-		else
-		{
-			glActiveTexture(GL_TEXTURE1);
-			glEnable(GL_TEXTURE_2D);
-		}
-		glBindTexture(GL_TEXTURE_2D, m_tcm);
 	}
 
 	for (int i = 0; i < (int)m_meshes.size(); ++i)
@@ -110,13 +85,6 @@ void QWZM::render()
 		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
 		glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArrays[0][0]);
 
-		if (currentTCMaskMode() == FixedPipeline)
-		{
-			glClientActiveTexture(GL_TEXTURE0);
-			glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArrays[0][0]);
-			glClientActiveTexture(GL_TEXTURE1);
-		}
-
 		CPP0X_FEATURED(static_assert(sizeof(WZMVertex) == sizeof(GLfloat)*3, "WZMVertex has become fat."));
 		glVertexPointer(3, GL_FLOAT, 0, &msh.m_vertexArray[0]);
 
@@ -129,13 +97,14 @@ void QWZM::render()
 		}
 	}
 
-	resetTCMaskEnvironment();
-
 	// set it back
 	if (frontFace != winding)
 	{
 		glFrontFace(frontFace);
 	}
+
+	releaseShader(m_active_shader);
+	clearTextureUnits(m_active_shader);
 
 	glPopMatrix();
 	glPopClientAttrib();
@@ -162,9 +131,14 @@ void QWZM::drawCenterPoint()
 	y = center.y() * scale_all * scale_xyz[1];
 	z = center.z() * scale_all * scale_xyz[2];
 
+	GLboolean lighting;
+	glGetBooleanv(GL_LIGHTING, &lighting);
+	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
+
 	glEnable(GL_LINE_SMOOTH);
 	glLineWidth(2);
+
 	glColor3f(1.f, 1.f, 1.f);
 
 	glBegin(GL_LINES);
@@ -177,6 +151,10 @@ void QWZM::drawCenterPoint()
 	glEnd();
 
 	glEnable(GL_TEXTURE_2D);
+	if (lighting)
+	{
+		glEnable(GL_LIGHTING);
+	}
 #endif
 }
 
@@ -189,76 +167,74 @@ void QWZM::clear()
 {
 	WZM::clear();
 
-	clearRenderTexture();
-	clearTCMaskTexture();
+	std::map<wzm_texture_type_t, GLuint>::iterator it;
+	for (it = m_gl_textures.begin(); it != m_gl_textures.end(); it++)
+	{
+		if (it->second)
+		{
+			deleteTexture(it->second);
+			it->second = 0;
+		}
+	}
 
 	defaultConstructor();
 
 	meshCountChanged(meshes(), getMeshNames());
 }
 
-void QWZM::setRenderTexture(QString fileName)
+void QWZM::loadGLRenderTexture(wzm_texture_type_t type, QString fileName)
 {
-	clearRenderTexture();
-	m_texture = createTexture(fileName).id();
+	deleteTexture(m_gl_textures[type]);
+	m_gl_textures[type] = createTexture(fileName).id();
 }
 
-void QWZM::clearRenderTexture()
+void QWZM::unloadGLRenderTexture(wzm_texture_type_t type)
 {
-	if (m_texture)
+	std::map<wzm_texture_type_t, GLuint>::iterator it;
+	it = m_gl_textures.find(type);
+	if (it != m_gl_textures.end())
 	{
-		deleteTexture(m_texture);
-		m_texture = 0;
+		deleteTexture(it->second);
+		it->second = 0;
 	}
+}
+
+bool QWZM::hasGLRenderTexture(wzm_texture_type_t type) const
+{
+	std::map<wzm_texture_type_t, GLuint>::const_iterator it;
+	it = m_gl_textures.find(type);
+	if (it != m_gl_textures.end() && it->second)
+		return true;
+
+	return false;
 }
 
 void QWZM::setTextureManager(IGLTextureManager * manager)
 {
-	QString tex_fileName, tcm_fileName;
+	std::map<wzm_texture_type_t, QString> texture_names;
+	std::map<wzm_texture_type_t, QString>::iterator it_names;
+	std::map<wzm_texture_type_t, GLuint>::iterator it;
 
-	if (m_texture != 0)
+	for (it = m_gl_textures.begin(); it != m_gl_textures.end(); it++)
 	{
-		tex_fileName = idToFilePath(m_texture);
-		deleteTexture(m_texture);
+		if (it->second)
+		{
+			texture_names[it->first] = idToFilePath(it->second);
+			deleteTexture(it->second);
+			it->second = 0;
+		}
 	}
-	if (m_tcm != 0)
-	{
-		tcm_fileName = idToFilePath(m_tcm);
-		deleteTexture(m_tcm);
-	}
 
-	ATexturedRenderable::setTextureManager(manager);
+	IGLTexturedRenderable::setTextureManager(manager);
 
-	if (m_texture != 0)
+	for (it_names = texture_names.begin(); it_names != texture_names.end(); it_names++)
 	{
-		m_texture = createTexture(tex_fileName).id();
-	}
-	if (m_tcm != 0)
-	{
-		m_tcm = createTexture(tcm_fileName).id();
-	}
-}
-
-void QWZM::setTCMaskTexture(QString fileName)
-{
-	clearTCMaskTexture();
-	m_tcm = createTexture(fileName).id();
-}
-
-void QWZM::clearTCMaskTexture()
-{
-	if (m_tcm)
-	{
-		deleteTexture(m_tcm);
-		m_tcm = 0;
+		m_gl_textures[it_names->first] = createTexture(it_names->second).id();
 	}
 }
 
 inline void QWZM::defaultConstructor()
 {
-	m_texture = 0;
-	m_tcm = 0;
-
 	m_active_mesh = -1;
 
 	resetAllPendingChanges();
@@ -275,6 +251,156 @@ QStringList QWZM::getMeshNames()
 	}
 
 	return names;
+}
+
+static inline void activateAndBindTexture(int unit, GLuint texture)
+{
+	glActiveTexture(GL_TEXTURE0 + unit);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texture);
+}
+
+static inline void deactivateTexture(int unit)
+{
+	glActiveTexture(GL_TEXTURE0 + unit);
+	glDisable(GL_TEXTURE_2D);
+}
+
+bool QWZM::setupTextureUnits(int type)
+{
+	switch (type)
+	{
+	case WZ_SHADER_PIE3:
+	case WZ_SHADER_PIE3_USER:
+		if (hasGLRenderTexture(WZM_TEX_DIFFUSE))
+			activateAndBindTexture(0, m_gl_textures[WZM_TEX_DIFFUSE]);
+		else
+			return false;
+
+		if (hasGLRenderTexture(WZM_TEX_TCMASK))
+			activateAndBindTexture(1, m_gl_textures[WZM_TEX_TCMASK]);
+
+		if (hasGLRenderTexture(WZM_TEX_NORMALMAP))
+			activateAndBindTexture(2, m_gl_textures[WZM_TEX_NORMALMAP]);
+		break;
+	}
+
+	return true;
+}
+
+void QWZM::clearTextureUnits(int type)
+{
+	switch (type)
+	{
+	case WZ_SHADER_PIE3:
+	case WZ_SHADER_PIE3_USER:
+		deactivateTexture(2);
+		deactivateTexture(1);
+		deactivateTexture(0);
+		break;
+	}
+}
+
+bool QWZM::initShader(int type)
+{
+	if (!m_shaderman)
+		return false;
+
+	QGLShaderProgram* shader = m_shaderman->getShader(type);
+
+	if (!shader)
+		return false;
+
+	shader->bind();
+
+	switch (type)
+	{
+	case WZ_SHADER_PIE3:
+	case WZ_SHADER_PIE3_USER:
+		int baseTexLoc, tcTexLoc, nmTexLoc,
+				tcFlagLoc, tcColorLoc, nmFlagLoc, fogFlagLoc;
+
+		baseTexLoc = shader->uniformLocation("Texture0");
+		tcTexLoc = shader->uniformLocation("Texture1");
+		nmTexLoc = shader->uniformLocation("Texture2");
+
+		tcFlagLoc = shader->uniformLocation("tcmask");
+		tcColorLoc = shader->uniformLocation("teamcolour");
+		nmFlagLoc = shader->uniformLocation("normalmap");
+		fogFlagLoc = shader->uniformLocation("fogEnabled");
+
+		shader->setUniformValue(baseTexLoc, GLint(0));
+		shader->setUniformValue(tcTexLoc, GLint(1));
+		shader->setUniformValue(nmTexLoc, GLint(2));
+
+		shader->setUniformValue(tcFlagLoc, GLint(0));
+		shader->setUniformValue(tcColorLoc,
+					m_tcmaskColour.redF(), m_tcmaskColour.greenF(), m_tcmaskColour.blueF(), m_tcmaskColour.alphaF());
+		shader->setUniformValue(nmFlagLoc, GLint(0));
+		shader->setUniformValue(fogFlagLoc, GLint(0));
+
+		break;
+	}
+
+	shader->release();
+	return true;
+}
+
+bool QWZM::bindShader(int type)
+{
+	if (!m_shaderman)
+		return false;
+
+	QGLShaderProgram* shader = m_shaderman->getShader(type);
+
+	if (!shader)
+		return false;
+
+	shader->bind();
+
+
+
+	switch (type)
+	{
+	case WZ_SHADER_PIE3:
+	case WZ_SHADER_PIE3_USER:
+		int uniloc = shader->uniformLocation("tcmask");
+		if (hasGLRenderTexture(WZM_TEX_TCMASK))
+		{
+			shader->setUniformValue(uniloc, GLint(1));
+			uniloc = shader->uniformLocation("teamcolour");
+			shader->setUniformValue(uniloc,
+						m_tcmaskColour.redF(), m_tcmaskColour.greenF(), m_tcmaskColour.blueF(), m_tcmaskColour.alphaF());
+		}
+		else
+		{
+			shader->setUniformValue(uniloc, GLint(0));
+		}
+
+		uniloc = shader->uniformLocation("normalmap");
+		if (hasGLRenderTexture(WZM_TEX_NORMALMAP))
+		{
+			shader->setUniformValue(uniloc, GLint(1));
+		}
+		else
+		{
+			shader->setUniformValue(uniloc, GLint(0));
+		}
+		break;
+	}
+
+	return true;
+}
+
+void QWZM::releaseShader(int type)
+{
+	if (!m_shaderman)
+		return;
+
+	QGLShaderProgram* shader = m_shaderman->getShader(type);
+
+	if (shader)
+		shader->release();
 }
 
 /*********** SLOTS ************/

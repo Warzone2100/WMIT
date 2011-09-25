@@ -21,10 +21,7 @@ HEADERS += \
     src/Generic.hpp \
     src/basic/VectorTypes.hpp \
     src/basic/Vector.hpp \
-    src/basic/TexturedRenderable.hpp \
-    src/basic/TCMaskRenderable.hpp \
     src/basic/Polygon.hpp \
-    src/basic/ITCMaskProvider.hpp \
     src/basic/IGLTextureManager.hpp \
     src/basic/IGLRenderable.hpp \
     src/basic/IAnimatable.hpp \
@@ -32,7 +29,10 @@ HEADERS += \
     3rdparty/GLee/GLee.h \
     src/widgets/QWZM.hpp \
     src/widgets/QtGLView.hpp \
-    src/wmit.h
+    src/wmit.h \
+    src/basic/IGLTexturedRenderable.hpp \
+    src/basic/IGLShaderManager.h \
+    src/basic/IGLShaderRenderable.h
     
 SOURCES += \
     src/formats/WZM.cpp \

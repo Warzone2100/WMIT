@@ -17,14 +17,12 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IGLTEXTUREMANAGER_HPP
-#define IGLTEXTUREMANAGER_HPP
+#pragma once
 
 #include <QString>
 
 #include "GLTexture.hpp"
 
-class QString;
 class IGLTextureManager
 {
 public:
@@ -35,4 +33,3 @@ public:
 	virtual void deleteAllTextures() = 0;
 	virtual QString idToFilePath(GLuint id) = 0;
 };
-#endif // IGLTEXTUREMANAGER_HPP

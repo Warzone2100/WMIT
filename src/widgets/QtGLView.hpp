@@ -32,15 +32,14 @@
 
 #include "GLTexture.hpp"
 #include "IGLTextureManager.hpp"
-
-#include "ITCMaskProvider.hpp"
+#include "IGLShaderManager.h"
 
 class IGLRenderable;
 class ITexturedRenderable;
 class ITCMaskRenderable;
 class QGLShaderProgram;
 
-class QtGLView : public QGLViewer , public IGLTextureManager, public ITCMaskProvider
+class QtGLView : public QGLViewer, public IGLTextureManager, public IGLShaderManager
 {
 	Q_OBJECT
 public:
@@ -51,32 +50,25 @@ public:
 	void postDraw();
 
 	void addToRenderList(IGLRenderable* object);
-	void addToRenderList(ITexturedRenderable* object);
-	void addToRenderList(ITCMaskRenderable* object);
 	void removeFromRenderList(IGLRenderable* object);
 	void clearRenderList();
 
 	/// GLTextureManager components
-	GLTexture createTexture(const QString& fileName);
+	virtual GLTexture createTexture(const QString& fileName);
 	GLTexture bindTexture(const QString& fileName); // We're hiding a few QGLWidget functions on purpose
 	virtual QString idToFilePath(GLuint id);
-	void deleteTexture(GLuint id);
-	void deleteTexture(const QString& fileName);
-	void deleteAllTextures();
+	virtual void deleteTexture(GLuint id);
+	virtual void deleteTexture(const QString& fileName);
+	virtual void deleteAllTextures();
 
-	/// TCMaskProvider components
-	unsigned tcmaskSupport() const;
-	TCMaskMethod currentTCMaskMode() const;
-	void setTCMaskMode(TCMaskMethod method);
-	void setTCMaskEnvironment(const GLfloat tcmaskColor[4]);
-	void setTCMaskEnvironment(const QColor& tcmaskColour);
-	void resetTCMaskEnvironment();
+	/// IGLShaderManager component
+	virtual bool loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag);
+	virtual void unloadShader(int type);
 
 signals:
 	void viewerInitialized();
 
 protected:
-
 	void init();
 
 	void timerEvent(QTimerEvent* event);
@@ -92,7 +84,6 @@ protected:
 	};
 
 private:
-
 	QList<IGLRenderable*> renderList;
 
 	/// GLTextureManager components
@@ -105,12 +96,6 @@ private:
 
 	QFileSystemWatcher textureUpdater;
 	QBasicTimer updateTimer;
-
-	/// TCMaskProvider components
-	QGLShaderProgram* m_tcmaskShader;
-	int m_colorLoc, m_baseTexLoc, m_tcTexLoc;
-	TCMaskMethod m_currentMode;
-	unsigned m_tcmSupport;
 
 private slots:
 	void textureChanged(const QString& fileName);

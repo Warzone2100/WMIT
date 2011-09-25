@@ -28,15 +28,17 @@
 
 #include "WZM.hpp"
 
-#include "IGLRenderable.hpp"
-#include "TexturedRenderable.hpp"
-#include "TCMaskRenderable.hpp"
+//#include "IGLRenderable.hpp"
 #include "IAnimatable.hpp"
+#include "IGLTexturedRenderable.hpp"
+#include "IGLShaderRenderable.h"
 
-class IGLTextureManager;
+enum wz_shader_type_t {WZ_SHADER_NONE = 0, WZ_SHADER_PIE3, WZ_SHADER_PIE3_USER};
+
 class Pie3Model;
 
-class QWZM : public QObject, protected WZM, public ATCMaskRenderable, public IAnimatable
+class QWZM: public QObject, protected WZM, public IAnimatable,
+		public IGLTexturedRenderable, public IGLShaderRenderable
 {
 	Q_OBJECT
 public:
@@ -45,23 +47,45 @@ public:
 
 	void operator=(const WZM& wzm);
 
-	void render();
-	void animate();
-	//void setCenterPointState(bool draw = true);
-
-	void setRenderTexture(QString fileName);
-	void setTextureManager(IGLTextureManager * manager);
-	void clearRenderTexture();
-
-	void setTCMaskTexture(QString fileName);
-	void clearTCMaskTexture();
-	bool hasTCMaskTexture() const;
-
 	void clear();
-
 	QStringList getMeshNames();
 
-public: // WZM interface - mesh control border
+	// GLTexture controls
+	void loadGLRenderTexture(wzm_texture_type_t type, QString fileName);
+	void unloadGLRenderTexture(wzm_texture_type_t type);
+	bool hasGLRenderTexture(wzm_texture_type_t type) const;
+
+	// TCMask part
+	void setTCMaskEnvironment(const QColor& tcmaskColour);
+	void resetTCMaskEnvironment();
+	//void setCenterPointState(bool draw = true);
+signals:
+	void meshCountChanged(int, QStringList);
+
+public slots:
+	void setScaleXYZ(GLfloat xyz);
+	void setScaleX(GLfloat x);
+	void setScaleY(GLfloat y);
+	void setScaleZ(GLfloat z);
+	void slotMirrorAxis(int axis);
+
+	void setActiveMesh(int mesh = -1);
+	void applyTransformations();
+
+public:
+	/// IAnimatable
+	void animate();
+
+	/// IGLTexturedRenderable
+	void render();
+	void setTextureManager(IGLTextureManager * manager);
+
+	/// IGLShaderRenderable
+	bool initShader(int type);
+	bool bindShader(int type);
+	void releaseShader(int type);
+
+	/// WZM interface - mesh control border
 	virtual operator Pie3Model() const;
 	inline bool read(std::istream& in) {return WZM::read(in);}
 	void write(std::ostream& out) const;
@@ -81,35 +105,26 @@ public: // WZM interface - mesh control border
 	void addMesh (const Mesh& mesh);
 	void rmMesh (int index);
 
-signals:
-	void meshCountChanged(int, QStringList);
-
-public slots:
-	void setScaleXYZ(GLfloat xyz);
-	void setScaleX(GLfloat x);
-	void setScaleY(GLfloat y);
-	void setScaleZ(GLfloat z);
-	void slotMirrorAxis(int axis);
-
-	void setActiveMesh(int mesh = -1);
-	void applyTransformations();
-
 private:
 	Q_DISABLE_COPY(QWZM)
 	void defaultConstructor();
 	void drawCenterPoint();
 
+	bool setupTextureUnits(int type);
+	void clearTextureUnits(int type);
+
 	void applyPendingChangesToModel(WZM& model) const;
 	void resetAllPendingChanges();
 
-	GLuint m_texture, m_tcm;
+	std::map<wzm_texture_type_t, GLuint> m_gl_textures;
 
 	GLfloat scale_all, scale_xyz[3];
 	static const GLint winding;
 
 	int m_active_mesh;
-
 	bool m_pending_changes;
+
+	QColor m_tcmaskColour;
 };
 
 #endif // QWZM_HPP
