@@ -20,6 +20,7 @@
 #include <QtGui/QApplication>
 #include <QCoreApplication>
 #include <QTextCodec>
+#include <QSettings>
 
 #include "MainWindow.hpp"
 #include "wmit.h"
@@ -34,7 +35,10 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 	a.setApplicationName(WMIT_APPNAME);
 	a.setOrganizationName(WMIT_ORG);
+	QSettings::setDefaultFormat(QSettings::IniFormat);
+
 	MainWindow w;
 	w.show();
+
 	return a.exec();
 }
