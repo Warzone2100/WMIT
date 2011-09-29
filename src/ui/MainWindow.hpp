@@ -53,18 +53,14 @@ public:
 protected:
 	void changeEvent(QEvent *e);
 
-signals:
-	void textureSearchDirsChanged(QStringList);
-
 private slots:
-	void on_actionShaders_toggled(bool );
-	void on_actionFixed_Pipeline_toggled(bool );
 	void on_actionOpen_triggered();
 	void on_actionSave_As_triggered();
 	void on_actionSave_triggered();
 	void on_actionClose_triggered();
 	void on_actionTransform_triggered();
 	void on_actionUVEditor_toggled(bool );
+	void on_actionSetupTextures_triggered();
 
 	void _on_viewerInitialized();
 
@@ -75,8 +71,6 @@ private slots:
 	void _on_scaleZChanged(double);
 	void _on_reverseWindings(int mesh);
 	void _on_mirrorAxis(int axis);
-
-	void on_actionSetupTextures_triggered();
 
 private:
 	Ui::MainWindow* ui;

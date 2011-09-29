@@ -16,6 +16,9 @@
     <kerning>true</kerning>
    </font>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::PreventContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string>WMIT</string>
   </property>
@@ -61,20 +64,8 @@
     <addaction name="actionTransform"/>
     <addaction name="actionSetupTextures"/>
    </widget>
-   <widget class="QMenu" name="menuTeam_Colours">
-    <property name="title">
-     <string>Team Colours</string>
-    </property>
-    <addaction name="actionTexture_Frames"/>
-    <addaction name="separator"/>
-    <addaction name="actionCTCMask"/>
-    <addaction name="separator"/>
-    <addaction name="actionFixed_Pipeline"/>
-    <addaction name="actionShaders"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuModel"/>
-   <addaction name="menuTeam_Colours"/>
   </widget>
   <action name="actionExit">
    <property name="text">
@@ -93,61 +84,14 @@
    </property>
   </action>
   <action name="actionUVEditor">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="text">
     <string>UVEditor</string>
    </property>
    <property name="toolTip">
     <string>UVEditor</string>
    </property>
-  </action>
-  <action name="actionTexture_Frames">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
+   <property name="visible">
     <bool>false</bool>
-   </property>
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Texture Frames</string>
-   </property>
-  </action>
-  <action name="actionCTCMask">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>TCMask</string>
-   </property>
-   <property name="toolTip">
-    <string>TCMask</string>
-   </property>
-  </action>
-  <action name="actionFixed_Pipeline">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Fixed Pipeline (obsolete)</string>
-   </property>
-  </action>
-  <action name="actionShaders">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Shaders</string>
    </property>
   </action>
   <action name="actionSave_As">

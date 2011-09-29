@@ -411,38 +411,6 @@ void MainWindow::_on_mirrorAxis(int axis)
 	ui->centralWidget->updateGL();
 }
 
-void MainWindow::on_actionFixed_Pipeline_toggled(bool checked)
-{
-/*	if (checked)
-	{
-		ui->actionShaders->setChecked(false);
-		ui->centralWidget->setTCMaskMode(FixedPipeline);
-	}
-	else
-	{
-		if (!ui->actionShaders->isChecked())
-		{
-			ui->centralWidget->setTCMaskMode(None);
-		}
-	}*/
-}
-
-void MainWindow::on_actionShaders_toggled(bool checked)
-{
-/*	if (checked)
-	{
-		ui->actionFixed_Pipeline->setChecked(false);
-		ui->centralWidget->setTCMaskMode(Shaders);
-	}
-	else
-	{
-		if (!ui->actionFixed_Pipeline->isChecked())
-		{
-			ui->centralWidget->setTCMaskMode(None);
-		}
-	}*/
-}
-
 void MainWindow::on_actionClose_triggered()
 {
 	clear();
