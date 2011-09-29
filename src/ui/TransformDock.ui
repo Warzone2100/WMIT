@@ -13,7 +13,7 @@
   <property name="minimumSize">
    <size>
     <width>170</width>
-    <height>242</height>
+    <height>275</height>
    </size>
   </property>
   <property name="features">
@@ -131,9 +131,16 @@
         </rect>
        </property>
        <attribute name="label">
-        <string>Mirror, RW</string>
+        <string>Mirror</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QCheckBox" name="cbGlobalMirror">
+          <property name="text">
+           <string>Global mirror</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QPushButton" name="pbMirrorX">
           <property name="text">
@@ -155,6 +162,21 @@
           </property>
          </widget>
         </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="pageMisc">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>187</width>
+         <height>268</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Misc</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QPushButton" name="pb_revWindings">
           <property name="text">
@@ -163,20 +185,6 @@
          </widget>
         </item>
        </layout>
-      </widget>
-      <widget class="QWidget" name="pageMisc">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>98</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <attribute name="label">
-        <string>Misc</string>
-       </attribute>
-       <layout class="QFormLayout" name="formLayout"/>
       </widget>
      </widget>
     </item>

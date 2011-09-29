@@ -188,15 +188,15 @@ void TransformDock::on_cbMeshIdx_currentIndexChanged(int index)
 
 void TransformDock::on_pbMirrorX_clicked()
 {
-	emit mirrorAxis(0);
+	emit mirrorAxis(ui->cbGlobalMirror->isChecked() ? 3 : 0);
 }
 
 void TransformDock::on_pbMirrorY_clicked()
 {
-	emit mirrorAxis(1);
+	emit mirrorAxis(ui->cbGlobalMirror->isChecked() ? 4 : 1);
 }
 
 void TransformDock::on_pbMirrorZ_clicked()
 {
-	emit mirrorAxis(2);
+	emit mirrorAxis(ui->cbGlobalMirror->isChecked() ? 5 : 2);
 }
