@@ -93,7 +93,7 @@ private:
 
 	QWZM model;
 
-	bool fireTexConfigDialog(const bool reinit = false);
+	bool fireTextureDialog(const bool reinit = false);
 };
 
 #endif // MAINWINDOW_HPP

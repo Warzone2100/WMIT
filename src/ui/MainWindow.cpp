@@ -182,14 +182,14 @@ void MainWindow::loadModel(const QString& file)
 	ui->actionClose->setEnabled(true);
 	ui->actionSetupTextures->setEnabled(true);
 
-	if (!fireTexConfigDialog(true))
+	if (!fireTextureDialog(true))
 	{
 		clear();
 		return;
 	}
 }
 
-bool MainWindow::fireTexConfigDialog(const bool reinit)
+bool MainWindow::fireTextureDialog(const bool reinit)
 {
 	QMap<wzm_texture_type_t, QString> texmap;
 
@@ -455,5 +455,5 @@ void MainWindow::on_actionTransform_triggered()
 
 void MainWindow::on_actionSetupTextures_triggered()
 {
-	fireTexConfigDialog();
+	fireTextureDialog();
 }
