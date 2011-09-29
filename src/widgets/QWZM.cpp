@@ -240,7 +240,7 @@ inline void QWZM::defaultConstructor()
 	resetAllPendingChanges();
 }
 
-QStringList QWZM::getMeshNames()
+QStringList QWZM::getMeshNames() const
 {
 	QStringList names;
 	std::vector<Mesh>::const_iterator it;
@@ -251,6 +251,20 @@ QStringList QWZM::getMeshNames()
 	}
 
 	return names;
+}
+
+void QWZM::getTexturesMap(QMap<wzm_texture_type_t, QString>& map) const
+{
+	std::map<wzm_texture_type_t, std::string>::const_iterator it_names;
+
+	map.clear();
+	for (it_names = m_textures.begin(); it_names != m_textures.end(); ++it_names)
+	{
+		if (!it_names->second.empty())
+		{
+			map[it_names->first] = QString::fromStdString(it_names->second);
+		}
+	}
 }
 
 static inline void activateAndBindTexture(int unit, GLuint texture)

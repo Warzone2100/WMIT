@@ -23,12 +23,11 @@
 #include <QString>
 #include <QStringList>
 #include <QObject>
+#include <QMap>
 
 #include "GLee.h"
 
 #include "WZM.hpp"
-
-//#include "IGLRenderable.hpp"
 #include "IAnimatable.hpp"
 #include "IGLTexturedRenderable.hpp"
 #include "IGLShaderRenderable.h"
@@ -48,7 +47,8 @@ public:
 	void operator=(const WZM& wzm);
 
 	void clear();
-	QStringList getMeshNames();
+	QStringList getMeshNames() const;
+	void getTexturesMap(QMap<wzm_texture_type_t, QString>& map) const;
 
 	// GLTexture controls
 	void loadGLRenderTexture(wzm_texture_type_t type, QString fileName);

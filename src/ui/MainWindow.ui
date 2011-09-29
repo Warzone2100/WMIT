@@ -58,8 +58,6 @@
     <property name="title">
      <string>Textures</string>
     </property>
-    <addaction name="actionTCMask"/>
-    <addaction name="actionChoose_Texture"/>
    </widget>
    <widget class="QMenu" name="menuTeam_Colours">
     <property name="title">

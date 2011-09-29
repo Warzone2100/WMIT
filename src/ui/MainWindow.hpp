@@ -34,6 +34,7 @@ class TransformDock;
 class ConfigDialog;
 class ImportDialog;
 class ExportDialog;
+class TextureDialog;
 class UVEditor;
 
 namespace Ui {
@@ -47,6 +48,8 @@ public:
 	~MainWindow();
 
 	void clear();
+
+	void loadModel(const QString& file);
 
 protected:
 	void changeEvent(QEvent *e);
@@ -67,7 +70,6 @@ private slots:
 	void on_actionTransformWidget_triggered();
 	void on_actionUVEditor_toggled(bool );
 
-	void s_fileOpen();
 	void s_updateTexSearchDirs(const QList<QPair<bool,QString> >&);
 
 	void _on_viewerInitialized();
@@ -82,10 +84,13 @@ private slots:
 
 private:
 	Ui::MainWindow* ui;
+
 	ConfigDialog* configDialog;
 	ImportDialog* importDialog;
 	ExportDialog* exportDialog;
 	TransformDock* transformDock;
+
+	TextureDialog* m_textureDialog;
 	UVEditor* m_UVEditor;
 	QSettings* m_settings;
 

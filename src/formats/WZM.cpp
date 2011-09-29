@@ -524,6 +524,29 @@ std::string WZM::getTextureName(wzm_texture_type_t type) const
 	return std::string();
 }
 
+std::string WZM::texTypeToString(wzm_texture_type_t type)
+{
+	std::string str;
+
+	switch (type)
+	{
+	case WZM_TEX_DIFFUSE:
+		str = "Diffuse";
+		break;
+	case WZM_TEX_TCMASK:
+		str = "TCMask";
+		break;
+	case WZM_TEX_NORMALMAP:
+		str = "Normal map";
+		break;
+	default:
+		str = "Unknown!";
+	}
+
+	return str;
+}
+
+
 Mesh& WZM::getMesh(int index)
 {
 	return m_meshes.at(index);

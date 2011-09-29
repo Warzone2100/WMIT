@@ -32,7 +32,8 @@ HEADERS += \
     src/wmit.h \
     src/basic/IGLTexturedRenderable.hpp \
     src/basic/IGLShaderManager.h \
-    src/basic/IGLShaderRenderable.h
+    src/basic/IGLShaderRenderable.h \
+    src/ui/TextureDialog.h
     
 SOURCES += \
     src/formats/WZM.cpp \
@@ -53,7 +54,8 @@ SOURCES += \
     src/basic/GLTexture.cpp \
     3rdparty/GLee/GLee.c \
     src/widgets/QWZM.cpp \
-    src/widgets/QtGLView.cpp
+    src/widgets/QtGLView.cpp \
+    src/ui/TextureDialog.cpp
     
 FORMS += \
     src/ui/UVEditor.ui \
@@ -62,7 +64,8 @@ FORMS += \
     src/ui/MainWindow.ui \
     src/ui/ImportDialog.ui \
     src/ui/ExportDialog.ui \
-    src/ui/ConfigDialog.ui
+    src/ui/ConfigDialog.ui \
+    src/ui/TextureDialog.ui
     
 OTHER_FILES += \
     TODO.txt \

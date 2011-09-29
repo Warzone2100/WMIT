@@ -23,6 +23,7 @@
 #include "TransformDock.hpp"
 #include "ImportDialog.hpp"
 #include "ExportDialog.hpp"
+#include "TextureDialog.h"
 #include "UVEditor.hpp"
 
 #include <fstream>
@@ -44,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	importDialog(new ImportDialog(this)),
 	exportDialog(NULL),
 	transformDock(new TransformDock(this)),
+	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
 	m_settings(new QSettings(QSettings::IniFormat, QSettings::UserScope, WMIT_ORG, WMIT_APPNAME))
 {
@@ -59,8 +61,6 @@ MainWindow::MainWindow(QWidget *parent) :
 //	ui->menuBar->addAction(ui->actionUVEditor);
 
 	m_pathImport = m_settings->value(WMIT_SETTINGS_IMPORTVAL, QDir::currentPath()).toString();
-	importDialog->setWorkingDir(m_pathImport);
-
 	m_pathExport = m_settings->value(WMIT_SETTINGS_EXPORTVAL, QDir::currentPath()).toString();
 
 	configDialog->hide();
@@ -74,8 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	this->addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
 	connect(ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(_on_viewerInitialized()));
-	connect(importDialog, SIGNAL(accepted()), this, SLOT(s_fileOpen()));
-	connect(this, SIGNAL(textureSearchDirsChanged(QStringList)), importDialog, SLOT(scanForTextures(QStringList)));
+	connect(this, SIGNAL(textureSearchDirsChanged(QStringList)), m_textureDialog, SLOT(setSearchDirs(QStringList)));
 	connect(configDialog, SIGNAL(updateTextureSearchDirs(QList<QPair<bool,QString> >)), this, SLOT(s_updateTexSearchDirs(const QList<QPair<bool,QString> >&)));
 	connect(this, SIGNAL(textureSearchDirsChanged(QStringList)), configDialog, SLOT(setTextureSearchDirs(QStringList)));
 
@@ -127,55 +126,66 @@ void MainWindow::changeEvent(QEvent *e)
 	}
 }
 
-void MainWindow::s_fileOpen()
+void MainWindow::loadModel(const QString& file)
 {
-	QFileInfo modelFileNfo(importDialog->modelFilePath());
+	QFileInfo modelFileNfo(file);
+	bool read_success = false;
 	std::ifstream f;
+	wmit_filetype_t type;
+
 	if (!modelFileNfo.exists())
 	{
 		return;
 	}
 
-	bool read_success = false;
-
-	// refresh import working dir
-	m_pathImport = importDialog->getWorkingDir();
-	m_settings->setValue(WMIT_SETTINGS_IMPORTVAL, m_pathImport);
-
 	if (modelFileNfo.completeSuffix().compare(QString("wzm"), Qt::CaseInsensitive) == 0)
 	{
-		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in | std::ios::binary);
-		read_success = model.read(f);
+		type = WMIT_FT_WZM;
 	}
-	else if(modelFileNfo.completeSuffix().compare(QString("pie"), Qt::CaseInsensitive) == 0)
+	else if (modelFileNfo.completeSuffix().compare(QString("3ds"), Qt::CaseInsensitive) == 0)
 	{
-		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in | std::ios::binary);
-		int version = pieVersion(f);
-		if (version == 3)
-		{
-			Pie3Model p3;
-			read_success = p3.read(f);
-			if (read_success)
-				model = WZM(p3);
-		}
-		else if (version == 2)
+		type = WMIT_FT_3DS;
+	}
+	else if (modelFileNfo.completeSuffix().compare(QString("obj"), Qt::CaseInsensitive) == 0)
+	{
+		type = WMIT_FT_OBJ;
+	}
+	else
+	{
+		type = WMIT_FT_PIE;
+	}
+
+	f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in | std::ios::binary);
+
+	switch (type)
+	{
+	case WMIT_FT_WZM:
+		read_success = model.read(f);
+		break;
+	case WMIT_FT_3DS:
+		read_success = model.importFrom3DS(std::string(modelFileNfo.absoluteFilePath().toLocal8Bit().constData()));
+		break;
+	case WMIT_FT_OBJ:
+		read_success = model.importFromOBJ(f);
+		break;
+	case WMIT_FT_PIE:
+	default:
+		int pieversion = pieVersion(f);
+		if (pieversion <= 2)
 		{
 			Pie2Model p2;
 			read_success = p2.read(f);
 			if (read_success)
 				model = WZM(Pie3Model(p2));
 		}
+		else // 3 or higher
+		{
+			Pie3Model p3;
+			read_success = p3.read(f);
+			if (read_success)
+				model = WZM(p3);
+		}
 	}
-	else if(modelFileNfo.completeSuffix().compare(QString("3ds"), Qt::CaseInsensitive) == 0)
-	{
-		read_success = model.importFrom3DS(std::string(modelFileNfo.absoluteFilePath().toLocal8Bit().constData()));
-	}
-	else if(modelFileNfo.completeSuffix().compare(QString("obj"), Qt::CaseInsensitive) == 0)
-	{
-		f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in | std::ios::binary);
-		read_success = model.importFromOBJ(f);
-	}
-
 
 	// Bail out on error, clear app state
 	if (!read_success)
@@ -186,47 +196,33 @@ void MainWindow::s_fileOpen()
 
 	m_currentFile = modelFileNfo.absoluteFilePath();
 
-	QFileInfo textureFileNfo;
-	QString selectedTextureFilePath = importDialog->textureFilePath();
-	if (!selectedTextureFilePath.isEmpty())
-	{
-		textureFileNfo.setFile(selectedTextureFilePath);
-		model.setTextureName(WZM_TEX_DIFFUSE, textureFileNfo.fileName().toStdString());
-		model.loadGLRenderTexture(WZM_TEX_DIFFUSE, selectedTextureFilePath);
-	}
-
-	selectedTextureFilePath = importDialog->tcmaskFilePath();
-	if (!selectedTextureFilePath.isEmpty())
-	{
-		textureFileNfo.setFile(selectedTextureFilePath);
-		model.setTextureName(WZM_TEX_TCMASK, textureFileNfo.fileName().toStdString());
-		model.loadGLRenderTexture(WZM_TEX_TCMASK, selectedTextureFilePath);
-
-		/*if (ui->centralWidget->tcmaskSupport() & FixedPipeline)
-		{
-			ui->actionFixed_Pipeline->setEnabled(true);
-		}
-		if (ui->centralWidget->tcmaskSupport() & Shaders)
-		{
-			ui->actionShaders->setEnabled(true);
-		}
-
-		if (ui->actionShaders->isEnabled())
-		{
-			ui->actionShaders->setChecked(true);
-		}
-		else if (ui->actionFixed_Pipeline->isEnabled())
-		{
-			ui->actionFixed_Pipeline->setChecked(true);
-		}*/
-	}
-	else if (model.couldHaveTCArrays())
-	{
-		ui->actionTexture_Frames->setEnabled(true);
-	}
-
 	setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
 	ui->actionClose->setEnabled(true);
+
+	QMap<wzm_texture_type_t, QString> texmap;
+	model.getTexturesMap(texmap);
+	m_textureDialog->setTexturesMap(texmap);
+	m_textureDialog->setSearchDirs(textureSearchDirs.toList());
+	m_textureDialog->createTextureIcons(m_pathImport, file);
+	if (m_textureDialog->exec() == QDialog::Accepted)
+	{
+		m_textureDialog->getTexturesFilepath(texmap);
+		QMap<wzm_texture_type_t, QString>::const_iterator it;
+		for (it = texmap.begin(); it != texmap.end(); ++it)
+		{
+			if (!it.value().isEmpty())
+			{
+				QFileInfo texFileNfo(it.value());
+				model.loadGLRenderTexture(it.key(), texFileNfo.filePath());
+				model.setTextureName(it.key(), texFileNfo.fileName().toStdString());
+			}
+		}
+	}
+	else
+	{
+		clear();
+		return;
+	}
 }
 
 void MainWindow::s_updateTexSearchDirs(const QList<QPair<bool,QString> >& changes)
@@ -274,7 +270,31 @@ void MainWindow::on_actionTransformWidget_triggered()
 
 void MainWindow::on_actionOpen_triggered()
 {
-	importDialog->show();
+	QString filePath;
+	QFileDialog* fileDialog = new QFileDialog(this,
+						  tr("Select File to open"),
+						  m_pathImport,
+						  tr("All Compatible (*.pie *.3ds *.obj);;"
+						     /// "WZM models (*.wzm);;"
+						     "PIE models (*.pie);;"
+						     "3DS files (*.3ds);;"
+						     "OBJ files (*.obj)"));
+	fileDialog->setFileMode(QFileDialog::ExistingFile);
+	fileDialog->exec();
+
+	if (fileDialog->result() == QDialog::Accepted)
+	{
+		filePath = fileDialog->selectedFiles().first();
+
+		// refresh import working dir
+		m_pathImport = fileDialog->directory().absolutePath();
+		m_settings->setValue(WMIT_SETTINGS_IMPORTVAL, m_pathImport);
+	}
+	delete fileDialog;
+	fileDialog = 0;
+
+	if (!filePath.isEmpty())
+		loadModel(filePath);
 }
 
 void MainWindow::on_actionUVEditor_toggled(bool show)

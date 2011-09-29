@@ -28,7 +28,8 @@
 
 class Pie3Model;
 
-enum wzm_texture_type_t {WZM_TEX_DIFFUSE = 0, WZM_TEX_TCMASK, WZM_TEX_NORMALMAP};
+enum wzm_texture_type_t {WZM_TEX_DIFFUSE = 0, WZM_TEX_TCMASK, WZM_TEX_NORMALMAP,
+			 WZM_TEX__LAST, WZM_TEX__FIRST = WZM_TEX_DIFFUSE};
 
 class WZM
 {
@@ -54,6 +55,8 @@ public:
 	void setTextureName(wzm_texture_type_t type, std::string name);
 	std::string getTextureName(wzm_texture_type_t type) const;
 
+	static std::string texTypeToString(wzm_texture_type_t type);
+
 	bool couldHaveTCArrays() const;
 
 	/// might throw out_of_range exception? not decided yet
@@ -71,6 +74,7 @@ public:
 
 protected:
 	void clear();
+
 	std::vector<Mesh> m_meshes;
 	std::map<wzm_texture_type_t, std::string> m_textures;
 };
