@@ -37,9 +37,8 @@ TextureDialog::TextureDialog(QWidget *parent) :
 	ui->lwTextures->setIconSize(QSize(128, 128));
 	ui->lwTextures->setMovement(QListView::Static);
 	ui->lwTextures->setFlow(QListView::LeftToRight);
-	ui->lwTextures->setSpacing(10);
 
-	ui->lwTextures->setMaximumWidth(350);
+	ui->lwTextures->setFixedWidth(170);
 
 	connect(ui->lwTextures, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
 		this, SLOT(iconDoubleClicked(QListWidgetItem*)));
@@ -71,9 +70,9 @@ QString TextureDialog::selectTextureFile()
 	return texture;
 }
 
-void TextureDialog::addTextureIcon(wzm_texture_type_t type)
+void TextureDialog::addTextureIcon(wzm_texture_type_t type, const QString& filepath)
 {
-	QString texpath = findTexture(type);
+	QString texpath = filepath.isEmpty() ? findTexture(type) : filepath;
 	if (texpath.isEmpty())
 	{
 		 texpath = WMIT_IMAGES_NOTEXTURE;
@@ -184,6 +183,7 @@ QString TextureDialog::findTexture(wzm_texture_type_t type) const
 void TextureDialog::scanForTexturesInDirs(const QStringList& dirs)
 {
 	m_predefined_textures.clear();
+
 	foreach (QString path, dirs)
 	{
 		QDir dir(path, "*.png", QDir::Type, QDir::Files);
@@ -192,6 +192,23 @@ void TextureDialog::scanForTexturesInDirs(const QStringList& dirs)
 		{
 			m_predefined_textures.append(dir.absoluteFilePath(texture));
 		}
+		ui->lwPredefined->addItems(m_predefined_textures);
+	}
+
+	filePredefinedList(ui->leFilter->text());
+}
+
+void TextureDialog::filePredefinedList(const QString& filter)
+{
+	ui->lwPredefined->clear();
+
+	if (filter.isEmpty())
+	{
+		ui->lwPredefined->addItems(m_predefined_textures);
+	}
+	else
+	{
+		ui->lwPredefined->addItems(m_predefined_textures.filter(filter));
 	}
 }
 
@@ -246,5 +263,20 @@ void TextureDialog::on_pbRemoveType_clicked()
 	{
 		m_icons.remove(static_cast<wzm_texture_type_t>(itm->data(Qt::UserRole).toInt()));
 		delete itm;
+	}
+}
+
+void TextureDialog::on_leFilter_textChanged(QString text)
+{
+	filePredefinedList(text);
+}
+
+void TextureDialog::on_lwPredefined_itemClicked(QListWidgetItem* item)
+{
+	QListWidgetItem* icon = ui->lwTextures->currentItem();
+	if (item && icon)
+	{
+		addTextureIcon(static_cast<wzm_texture_type_t>(icon->data(Qt::UserRole).toInt()),
+			       item->text());
 	}
 }

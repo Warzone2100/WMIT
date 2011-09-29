@@ -50,6 +50,8 @@ private slots:
 
 	void on_pbAddType_clicked();
 	void on_pbRemoveType_clicked();
+	void on_leFilter_textChanged(QString );
+	void on_lwPredefined_itemClicked(QListWidgetItem* item);
 
 private:
 	Ui::TextureDialog *ui;
@@ -64,5 +66,6 @@ private:
 	void scanForTexturesInDirs(const QStringList& dirs);
 	QString findTexture(wzm_texture_type_t type) const;
 	QString selectTextureFile();
-	void addTextureIcon(wzm_texture_type_t type);
+	void addTextureIcon(wzm_texture_type_t type, const QString& filepath = QString());
+	void filePredefinedList(const QString& filter = QString());
 };
