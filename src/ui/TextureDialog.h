@@ -48,6 +48,9 @@ public slots:
 private slots:
 	void iconDoubleClicked(QListWidgetItem *icon);
 
+	void on_pbAddType_clicked();
+	void on_pbRemoveType_clicked();
+
 private:
 	Ui::TextureDialog *ui;
 

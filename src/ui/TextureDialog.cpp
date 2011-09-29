@@ -21,8 +21,11 @@
 #include "ui_TextureDialog.h"
 
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QFileInfo>
 #include <QDir>
+
+#include "wmit.h"
 
 TextureDialog::TextureDialog(QWidget *parent) :
 	QDialog(parent),
@@ -71,25 +74,27 @@ QString TextureDialog::selectTextureFile()
 void TextureDialog::addTextureIcon(wzm_texture_type_t type)
 {
 	QString texpath = findTexture(type);
-	if (!texpath.isEmpty())
+	if (texpath.isEmpty())
 	{
-		if (m_icons.find(type) == m_icons.end())
-		{
-			m_icons[type] = new QListWidgetItem(ui->lwTextures);
-		}
-		QListWidgetItem *newicn = m_icons[type];
-
-		newicn->setData(Qt::UserRole, QVariant(static_cast<int>(type)));
-		newicn->setData(Qt::UserRole + 1, texpath);
-
-		QPixmap img(texpath);
-		QString ttp = "Path: " + texpath + "\nWidth: " + QString::number(img.width())+ ", height: " + QString::number(img.height());
-		newicn->setToolTip(ttp);
-		newicn->setIcon(QIcon(img));
-		newicn->setText(QString::fromStdString(WZM::texTypeToString(type)));
-		newicn->setTextAlignment(Qt::AlignHCenter);
-		newicn->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		 texpath = WMIT_IMAGES_NOTEXTURE;
 	}
+
+	if (m_icons.find(type) == m_icons.end())
+	{
+		m_icons[type] = new QListWidgetItem(ui->lwTextures);
+	}
+	QListWidgetItem *newicn = m_icons[type];
+
+	newicn->setData(Qt::UserRole, QVariant(static_cast<int>(type)));
+	newicn->setData(Qt::UserRole + 1, texpath);
+
+	QPixmap img(texpath);
+	QString ttp = "Path: " + texpath + "\nWidth: " + QString::number(img.width())+ ", height: " + QString::number(img.height());
+	newicn->setToolTip(ttp);
+	newicn->setIcon(QIcon(img));
+	newicn->setText(QString::fromStdString(WZM::texTypeToString(type)));
+	newicn->setTextAlignment(Qt::AlignHCenter);
+	newicn->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 }
 
 void TextureDialog::createTextureIcons(const QString& workdir, const QString& modelname)
@@ -131,8 +136,13 @@ void TextureDialog::getTexturesFilepath(QMap<wzm_texture_type_t, QString> &files
 		QListWidgetItem *itm = ui->lwTextures->item(i);
 		if (itm)
 		{
-			files.insert(static_cast<wzm_texture_type_t>(itm->data(Qt::UserRole).toInt()),
-				     itm->data(Qt::UserRole + 1).toString());
+			wzm_texture_type_t typ = static_cast<wzm_texture_type_t>(itm->data(Qt::UserRole).toInt());
+			QString texpath = itm->data(Qt::UserRole + 1).toString();
+
+			if (!texpath.isEmpty() && !texpath.contains(WMIT_IMAGES_NOTEXTURE))
+			{
+				files.insert(typ, texpath);
+			}
 		}
 	}
 }
@@ -196,5 +206,45 @@ void TextureDialog::iconDoubleClicked(QListWidgetItem *icon)
 		QString ttp = "Path: " + newtex + "\nWidth: " + QString::number(img.width())+ ", height: " + QString::number(img.height());
 		icon->setToolTip(ttp);
 		icon->setIcon(QIcon(img));
+	}
+}
+
+// FIXME: probably this is NOT a good way to do it
+void TextureDialog::on_pbAddType_clicked()
+{
+	QMap<QString, wzm_texture_type_t> types;
+	for (int i = WZM_TEX__FIRST; i < WZM_TEX__LAST; ++i)
+	{
+		QString textypename = QString::fromStdString(WZM::texTypeToString(static_cast<wzm_texture_type_t>(i)));
+		types[textypename] = static_cast<wzm_texture_type_t>(i);
+	}
+
+	QStringList items;
+	QMapIterator<QString, wzm_texture_type_t> it(types);
+	while (it.hasNext()) {
+		it.next();
+		items << it.key();
+	}
+
+	bool ok;
+	QString item = QInputDialog::getItem(this, tr("New texture mapping"),
+					     tr("Select texture type:"), items, 0, false, &ok);
+	if (ok && !item.isEmpty())
+	{
+		wzm_texture_type_t textype = types[item];
+		if (!m_icons.contains(textype))
+		{
+			addTextureIcon(textype);
+		}
+	}
+}
+
+void TextureDialog::on_pbRemoveType_clicked()
+{
+	QListWidgetItem *itm = ui->lwTextures->currentItem();
+	if (itm)
+	{
+		m_icons.remove(static_cast<wzm_texture_type_t>(itm->data(Qt::UserRole).toInt()));
+		delete itm;
 	}
 }

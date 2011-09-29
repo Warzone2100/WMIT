@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>data/shaders/tcmask.frag</file>
         <file>data/shaders/tcmask.vert</file>
+        <file>data/images/notex.png</file>
     </qresource>
 </RCC>

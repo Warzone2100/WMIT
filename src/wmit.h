@@ -11,4 +11,6 @@
 #define WMIT_SHADER_PIE3_DEFPATH_VERT ":/data/shaders/tcmask.vert"
 #define WMIT_SHADER_PIE3_DEFPATH_FRAG ":/data/shaders/tcmask.frag"
 
+#define WMIT_IMAGES_NOTEXTURE ":/data/images/notex.png"
+
 enum wmit_filetype_t { WMIT_FT_PIE = 0, WMIT_FT_WZM, WMIT_FT_3DS, WMIT_FT_OBJ};
