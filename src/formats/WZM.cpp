@@ -524,6 +524,11 @@ std::string WZM::getTextureName(wzm_texture_type_t type) const
 	return std::string();
 }
 
+void WZM::clearTextureNames()
+{
+	m_textures.clear();
+}
+
 std::string WZM::texTypeToString(wzm_texture_type_t type)
 {
 	std::string str;

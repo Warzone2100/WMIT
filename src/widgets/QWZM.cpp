@@ -167,15 +167,7 @@ void QWZM::clear()
 {
 	WZM::clear();
 
-	std::map<wzm_texture_type_t, GLuint>::iterator it;
-	for (it = m_gl_textures.begin(); it != m_gl_textures.end(); it++)
-	{
-		if (it->second)
-		{
-			deleteTexture(it->second);
-			it->second = 0;
-		}
-	}
+	clearGLRenderTextures();
 
 	defaultConstructor();
 
@@ -207,6 +199,19 @@ bool QWZM::hasGLRenderTexture(wzm_texture_type_t type) const
 		return true;
 
 	return false;
+}
+
+void QWZM::clearGLRenderTextures()
+{
+	std::map<wzm_texture_type_t, GLuint>::iterator it;
+	for (it = m_gl_textures.begin(); it != m_gl_textures.end(); it++)
+	{
+		if (it->second)
+		{
+			deleteTexture(it->second);
+			it->second = 0;
+		}
+	}
 }
 
 void QWZM::setTextureManager(IGLTextureManager * manager)

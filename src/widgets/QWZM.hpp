@@ -54,6 +54,7 @@ public:
 	void loadGLRenderTexture(wzm_texture_type_t type, QString fileName);
 	void unloadGLRenderTexture(wzm_texture_type_t type);
 	bool hasGLRenderTexture(wzm_texture_type_t type) const;
+	void clearGLRenderTextures();
 
 	// TCMask part
 	void setTCMaskEnvironment(const QColor& tcmaskColour);
@@ -98,6 +99,7 @@ public:
 
 	inline void setTextureName(wzm_texture_type_t type, std::string name) {WZM::setTextureName(type, name);}
 	inline std::string getTextureName(wzm_texture_type_t type) const {return WZM::getTextureName(type);}
+	inline void clearTextureNames() {WZM::clearTextureNames();}
 
 	inline bool couldHaveTCArrays() const {return WZM::couldHaveTCArrays();}
 	inline void reverseWinding(int mesh = -1) {WZM::reverseWinding(mesh);}

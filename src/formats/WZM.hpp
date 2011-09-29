@@ -54,6 +54,7 @@ public:
 
 	void setTextureName(wzm_texture_type_t type, std::string name);
 	std::string getTextureName(wzm_texture_type_t type) const;
+	void clearTextureNames();
 
 	static std::string texTypeToString(wzm_texture_type_t type);
 
