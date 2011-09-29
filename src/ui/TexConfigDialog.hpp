@@ -16,36 +16,39 @@
 	You should have received a copy of the GNU General Public License
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef CONFIGDIALOG_HPP
-#define CONFIGDIALOG_HPP
+#pragma once
 
 #include <QDialog>
 
-#include <QList>
-#include <QPair>
 #include <QString>
+#include <QSet>
 
 namespace Ui {
-    class ConfigDialog;
+    class TexConfigDialog;
 }
 
-class ConfigDialog : public QDialog {
-    Q_OBJECT
+class TexConfigDialog : public QDialog
+{
+	Q_OBJECT
+
+	Ui::TexConfigDialog *ui;
+
+	QSet<QString> m_searchdirs;
+
+	void resetDirsList();
+
 public:
-    ConfigDialog(QWidget *parent = 0);
-    ~ConfigDialog();
+	TexConfigDialog(QWidget *parent = 0);
+	~TexConfigDialog();
+
+	void saveSearchDirs();
+	void loadSearchDirs();
 
 protected:
-    void changeEvent(QEvent *e);
+	void changeEvent(QEvent *e);
 
-private:
-    Ui::ConfigDialog *ui;
-	QList<QPair<bool,QString> > searchDirChanges;
 signals:
-	void updateTextureSearchDirs(QList<QPair<bool,QString> >);
-
-public slots:
-	void setTextureSearchDirs(QStringList);
+	void updateTextureSearchDirs(QStringList);
 
 private slots:
 	void on_buttonBox_rejected();
@@ -53,5 +56,3 @@ private slots:
 	void on_pb_remove_clicked();
 	void on_pb_add_clicked();
 };
-
-#endif // CONFIGDIALOG_HPP

@@ -27,21 +27,30 @@
 
 #include "wmit.h"
 
+#include "TexConfigDialog.hpp"
+
 TextureDialog::TextureDialog(QWidget *parent) :
 	QDialog(parent),
-	ui(new Ui::TextureDialog)
+	ui(new Ui::TextureDialog),
+	m_texConfigDialog(new TexConfigDialog(this))
 {
 	ui->setupUi(this);
 
+	// shape texture icons
 	ui->lwTextures->setViewMode(QListView::IconMode);
 	ui->lwTextures->setIconSize(QSize(128, 128));
 	ui->lwTextures->setMovement(QListView::Static);
 	ui->lwTextures->setFlow(QListView::LeftToRight);
-
 	ui->lwTextures->setFixedWidth(170);
 
 	connect(ui->lwTextures, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
 		this, SLOT(iconDoubleClicked(QListWidgetItem*)));
+
+	// connect then kick loader for chain reaction
+	connect(m_texConfigDialog, SIGNAL(updateTextureSearchDirs(QStringList)),
+		this, SLOT(setSearchDirs(QStringList)));
+
+	m_texConfigDialog->loadSearchDirs();
 }
 
 TextureDialog::~TextureDialog()
@@ -279,4 +288,9 @@ void TextureDialog::on_lwPredefined_itemClicked(QListWidgetItem* item)
 		addTextureIcon(static_cast<wzm_texture_type_t>(icon->data(Qt::UserRole).toInt()),
 			       item->text());
 	}
+}
+
+void TextureDialog::on_pbConfig_clicked()
+{
+	m_texConfigDialog->show();
 }

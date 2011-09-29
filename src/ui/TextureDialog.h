@@ -25,6 +25,7 @@
 #include "WZM.hpp"
 
 class QListWidgetItem;
+class TexConfigDialog;
 
 namespace Ui {
     class TextureDialog;
@@ -52,9 +53,12 @@ private slots:
 	void on_pbRemoveType_clicked();
 	void on_leFilter_textChanged(QString );
 	void on_lwPredefined_itemClicked(QListWidgetItem* item);
+	void on_pbConfig_clicked();
 
 private:
 	Ui::TextureDialog *ui;
+
+	TexConfigDialog* m_texConfigDialog;
 
 	QString m_model_filepath;
 	QMap<wzm_texture_type_t, QString> m_texnames; // actual data read from model

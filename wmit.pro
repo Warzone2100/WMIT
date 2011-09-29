@@ -16,7 +16,6 @@ HEADERS += \
     src/ui/MainWindow.hpp \
     src/ui/ImportDialog.hpp \
     src/ui/ExportDialog.hpp \
-    src/ui/ConfigDialog.hpp \
     src/Util.hpp \
     src/Generic.hpp \
     src/basic/VectorTypes.hpp \
@@ -33,7 +32,8 @@ HEADERS += \
     src/basic/IGLTexturedRenderable.hpp \
     src/basic/IGLShaderManager.h \
     src/basic/IGLShaderRenderable.h \
-    src/ui/TextureDialog.h
+    src/ui/TextureDialog.h \
+    src/ui/TexConfigDialog.hpp
     
 SOURCES += \
     src/formats/WZM.cpp \
@@ -46,7 +46,6 @@ SOURCES += \
     src/ui/MainWindow.cpp \
     src/ui/ImportDialog.cpp \
     src/ui/ExportDialog.cpp \
-    src/ui/ConfigDialog.cpp \
     src/Util.cpp \
     src/main.cpp \
     src/Generic.cpp \
@@ -55,7 +54,8 @@ SOURCES += \
     3rdparty/GLee/GLee.c \
     src/widgets/QWZM.cpp \
     src/widgets/QtGLView.cpp \
-    src/ui/TextureDialog.cpp
+    src/ui/TextureDialog.cpp \
+    src/ui/TexConfigDialog.cpp
     
 FORMS += \
     src/ui/UVEditor.ui \
@@ -64,8 +64,8 @@ FORMS += \
     src/ui/MainWindow.ui \
     src/ui/ImportDialog.ui \
     src/ui/ExportDialog.ui \
-    src/ui/ConfigDialog.ui \
-    src/ui/TextureDialog.ui
+    src/ui/TextureDialog.ui \
+    src/ui/TexConfigDialog.ui
     
 OTHER_FILES += \
     TODO.txt \

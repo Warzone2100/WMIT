@@ -5,6 +5,7 @@
 
 #define WMIT_SETTINGS_IMPORTVAL "importFolder"
 #define WMIT_SETTINGS_EXPORTVAL "exportFolder"
+#define WMIT_SETTINGS_TEXSEARCHDIRS "textureSearchDirs"
 
 #define WMIT_WZ_TEXPAGE_REMASK "page\\-(\\d+)"
 

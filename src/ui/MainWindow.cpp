@@ -19,7 +19,6 @@
 
 #include "MainWindow.hpp"
 #include "ui_MainWindow.h"
-#include "ConfigDialog.hpp"
 #include "TransformDock.hpp"
 #include "ImportDialog.hpp"
 #include "ExportDialog.hpp"
@@ -41,29 +40,17 @@
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow),
-	configDialog(new ConfigDialog(this)),
 	importDialog(new ImportDialog(this)),
 	exportDialog(NULL),
 	transformDock(new TransformDock(this)),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
-	m_settings(new QSettings(QSettings::IniFormat, QSettings::UserScope, WMIT_ORG, WMIT_APPNAME))
+	m_settings(new QSettings(this))
 {
 	ui->setupUi(this);
 
-	// A work around to add actions in the order we want
-	ui->menuBar->clear();
-	ui->menuBar->addMenu(ui->menuFile);
-	ui->menuBar->addAction(ui->actionConfig);
-	ui->menuBar->addMenu(ui->menuTextures);
-	ui->menuBar->addMenu(ui->menuTeam_Colours);
-	ui->menuBar->addAction(ui->actionTransformWidget);
-//	ui->menuBar->addAction(ui->actionUVEditor);
-
 	m_pathImport = m_settings->value(WMIT_SETTINGS_IMPORTVAL, QDir::currentPath()).toString();
 	m_pathExport = m_settings->value(WMIT_SETTINGS_EXPORTVAL, QDir::currentPath()).toString();
-
-	configDialog->hide();
 
 	transformDock->setAllowedAreas(Qt::RightDockWidgetArea);
 	transformDock->hide();
@@ -74,9 +61,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	this->addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
 	connect(ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(_on_viewerInitialized()));
-	connect(this, SIGNAL(textureSearchDirsChanged(QStringList)), m_textureDialog, SLOT(setSearchDirs(QStringList)));
-	connect(configDialog, SIGNAL(updateTextureSearchDirs(QList<QPair<bool,QString> >)), this, SLOT(s_updateTexSearchDirs(const QList<QPair<bool,QString> >&)));
-	connect(this, SIGNAL(textureSearchDirsChanged(QStringList)), configDialog, SLOT(setTextureSearchDirs(QStringList)));
 
 	// transformations
 	connect(transformDock, SIGNAL(scaleXYZChanged(double)), this, SLOT(_on_scaleXYZChanged(double)));
@@ -89,18 +73,15 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(transformDock, SIGNAL(setActiveMeshIdx(int)), &model, SLOT(setActiveMesh(int)));
 	connect(transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(_on_mirrorAxis(int)));
 
-	textureSearchDirs = QSet<QString>::fromList(m_settings->value("textureSearchDirs", QStringList()).toStringList());
-	if (!textureSearchDirs.empty())
-	{
-		emit textureSearchDirsChanged(textureSearchDirs.toList());
-	}
+	clear();
+
+	// disable wip-parts
+	ui->actionSave->setDisabled(true);
 }
 
 MainWindow::~MainWindow()
 {
 	delete ui;
-
-	delete m_settings;
 }
 
 void MainWindow::clear()
@@ -111,6 +92,7 @@ void MainWindow::clear()
 	setWindowTitle(WMIT_APPNAME);
 
 	ui->actionClose->setDisabled(true);
+	ui->actionSetupTextures->setDisabled(true);
 }
 
 void MainWindow::changeEvent(QEvent *e)
@@ -198,16 +180,34 @@ void MainWindow::loadModel(const QString& file)
 
 	setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
 	ui->actionClose->setEnabled(true);
+	ui->actionSetupTextures->setEnabled(true);
 
+	if (!fireTexConfigDialog(true))
+	{
+		clear();
+		return;
+	}
+}
+
+bool MainWindow::fireTexConfigDialog(const bool reinit)
+{
 	QMap<wzm_texture_type_t, QString> texmap;
-	model.getTexturesMap(texmap);
-	m_textureDialog->setTexturesMap(texmap);
-	m_textureDialog->setSearchDirs(textureSearchDirs.toList());
-	m_textureDialog->createTextureIcons(m_pathImport, file);
+
+	if (reinit)
+	{
+		model.getTexturesMap(texmap);
+		m_textureDialog->setTexturesMap(texmap);
+		m_textureDialog->createTextureIcons(m_pathImport, m_currentFile);
+	}
+
 	if (m_textureDialog->exec() == QDialog::Accepted)
 	{
-		m_textureDialog->getTexturesFilepath(texmap);
 		QMap<wzm_texture_type_t, QString>::const_iterator it;
+
+		model.clearTextureNames();
+		model.clearGLRenderTextures();
+
+		m_textureDialog->getTexturesFilepath(texmap);
 		for (it = texmap.begin(); it != texmap.end(); ++it)
 		{
 			if (!it.value().isEmpty())
@@ -217,55 +217,11 @@ void MainWindow::loadModel(const QString& file)
 				model.setTextureName(it.key(), texFileNfo.fileName().toStdString());
 			}
 		}
-	}
-	else
-	{
-		clear();
-		return;
-	}
-}
 
-void MainWindow::s_updateTexSearchDirs(const QList<QPair<bool,QString> >& changes)
-{
-	bool changed = false;
-	typedef QPair<bool,QString> t_change; // Work around foreach macro 3 argument error
-	foreach (t_change change, changes)
-	{
-		if (change.first) // adding
-		{
-			if (!textureSearchDirs.contains(change.second))
-			{
-				textureSearchDirs.insert(change.second);
-				if (!changed)
-				{
-					changed = true;
-				}
-			}
-		}
-		else // removing
-		{
-			if (textureSearchDirs.remove(change.second) && !changed)
-			{
-				changed = true;
-			}
-		}
-	}
-	if (changed)
-	{
-		emit textureSearchDirsChanged(textureSearchDirs.toList());
+		return true;
 	}
 
-	m_settings->setValue("textureSearchDirs", QVariant(textureSearchDirs.toList()));
-}
-
-void MainWindow::on_actionConfig_triggered()
-{
-	configDialog->show();
-}
-
-void MainWindow::on_actionTransformWidget_triggered()
-{
-	transformDock->isVisible() ? transformDock->hide() : transformDock->show();
+	return false;
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -490,4 +446,14 @@ void MainWindow::on_actionShaders_toggled(bool checked)
 void MainWindow::on_actionClose_triggered()
 {
 	clear();
+}
+
+void MainWindow::on_actionTransform_triggered()
+{
+	transformDock->isVisible() ? transformDock->hide() : transformDock->show();
+}
+
+void MainWindow::on_actionSetupTextures_triggered()
+{
+	fireTexConfigDialog();
 }

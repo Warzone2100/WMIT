@@ -31,7 +31,6 @@
 #include "QWZM.hpp"
 
 class TransformDock;
-class ConfigDialog;
 class ImportDialog;
 class ExportDialog;
 class TextureDialog;
@@ -60,17 +59,12 @@ signals:
 private slots:
 	void on_actionShaders_toggled(bool );
 	void on_actionFixed_Pipeline_toggled(bool );
-
 	void on_actionOpen_triggered();
 	void on_actionSave_As_triggered();
 	void on_actionSave_triggered();
 	void on_actionClose_triggered();
-
-	void on_actionConfig_triggered();
-	void on_actionTransformWidget_triggered();
+	void on_actionTransform_triggered();
 	void on_actionUVEditor_toggled(bool );
-
-	void s_updateTexSearchDirs(const QList<QPair<bool,QString> >&);
 
 	void _on_viewerInitialized();
 
@@ -82,10 +76,11 @@ private slots:
 	void _on_reverseWindings(int mesh);
 	void _on_mirrorAxis(int axis);
 
+	void on_actionSetupTextures_triggered();
+
 private:
 	Ui::MainWindow* ui;
 
-	ConfigDialog* configDialog;
 	ImportDialog* importDialog;
 	ExportDialog* exportDialog;
 	TransformDock* transformDock;
@@ -94,10 +89,11 @@ private:
 	UVEditor* m_UVEditor;
 	QSettings* m_settings;
 
-	QSet<QString> textureSearchDirs;
 	QString m_pathImport, m_pathExport, m_currentFile;
 
 	QWZM model;
+
+	bool fireTexConfigDialog(const bool reinit = false);
 };
 
 #endif // MAINWINDOW_HPP

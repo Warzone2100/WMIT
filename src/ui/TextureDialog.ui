@@ -67,6 +67,13 @@
      <item row="1" column="0">
       <widget class="QLineEdit" name="leFilter"/>
      </item>
+     <item row="3" column="0">
+      <widget class="QPushButton" name="pbConfig">
+       <property name="text">
+        <string>Setup predefined folders</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
