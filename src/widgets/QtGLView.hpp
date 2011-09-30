@@ -97,6 +97,8 @@ private:
 	QFileSystemWatcher textureUpdater;
 	QBasicTimer updateTimer;
 
+	void dynamicManagedSetup(IGLRenderable* object, bool remove = false);
+
 private slots:
 	void textureChanged(const QString& fileName);
 };

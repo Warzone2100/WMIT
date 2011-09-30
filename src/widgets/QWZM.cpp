@@ -182,7 +182,7 @@ void QWZM::clear()
 
 void QWZM::loadGLRenderTexture(wzm_texture_type_t type, QString fileName)
 {
-	deleteTexture(m_gl_textures[type]);
+	unloadGLRenderTexture(type);
 	m_gl_textures[type] = createTexture(fileName).id();
 }
 
@@ -307,6 +307,9 @@ bool QWZM::setupTextureUnits(int type)
 
 		if (hasGLRenderTexture(WZM_TEX_NORMALMAP))
 			activateAndBindTexture(2, m_gl_textures[WZM_TEX_NORMALMAP]);
+
+		glActiveTexture(GL_TEXTURE0);
+
 		break;
 	}
 

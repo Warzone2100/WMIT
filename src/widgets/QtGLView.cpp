@@ -52,6 +52,11 @@ QtGLView::QtGLView(QWidget *parent) :
 
 QtGLView::~QtGLView()
 {
+	foreach(IGLRenderable* obj, renderList)
+	{
+		dynamicManagedSetup(obj, true);
+	}
+
 	foreach (ManagedGLTexture texture, m_textures)
 	{
 		const GLuint id = texture.id();
@@ -61,7 +66,7 @@ QtGLView::~QtGLView()
 
 void QtGLView::init()
 {
-	const float pos[4] = {225.0f, -600.0f, 450.0f, 0.0f};
+	const float pos[4] = {225.0f, 600.0f, 450.0f, 0.0f};
 
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lighting[LIGHT_EMISSIVE]);
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
@@ -207,18 +212,22 @@ void QtGLView::postDraw()
 	glEnable(GL_TEXTURE_2D);
 }
 
-void QtGLView::addToRenderList(IGLRenderable* object)
+void QtGLView::dynamicManagedSetup(IGLRenderable *object, bool remove)
 {
 	// We have a TextureMan
 	IGLTexturedRenderable* obj_tr = dynamic_cast<IGLTexturedRenderable*>(object);
 	if (obj_tr)
-		obj_tr->setTextureManager(this);
+		obj_tr->setTextureManager(remove ? NULL : this);
 
 	// and a ShaderMan
 	IGLShaderRenderable* obj_sr = dynamic_cast<IGLShaderRenderable*>(object);
 	if (obj_sr)
-		obj_sr->setShaderManager(this);
+		obj_sr->setShaderManager(remove ? NULL : this);
+}
 
+void QtGLView::addToRenderList(IGLRenderable* object)
+{
+	dynamicManagedSetup(object);
 	renderList.append(object);
 }
 
@@ -297,7 +306,6 @@ GLTexture QtGLView::createTexture(const QString& fileName)
 		t_texIt texIt = m_textures.find(fileName);
 		if (texIt == m_textures.end())
 		{
-
 			QImage image(fileName);
 			ManagedGLTexture texture(QGLWidget::bindTexture(image, GL_TEXTURE_2D, GL_RGBA, QGLContext::LinearFilteringBindOption),
 									 image.width(),
@@ -376,7 +384,7 @@ void QtGLView::deleteTexture(const QString& fileName)
 	t_texIt texIt = m_textures.find(fileName);
 	if (texIt != m_textures.end())
 	{
-		texIt->users = std::min(texIt->users - 1, 0);
+		texIt->users = std::max(texIt->users - 1, 0);
 		if (m_textures.size() > 2 && texIt->users == 0)
 		{
 			_deleteTexture(texIt);

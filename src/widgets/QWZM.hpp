@@ -104,8 +104,10 @@ public:
 	inline bool couldHaveTCArrays() const {return WZM::couldHaveTCArrays();}
 	inline void reverseWinding(int mesh = -1) {WZM::reverseWinding(mesh);}
 
+	inline Mesh& getMesh(int index) {return WZM::getMesh(index);}
 	void addMesh (const Mesh& mesh);
 	void rmMesh (int index);
+	inline int meshes() const {return WZM::meshes();}
 
 private:
 	Q_DISABLE_COPY(QWZM)
