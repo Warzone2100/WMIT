@@ -46,10 +46,13 @@
 
 WZM::WZM()
 {
+	m_materials.resize(1);
 }
 
 WZM::WZM(const Pie3Model &p3)
 {
+	m_materials.resize(1);
+
 	std::vector<Pie3Level>::const_iterator it;
 	std::stringstream ss;
 

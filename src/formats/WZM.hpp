@@ -31,6 +31,25 @@ class Pie3Model;
 enum wzm_texture_type_t {WZM_TEX_DIFFUSE = 0, WZM_TEX_TCMASK, WZM_TEX_NORMALMAP,
 			 WZM_TEX__LAST, WZM_TEX__FIRST = WZM_TEX_DIFFUSE};
 
+enum wzm_material_t {WZM_MAT_EMISSIVE = 0, WZM_MAT_AMBIENT, WZM_MAT_DIFFUSE, WZM_MAT_SPECULAR,
+		     WZM_MAT__LAST, WZM_MAT__FIRST = WZM_MAT_EMISSIVE};
+
+struct WZMaterial
+{
+	GLfloat vals[WZM_MAT__LAST][4];
+	GLfloat shininess;
+
+	WZMaterial(): shininess(10.f)
+	{
+		for (int i = WZM_MAT__FIRST; i < WZM_MAT__LAST; ++i)
+		{
+			wzm_material_t mattype = static_cast<wzm_material_t>(i);
+			vals[mattype][0] = vals[mattype][1] = vals[mattype][2] = vals[mattype][3] = 1.f;
+		}
+	}
+};
+
+
 class WZM
 {
 public:
@@ -77,6 +96,7 @@ protected:
 	void clear();
 
 	std::vector<Mesh> m_meshes;
+	std::vector<WZMaterial> m_materials;
 	std::map<wzm_texture_type_t, std::string> m_textures;
 };
 
