@@ -9,8 +9,8 @@
 
 #define WMIT_WZ_TEXPAGE_REMASK "page\\-(\\d+)"
 
-#define WMIT_SHADER_PIE3_DEFPATH_VERT ":/data/shaders/tcmask.vert"
-#define WMIT_SHADER_PIE3_DEFPATH_FRAG ":/data/shaders/tcmask.frag"
+#define WMIT_SHADER_PIE3_DEFPATH_VERT ":/data/shaders/pie3.vert"
+#define WMIT_SHADER_PIE3_DEFPATH_FRAG ":/data/shaders/pie3.frag"
 
 #define WMIT_IMAGES_NOTEXTURE ":/data/images/notex.png"
 

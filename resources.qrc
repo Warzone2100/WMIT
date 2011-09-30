@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file>data/shaders/tcmask.frag</file>
-        <file>data/shaders/tcmask.vert</file>
         <file>data/images/notex.png</file>
+        <file>data/shaders/pie3.frag</file>
+        <file>data/shaders/pie3.vert</file>
     </qresource>
 </RCC>
