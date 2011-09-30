@@ -31,6 +31,15 @@
 #include "IGLTexturedRenderable.hpp"
 #include "IGLShaderRenderable.h"
 
+enum LIGHTING_TYPE {
+	LIGHT_EMISSIVE, LIGHT_AMBIENT, LIGHT_DIFFUSE, LIGHT_SPECULAR, LIGHT_TYPE_MAX
+};
+
+static GLfloat lighting[LIGHT_TYPE_MAX][4] = {
+	{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f},  {0.8f, 0.8f, 0.8f, 1.0f},  {1.0f, 1.0f, 1.0f, 1.0f}
+};
+
+
 QtGLView::QtGLView(QWidget *parent) :
 		QGLViewer(parent)
 {
@@ -52,6 +61,16 @@ QtGLView::~QtGLView()
 
 void QtGLView::init()
 {
+	const float pos[4] = {225.0f, -600.0f, 450.0f, 0.0f};
+
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lighting[LIGHT_EMISSIVE]);
+	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lighting[LIGHT_AMBIENT]);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lighting[LIGHT_DIFFUSE]);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, lighting[LIGHT_SPECULAR]);
+	glEnable(GL_LIGHT0);
+
 	glDisable(GL_LIGHTING); // QGLViewer likes enabling this stuff
 	glDisable(GL_COLOR_MATERIAL);
 
@@ -155,6 +174,11 @@ void QtGLView::postDraw()
 		glEnable(GL_LIGHTING);
 
 		float color[4];
+		color[0] = 0.f;  color[1] = 0.f;  color[2] = 0.f;  color[3] = 1.0f;
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, color);
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.f);
+
 		color[0] = 0.7f;  color[1] = 0.7f;  color[2] = 1.0f;  color[3] = 1.0f;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 		glRotatef(180.0, 0.0, 1.0, 0.0);
