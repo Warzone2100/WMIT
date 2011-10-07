@@ -28,7 +28,7 @@
 
 class Pie3Model;
 
-enum wzm_texture_type_t {WZM_TEX_DIFFUSE = 0, WZM_TEX_TCMASK, WZM_TEX_NORMALMAP,
+enum wzm_texture_type_t {WZM_TEX_DIFFUSE = 0, WZM_TEX_TCMASK, WZM_TEX_NORMALMAP, WZM_TEX_SPECULAR,
 			 WZM_TEX__LAST, WZM_TEX__FIRST = WZM_TEX_DIFFUSE};
 
 enum wzm_material_t {WZM_MAT_EMISSIVE = 0, WZM_MAT_AMBIENT, WZM_MAT_DIFFUSE, WZM_MAT_SPECULAR,
@@ -46,6 +46,8 @@ struct WZMaterial
 			wzm_material_t mattype = static_cast<wzm_material_t>(i);
 			vals[mattype][0] = vals[mattype][1] = vals[mattype][2] = vals[mattype][3] = 1.f;
 		}
+
+		vals[WZM_MAT_EMISSIVE][0] = vals[WZM_MAT_EMISSIVE][1] = vals[WZM_MAT_EMISSIVE][2] = vals[WZM_MAT_EMISSIVE][3] = 0.f;
 	}
 };
 

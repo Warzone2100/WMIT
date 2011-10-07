@@ -547,6 +547,9 @@ std::string WZM::texTypeToString(wzm_texture_type_t type)
 	case WZM_TEX_NORMALMAP:
 		str = "Normal map";
 		break;
+	case WZM_TEX_SPECULAR:
+		str = "Specular map";
+		break;
 	default:
 		str = "Unknown!";
 	}

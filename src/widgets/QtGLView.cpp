@@ -35,8 +35,9 @@ enum LIGHTING_TYPE {
 	LIGHT_EMISSIVE, LIGHT_AMBIENT, LIGHT_DIFFUSE, LIGHT_SPECULAR, LIGHT_TYPE_MAX
 };
 
-static GLfloat lighting[LIGHT_TYPE_MAX][4] = {
-	{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f},  {0.8f, 0.8f, 0.8f, 1.0f},  {1.0f, 1.0f, 1.0f, 1.0f}
+const GLfloat lightPos0[4] = {225.0f, 600.0f, 450.0f, 0.0f};
+static GLfloat lightCol0[LIGHT_TYPE_MAX][4] = {
+	{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f}, {0.8f, 0.8f, 0.8f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}
 };
 
 
@@ -66,18 +67,16 @@ QtGLView::~QtGLView()
 
 void QtGLView::init()
 {
-	const float pos[4] = {225.0f, 600.0f, 450.0f, 0.0f};
-
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lighting[LIGHT_EMISSIVE]);
-	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
-	glLightfv(GL_LIGHT0, GL_POSITION, pos);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lighting[LIGHT_AMBIENT]);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lighting[LIGHT_DIFFUSE]);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, lighting[LIGHT_SPECULAR]);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightCol0[LIGHT_EMISSIVE]);
+	glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lightCol0[LIGHT_AMBIENT]);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightCol0[LIGHT_DIFFUSE]);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, lightCol0[LIGHT_SPECULAR]);
 	glEnable(GL_LIGHT0);
 
-	glDisable(GL_LIGHTING); // QGLViewer likes enabling this stuff
-	glDisable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL); // required for glMaterial to work
+	glEnable(GL_MULTISAMPLE);
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
@@ -88,8 +87,9 @@ void QtGLView::init()
 	glAlphaFunc(GL_GEQUAL, 0.05f);
 
 	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
-	setSceneRadius(2);
+	setSceneRadius(3);
 
 	camera()->setPosition(qglviewer::Vec(0.5 * 2, 2.12 * 2, -2.12 * 2));
 	camera()->setViewDirection(qglviewer::Vec(-0.5, -2.12, 2.12));
@@ -99,6 +99,8 @@ void QtGLView::init()
 
 void QtGLView::draw()
 {
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+
 	foreach(IGLRenderable* obj, renderList)
 	{
 		obj->render();
@@ -108,6 +110,14 @@ void QtGLView::draw()
 void QtGLView::postDraw()
 {
 	glDisable(GL_TEXTURE_2D);
+
+	GLboolean lighting;
+	glGetBooleanv(GL_LIGHTING, &lighting);
+
+	glDisable(GL_LIGHTING);
+
+	glColor3f(lightCol0[LIGHT_DIFFUSE][0], lightCol0[LIGHT_DIFFUSE][1], lightCol0[LIGHT_DIFFUSE][2]);
+	drawLight(GL_LIGHT0);
 
 	/* Grid begin - Copied from QGLViewer source then modified */
 	if (gridIsDrawn())
@@ -130,7 +140,7 @@ void QtGLView::postDraw()
 			glVertex2f( halfSize, pos); // |   |___ |_|_ |_|_
 		}
 		glEnd();
-		glColor3f(1.f, 1.f, 1.f);
+
 		glPopMatrix();
 	}
 
@@ -144,19 +154,16 @@ void QtGLView::postDraw()
 		const float charHeight = length / 30.0;
 		const float charShift = 1.04 * length;
 
-		GLboolean lighting;
-		glGetBooleanv(GL_LIGHTING, &lighting);
-
-		glDisable(GL_LIGHTING);
 		glEnable(GL_LINE_SMOOTH);
 		glLineWidth(2);
+		glColor3f(1.f, 1.f, 1.f);
 
 		glBegin(GL_LINES);
 		// The X
-		glVertex3f(-charShift,  charWidth, -charHeight);
-		glVertex3f(-charShift, -charWidth,  charHeight);
-		glVertex3f(-charShift, -charWidth, -charHeight);
-		glVertex3f(-charShift,  charWidth,  charHeight);
+		glVertex3f(charShift,  charWidth, -charHeight);
+		glVertex3f(charShift, -charWidth,  charHeight);
+		glVertex3f(charShift, -charWidth, -charHeight);
+		glVertex3f(charShift,  charWidth,  charHeight);
 		// The Y
 		glVertex3f( charWidth, charShift, charHeight);
 		glVertex3f(0.f,        charShift, 0.f);
@@ -186,8 +193,10 @@ void QtGLView::postDraw()
 
 		color[0] = 0.7f;  color[1] = 0.7f;  color[2] = 1.0f;  color[3] = 1.0f;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+		glPushMatrix();
 		glRotatef(180.0, 0.0, 1.0, 0.0);
 		QGLViewer::drawArrow(length, 0.003*length);
+		glPopMatrix();
 
 		color[0] = 1.0f;  color[1] = 0.7f;  color[2] = 0.7f;  color[3] = 1.0f;
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
@@ -202,11 +211,11 @@ void QtGLView::postDraw()
 		glRotatef(-90.0, 1.0, 0.0, 0.0);
 		QGLViewer::drawArrow(length, 0.003*length);
 		glPopMatrix();
+	}
 
-		if (!lighting)
-		{
-			glDisable(GL_LIGHTING);
-		}
+	if (!lighting)
+	{
+		glDisable(GL_LIGHTING);
 	}
 
 	glEnable(GL_TEXTURE_2D);

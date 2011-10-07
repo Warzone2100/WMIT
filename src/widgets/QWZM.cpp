@@ -26,7 +26,7 @@
 #  define CPP0X_FEATURED(x) do {} while (0)
 #endif
 
-const GLint QWZM::winding = GL_CW;
+const GLint QWZM::winding = GL_CCW;
 
 QWZM::QWZM(QObject *parent): QObject(parent), m_tcmaskColour(0, 0x60, 0, 0xFF)
 {
@@ -47,7 +47,7 @@ void QWZM::render()
 	glPushAttrib(GL_TEXTURE_BIT);
 	glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
 
-	glScalef(-1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
+	glScalef(1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
 
 	// before shaders
 	drawCenterPoint();
@@ -308,9 +308,15 @@ bool QWZM::setupTextureUnits(int type)
 		if (hasGLRenderTexture(WZM_TEX_NORMALMAP))
 			activateAndBindTexture(2, m_gl_textures[WZM_TEX_NORMALMAP]);
 
-		glActiveTexture(GL_TEXTURE0);
+		if (hasGLRenderTexture(WZM_TEX_SPECULAR))
+			activateAndBindTexture(3, m_gl_textures[WZM_TEX_SPECULAR]);
 
 		break;
+	default:
+		if (hasGLRenderTexture(WZM_TEX_DIFFUSE))
+			activateAndBindTexture(0, m_gl_textures[WZM_TEX_DIFFUSE]);
+		else
+			return false;
 	}
 
 	return true;
@@ -322,10 +328,13 @@ void QWZM::clearTextureUnits(int type)
 	{
 	case WZ_SHADER_PIE3:
 	case WZ_SHADER_PIE3_USER:
+		deactivateTexture(3);
 		deactivateTexture(2);
 		deactivateTexture(1);
 		deactivateTexture(0);
 		break;
+	default:
+		deactivateTexture(0);
 	}
 }
 
@@ -345,27 +354,31 @@ bool QWZM::initShader(int type)
 	{
 	case WZ_SHADER_PIE3:
 	case WZ_SHADER_PIE3_USER:
-		int baseTexLoc, tcTexLoc, nmTexLoc,
-				tcFlagLoc, tcColorLoc, nmFlagLoc, fogFlagLoc;
+		int baseTexLoc, tcTexLoc, nmTexLoc, smTexLoc,
+				tcFlagLoc, tcColorLoc, nmFlagLoc, fogFlagLoc, smFlagLoc;
 
 		baseTexLoc = shader->uniformLocation("Texture0");
 		tcTexLoc = shader->uniformLocation("Texture1");
 		nmTexLoc = shader->uniformLocation("Texture2");
+		smTexLoc = shader->uniformLocation("Texture3");
 
 		tcFlagLoc = shader->uniformLocation("tcmask");
 		tcColorLoc = shader->uniformLocation("teamcolour");
 		nmFlagLoc = shader->uniformLocation("normalmap");
 		fogFlagLoc = shader->uniformLocation("fogEnabled");
+		smFlagLoc = shader->uniformLocation("specularmap");
 
 		shader->setUniformValue(baseTexLoc, GLint(0));
 		shader->setUniformValue(tcTexLoc, GLint(1));
 		shader->setUniformValue(nmTexLoc, GLint(2));
+		shader->setUniformValue(smTexLoc, GLint(3));
 
 		shader->setUniformValue(tcFlagLoc, GLint(0));
 		shader->setUniformValue(tcColorLoc,
 					m_tcmaskColour.redF(), m_tcmaskColour.greenF(), m_tcmaskColour.blueF(), m_tcmaskColour.alphaF());
 		shader->setUniformValue(nmFlagLoc, GLint(0));
 		shader->setUniformValue(fogFlagLoc, GLint(0));
+		shader->setUniformValue(smFlagLoc, GLint(0));
 
 		break;
 	}
@@ -386,8 +399,6 @@ bool QWZM::bindShader(int type)
 
 	shader->bind();
 
-
-
 	switch (type)
 	{
 	case WZ_SHADER_PIE3:
@@ -407,6 +418,16 @@ bool QWZM::bindShader(int type)
 
 		uniloc = shader->uniformLocation("normalmap");
 		if (hasGLRenderTexture(WZM_TEX_NORMALMAP))
+		{
+			shader->setUniformValue(uniloc, GLint(1));
+		}
+		else
+		{
+			shader->setUniformValue(uniloc, GLint(0));
+		}
+
+		uniloc = shader->uniformLocation("specularmap");
+		if (hasGLRenderTexture(WZM_TEX_SPECULAR))
 		{
 			shader->setUniformValue(uniloc, GLint(1));
 		}
