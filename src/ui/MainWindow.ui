@@ -63,6 +63,8 @@
     </property>
     <addaction name="actionTransform"/>
     <addaction name="actionSetupTextures"/>
+    <addaction name="separator"/>
+    <addaction name="actionAppend_Model"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuModel"/>
@@ -129,6 +131,11 @@
   <action name="actionSetupTextures">
    <property name="text">
     <string>Setup Textures</string>
+   </property>
+  </action>
+  <action name="actionAppend_Model">
+   <property name="text">
+    <string>Append Model</string>
    </property>
   </action>
  </widget>

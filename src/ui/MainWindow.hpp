@@ -48,7 +48,7 @@ public:
 
 	void clear();
 
-	void loadModel(const QString& file);
+	static bool loadModel(const QString& file, WZM& model);
 
 protected:
 	void changeEvent(QEvent *e);
@@ -72,6 +72,8 @@ private slots:
 	void _on_reverseWindings(int mesh);
 	void _on_mirrorAxis(int axis);
 
+	void on_actionAppend_Model_triggered();
+
 private:
 	Ui::MainWindow* ui;
 
@@ -85,7 +87,7 @@ private:
 
 	QString m_pathImport, m_pathExport, m_currentFile;
 
-	QWZM model;
+	QWZM m_model;
 
 	bool fireTextureDialog(const bool reinit = false);
 };

@@ -68,9 +68,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(transformDock, SIGNAL(scaleYChanged(double)), this, SLOT(_on_scaleYChanged(double)));
 	connect(transformDock, SIGNAL(scaleZChanged(double)), this, SLOT(_on_scaleZChanged(double)));
 	connect(transformDock, SIGNAL(reverseWindings(int)), this, SLOT(_on_reverseWindings(int)));
-	connect(transformDock, SIGNAL(applyTransformations()), &model, SLOT(applyTransformations()));
-	connect(&model, SIGNAL(meshCountChanged(int,QStringList)), transformDock, SLOT(setMeshCount(int,QStringList)));
-	connect(transformDock, SIGNAL(setActiveMeshIdx(int)), &model, SLOT(setActiveMesh(int)));
+	connect(transformDock, SIGNAL(applyTransformations()), &m_model, SLOT(applyTransformations()));
+	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), transformDock, SLOT(setMeshCount(int,QStringList)));
+	connect(transformDock, SIGNAL(setActiveMeshIdx(int)), &m_model, SLOT(setActiveMesh(int)));
 	connect(transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(_on_mirrorAxis(int)));
 
 	clear();
@@ -86,7 +86,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::clear()
 {
-	model.clear();
+	m_model.clear();
 	m_currentFile.clear();
 
 	setWindowTitle(WMIT_APPNAME);
@@ -108,17 +108,17 @@ void MainWindow::changeEvent(QEvent *e)
 	}
 }
 
-void MainWindow::loadModel(const QString& file)
+bool MainWindow::loadModel(const QString& file, WZM& model)
 {
 	QFileInfo modelFileNfo(file);
-	bool read_success = false;
-	std::ifstream f;
-	wmit_filetype_t type;
 
 	if (!modelFileNfo.exists())
 	{
-		return;
+		return false;
 	}
+
+
+	wmit_filetype_t type;
 
 	if (modelFileNfo.completeSuffix().compare(QString("wzm"), Qt::CaseInsensitive) == 0)
 	{
@@ -136,6 +136,9 @@ void MainWindow::loadModel(const QString& file)
 	{
 		type = WMIT_FT_PIE;
 	}
+
+	bool read_success = false;
+	std::ifstream f;
 
 	f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in | std::ios::binary);
 
@@ -169,24 +172,7 @@ void MainWindow::loadModel(const QString& file)
 		}
 	}
 
-	// Bail out on error, clear app state
-	if (!read_success)
-	{
-		clear();
-		return;
-	}
-
-	m_currentFile = modelFileNfo.absoluteFilePath();
-
-	setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
-	ui->actionClose->setEnabled(true);
-	ui->actionSetupTextures->setEnabled(true);
-
-	if (!fireTextureDialog(true))
-	{
-		clear();
-		return;
-	}
+	return read_success;
 }
 
 bool MainWindow::fireTextureDialog(const bool reinit)
@@ -195,7 +181,7 @@ bool MainWindow::fireTextureDialog(const bool reinit)
 
 	if (reinit)
 	{
-		model.getTexturesMap(texmap);
+		m_model.getTexturesMap(texmap);
 		m_textureDialog->setTexturesMap(texmap);
 		m_textureDialog->createTextureIcons(m_pathImport, m_currentFile);
 	}
@@ -204,8 +190,8 @@ bool MainWindow::fireTextureDialog(const bool reinit)
 	{
 		QMap<wzm_texture_type_t, QString>::const_iterator it;
 
-		model.clearTextureNames();
-		model.clearGLRenderTextures();
+		m_model.clearTextureNames();
+		m_model.clearGLRenderTextures();
 
 		m_textureDialog->getTexturesFilepath(texmap);
 		for (it = texmap.begin(); it != texmap.end(); ++it)
@@ -213,8 +199,8 @@ bool MainWindow::fireTextureDialog(const bool reinit)
 			if (!it.value().isEmpty())
 			{
 				QFileInfo texFileNfo(it.value());
-				model.loadGLRenderTexture(it.key(), texFileNfo.filePath());
-				model.setTextureName(it.key(), texFileNfo.fileName().toStdString());
+				m_model.loadGLRenderTexture(it.key(), texFileNfo.filePath());
+				m_model.setTextureName(it.key(), texFileNfo.fileName().toStdString());
 			}
 		}
 
@@ -250,7 +236,27 @@ void MainWindow::on_actionOpen_triggered()
 	fileDialog = 0;
 
 	if (!filePath.isEmpty())
-		loadModel(filePath);
+	{
+		WZM tmpmodel;
+
+		if (loadModel(filePath, tmpmodel))
+		{
+			QFileInfo modelFileNfo(filePath);
+			m_model = tmpmodel;
+			m_currentFile = modelFileNfo.absoluteFilePath();
+
+			setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
+			ui->actionClose->setEnabled(true);
+			ui->actionSetupTextures->setEnabled(true);
+
+			if (!fireTextureDialog(true))
+			{
+				clear();
+				return;
+			}
+		}
+		// else inf popup on fail?
+	}
 }
 
 void MainWindow::on_actionUVEditor_toggled(bool show)
@@ -338,76 +344,77 @@ void MainWindow::on_actionSave_As_triggered()
 	if (type == WMIT_FT_WZM)
 	{
 		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
-		model.write(out);
+		m_model.write(out);
 	}
 	else if(type == WMIT_FT_3DS)
 	{
-		model.exportTo3DS(std::string(nfo.absoluteFilePath().toLocal8Bit().constData()));
+		m_model.exportTo3DS(std::string(nfo.absoluteFilePath().toLocal8Bit().constData()));
 	}
 	else if(type == WMIT_FT_OBJ)
 	{
 		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
-		model.exportToOBJ(out);
+		m_model.exportToOBJ(out);
 	}
 	else //if(type == WMIT_FT_PIE)
 	{
 		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
-		Pie3Model p3 = model;
+		Pie3Model p3 = m_model;
 		p3.write(out);
 	}
 }
 
 void MainWindow::_on_viewerInitialized()
 {
-	ui->centralWidget->addToRenderList(&model);
+	ui->centralWidget->addToRenderList(&m_model);
 
 	// Only do it AFTER model was set to new render context
 	if (ui->centralWidget->loadShader(WZ_SHADER_PIE3, WMIT_SHADER_PIE3_DEFPATH_VERT, WMIT_SHADER_PIE3_DEFPATH_FRAG))
 	{
-		model.setActiveShader(WZ_SHADER_PIE3);
+		m_model.setActiveShader(WZ_SHADER_PIE3);
 	}
 
 	// FIXME: check for frag file too
-	QFileInfo finfo("./pie3.vert");
-	if (finfo.exists() && ui->centralWidget->loadShader(WZ_SHADER_PIE3_USER, "./pie3.vert", "./pie3.frag"))
+	QFileInfo finfo("pie3.vert");
+	if (finfo.exists() && ui->centralWidget->loadShader(WZ_SHADER_PIE3_USER, "pie3.vert", "pie3.frag"))
 	{
-		model.setActiveShader(WZ_SHADER_PIE3_USER);
+		setWindowTitle("WMIT - User mode shader");
+		m_model.setActiveShader(WZ_SHADER_PIE3_USER);
 	}
 }
 
 void MainWindow::_on_scaleXYZChanged(double val)
 {
-	model.setScaleXYZ(val);
+	m_model.setScaleXYZ(val);
 	ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_scaleXChanged(double val)
 {
-	model.setScaleX(val);
+	m_model.setScaleX(val);
 	ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_scaleYChanged(double val)
 {
-	model.setScaleY(val);
+	m_model.setScaleY(val);
 	ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_scaleZChanged(double val)
 {
-	model.setScaleZ(val);
+	m_model.setScaleZ(val);
 	ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_reverseWindings(int mesh)
 {
-	model.reverseWinding(mesh);
+	m_model.reverseWinding(mesh);
 	ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_mirrorAxis(int axis)
 {
-	model.slotMirrorAxis(axis);
+	m_model.slotMirrorAxis(axis);
 	ui->centralWidget->updateGL();
 }
 
@@ -424,4 +431,39 @@ void MainWindow::on_actionTransform_triggered()
 void MainWindow::on_actionSetupTextures_triggered()
 {
 	fireTextureDialog();
+}
+
+void MainWindow::on_actionAppend_Model_triggered()
+{
+	QString filePath;
+	QFileDialog* fileDialog = new QFileDialog(this,
+						  tr("Select file to append"),
+						  m_pathImport,
+						  tr("All Compatible (*.pie *.3ds *.obj);;"
+						     /// "WZM models (*.wzm);;"
+						     "PIE models (*.pie);;"
+						     "3DS files (*.3ds);;"
+						     "OBJ files (*.obj)"));
+	fileDialog->setFileMode(QFileDialog::ExistingFile);
+	fileDialog->exec();
+
+	if (fileDialog->result() == QDialog::Accepted)
+	{
+		filePath = fileDialog->selectedFiles().first();
+	}
+	delete fileDialog;
+	fileDialog = 0;
+
+	if (!filePath.isEmpty())
+	{
+		WZM newmodel;
+
+		if (loadModel(filePath, newmodel))
+		{
+			for (int i = 0; i < newmodel.meshes(); ++i)
+			{
+				m_model.addMesh(newmodel.getMesh(i));
+			}
+		}
+	}
 }
