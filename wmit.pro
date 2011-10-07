@@ -71,7 +71,9 @@ OTHER_FILES += \
     TODO.txt \
     COPYING.txt \
     HACKING.txt \
-    COPYING.nongpl
+    COPYING.nongpl \
+    data/shaders/pie3.vert \
+    data/shaders/pie3.frag
 
 CONFIG(debug, debug|release) {
     DEFINES *= DEBUG _DEBUG
