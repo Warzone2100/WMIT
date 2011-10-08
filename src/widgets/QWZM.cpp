@@ -278,6 +278,34 @@ void QWZM::getTexturesMap(QMap<wzm_texture_type_t, QString>& map) const
 	}
 }
 
+void QWZM::disableShaders()
+{
+	releaseShader(m_active_shader);
+	m_active_shader = WZ_SHADER_NONE;
+}
+
+QString QWZM::shaderTypeToString(wz_shader_type_t type)
+{
+	QString str;
+
+	switch (type)
+	{
+	case WZ_SHADER_NONE:
+		str = "Fixed pipeline";
+		break;
+	case WZ_SHADER_PIE3:
+		str = "PIE3 shader";
+		break;
+	case WZ_SHADER_PIE3_USER:
+		str = "PIE3 shader (external)";
+		break;
+	default:
+		str = "Unknown!";
+	}
+
+	return str;
+}
+
 static inline void activateAndBindTexture(int unit, GLuint texture)
 {
 	glActiveTexture(GL_TEXTURE0 + unit);
@@ -354,31 +382,20 @@ bool QWZM::initShader(int type)
 	{
 	case WZ_SHADER_PIE3:
 	case WZ_SHADER_PIE3_USER:
-		int baseTexLoc, tcTexLoc, nmTexLoc, smTexLoc,
-				tcFlagLoc, tcColorLoc, nmFlagLoc, fogFlagLoc, smFlagLoc;
+		int baseTexLoc, tcTexLoc, nmTexLoc, smTexLoc, fogFlagLoc;
 
 		baseTexLoc = shader->uniformLocation("Texture0");
 		tcTexLoc = shader->uniformLocation("Texture1");
 		nmTexLoc = shader->uniformLocation("Texture2");
 		smTexLoc = shader->uniformLocation("Texture3");
 
-		tcFlagLoc = shader->uniformLocation("tcmask");
-		tcColorLoc = shader->uniformLocation("teamcolour");
-		nmFlagLoc = shader->uniformLocation("normalmap");
-		fogFlagLoc = shader->uniformLocation("fogEnabled");
-		smFlagLoc = shader->uniformLocation("specularmap");
-
 		shader->setUniformValue(baseTexLoc, GLint(0));
 		shader->setUniformValue(tcTexLoc, GLint(1));
 		shader->setUniformValue(nmTexLoc, GLint(2));
 		shader->setUniformValue(smTexLoc, GLint(3));
 
-		shader->setUniformValue(tcFlagLoc, GLint(0));
-		shader->setUniformValue(tcColorLoc,
-					m_tcmaskColour.redF(), m_tcmaskColour.greenF(), m_tcmaskColour.blueF(), m_tcmaskColour.alphaF());
-		shader->setUniformValue(nmFlagLoc, GLint(0));
+		fogFlagLoc = shader->uniformLocation("fogEnabled");
 		shader->setUniformValue(fogFlagLoc, GLint(0));
-		shader->setUniformValue(smFlagLoc, GLint(0));
 
 		break;
 	}
@@ -450,6 +467,8 @@ void QWZM::releaseShader(int type)
 
 	if (shader)
 		shader->release();
+	else
+		glUseProgram(0);
 }
 
 /*********** SLOTS ************/

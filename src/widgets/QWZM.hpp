@@ -32,7 +32,8 @@
 #include "IGLTexturedRenderable.hpp"
 #include "IGLShaderRenderable.h"
 
-enum wz_shader_type_t {WZ_SHADER_NONE = 0, WZ_SHADER_PIE3, WZ_SHADER_PIE3_USER};
+enum wz_shader_type_t {WZ_SHADER_NONE = 0, WZ_SHADER_PIE3, WZ_SHADER_PIE3_USER,
+		       WZ_SHADER__LAST, WZ_SHADER__FIRST = WZ_SHADER_NONE};
 
 class Pie3Model;
 
@@ -49,6 +50,9 @@ public:
 	void clear();
 	QStringList getMeshNames() const;
 	void getTexturesMap(QMap<wzm_texture_type_t, QString>& map) const;
+
+	void disableShaders();
+	static QString shaderTypeToString(wz_shader_type_t type);
 
 	// GLTexture controls
 	void loadGLRenderTexture(wzm_texture_type_t type, QString fileName);

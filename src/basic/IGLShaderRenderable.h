@@ -35,11 +35,13 @@ public:
 	virtual void setShaderManager(IGLShaderManager* manager) {m_shaderman = manager;}
 	virtual bool setActiveShader(const int type)
 	{
+		releaseShader(m_active_shader);
 		if (m_shaderman != NULL && m_shaderman->hasShader(type) && initShader(type))
 		{
 			m_active_shader = type;
 			return true;
 		}
+
 		return false;
 	}
 

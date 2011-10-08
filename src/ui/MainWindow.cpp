@@ -45,7 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	transformDock(new TransformDock(this)),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
-	m_settings(new QSettings(this))
+	m_settings(new QSettings(this)),
+	m_shaderSignalMapper(new QSignalMapper(this))
 {
 	ui->setupUi(this);
 
@@ -367,18 +368,78 @@ void MainWindow::_on_viewerInitialized()
 {
 	ui->centralWidget->addToRenderList(&m_model);
 
-	// Only do it AFTER model was set to new render context
-	if (ui->centralWidget->loadShader(WZ_SHADER_PIE3, WMIT_SHADER_PIE3_DEFPATH_VERT, WMIT_SHADER_PIE3_DEFPATH_FRAG))
+	QActionGroup* shaderGroup = new QActionGroup(this);
+
+	for (int i = WZ_SHADER__FIRST; i < WZ_SHADER__LAST; ++i)
 	{
-		m_model.setActiveShader(WZ_SHADER_PIE3);
+		QString shadername = QWZM::shaderTypeToString(static_cast<wz_shader_type_t>(i));
+
+		QAction* shaderAct = new QAction(shadername, this);
+
+		shaderAct->setCheckable(true);
+		shaderAct->setEnabled(false);
+
+		//FIXME: more automated way required
+		{
+			QString pathvert, pathfrag;
+			switch (static_cast<wz_shader_type_t>(i))
+			{
+			case WZ_SHADER_NONE:
+				shaderAct->setEnabled(true);
+				break;
+			case WZ_SHADER_PIE3:
+				pathvert = WMIT_SHADER_PIE3_DEFPATH_VERT;
+				pathfrag = WMIT_SHADER_PIE3_DEFPATH_FRAG;
+				break;
+			case WZ_SHADER_PIE3_USER:
+				pathvert = WMIT_SHADER_PIE3_USERFILE_VERT;
+				pathfrag = WMIT_SHADER_PIE3_USERFILE_FRAG;
+				break;
+			default:
+				break;
+			}
+
+			QFileInfo finfo(pathvert);
+			if (finfo.exists())
+			{
+				finfo.setFile(pathfrag);
+				if (finfo.exists())
+				{
+					if (ui->centralWidget->loadShader(static_cast<wz_shader_type_t>(i), pathvert, pathfrag))
+					{
+						shaderAct->setEnabled(true);
+					}
+				}
+			}
+		}
+
+		m_shaderSignalMapper->setMapping(shaderAct, i);
+		connect(shaderAct, SIGNAL(triggered()), m_shaderSignalMapper, SLOT(map()));
+
+		shaderAct->setActionGroup(shaderGroup);
 	}
 
-	// FIXME: check for frag file too
-	QFileInfo finfo("pie3.vert");
-	if (finfo.exists() && ui->centralWidget->loadShader(WZ_SHADER_PIE3_USER, "pie3.vert", "pie3.frag"))
+	connect(m_shaderSignalMapper, SIGNAL(mapped(int)),
+		     this, SLOT(_on_shaderActionTriggered(int)));
+
+	QMenu* rendererMenu = menuBar()->addMenu(tr("Rendered"));
+	rendererMenu->addActions(shaderGroup->actions());
+
+	if (shaderGroup->actions().size())
 	{
-		setWindowTitle("WMIT - User mode shader");
-		m_model.setActiveShader(WZ_SHADER_PIE3_USER);
+		shaderGroup->actions().at(shaderGroup->actions().size() - 1)->activate(QAction::Trigger);
+	}
+}
+
+void MainWindow::_on_shaderActionTriggered(int type)
+{
+	if (static_cast<wz_shader_type_t>(type) != WZ_SHADER_NONE)
+	{
+		m_model.setActiveShader(static_cast<wz_shader_type_t>(type));
+	}
+	else
+	{
+		m_model.disableShaders();
 	}
 }
 

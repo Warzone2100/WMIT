@@ -27,6 +27,7 @@
 #include <QPair>
 
 #include <QSettings>
+#include <QSignalMapper>
 
 #include "QWZM.hpp"
 
@@ -61,8 +62,10 @@ private slots:
 	void on_actionTransform_triggered();
 	void on_actionUVEditor_toggled(bool );
 	void on_actionSetupTextures_triggered();
+	void on_actionAppend_Model_triggered();
 
 	void _on_viewerInitialized();
+	void _on_shaderActionTriggered(int);
 
 	// transformations
 	void _on_scaleXYZChanged(double);
@@ -71,8 +74,6 @@ private slots:
 	void _on_scaleZChanged(double);
 	void _on_reverseWindings(int mesh);
 	void _on_mirrorAxis(int axis);
-
-	void on_actionAppend_Model_triggered();
 
 private:
 	Ui::MainWindow* ui;
@@ -85,6 +86,7 @@ private:
 	UVEditor* m_UVEditor;
 	QSettings* m_settings;
 
+	QSignalMapper *m_shaderSignalMapper;
 	QString m_pathImport, m_pathExport, m_currentFile;
 
 	QWZM m_model;
