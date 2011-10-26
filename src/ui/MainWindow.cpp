@@ -72,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(transformDock, SIGNAL(applyTransformations()), &m_model, SLOT(applyTransformations()));
 	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), transformDock, SLOT(setMeshCount(int,QStringList)));
 	connect(transformDock, SIGNAL(setActiveMeshIdx(int)), &m_model, SLOT(setActiveMesh(int)));
+	connect(transformDock, SIGNAL(removeMeshIdx(int)), this, SLOT(_on_removeMesh(int)));
 	connect(transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(_on_mirrorAxis(int)));
 
 	clear();
@@ -476,6 +477,15 @@ void MainWindow::_on_reverseWindings(int mesh)
 void MainWindow::_on_mirrorAxis(int axis)
 {
 	m_model.slotMirrorAxis(axis);
+	ui->centralWidget->updateGL();
+}
+
+void MainWindow::_on_removeMesh(int mesh)
+{
+	if (mesh < 0 || mesh > m_model.meshes())
+		return;
+
+	m_model.rmMesh(mesh);
 	ui->centralWidget->updateGL();
 }
 

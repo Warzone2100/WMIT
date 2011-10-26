@@ -29,6 +29,8 @@ TransformDock::TransformDock(QWidget *parent) :
 	 ui->cbMeshIdx->setEditable(false);
 	 setMeshCount(0, QStringList());
 
+	 ui->pbRemoveMesh->setIcon(style()->standardIcon(QStyle::SP_TrashIcon, 0, ui->pbRemoveMesh));
+
 	 reset(true);
 }
 
@@ -61,16 +63,15 @@ void TransformDock::setMeshCount(int value, QStringList names)
 		ui->cbMeshIdx->addItem(QString::number(i) + " [" + names.value(i - 1) + "]");
 	}
 
-	if (selected <= value)
+	if (selected > value || selected < 0)
 	{
-		if (selected < 0)
-		{
-			selected = 0;
-		}
-		ui->cbMeshIdx->setCurrentIndex(selected);
+		selected = 0;
 	}
+	ui->cbMeshIdx->setCurrentIndex(selected);
 
 	ui->cbMeshIdx->blockSignals(false);
+
+	on_cbMeshIdx_currentIndexChanged(selected); // force this because of possible mesh stack pop
 }
 
 void TransformDock::changeEvent(QEvent *e)
@@ -176,6 +177,8 @@ void TransformDock::on_comboBox_currentIndexChanged(int index)
 
 void TransformDock::on_cbMeshIdx_currentIndexChanged(int index)
 {
+	ui->pbRemoveMesh->setDisabled(!index || ui->cbMeshIdx->count() <= 2); // FIXME: can't remove all and shouldn't remove last remaining mesh
+
 	if (index < 0)
 		return;
 
@@ -199,4 +202,9 @@ void TransformDock::on_pbMirrorY_clicked()
 void TransformDock::on_pbMirrorZ_clicked()
 {
 	emit mirrorAxis(ui->cbGlobalMirror->isChecked() ? 5 : 2);
+}
+
+void TransformDock::on_pbRemoveMesh_clicked()
+{
+	emit removeMeshIdx(m_selected_mesh);
 }

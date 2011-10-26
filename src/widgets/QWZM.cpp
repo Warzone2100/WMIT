@@ -122,7 +122,7 @@ void QWZM::drawCenterPoint()
 #ifdef _DEBUG
 	WZMVertex center;
 
-	if (m_active_mesh < 0)
+	if (m_active_mesh < 0 || !m_meshes.size())
 	{
 		center = calculateCenterPoint();
 	}

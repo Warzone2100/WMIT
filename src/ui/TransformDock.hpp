@@ -45,6 +45,7 @@ signals:
 
 	void applyTransformations();
 	void setActiveMeshIdx(int);
+	void removeMeshIdx(int);
 
 public slots:
 	void setMeshCount(int value, QStringList names);
@@ -71,6 +72,7 @@ private slots:
 	void on_pbMirrorX_clicked();
 	void on_pbMirrorY_clicked();
 	void on_pbMirrorZ_clicked();
+	void on_pbRemoveMesh_clicked();
 };
 
 #endif // TRANSFORMDOCK_HPP
