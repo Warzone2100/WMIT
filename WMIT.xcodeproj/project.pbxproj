@@ -1,0 +1,1344 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		430C2E64129737AD00AAA86E /* Setup Prebuilt Components */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 430C2E71129737C600AAA86E /* Build configuration list for PBXAggregateTarget "Setup Prebuilt Components" */;
+			buildPhases = (
+				430C2E63129737AD00AAA86E /* MOC */,
+				43B54B2612998D9F002AC030 /* QT */,
+			);
+			dependencies = (
+			);
+			name = "Setup Prebuilt Components";
+			productName = "Setup Prebuilt Components";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		430C2E111297326100AAA86E /* COPYING.nongpl in Resources */ = {isa = PBXBuildFile; fileRef = 430C2E0D1297326100AAA86E /* COPYING.nongpl */; };
+		430C2E121297326100AAA86E /* COPYING.txt in Resources */ = {isa = PBXBuildFile; fileRef = 430C2E0E1297326100AAA86E /* COPYING.txt */; };
+		430C2E131297326100AAA86E /* tcmask.frag in Resources */ = {isa = PBXBuildFile; fileRef = 430C2E0F1297326100AAA86E /* tcmask.frag */; };
+		430C2E141297326100AAA86E /* tcmask.vert in Resources */ = {isa = PBXBuildFile; fileRef = 430C2E101297326100AAA86E /* tcmask.vert */; };
+		430C2E36129732FD00AAA86E /* ConfigDialog.ui in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E2F129732FD00AAA86E /* ConfigDialog.ui */; };
+		430C2E37129732FD00AAA86E /* ExportDialog.ui in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E30129732FD00AAA86E /* ExportDialog.ui */; };
+		430C2E38129732FD00AAA86E /* ImportDialog.ui in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E31129732FD00AAA86E /* ImportDialog.ui */; };
+		430C2E39129732FD00AAA86E /* MainWindow.ui in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E32129732FD00AAA86E /* MainWindow.ui */; };
+		430C2E3A129732FD00AAA86E /* TeamColoursDock.ui in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E33129732FD00AAA86E /* TeamColoursDock.ui */; };
+		430C2E3B129732FD00AAA86E /* TransformDock.ui in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E34129732FD00AAA86E /* TransformDock.ui */; };
+		430C2E3C129732FD00AAA86E /* UVEditor.ui in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E35129732FD00AAA86E /* UVEditor.ui */; };
+		430C2E501297333400AAA86E /* ConfigDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E3D1297333400AAA86E /* ConfigDialog.cpp */; };
+		430C2E511297333400AAA86E /* ExportDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E3E1297333400AAA86E /* ExportDialog.cpp */; };
+		430C2E521297333400AAA86E /* Generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E3F1297333400AAA86E /* Generic.cpp */; };
+		430C2E531297333400AAA86E /* GLee.c in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E401297333400AAA86E /* GLee.c */; };
+		430C2E541297333400AAA86E /* GLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E411297333400AAA86E /* GLTexture.cpp */; };
+		430C2E551297333400AAA86E /* ImportDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E421297333400AAA86E /* ImportDialog.cpp */; };
+		430C2E561297333400AAA86E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E431297333400AAA86E /* main.cpp */; };
+		430C2E571297333400AAA86E /* MainWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E441297333400AAA86E /* MainWindow.cpp */; };
+		430C2E581297333400AAA86E /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E451297333400AAA86E /* Mesh.cpp */; };
+		430C2E591297333400AAA86E /* Pie_t.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E461297333400AAA86E /* Pie_t.cpp */; };
+		430C2E5A1297333400AAA86E /* Pie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E471297333400AAA86E /* Pie.cpp */; };
+		430C2E5B1297333400AAA86E /* Polygon_t.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E481297333400AAA86E /* Polygon_t.cpp */; };
+		430C2E5C1297333400AAA86E /* QtGLView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E491297333400AAA86E /* QtGLView.cpp */; };
+		430C2E5D1297333400AAA86E /* QWZM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E4A1297333400AAA86E /* QWZM.cpp */; };
+		430C2E5E1297333400AAA86E /* TeamColoursDock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E4B1297333400AAA86E /* TeamColoursDock.cpp */; };
+		430C2E5F1297333400AAA86E /* TransformDock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E4C1297333400AAA86E /* TransformDock.cpp */; };
+		430C2E601297333400AAA86E /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E4D1297333400AAA86E /* Util.cpp */; };
+		430C2E611297333400AAA86E /* UVEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E4E1297333400AAA86E /* UVEditor.cpp */; };
+		430C2E621297333400AAA86E /* WZM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E4F1297333400AAA86E /* WZM.cpp */; };
+		430C2E9B1297441100AAA86E /* ConfigDialog.hpp.moc in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E931297441100AAA86E /* ConfigDialog.hpp.moc */; };
+		430C2E9C1297441100AAA86E /* ExportDialog.hpp.moc in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E941297441100AAA86E /* ExportDialog.hpp.moc */; };
+		430C2E9D1297441100AAA86E /* ImportDialog.hpp.moc in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E951297441100AAA86E /* ImportDialog.hpp.moc */; };
+		430C2E9E1297441100AAA86E /* MainWindow.hpp.moc in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E961297441100AAA86E /* MainWindow.hpp.moc */; };
+		430C2E9F1297441100AAA86E /* QtGLView.hpp.moc in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E971297441100AAA86E /* QtGLView.hpp.moc */; };
+		430C2EA01297441100AAA86E /* TeamColoursDock.hpp.moc in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E981297441100AAA86E /* TeamColoursDock.hpp.moc */; };
+		430C2EA11297441100AAA86E /* TransformDock.hpp.moc in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E991297441100AAA86E /* TransformDock.hpp.moc */; };
+		430C2EA21297441100AAA86E /* UVEditor.hpp.moc in Sources */ = {isa = PBXBuildFile; fileRef = 430C2E9A1297441100AAA86E /* UVEditor.hpp.moc */; };
+		43B54BED12998F21002AC030 /* QtCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BEC12998F21002AC030 /* QtCore.framework */; };
+		43B54BEF12998F22002AC030 /* QtGui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BEE12998F22002AC030 /* QtGui.framework */; };
+		43B54BF112998F22002AC030 /* QtOpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BF012998F22002AC030 /* QtOpenGL.framework */; };
+		43B551461299A5E4002AC030 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B551451299A5E4002AC030 /* Carbon.framework */; };
+		43B551481299A5E4002AC030 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B551471299A5E4002AC030 /* OpenGL.framework */; };
+		43B552781299AD28002AC030 /* atmosphere.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552521299AD28002AC030 /* atmosphere.c */; };
+		43B552791299AD28002AC030 /* atmosphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552531299AD28002AC030 /* atmosphere.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B5527A1299AD28002AC030 /* background.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552541299AD28002AC030 /* background.c */; };
+		43B5527B1299AD28002AC030 /* background.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552551299AD28002AC030 /* background.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B5527C1299AD28002AC030 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552561299AD28002AC030 /* camera.c */; };
+		43B5527D1299AD28002AC030 /* camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552571299AD28002AC030 /* camera.h */; };
+		43B5527E1299AD28002AC030 /* chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552581299AD28002AC030 /* chunk.c */; };
+		43B5527F1299AD28002AC030 /* chunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552591299AD28002AC030 /* chunk.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B552801299AD28002AC030 /* chunktable.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5525A1299AD28002AC030 /* chunktable.h */; };
+		43B552811299AD28002AC030 /* ease.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5525B1299AD28002AC030 /* ease.c */; };
+		43B552821299AD28002AC030 /* ease.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5525C1299AD28002AC030 /* ease.h */; };
+		43B552831299AD28002AC030 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5525D1299AD28002AC030 /* file.c */; };
+		43B552841299AD28002AC030 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5525E1299AD28002AC030 /* file.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B552851299AD28002AC030 /* io.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5525F1299AD28002AC030 /* io.c */; };
+		43B552861299AD28002AC030 /* io.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552601299AD28002AC030 /* io.h */; };
+		43B552871299AD28002AC030 /* light.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552611299AD28002AC030 /* light.c */; };
+		43B552881299AD28002AC030 /* light.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552621299AD28002AC030 /* light.h */; };
+		43B552891299AD28002AC030 /* material.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552631299AD28002AC030 /* material.c */; };
+		43B5528A1299AD28002AC030 /* material.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552641299AD28002AC030 /* material.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B5528B1299AD28002AC030 /* matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552651299AD28002AC030 /* matrix.c */; };
+		43B5528C1299AD28002AC030 /* matrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552661299AD28002AC030 /* matrix.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B5528D1299AD28002AC030 /* mesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552671299AD28002AC030 /* mesh.c */; };
+		43B5528E1299AD28002AC030 /* mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552681299AD28002AC030 /* mesh.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B5528F1299AD28002AC030 /* node.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552691299AD28002AC030 /* node.c */; };
+		43B552901299AD28002AC030 /* node.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5526A1299AD28002AC030 /* node.h */; };
+		43B552911299AD28002AC030 /* quat.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5526B1299AD28002AC030 /* quat.c */; };
+		43B552921299AD28002AC030 /* quat.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5526C1299AD28002AC030 /* quat.h */; };
+		43B552931299AD28002AC030 /* shadow.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5526D1299AD28002AC030 /* shadow.c */; };
+		43B552941299AD28002AC030 /* shadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5526E1299AD28002AC030 /* shadow.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B552951299AD28002AC030 /* tcb.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5526F1299AD28002AC030 /* tcb.c */; };
+		43B552961299AD28002AC030 /* tcb.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552701299AD28002AC030 /* tcb.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B552971299AD28002AC030 /* tracks.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552711299AD28002AC030 /* tracks.c */; };
+		43B552981299AD28002AC030 /* tracks.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552721299AD28002AC030 /* tracks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B552991299AD28002AC030 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552731299AD28002AC030 /* types.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B5529A1299AD28002AC030 /* vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552741299AD28002AC030 /* vector.c */; };
+		43B5529B1299AD28002AC030 /* vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552751299AD28002AC030 /* vector.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B5529C1299AD28002AC030 /* viewport.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552761299AD28002AC030 /* viewport.c */; };
+		43B5529D1299AD28002AC030 /* viewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552771299AD28002AC030 /* viewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B552BF1299BD34002AC030 /* lib3ds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B552201299AAD7002AC030 /* lib3ds.framework */; };
+		43B552C01299BD3D002AC030 /* lib3ds.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B552201299AAD7002AC030 /* lib3ds.framework */; };
+		43B552D01299BD53002AC030 /* QtCore.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BEC12998F21002AC030 /* QtCore.framework */; };
+		43B552D11299BD53002AC030 /* QtGui.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BEE12998F22002AC030 /* QtGui.framework */; };
+		43B552D21299BD53002AC030 /* QtOpenGL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BF012998F22002AC030 /* QtOpenGL.framework */; };
+		43B5535C1299C3AD002AC030 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B5535B1299C3AD002AC030 /* GLUT.framework */; };
+		43B553801299C681002AC030 /* QGLViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B5534D1299C1BF002AC030 /* QGLViewer.framework */; };
+		43B553831299C69A002AC030 /* QGLViewer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B5534D1299C1BF002AC030 /* QGLViewer.framework */; };
+		43B553BF1299C759002AC030 /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553881299C759002AC030 /* camera.cpp */; };
+		43B553C01299C759002AC030 /* camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553891299C759002AC030 /* camera.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553C11299C759002AC030 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5538A1299C759002AC030 /* config.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553C21299C759002AC030 /* constraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B5538B1299C759002AC030 /* constraint.cpp */; };
+		43B553C31299C759002AC030 /* constraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5538C1299C759002AC030 /* constraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553C41299C759002AC030 /* domUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5538D1299C759002AC030 /* domUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553C51299C759002AC030 /* frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B5538E1299C759002AC030 /* frame.cpp */; };
+		43B553C61299C759002AC030 /* frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5538F1299C759002AC030 /* frame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553C71299C759002AC030 /* ImageInterface.Qt4.ui in Sources */ = {isa = PBXBuildFile; fileRef = 43B553901299C759002AC030 /* ImageInterface.Qt4.ui */; };
+		43B553C81299C759002AC030 /* keyFrameInterpolator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553911299C759002AC030 /* keyFrameInterpolator.cpp */; };
+		43B553C91299C759002AC030 /* keyFrameInterpolator.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553921299C759002AC030 /* keyFrameInterpolator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553CA1299C759002AC030 /* manipulatedCameraFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553931299C759002AC030 /* manipulatedCameraFrame.cpp */; };
+		43B553CB1299C759002AC030 /* manipulatedCameraFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553941299C759002AC030 /* manipulatedCameraFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553CC1299C759002AC030 /* manipulatedFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553951299C759002AC030 /* manipulatedFrame.cpp */; };
+		43B553CD1299C759002AC030 /* manipulatedFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553961299C759002AC030 /* manipulatedFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553CE1299C759002AC030 /* mouseGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553971299C759002AC030 /* mouseGrabber.cpp */; };
+		43B553CF1299C759002AC030 /* mouseGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553981299C759002AC030 /* mouseGrabber.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553D01299C759002AC030 /* qglviewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553991299C759002AC030 /* qglviewer.cpp */; };
+		43B553D11299C759002AC030 /* qglviewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5539A1299C759002AC030 /* qglviewer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553D21299C759002AC030 /* qglviewer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 43B5539B1299C759002AC030 /* qglviewer.icns */; };
+		43B553D31299C759002AC030 /* quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B5539C1299C759002AC030 /* quaternion.cpp */; };
+		43B553D41299C759002AC030 /* quaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5539D1299C759002AC030 /* quaternion.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553D51299C759002AC030 /* saveSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B5539E1299C759002AC030 /* saveSnapshot.cpp */; };
+		43B553D61299C759002AC030 /* vec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B5539F1299C759002AC030 /* vec.cpp */; };
+		43B553D71299C759002AC030 /* vec.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553A01299C759002AC030 /* vec.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553D81299C759002AC030 /* AxisAlignedBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553A21299C759002AC030 /* AxisAlignedBox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553D91299C759002AC030 /* BackFaceCullingOptimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553A31299C759002AC030 /* BackFaceCullingOptimizer.cpp */; };
+		43B553DA1299C759002AC030 /* BSPSortMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553A41299C759002AC030 /* BSPSortMethod.cpp */; };
+		43B553DB1299C759002AC030 /* EPSExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553A51299C759002AC030 /* EPSExporter.cpp */; };
+		43B553DC1299C759002AC030 /* Exporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553A61299C759002AC030 /* Exporter.cpp */; };
+		43B553DD1299C759002AC030 /* Exporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553A71299C759002AC030 /* Exporter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553DE1299C759002AC030 /* FIGExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553A81299C759002AC030 /* FIGExporter.cpp */; };
+		43B553DF1299C759002AC030 /* gpc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553A91299C759002AC030 /* gpc.cpp */; };
+		43B553E01299C759002AC030 /* gpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553AA1299C759002AC030 /* gpc.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553E11299C759002AC030 /* NVector3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553AB1299C759002AC030 /* NVector3.cpp */; };
+		43B553E21299C759002AC030 /* NVector3.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553AC1299C759002AC030 /* NVector3.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553E31299C759002AC030 /* Optimizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553AD1299C759002AC030 /* Optimizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553E41299C759002AC030 /* ParserGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553AE1299C759002AC030 /* ParserGL.cpp */; };
+		43B553E51299C759002AC030 /* ParserGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553AF1299C759002AC030 /* ParserGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553E61299C759002AC030 /* Primitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553B01299C759002AC030 /* Primitive.cpp */; };
+		43B553E71299C759002AC030 /* Primitive.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553B11299C759002AC030 /* Primitive.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553E81299C759002AC030 /* PrimitivePositioning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553B21299C759002AC030 /* PrimitivePositioning.cpp */; };
+		43B553E91299C759002AC030 /* PrimitivePositioning.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553B31299C759002AC030 /* PrimitivePositioning.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553EA1299C759002AC030 /* SortMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553B41299C759002AC030 /* SortMethod.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553EB1299C759002AC030 /* TopologicalSortMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553B51299C759002AC030 /* TopologicalSortMethod.cpp */; };
+		43B553EC1299C759002AC030 /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553B61299C759002AC030 /* Types.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553ED1299C759002AC030 /* Vector2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553B71299C759002AC030 /* Vector2.cpp */; };
+		43B553EE1299C759002AC030 /* Vector2.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553B81299C759002AC030 /* Vector2.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553EF1299C759002AC030 /* Vector3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553B91299C759002AC030 /* Vector3.cpp */; };
+		43B553F01299C759002AC030 /* Vector3.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553BA1299C759002AC030 /* Vector3.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553F11299C759002AC030 /* VisibilityOptimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553BB1299C759002AC030 /* VisibilityOptimizer.cpp */; };
+		43B553F21299C759002AC030 /* VRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B553BC1299C759002AC030 /* VRender.cpp */; };
+		43B553F31299C759002AC030 /* VRender.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B553BD1299C759002AC030 /* VRender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43B553F41299C759002AC030 /* VRenderInterface.Qt4.ui in Sources */ = {isa = PBXBuildFile; fileRef = 43B553BE1299C759002AC030 /* VRenderInterface.Qt4.ui */; };
+		43B553F51299C802002AC030 /* QtCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BEC12998F21002AC030 /* QtCore.framework */; };
+		43B553F61299C802002AC030 /* QtGui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BEE12998F22002AC030 /* QtGui.framework */; };
+		43B553F71299C802002AC030 /* QtOpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BF012998F22002AC030 /* QtOpenGL.framework */; };
+		43B5540D1299D257002AC030 /* QtXml.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B5540C1299D257002AC030 /* QtXml.framework */; };
+		43B554461299D294002AC030 /* QtXml.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B5540C1299D257002AC030 /* QtXml.framework */; };
+		43B5544C1299D2C6002AC030 /* QtXml.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B5540C1299D257002AC030 /* QtXml.framework */; };
+		43B554551299D88A002AC030 /* Qt3Support.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B554541299D88A002AC030 /* Qt3Support.framework */; };
+		43B554571299D88A002AC030 /* QtSql.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B554561299D88A002AC030 /* QtSql.framework */; };
+		43B555C21299D8A4002AC030 /* QtSql.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B554561299D88A002AC030 /* QtSql.framework */; };
+		43B555C31299D8A4002AC030 /* Qt3Support.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B554541299D88A002AC030 /* Qt3Support.framework */; };
+		43B555D41299DA12002AC030 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B551471299A5E4002AC030 /* OpenGL.framework */; };
+		43B556101299E51E002AC030 /* camera.h.moc in Sources */ = {isa = PBXBuildFile; fileRef = 43B5560A1299E51E002AC030 /* camera.h.moc */; };
+		43B556111299E51E002AC030 /* frame.h.moc in Sources */ = {isa = PBXBuildFile; fileRef = 43B5560B1299E51E002AC030 /* frame.h.moc */; };
+		43B556121299E51E002AC030 /* keyFrameInterpolator.h.moc in Sources */ = {isa = PBXBuildFile; fileRef = 43B5560C1299E51E002AC030 /* keyFrameInterpolator.h.moc */; };
+		43B556131299E51E002AC030 /* manipulatedCameraFrame.h.moc in Sources */ = {isa = PBXBuildFile; fileRef = 43B5560D1299E51E002AC030 /* manipulatedCameraFrame.h.moc */; };
+		43B556141299E51E002AC030 /* manipulatedFrame.h.moc in Sources */ = {isa = PBXBuildFile; fileRef = 43B5560E1299E51E002AC030 /* manipulatedFrame.h.moc */; };
+		43B556151299E51E002AC030 /* qglviewer.h.moc in Sources */ = {isa = PBXBuildFile; fileRef = 43B5560F1299E51E002AC030 /* qglviewer.h.moc */; };
+		43B556C01299F361002AC030 /* QtNetwork.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B556711299F308002AC030 /* QtNetwork.framework */; };
+		43B558481299FD41002AC030 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B558471299FD41002AC030 /* CoreFoundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		430C2EAB12975E0900AAA86E /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.moc";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp",
+			);
+			script = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\nmoc -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp\" \"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}\" || exit 1";
+		};
+		430C2EAF12975F3300AAA86E /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.ui";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h",
+				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp",
+			);
+			script = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\nuic -o \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\" \"${INPUT_FILE_PATH}\" || exit 1\nmoc -nw -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp\" \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\"\nexit 0";
+		};
+		43B553741299C5EF002AC030 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.moc";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp",
+			);
+			script = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\nmoc -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp\" \"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}\" || exit 1";
+		};
+		43B553751299C5EF002AC030 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.ui";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h",
+				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp",
+			);
+			script = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\nuic -o \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\" \"${INPUT_FILE_PATH}\" || exit 1\nmoc -nw -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp\" \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\"\nexit 0";
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXContainerItemProxy section */
+		430C2E67129737BB00AAA86E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 430C2DE412972FE700AAA86E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 430C2E64129737AD00AAA86E;
+			remoteInfo = "Setup Prebuilt Components";
+		};
+		43B552B51299BCBE002AC030 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 430C2DE412972FE700AAA86E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 43B5521F1299AAD7002AC030;
+			remoteInfo = lib3ds;
+		};
+		43B553771299C663002AC030 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 430C2DE412972FE700AAA86E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 43B5534C1299C1BF002AC030;
+			remoteInfo = libQGLViewer;
+		};
+		43B554061299CB50002AC030 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 430C2DE412972FE700AAA86E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 430C2E64129737AD00AAA86E;
+			remoteInfo = "Setup Prebuilt Components";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		43B552BE1299BD24002AC030 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				43B552D01299BD53002AC030 /* QtCore.framework in Copy Frameworks */,
+				43B552D11299BD53002AC030 /* QtGui.framework in Copy Frameworks */,
+				43B556C01299F361002AC030 /* QtNetwork.framework in Copy Frameworks */,
+				43B552D21299BD53002AC030 /* QtOpenGL.framework in Copy Frameworks */,
+				43B554461299D294002AC030 /* QtXml.framework in Copy Frameworks */,
+				43B555C21299D8A4002AC030 /* QtSql.framework in Copy Frameworks */,
+				43B555C31299D8A4002AC030 /* Qt3Support.framework in Copy Frameworks */,
+				43B552C01299BD3D002AC030 /* lib3ds.framework in Copy Frameworks */,
+				43B553831299C69A002AC030 /* QGLViewer.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		430C2E04129731CE00AAA86E /* Warzone Model Importer Tool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Warzone Model Importer Tool.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		430C2E07129731CE00AAA86E /* Warzone Model Importer Tool-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Warzone Model Importer Tool-Info.plist"; path = "Resources/Warzone Model Importer Tool-Info.plist"; sourceTree = "<group>"; };
+		430C2E0D1297326100AAA86E /* COPYING.nongpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING.nongpl; sourceTree = "<group>"; };
+		430C2E0E1297326100AAA86E /* COPYING.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING.txt; sourceTree = "<group>"; };
+		430C2E0F1297326100AAA86E /* tcmask.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tcmask.frag; sourceTree = "<group>"; };
+		430C2E101297326100AAA86E /* tcmask.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tcmask.vert; sourceTree = "<group>"; };
+		430C2E15129732CC00AAA86E /* ConfigDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ConfigDialog.hpp; sourceTree = "<group>"; };
+		430C2E16129732CC00AAA86E /* ExportDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ExportDialog.hpp; sourceTree = "<group>"; };
+		430C2E17129732CC00AAA86E /* Generic.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Generic.hpp; sourceTree = "<group>"; };
+		430C2E18129732CC00AAA86E /* GLee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLee.h; sourceTree = "<group>"; };
+		430C2E19129732CC00AAA86E /* GLTexture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GLTexture.hpp; sourceTree = "<group>"; };
+		430C2E1A129732CC00AAA86E /* IAnimatable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IAnimatable.hpp; sourceTree = "<group>"; };
+		430C2E1B129732CC00AAA86E /* IGLRenderable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IGLRenderable.hpp; sourceTree = "<group>"; };
+		430C2E1C129732CC00AAA86E /* IGLTextureManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IGLTextureManager.hpp; sourceTree = "<group>"; };
+		430C2E1D129732CC00AAA86E /* ImportDialog.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ImportDialog.hpp; sourceTree = "<group>"; };
+		430C2E1E129732CC00AAA86E /* ITCMaskProvider.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ITCMaskProvider.hpp; sourceTree = "<group>"; };
+		430C2E1F129732CC00AAA86E /* MainWindow.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MainWindow.hpp; sourceTree = "<group>"; };
+		430C2E20129732CC00AAA86E /* Mesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Mesh.hpp; sourceTree = "<group>"; };
+		430C2E21129732CC00AAA86E /* OBJ.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OBJ.hpp; sourceTree = "<group>"; };
+		430C2E22129732CC00AAA86E /* Pie.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Pie.hpp; sourceTree = "<group>"; };
+		430C2E23129732CC00AAA86E /* Polygon.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Polygon.hpp; sourceTree = "<group>"; };
+		430C2E24129732CC00AAA86E /* QtGLView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QtGLView.hpp; sourceTree = "<group>"; };
+		430C2E25129732CC00AAA86E /* QWZM.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QWZM.hpp; sourceTree = "<group>"; };
+		430C2E26129732CC00AAA86E /* TCMaskRenderable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TCMaskRenderable.hpp; sourceTree = "<group>"; };
+		430C2E27129732CC00AAA86E /* TeamColoursDock.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TeamColoursDock.hpp; sourceTree = "<group>"; };
+		430C2E28129732CC00AAA86E /* TexturedRenderable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TexturedRenderable.hpp; sourceTree = "<group>"; };
+		430C2E29129732CC00AAA86E /* TransformDock.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TransformDock.hpp; sourceTree = "<group>"; };
+		430C2E2A129732CC00AAA86E /* Util.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Util.hpp; sourceTree = "<group>"; };
+		430C2E2B129732CC00AAA86E /* UVEditor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = UVEditor.hpp; sourceTree = "<group>"; };
+		430C2E2C129732CC00AAA86E /* Vector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vector.hpp; sourceTree = "<group>"; };
+		430C2E2D129732CC00AAA86E /* VectorTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VectorTypes.hpp; sourceTree = "<group>"; };
+		430C2E2E129732CC00AAA86E /* WZM.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WZM.hpp; sourceTree = "<group>"; };
+		430C2E2F129732FD00AAA86E /* ConfigDialog.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConfigDialog.ui; sourceTree = "<group>"; };
+		430C2E30129732FD00AAA86E /* ExportDialog.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ExportDialog.ui; sourceTree = "<group>"; };
+		430C2E31129732FD00AAA86E /* ImportDialog.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ImportDialog.ui; sourceTree = "<group>"; };
+		430C2E32129732FD00AAA86E /* MainWindow.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MainWindow.ui; sourceTree = "<group>"; };
+		430C2E33129732FD00AAA86E /* TeamColoursDock.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TeamColoursDock.ui; sourceTree = "<group>"; };
+		430C2E34129732FD00AAA86E /* TransformDock.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TransformDock.ui; sourceTree = "<group>"; };
+		430C2E35129732FD00AAA86E /* UVEditor.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = UVEditor.ui; sourceTree = "<group>"; };
+		430C2E3D1297333400AAA86E /* ConfigDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigDialog.cpp; sourceTree = "<group>"; };
+		430C2E3E1297333400AAA86E /* ExportDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExportDialog.cpp; sourceTree = "<group>"; };
+		430C2E3F1297333400AAA86E /* Generic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Generic.cpp; sourceTree = "<group>"; };
+		430C2E401297333400AAA86E /* GLee.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLee.c; sourceTree = "<group>"; };
+		430C2E411297333400AAA86E /* GLTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLTexture.cpp; sourceTree = "<group>"; };
+		430C2E421297333400AAA86E /* ImportDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImportDialog.cpp; sourceTree = "<group>"; };
+		430C2E431297333400AAA86E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		430C2E441297333400AAA86E /* MainWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainWindow.cpp; sourceTree = "<group>"; };
+		430C2E451297333400AAA86E /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mesh.cpp; sourceTree = "<group>"; };
+		430C2E461297333400AAA86E /* Pie_t.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pie_t.cpp; sourceTree = "<group>"; };
+		430C2E471297333400AAA86E /* Pie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pie.cpp; sourceTree = "<group>"; };
+		430C2E481297333400AAA86E /* Polygon_t.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Polygon_t.cpp; sourceTree = "<group>"; };
+		430C2E491297333400AAA86E /* QtGLView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QtGLView.cpp; sourceTree = "<group>"; };
+		430C2E4A1297333400AAA86E /* QWZM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QWZM.cpp; sourceTree = "<group>"; };
+		430C2E4B1297333400AAA86E /* TeamColoursDock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TeamColoursDock.cpp; sourceTree = "<group>"; };
+		430C2E4C1297333400AAA86E /* TransformDock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformDock.cpp; sourceTree = "<group>"; };
+		430C2E4D1297333400AAA86E /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
+		430C2E4E1297333400AAA86E /* UVEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UVEditor.cpp; sourceTree = "<group>"; };
+		430C2E4F1297333400AAA86E /* WZM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WZM.cpp; sourceTree = "<group>"; };
+		430C2E931297441100AAA86E /* ConfigDialog.hpp.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ConfigDialog.hpp.moc; sourceTree = "<group>"; };
+		430C2E941297441100AAA86E /* ExportDialog.hpp.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ExportDialog.hpp.moc; sourceTree = "<group>"; };
+		430C2E951297441100AAA86E /* ImportDialog.hpp.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ImportDialog.hpp.moc; sourceTree = "<group>"; };
+		430C2E961297441100AAA86E /* MainWindow.hpp.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MainWindow.hpp.moc; sourceTree = "<group>"; };
+		430C2E971297441100AAA86E /* QtGLView.hpp.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = QtGLView.hpp.moc; sourceTree = "<group>"; };
+		430C2E981297441100AAA86E /* TeamColoursDock.hpp.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TeamColoursDock.hpp.moc; sourceTree = "<group>"; };
+		430C2E991297441100AAA86E /* TransformDock.hpp.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TransformDock.hpp.moc; sourceTree = "<group>"; };
+		430C2E9A1297441100AAA86E /* UVEditor.hpp.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UVEditor.hpp.moc; sourceTree = "<group>"; };
+		43703E2F129E0C7F00DDDB30 /* Project-All.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Project-All.xcconfig"; path = "configs/Project-All.xcconfig"; sourceTree = "<group>"; };
+		43703E37129E100F00DDDB30 /* WMIT-All.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "WMIT-All.xcconfig"; path = "configs/WMIT-All.xcconfig"; sourceTree = "<group>"; };
+		43703E38129E100F00DDDB30 /* WMIT-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "WMIT-Debug.xcconfig"; path = "configs/WMIT-Debug.xcconfig"; sourceTree = "<group>"; };
+		43703E39129E100F00DDDB30 /* WMIT-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "WMIT-Release.xcconfig"; path = "configs/WMIT-Release.xcconfig"; sourceTree = "<group>"; };
+		43703E40129E143600DDDB30 /* lib3ds-All.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "lib3ds-All.xcconfig"; path = "configs/lib3ds-All.xcconfig"; sourceTree = "<group>"; };
+		43703E41129E143600DDDB30 /* lib3ds-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "lib3ds-Debug.xcconfig"; path = "configs/lib3ds-Debug.xcconfig"; sourceTree = "<group>"; };
+		43703E42129E143600DDDB30 /* lib3ds-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "lib3ds-Release.xcconfig"; path = "configs/lib3ds-Release.xcconfig"; sourceTree = "<group>"; };
+		43703E43129E1AE600DDDB30 /* QGLViewer-All.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "QGLViewer-All.xcconfig"; path = "configs/QGLViewer-All.xcconfig"; sourceTree = "<group>"; };
+		43703E44129E1AE600DDDB30 /* QGLViewer-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "QGLViewer-Debug.xcconfig"; path = "configs/QGLViewer-Debug.xcconfig"; sourceTree = "<group>"; };
+		43703E45129E1AE600DDDB30 /* QGLViewer-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "QGLViewer-Release.xcconfig"; path = "configs/QGLViewer-Release.xcconfig"; sourceTree = "<group>"; };
+		43B54BEC12998F21002AC030 /* QtCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtCore.framework; path = external/QT/QtCore.framework; sourceTree = "<group>"; };
+		43B54BEE12998F22002AC030 /* QtGui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtGui.framework; path = external/QT/QtGui.framework; sourceTree = "<group>"; };
+		43B54BF012998F22002AC030 /* QtOpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtOpenGL.framework; path = external/QT/QtOpenGL.framework; sourceTree = "<group>"; };
+		43B551451299A5E4002AC030 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		43B551471299A5E4002AC030 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		43B552201299AAD7002AC030 /* lib3ds.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = lib3ds.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43B552211299AAD7002AC030 /* lib3ds-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "lib3ds-Info.plist"; path = "Resources/lib3ds-Info.plist"; sourceTree = "<group>"; };
+		43B552521299AD28002AC030 /* atmosphere.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = atmosphere.c; path = external/lib3ds/lib3ds/atmosphere.c; sourceTree = "<group>"; };
+		43B552531299AD28002AC030 /* atmosphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = atmosphere.h; path = external/lib3ds/lib3ds/atmosphere.h; sourceTree = "<group>"; };
+		43B552541299AD28002AC030 /* background.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = background.c; path = external/lib3ds/lib3ds/background.c; sourceTree = "<group>"; };
+		43B552551299AD28002AC030 /* background.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = background.h; path = external/lib3ds/lib3ds/background.h; sourceTree = "<group>"; };
+		43B552561299AD28002AC030 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = camera.c; path = external/lib3ds/lib3ds/camera.c; sourceTree = "<group>"; };
+		43B552571299AD28002AC030 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = camera.h; path = external/lib3ds/lib3ds/camera.h; sourceTree = "<group>"; };
+		43B552581299AD28002AC030 /* chunk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = chunk.c; path = external/lib3ds/lib3ds/chunk.c; sourceTree = "<group>"; };
+		43B552591299AD28002AC030 /* chunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chunk.h; path = external/lib3ds/lib3ds/chunk.h; sourceTree = "<group>"; };
+		43B5525A1299AD28002AC030 /* chunktable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chunktable.h; path = external/lib3ds/lib3ds/chunktable.h; sourceTree = "<group>"; };
+		43B5525B1299AD28002AC030 /* ease.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ease.c; path = external/lib3ds/lib3ds/ease.c; sourceTree = "<group>"; };
+		43B5525C1299AD28002AC030 /* ease.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ease.h; path = external/lib3ds/lib3ds/ease.h; sourceTree = "<group>"; };
+		43B5525D1299AD28002AC030 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = file.c; path = external/lib3ds/lib3ds/file.c; sourceTree = "<group>"; };
+		43B5525E1299AD28002AC030 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file.h; path = external/lib3ds/lib3ds/file.h; sourceTree = "<group>"; };
+		43B5525F1299AD28002AC030 /* io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = io.c; path = external/lib3ds/lib3ds/io.c; sourceTree = "<group>"; };
+		43B552601299AD28002AC030 /* io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = io.h; path = external/lib3ds/lib3ds/io.h; sourceTree = "<group>"; };
+		43B552611299AD28002AC030 /* light.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = light.c; path = external/lib3ds/lib3ds/light.c; sourceTree = "<group>"; };
+		43B552621299AD28002AC030 /* light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = light.h; path = external/lib3ds/lib3ds/light.h; sourceTree = "<group>"; };
+		43B552631299AD28002AC030 /* material.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = material.c; path = external/lib3ds/lib3ds/material.c; sourceTree = "<group>"; };
+		43B552641299AD28002AC030 /* material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = material.h; path = external/lib3ds/lib3ds/material.h; sourceTree = "<group>"; };
+		43B552651299AD28002AC030 /* matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = matrix.c; path = external/lib3ds/lib3ds/matrix.c; sourceTree = "<group>"; };
+		43B552661299AD28002AC030 /* matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = matrix.h; path = external/lib3ds/lib3ds/matrix.h; sourceTree = "<group>"; };
+		43B552671299AD28002AC030 /* mesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mesh.c; path = external/lib3ds/lib3ds/mesh.c; sourceTree = "<group>"; };
+		43B552681299AD28002AC030 /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mesh.h; path = external/lib3ds/lib3ds/mesh.h; sourceTree = "<group>"; };
+		43B552691299AD28002AC030 /* node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = node.c; path = external/lib3ds/lib3ds/node.c; sourceTree = "<group>"; };
+		43B5526A1299AD28002AC030 /* node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = node.h; path = external/lib3ds/lib3ds/node.h; sourceTree = "<group>"; };
+		43B5526B1299AD28002AC030 /* quat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = quat.c; path = external/lib3ds/lib3ds/quat.c; sourceTree = "<group>"; };
+		43B5526C1299AD28002AC030 /* quat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = quat.h; path = external/lib3ds/lib3ds/quat.h; sourceTree = "<group>"; };
+		43B5526D1299AD28002AC030 /* shadow.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = shadow.c; path = external/lib3ds/lib3ds/shadow.c; sourceTree = "<group>"; };
+		43B5526E1299AD28002AC030 /* shadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shadow.h; path = external/lib3ds/lib3ds/shadow.h; sourceTree = "<group>"; };
+		43B5526F1299AD28002AC030 /* tcb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tcb.c; path = external/lib3ds/lib3ds/tcb.c; sourceTree = "<group>"; };
+		43B552701299AD28002AC030 /* tcb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tcb.h; path = external/lib3ds/lib3ds/tcb.h; sourceTree = "<group>"; };
+		43B552711299AD28002AC030 /* tracks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tracks.c; path = external/lib3ds/lib3ds/tracks.c; sourceTree = "<group>"; };
+		43B552721299AD28002AC030 /* tracks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tracks.h; path = external/lib3ds/lib3ds/tracks.h; sourceTree = "<group>"; };
+		43B552731299AD28002AC030 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = types.h; path = external/lib3ds/lib3ds/types.h; sourceTree = "<group>"; };
+		43B552741299AD28002AC030 /* vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vector.c; path = external/lib3ds/lib3ds/vector.c; sourceTree = "<group>"; };
+		43B552751299AD28002AC030 /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vector.h; path = external/lib3ds/lib3ds/vector.h; sourceTree = "<group>"; };
+		43B552761299AD28002AC030 /* viewport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = viewport.c; path = external/lib3ds/lib3ds/viewport.c; sourceTree = "<group>"; };
+		43B552771299AD28002AC030 /* viewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = viewport.h; path = external/lib3ds/lib3ds/viewport.h; sourceTree = "<group>"; };
+		43B5534D1299C1BF002AC030 /* QGLViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = QGLViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43B5534E1299C1BF002AC030 /* libQGLViewer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "libQGLViewer-Info.plist"; path = "Resources/libQGLViewer-Info.plist"; sourceTree = "<group>"; };
+		43B5535B1299C3AD002AC030 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		43B553881299C759002AC030 /* camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = camera.cpp; path = external/libQGLViewer/QGLViewer/camera.cpp; sourceTree = "<group>"; };
+		43B553891299C759002AC030 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = camera.h; path = external/libQGLViewer/QGLViewer/camera.h; sourceTree = "<group>"; };
+		43B5538A1299C759002AC030 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = external/libQGLViewer/QGLViewer/config.h; sourceTree = "<group>"; };
+		43B5538B1299C759002AC030 /* constraint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = constraint.cpp; path = external/libQGLViewer/QGLViewer/constraint.cpp; sourceTree = "<group>"; };
+		43B5538C1299C759002AC030 /* constraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = constraint.h; path = external/libQGLViewer/QGLViewer/constraint.h; sourceTree = "<group>"; };
+		43B5538D1299C759002AC030 /* domUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = domUtils.h; path = external/libQGLViewer/QGLViewer/domUtils.h; sourceTree = "<group>"; };
+		43B5538E1299C759002AC030 /* frame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = frame.cpp; path = external/libQGLViewer/QGLViewer/frame.cpp; sourceTree = "<group>"; };
+		43B5538F1299C759002AC030 /* frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = frame.h; path = external/libQGLViewer/QGLViewer/frame.h; sourceTree = "<group>"; };
+		43B553901299C759002AC030 /* ImageInterface.Qt4.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = ImageInterface.Qt4.ui; path = external/libQGLViewer/QGLViewer/ImageInterface.Qt4.ui; sourceTree = "<group>"; };
+		43B553911299C759002AC030 /* keyFrameInterpolator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = keyFrameInterpolator.cpp; path = external/libQGLViewer/QGLViewer/keyFrameInterpolator.cpp; sourceTree = "<group>"; };
+		43B553921299C759002AC030 /* keyFrameInterpolator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keyFrameInterpolator.h; path = external/libQGLViewer/QGLViewer/keyFrameInterpolator.h; sourceTree = "<group>"; };
+		43B553931299C759002AC030 /* manipulatedCameraFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = manipulatedCameraFrame.cpp; path = external/libQGLViewer/QGLViewer/manipulatedCameraFrame.cpp; sourceTree = "<group>"; };
+		43B553941299C759002AC030 /* manipulatedCameraFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = manipulatedCameraFrame.h; path = external/libQGLViewer/QGLViewer/manipulatedCameraFrame.h; sourceTree = "<group>"; };
+		43B553951299C759002AC030 /* manipulatedFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = manipulatedFrame.cpp; path = external/libQGLViewer/QGLViewer/manipulatedFrame.cpp; sourceTree = "<group>"; };
+		43B553961299C759002AC030 /* manipulatedFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = manipulatedFrame.h; path = external/libQGLViewer/QGLViewer/manipulatedFrame.h; sourceTree = "<group>"; };
+		43B553971299C759002AC030 /* mouseGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mouseGrabber.cpp; path = external/libQGLViewer/QGLViewer/mouseGrabber.cpp; sourceTree = "<group>"; };
+		43B553981299C759002AC030 /* mouseGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mouseGrabber.h; path = external/libQGLViewer/QGLViewer/mouseGrabber.h; sourceTree = "<group>"; };
+		43B553991299C759002AC030 /* qglviewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = qglviewer.cpp; path = external/libQGLViewer/QGLViewer/qglviewer.cpp; sourceTree = "<group>"; };
+		43B5539A1299C759002AC030 /* qglviewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = qglviewer.h; path = external/libQGLViewer/QGLViewer/qglviewer.h; sourceTree = "<group>"; };
+		43B5539B1299C759002AC030 /* qglviewer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = qglviewer.icns; path = external/libQGLViewer/QGLViewer/qglviewer.icns; sourceTree = "<group>"; };
+		43B5539C1299C759002AC030 /* quaternion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = quaternion.cpp; path = external/libQGLViewer/QGLViewer/quaternion.cpp; sourceTree = "<group>"; };
+		43B5539D1299C759002AC030 /* quaternion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = quaternion.h; path = external/libQGLViewer/QGLViewer/quaternion.h; sourceTree = "<group>"; };
+		43B5539E1299C759002AC030 /* saveSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = saveSnapshot.cpp; path = external/libQGLViewer/QGLViewer/saveSnapshot.cpp; sourceTree = "<group>"; };
+		43B5539F1299C759002AC030 /* vec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vec.cpp; path = external/libQGLViewer/QGLViewer/vec.cpp; sourceTree = "<group>"; };
+		43B553A01299C759002AC030 /* vec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vec.h; path = external/libQGLViewer/QGLViewer/vec.h; sourceTree = "<group>"; };
+		43B553A21299C759002AC030 /* AxisAlignedBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AxisAlignedBox.h; sourceTree = "<group>"; };
+		43B553A31299C759002AC030 /* BackFaceCullingOptimizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackFaceCullingOptimizer.cpp; sourceTree = "<group>"; };
+		43B553A41299C759002AC030 /* BSPSortMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BSPSortMethod.cpp; sourceTree = "<group>"; };
+		43B553A51299C759002AC030 /* EPSExporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EPSExporter.cpp; sourceTree = "<group>"; };
+		43B553A61299C759002AC030 /* Exporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Exporter.cpp; sourceTree = "<group>"; };
+		43B553A71299C759002AC030 /* Exporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exporter.h; sourceTree = "<group>"; };
+		43B553A81299C759002AC030 /* FIGExporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FIGExporter.cpp; sourceTree = "<group>"; };
+		43B553A91299C759002AC030 /* gpc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gpc.cpp; sourceTree = "<group>"; };
+		43B553AA1299C759002AC030 /* gpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gpc.h; sourceTree = "<group>"; };
+		43B553AB1299C759002AC030 /* NVector3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NVector3.cpp; sourceTree = "<group>"; };
+		43B553AC1299C759002AC030 /* NVector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NVector3.h; sourceTree = "<group>"; };
+		43B553AD1299C759002AC030 /* Optimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Optimizer.h; sourceTree = "<group>"; };
+		43B553AE1299C759002AC030 /* ParserGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParserGL.cpp; sourceTree = "<group>"; };
+		43B553AF1299C759002AC030 /* ParserGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserGL.h; sourceTree = "<group>"; };
+		43B553B01299C759002AC030 /* Primitive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Primitive.cpp; sourceTree = "<group>"; };
+		43B553B11299C759002AC030 /* Primitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Primitive.h; sourceTree = "<group>"; };
+		43B553B21299C759002AC030 /* PrimitivePositioning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrimitivePositioning.cpp; sourceTree = "<group>"; };
+		43B553B31299C759002AC030 /* PrimitivePositioning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrimitivePositioning.h; sourceTree = "<group>"; };
+		43B553B41299C759002AC030 /* SortMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SortMethod.h; sourceTree = "<group>"; };
+		43B553B51299C759002AC030 /* TopologicalSortMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TopologicalSortMethod.cpp; sourceTree = "<group>"; };
+		43B553B61299C759002AC030 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		43B553B71299C759002AC030 /* Vector2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector2.cpp; sourceTree = "<group>"; };
+		43B553B81299C759002AC030 /* Vector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector2.h; sourceTree = "<group>"; };
+		43B553B91299C759002AC030 /* Vector3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector3.cpp; sourceTree = "<group>"; };
+		43B553BA1299C759002AC030 /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector3.h; sourceTree = "<group>"; };
+		43B553BB1299C759002AC030 /* VisibilityOptimizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibilityOptimizer.cpp; sourceTree = "<group>"; };
+		43B553BC1299C759002AC030 /* VRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRender.cpp; sourceTree = "<group>"; };
+		43B553BD1299C759002AC030 /* VRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRender.h; sourceTree = "<group>"; };
+		43B553BE1299C759002AC030 /* VRenderInterface.Qt4.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = VRenderInterface.Qt4.ui; path = external/libQGLViewer/QGLViewer/VRenderInterface.Qt4.ui; sourceTree = "<group>"; };
+		43B5540C1299D257002AC030 /* QtXml.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtXml.framework; path = external/QT/QtXml.framework; sourceTree = "<group>"; };
+		43B554541299D88A002AC030 /* Qt3Support.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Qt3Support.framework; path = external/QT/Qt3Support.framework; sourceTree = "<group>"; };
+		43B554561299D88A002AC030 /* QtSql.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtSql.framework; path = external/QT/QtSql.framework; sourceTree = "<group>"; };
+		43B5560A1299E51E002AC030 /* camera.h.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = camera.h.moc; path = external/libQGLViewer/QGLViewer/camera.h.moc; sourceTree = "<group>"; };
+		43B5560B1299E51E002AC030 /* frame.h.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = frame.h.moc; path = external/libQGLViewer/QGLViewer/frame.h.moc; sourceTree = "<group>"; };
+		43B5560C1299E51E002AC030 /* keyFrameInterpolator.h.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = keyFrameInterpolator.h.moc; path = external/libQGLViewer/QGLViewer/keyFrameInterpolator.h.moc; sourceTree = "<group>"; };
+		43B5560D1299E51E002AC030 /* manipulatedCameraFrame.h.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = manipulatedCameraFrame.h.moc; path = external/libQGLViewer/QGLViewer/manipulatedCameraFrame.h.moc; sourceTree = "<group>"; };
+		43B5560E1299E51E002AC030 /* manipulatedFrame.h.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = manipulatedFrame.h.moc; path = external/libQGLViewer/QGLViewer/manipulatedFrame.h.moc; sourceTree = "<group>"; };
+		43B5560F1299E51E002AC030 /* qglviewer.h.moc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = qglviewer.h.moc; path = external/libQGLViewer/QGLViewer/qglviewer.h.moc; sourceTree = "<group>"; };
+		43B556711299F308002AC030 /* QtNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtNetwork.framework; path = external/QT/QtNetwork.framework; sourceTree = "<group>"; };
+		43B558471299FD41002AC030 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		430C2E02129731CE00AAA86E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43B54BED12998F21002AC030 /* QtCore.framework in Frameworks */,
+				43B54BEF12998F22002AC030 /* QtGui.framework in Frameworks */,
+				43B54BF112998F22002AC030 /* QtOpenGL.framework in Frameworks */,
+				43B5544C1299D2C6002AC030 /* QtXml.framework in Frameworks */,
+				43B552BF1299BD34002AC030 /* lib3ds.framework in Frameworks */,
+				43B553801299C681002AC030 /* QGLViewer.framework in Frameworks */,
+				43B551461299A5E4002AC030 /* Carbon.framework in Frameworks */,
+				43B551481299A5E4002AC030 /* OpenGL.framework in Frameworks */,
+				43B558481299FD41002AC030 /* CoreFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43B5521E1299AAD7002AC030 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43B5534B1299C1BF002AC030 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43B553F51299C802002AC030 /* QtCore.framework in Frameworks */,
+				43B553F61299C802002AC030 /* QtGui.framework in Frameworks */,
+				43B553F71299C802002AC030 /* QtOpenGL.framework in Frameworks */,
+				43B5540D1299D257002AC030 /* QtXml.framework in Frameworks */,
+				43B554551299D88A002AC030 /* Qt3Support.framework in Frameworks */,
+				43B554571299D88A002AC030 /* QtSql.framework in Frameworks */,
+				43B5535C1299C3AD002AC030 /* GLUT.framework in Frameworks */,
+				43B555D41299DA12002AC030 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		430C2DE212972FE700AAA86E = {
+			isa = PBXGroup;
+			children = (
+				430C2DFB1297302A00AAA86E /* WMIT */,
+				43703E2E129E0C5500DDDB30 /* Configs */,
+				430C2DFF129730B600AAA86E /* Resources */,
+				43B54BEB12998EDB002AC030 /* Third Party Libs */,
+				43B54B3112998EA2002AC030 /* System Libs */,
+				430C2E05129731CE00AAA86E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		430C2DFB1297302A00AAA86E /* WMIT */ = {
+			isa = PBXGroup;
+			children = (
+				430C2DFC1297303D00AAA86E /* Headers */,
+				430C2DFD1297306100AAA86E /* Sources */,
+				430C2DFE1297308B00AAA86E /* Forms */,
+			);
+			name = WMIT;
+			sourceTree = "<group>";
+		};
+		430C2DFC1297303D00AAA86E /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				430C2E15129732CC00AAA86E /* ConfigDialog.hpp */,
+				430C2E16129732CC00AAA86E /* ExportDialog.hpp */,
+				430C2E17129732CC00AAA86E /* Generic.hpp */,
+				430C2E18129732CC00AAA86E /* GLee.h */,
+				430C2E19129732CC00AAA86E /* GLTexture.hpp */,
+				430C2E1A129732CC00AAA86E /* IAnimatable.hpp */,
+				430C2E1B129732CC00AAA86E /* IGLRenderable.hpp */,
+				430C2E1C129732CC00AAA86E /* IGLTextureManager.hpp */,
+				430C2E1D129732CC00AAA86E /* ImportDialog.hpp */,
+				430C2E1E129732CC00AAA86E /* ITCMaskProvider.hpp */,
+				430C2E1F129732CC00AAA86E /* MainWindow.hpp */,
+				430C2E20129732CC00AAA86E /* Mesh.hpp */,
+				430C2E21129732CC00AAA86E /* OBJ.hpp */,
+				430C2E22129732CC00AAA86E /* Pie.hpp */,
+				430C2E23129732CC00AAA86E /* Polygon.hpp */,
+				430C2E24129732CC00AAA86E /* QtGLView.hpp */,
+				430C2E25129732CC00AAA86E /* QWZM.hpp */,
+				430C2E26129732CC00AAA86E /* TCMaskRenderable.hpp */,
+				430C2E27129732CC00AAA86E /* TeamColoursDock.hpp */,
+				430C2E28129732CC00AAA86E /* TexturedRenderable.hpp */,
+				430C2E29129732CC00AAA86E /* TransformDock.hpp */,
+				430C2E2A129732CC00AAA86E /* Util.hpp */,
+				430C2E2B129732CC00AAA86E /* UVEditor.hpp */,
+				430C2E2C129732CC00AAA86E /* Vector.hpp */,
+				430C2E2D129732CC00AAA86E /* VectorTypes.hpp */,
+				430C2E2E129732CC00AAA86E /* WZM.hpp */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		430C2DFD1297306100AAA86E /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				430C2E931297441100AAA86E /* ConfigDialog.hpp.moc */,
+				430C2E941297441100AAA86E /* ExportDialog.hpp.moc */,
+				430C2E951297441100AAA86E /* ImportDialog.hpp.moc */,
+				430C2E961297441100AAA86E /* MainWindow.hpp.moc */,
+				430C2E971297441100AAA86E /* QtGLView.hpp.moc */,
+				430C2E981297441100AAA86E /* TeamColoursDock.hpp.moc */,
+				430C2E991297441100AAA86E /* TransformDock.hpp.moc */,
+				430C2E9A1297441100AAA86E /* UVEditor.hpp.moc */,
+				430C2E3D1297333400AAA86E /* ConfigDialog.cpp */,
+				430C2E3E1297333400AAA86E /* ExportDialog.cpp */,
+				430C2E3F1297333400AAA86E /* Generic.cpp */,
+				430C2E401297333400AAA86E /* GLee.c */,
+				430C2E411297333400AAA86E /* GLTexture.cpp */,
+				430C2E421297333400AAA86E /* ImportDialog.cpp */,
+				430C2E431297333400AAA86E /* main.cpp */,
+				430C2E441297333400AAA86E /* MainWindow.cpp */,
+				430C2E451297333400AAA86E /* Mesh.cpp */,
+				430C2E461297333400AAA86E /* Pie_t.cpp */,
+				430C2E471297333400AAA86E /* Pie.cpp */,
+				430C2E481297333400AAA86E /* Polygon_t.cpp */,
+				430C2E491297333400AAA86E /* QtGLView.cpp */,
+				430C2E4A1297333400AAA86E /* QWZM.cpp */,
+				430C2E4B1297333400AAA86E /* TeamColoursDock.cpp */,
+				430C2E4C1297333400AAA86E /* TransformDock.cpp */,
+				430C2E4D1297333400AAA86E /* Util.cpp */,
+				430C2E4E1297333400AAA86E /* UVEditor.cpp */,
+				430C2E4F1297333400AAA86E /* WZM.cpp */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		430C2DFE1297308B00AAA86E /* Forms */ = {
+			isa = PBXGroup;
+			children = (
+				430C2E2F129732FD00AAA86E /* ConfigDialog.ui */,
+				430C2E30129732FD00AAA86E /* ExportDialog.ui */,
+				430C2E31129732FD00AAA86E /* ImportDialog.ui */,
+				430C2E32129732FD00AAA86E /* MainWindow.ui */,
+				430C2E33129732FD00AAA86E /* TeamColoursDock.ui */,
+				430C2E34129732FD00AAA86E /* TransformDock.ui */,
+				430C2E35129732FD00AAA86E /* UVEditor.ui */,
+			);
+			name = Forms;
+			sourceTree = "<group>";
+		};
+		430C2DFF129730B600AAA86E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				43B5534E1299C1BF002AC030 /* libQGLViewer-Info.plist */,
+				43B552211299AAD7002AC030 /* lib3ds-Info.plist */,
+				430C2E0F1297326100AAA86E /* tcmask.frag */,
+				430C2E101297326100AAA86E /* tcmask.vert */,
+				430C2E0D1297326100AAA86E /* COPYING.nongpl */,
+				430C2E0E1297326100AAA86E /* COPYING.txt */,
+				430C2E07129731CE00AAA86E /* Warzone Model Importer Tool-Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		430C2E05129731CE00AAA86E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				430C2E04129731CE00AAA86E /* Warzone Model Importer Tool.app */,
+				43B552201299AAD7002AC030 /* lib3ds.framework */,
+				43B5534D1299C1BF002AC030 /* QGLViewer.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		43703E2E129E0C5500DDDB30 /* Configs */ = {
+			isa = PBXGroup;
+			children = (
+				43703E43129E1AE600DDDB30 /* QGLViewer-All.xcconfig */,
+				43703E44129E1AE600DDDB30 /* QGLViewer-Debug.xcconfig */,
+				43703E45129E1AE600DDDB30 /* QGLViewer-Release.xcconfig */,
+				43703E40129E143600DDDB30 /* lib3ds-All.xcconfig */,
+				43703E41129E143600DDDB30 /* lib3ds-Debug.xcconfig */,
+				43703E42129E143600DDDB30 /* lib3ds-Release.xcconfig */,
+				43703E37129E100F00DDDB30 /* WMIT-All.xcconfig */,
+				43703E38129E100F00DDDB30 /* WMIT-Debug.xcconfig */,
+				43703E39129E100F00DDDB30 /* WMIT-Release.xcconfig */,
+				43703E2F129E0C7F00DDDB30 /* Project-All.xcconfig */,
+			);
+			name = Configs;
+			sourceTree = "<group>";
+		};
+		43B54B3112998EA2002AC030 /* System Libs */ = {
+			isa = PBXGroup;
+			children = (
+				43B551451299A5E4002AC030 /* Carbon.framework */,
+				43B558471299FD41002AC030 /* CoreFoundation.framework */,
+				43B551471299A5E4002AC030 /* OpenGL.framework */,
+				43B5535B1299C3AD002AC030 /* GLUT.framework */,
+			);
+			name = "System Libs";
+			sourceTree = "<group>";
+		};
+		43B54BEB12998EDB002AC030 /* Third Party Libs */ = {
+			isa = PBXGroup;
+			children = (
+				43B553581299C28E002AC030 /* libQGLViewer */,
+				43B5524E1299AC05002AC030 /* lib3ds */,
+				43B54BF812998F28002AC030 /* Qt */,
+			);
+			name = "Third Party Libs";
+			sourceTree = "<group>";
+		};
+		43B54BF812998F28002AC030 /* Qt */ = {
+			isa = PBXGroup;
+			children = (
+				43B54BEC12998F21002AC030 /* QtCore.framework */,
+				43B54BEE12998F22002AC030 /* QtGui.framework */,
+				43B556711299F308002AC030 /* QtNetwork.framework */,
+				43B54BF012998F22002AC030 /* QtOpenGL.framework */,
+				43B5540C1299D257002AC030 /* QtXml.framework */,
+				43B554561299D88A002AC030 /* QtSql.framework */,
+				43B554541299D88A002AC030 /* Qt3Support.framework */,
+			);
+			name = Qt;
+			sourceTree = "<group>";
+		};
+		43B5524E1299AC05002AC030 /* lib3ds */ = {
+			isa = PBXGroup;
+			children = (
+				43B552521299AD28002AC030 /* atmosphere.c */,
+				43B552531299AD28002AC030 /* atmosphere.h */,
+				43B552541299AD28002AC030 /* background.c */,
+				43B552551299AD28002AC030 /* background.h */,
+				43B552561299AD28002AC030 /* camera.c */,
+				43B552571299AD28002AC030 /* camera.h */,
+				43B552581299AD28002AC030 /* chunk.c */,
+				43B552591299AD28002AC030 /* chunk.h */,
+				43B5525A1299AD28002AC030 /* chunktable.h */,
+				43B5525B1299AD28002AC030 /* ease.c */,
+				43B5525C1299AD28002AC030 /* ease.h */,
+				43B5525D1299AD28002AC030 /* file.c */,
+				43B5525E1299AD28002AC030 /* file.h */,
+				43B5525F1299AD28002AC030 /* io.c */,
+				43B552601299AD28002AC030 /* io.h */,
+				43B552611299AD28002AC030 /* light.c */,
+				43B552621299AD28002AC030 /* light.h */,
+				43B552631299AD28002AC030 /* material.c */,
+				43B552641299AD28002AC030 /* material.h */,
+				43B552651299AD28002AC030 /* matrix.c */,
+				43B552661299AD28002AC030 /* matrix.h */,
+				43B552671299AD28002AC030 /* mesh.c */,
+				43B552681299AD28002AC030 /* mesh.h */,
+				43B552691299AD28002AC030 /* node.c */,
+				43B5526A1299AD28002AC030 /* node.h */,
+				43B5526B1299AD28002AC030 /* quat.c */,
+				43B5526C1299AD28002AC030 /* quat.h */,
+				43B5526D1299AD28002AC030 /* shadow.c */,
+				43B5526E1299AD28002AC030 /* shadow.h */,
+				43B5526F1299AD28002AC030 /* tcb.c */,
+				43B552701299AD28002AC030 /* tcb.h */,
+				43B552711299AD28002AC030 /* tracks.c */,
+				43B552721299AD28002AC030 /* tracks.h */,
+				43B552731299AD28002AC030 /* types.h */,
+				43B552741299AD28002AC030 /* vector.c */,
+				43B552751299AD28002AC030 /* vector.h */,
+				43B552761299AD28002AC030 /* viewport.c */,
+				43B552771299AD28002AC030 /* viewport.h */,
+			);
+			name = lib3ds;
+			sourceTree = "<group>";
+		};
+		43B553581299C28E002AC030 /* libQGLViewer */ = {
+			isa = PBXGroup;
+			children = (
+				43B5560A1299E51E002AC030 /* camera.h.moc */,
+				43B5560B1299E51E002AC030 /* frame.h.moc */,
+				43B5560C1299E51E002AC030 /* keyFrameInterpolator.h.moc */,
+				43B5560D1299E51E002AC030 /* manipulatedCameraFrame.h.moc */,
+				43B5560E1299E51E002AC030 /* manipulatedFrame.h.moc */,
+				43B5560F1299E51E002AC030 /* qglviewer.h.moc */,
+				43B553881299C759002AC030 /* camera.cpp */,
+				43B553891299C759002AC030 /* camera.h */,
+				43B5538A1299C759002AC030 /* config.h */,
+				43B5538B1299C759002AC030 /* constraint.cpp */,
+				43B5538C1299C759002AC030 /* constraint.h */,
+				43B5538D1299C759002AC030 /* domUtils.h */,
+				43B5538E1299C759002AC030 /* frame.cpp */,
+				43B5538F1299C759002AC030 /* frame.h */,
+				43B553901299C759002AC030 /* ImageInterface.Qt4.ui */,
+				43B553911299C759002AC030 /* keyFrameInterpolator.cpp */,
+				43B553921299C759002AC030 /* keyFrameInterpolator.h */,
+				43B553931299C759002AC030 /* manipulatedCameraFrame.cpp */,
+				43B553941299C759002AC030 /* manipulatedCameraFrame.h */,
+				43B553951299C759002AC030 /* manipulatedFrame.cpp */,
+				43B553961299C759002AC030 /* manipulatedFrame.h */,
+				43B553971299C759002AC030 /* mouseGrabber.cpp */,
+				43B553981299C759002AC030 /* mouseGrabber.h */,
+				43B553991299C759002AC030 /* qglviewer.cpp */,
+				43B5539A1299C759002AC030 /* qglviewer.h */,
+				43B5539B1299C759002AC030 /* qglviewer.icns */,
+				43B5539C1299C759002AC030 /* quaternion.cpp */,
+				43B5539D1299C759002AC030 /* quaternion.h */,
+				43B5539E1299C759002AC030 /* saveSnapshot.cpp */,
+				43B5539F1299C759002AC030 /* vec.cpp */,
+				43B553A01299C759002AC030 /* vec.h */,
+				43B553A11299C759002AC030 /* VRender */,
+				43B553BE1299C759002AC030 /* VRenderInterface.Qt4.ui */,
+			);
+			name = libQGLViewer;
+			sourceTree = "<group>";
+		};
+		43B553A11299C759002AC030 /* VRender */ = {
+			isa = PBXGroup;
+			children = (
+				43B553A21299C759002AC030 /* AxisAlignedBox.h */,
+				43B553A31299C759002AC030 /* BackFaceCullingOptimizer.cpp */,
+				43B553A41299C759002AC030 /* BSPSortMethod.cpp */,
+				43B553A51299C759002AC030 /* EPSExporter.cpp */,
+				43B553A61299C759002AC030 /* Exporter.cpp */,
+				43B553A71299C759002AC030 /* Exporter.h */,
+				43B553A81299C759002AC030 /* FIGExporter.cpp */,
+				43B553A91299C759002AC030 /* gpc.cpp */,
+				43B553AA1299C759002AC030 /* gpc.h */,
+				43B553AB1299C759002AC030 /* NVector3.cpp */,
+				43B553AC1299C759002AC030 /* NVector3.h */,
+				43B553AD1299C759002AC030 /* Optimizer.h */,
+				43B553AE1299C759002AC030 /* ParserGL.cpp */,
+				43B553AF1299C759002AC030 /* ParserGL.h */,
+				43B553B01299C759002AC030 /* Primitive.cpp */,
+				43B553B11299C759002AC030 /* Primitive.h */,
+				43B553B21299C759002AC030 /* PrimitivePositioning.cpp */,
+				43B553B31299C759002AC030 /* PrimitivePositioning.h */,
+				43B553B41299C759002AC030 /* SortMethod.h */,
+				43B553B51299C759002AC030 /* TopologicalSortMethod.cpp */,
+				43B553B61299C759002AC030 /* Types.h */,
+				43B553B71299C759002AC030 /* Vector2.cpp */,
+				43B553B81299C759002AC030 /* Vector2.h */,
+				43B553B91299C759002AC030 /* Vector3.cpp */,
+				43B553BA1299C759002AC030 /* Vector3.h */,
+				43B553BB1299C759002AC030 /* VisibilityOptimizer.cpp */,
+				43B553BC1299C759002AC030 /* VRender.cpp */,
+				43B553BD1299C759002AC030 /* VRender.h */,
+			);
+			name = VRender;
+			path = external/libQGLViewer/QGLViewer/VRender;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		43B5521B1299AAD7002AC030 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43B552791299AD28002AC030 /* atmosphere.h in Headers */,
+				43B5527B1299AD28002AC030 /* background.h in Headers */,
+				43B5527D1299AD28002AC030 /* camera.h in Headers */,
+				43B5527F1299AD28002AC030 /* chunk.h in Headers */,
+				43B552801299AD28002AC030 /* chunktable.h in Headers */,
+				43B552821299AD28002AC030 /* ease.h in Headers */,
+				43B552841299AD28002AC030 /* file.h in Headers */,
+				43B552861299AD28002AC030 /* io.h in Headers */,
+				43B552881299AD28002AC030 /* light.h in Headers */,
+				43B5528A1299AD28002AC030 /* material.h in Headers */,
+				43B5528C1299AD28002AC030 /* matrix.h in Headers */,
+				43B5528E1299AD28002AC030 /* mesh.h in Headers */,
+				43B552901299AD28002AC030 /* node.h in Headers */,
+				43B552921299AD28002AC030 /* quat.h in Headers */,
+				43B552941299AD28002AC030 /* shadow.h in Headers */,
+				43B552961299AD28002AC030 /* tcb.h in Headers */,
+				43B552981299AD28002AC030 /* tracks.h in Headers */,
+				43B552991299AD28002AC030 /* types.h in Headers */,
+				43B5529B1299AD28002AC030 /* vector.h in Headers */,
+				43B5529D1299AD28002AC030 /* viewport.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43B553481299C1BF002AC030 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43B553C01299C759002AC030 /* camera.h in Headers */,
+				43B553C11299C759002AC030 /* config.h in Headers */,
+				43B553C31299C759002AC030 /* constraint.h in Headers */,
+				43B553C41299C759002AC030 /* domUtils.h in Headers */,
+				43B553C61299C759002AC030 /* frame.h in Headers */,
+				43B553C91299C759002AC030 /* keyFrameInterpolator.h in Headers */,
+				43B553CB1299C759002AC030 /* manipulatedCameraFrame.h in Headers */,
+				43B553CD1299C759002AC030 /* manipulatedFrame.h in Headers */,
+				43B553CF1299C759002AC030 /* mouseGrabber.h in Headers */,
+				43B553D11299C759002AC030 /* qglviewer.h in Headers */,
+				43B553D41299C759002AC030 /* quaternion.h in Headers */,
+				43B553D71299C759002AC030 /* vec.h in Headers */,
+				43B553D81299C759002AC030 /* AxisAlignedBox.h in Headers */,
+				43B553DD1299C759002AC030 /* Exporter.h in Headers */,
+				43B553E01299C759002AC030 /* gpc.h in Headers */,
+				43B553E21299C759002AC030 /* NVector3.h in Headers */,
+				43B553E31299C759002AC030 /* Optimizer.h in Headers */,
+				43B553E51299C759002AC030 /* ParserGL.h in Headers */,
+				43B553E71299C759002AC030 /* Primitive.h in Headers */,
+				43B553E91299C759002AC030 /* PrimitivePositioning.h in Headers */,
+				43B553EA1299C759002AC030 /* SortMethod.h in Headers */,
+				43B553EC1299C759002AC030 /* Types.h in Headers */,
+				43B553EE1299C759002AC030 /* Vector2.h in Headers */,
+				43B553F01299C759002AC030 /* Vector3.h in Headers */,
+				43B553F31299C759002AC030 /* VRender.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		430C2E03129731CE00AAA86E /* Warzone Model Importer Tool */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 430C2E0A129731D100AAA86E /* Build configuration list for PBXNativeTarget "Warzone Model Importer Tool" */;
+			buildPhases = (
+				430C2E00129731CE00AAA86E /* Resources */,
+				430C2E01129731CE00AAA86E /* Sources */,
+				430C2E02129731CE00AAA86E /* Frameworks */,
+				43B552BE1299BD24002AC030 /* Copy Frameworks */,
+			);
+			buildRules = (
+				430C2EAF12975F3300AAA86E /* PBXBuildRule */,
+				430C2EAB12975E0900AAA86E /* PBXBuildRule */,
+			);
+			dependencies = (
+				430C2E68129737BB00AAA86E /* PBXTargetDependency */,
+				43B552B61299BCBE002AC030 /* PBXTargetDependency */,
+				43B553781299C663002AC030 /* PBXTargetDependency */,
+			);
+			name = "Warzone Model Importer Tool";
+			productName = "Warzone Model Importer Tool";
+			productReference = 430C2E04129731CE00AAA86E /* Warzone Model Importer Tool.app */;
+			productType = "com.apple.product-type.application";
+		};
+		43B5521F1299AAD7002AC030 /* lib3ds */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 43B552241299AAD8002AC030 /* Build configuration list for PBXNativeTarget "lib3ds" */;
+			buildPhases = (
+				43B558311299F9A5002AC030 /* Fetch source */,
+				43B5521B1299AAD7002AC030 /* Headers */,
+				43B5521C1299AAD7002AC030 /* Resources */,
+				43B5521D1299AAD7002AC030 /* Sources */,
+				43B5521E1299AAD7002AC030 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = lib3ds;
+			productName = lib3ds;
+			productReference = 43B552201299AAD7002AC030 /* lib3ds.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		43B5534C1299C1BF002AC030 /* QGLViewer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 43B553511299C1C0002AC030 /* Build configuration list for PBXNativeTarget "QGLViewer" */;
+			buildPhases = (
+				43B5583D1299F9CC002AC030 /* Fetch source */,
+				43B556071299E4BE002AC030 /* mocd */,
+				43B553481299C1BF002AC030 /* Headers */,
+				43B553491299C1BF002AC030 /* Resources */,
+				43B5534A1299C1BF002AC030 /* Sources */,
+				43B5534B1299C1BF002AC030 /* Frameworks */,
+			);
+			buildRules = (
+				43B553751299C5EF002AC030 /* PBXBuildRule */,
+				43B553741299C5EF002AC030 /* PBXBuildRule */,
+			);
+			dependencies = (
+				43B554071299CB50002AC030 /* PBXTargetDependency */,
+			);
+			name = QGLViewer;
+			productName = libQGLViewer;
+			productReference = 43B5534D1299C1BF002AC030 /* QGLViewer.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		430C2DE412972FE700AAA86E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				ORGANIZATIONNAME = net.wz2100.;
+			};
+			buildConfigurationList = 430C2DE712972FE700AAA86E /* Build configuration list for PBXProject "WMIT" */;
+			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 430C2DE212972FE700AAA86E;
+			productRefGroup = 430C2E05129731CE00AAA86E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				430C2E03129731CE00AAA86E /* Warzone Model Importer Tool */,
+				430C2E64129737AD00AAA86E /* Setup Prebuilt Components */,
+				43B5521F1299AAD7002AC030 /* lib3ds */,
+				43B5534C1299C1BF002AC030 /* QGLViewer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		430C2E00129731CE00AAA86E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				430C2E131297326100AAA86E /* tcmask.frag in Resources */,
+				430C2E141297326100AAA86E /* tcmask.vert in Resources */,
+				430C2E111297326100AAA86E /* COPYING.nongpl in Resources */,
+				430C2E121297326100AAA86E /* COPYING.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43B5521C1299AAD7002AC030 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43B553491299C1BF002AC030 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43B553D21299C759002AC030 /* qglviewer.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		430C2E63129737AD00AAA86E /* MOC */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = MOC;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\necho \"Checking for moc...\"\nif ! type -aP moc; then\n    echo \"error: Fatal inability to properly moc the code. (Insure you have installed Qt or risk more mocing.)\" >&2\n    open ./README.BUILD.txt\n    exit 1\nelif [[ `moc -v 2>&1 | sed -e 's:.*Qt \\(4\\.6\\)\\..)$:\\1:'` < \"4.6\" ]]; then\n    echo \"error: Moc is not properly installed\" >&2\n    exit 1\nfi\nmoc -v\nexit 0";
+		};
+		43B54B2612998D9F002AC030 /* QT */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = QT;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "DirectorY=\"QT_\"\nOutDir=\"QT\"\nFileName=\"QT.tar.gz\"\nBuiltDLP=\"http://downloads.sourceforge.net/project/warzone2100/build-tools/mac/QT.tar.gz\"\nMD5Sum=\"8bd5dd347b391ab4a29105f144c64b4d\"\n\nconfigs/FetchPrebuilt.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${BuiltDLP}\" \"${MD5Sum}\"\nexit ${?}\n\n# tar -czf QT.tar.gz --exclude '.DS_Store' QT_";
+		};
+		43B556071299E4BE002AC030 /* mocd */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = mocd;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd external/libQGLViewer/QGLViewer\n\nmoclist=`grep -lr \"Q_OBJECT\" . | sed -e 's:.h:&.moc:'`\n\nfor mocd in ${moclist}; do\n\tif [ ! -f \"${mocd}\" ]; then\n\t\techo \"${mocd}\"\n\t\ttouch \"${mocd}\"\n\tfi\ndone\n";
+		};
+		43B558311299F9A5002AC030 /* Fetch source */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Fetch source";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "DirectorY=\"lib3ds-1.3.0\"\nOutDir=\"lib3ds\"\nFileName=\"lib3ds-1.3.0.zip\"\nSourceDLP=\"http://lib3ds.googlecode.com/files/lib3ds-1.3.0.zip\"\nMD5Sum=\"2572f7b0f29b591d494c1a0658b35c86\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}";
+		};
+		43B5583D1299F9CC002AC030 /* Fetch source */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Fetch source";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "DirectorY=\"libQGLViewer-2.3.8\"\nOutDir=\"libQGLViewer\"\nFileName=\"libQGLViewer-2.3.8.tar.gz\"\nSourceDLP=\"http://www.libqglviewer.com/src/libQGLViewer-2.3.8.tar.gz\"\nMD5Sum=\"9dd2fe0d521d488378e2b108f559d60a\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		430C2E01129731CE00AAA86E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				430C2E9B1297441100AAA86E /* ConfigDialog.hpp.moc in Sources */,
+				430C2E9C1297441100AAA86E /* ExportDialog.hpp.moc in Sources */,
+				430C2E9D1297441100AAA86E /* ImportDialog.hpp.moc in Sources */,
+				430C2E9E1297441100AAA86E /* MainWindow.hpp.moc in Sources */,
+				430C2E9F1297441100AAA86E /* QtGLView.hpp.moc in Sources */,
+				430C2EA01297441100AAA86E /* TeamColoursDock.hpp.moc in Sources */,
+				430C2EA11297441100AAA86E /* TransformDock.hpp.moc in Sources */,
+				430C2EA21297441100AAA86E /* UVEditor.hpp.moc in Sources */,
+				430C2E36129732FD00AAA86E /* ConfigDialog.ui in Sources */,
+				430C2E37129732FD00AAA86E /* ExportDialog.ui in Sources */,
+				430C2E38129732FD00AAA86E /* ImportDialog.ui in Sources */,
+				430C2E39129732FD00AAA86E /* MainWindow.ui in Sources */,
+				430C2E3A129732FD00AAA86E /* TeamColoursDock.ui in Sources */,
+				430C2E3B129732FD00AAA86E /* TransformDock.ui in Sources */,
+				430C2E3C129732FD00AAA86E /* UVEditor.ui in Sources */,
+				430C2E501297333400AAA86E /* ConfigDialog.cpp in Sources */,
+				430C2E511297333400AAA86E /* ExportDialog.cpp in Sources */,
+				430C2E521297333400AAA86E /* Generic.cpp in Sources */,
+				430C2E531297333400AAA86E /* GLee.c in Sources */,
+				430C2E541297333400AAA86E /* GLTexture.cpp in Sources */,
+				430C2E551297333400AAA86E /* ImportDialog.cpp in Sources */,
+				430C2E561297333400AAA86E /* main.cpp in Sources */,
+				430C2E571297333400AAA86E /* MainWindow.cpp in Sources */,
+				430C2E581297333400AAA86E /* Mesh.cpp in Sources */,
+				430C2E591297333400AAA86E /* Pie_t.cpp in Sources */,
+				430C2E5A1297333400AAA86E /* Pie.cpp in Sources */,
+				430C2E5B1297333400AAA86E /* Polygon_t.cpp in Sources */,
+				430C2E5C1297333400AAA86E /* QtGLView.cpp in Sources */,
+				430C2E5D1297333400AAA86E /* QWZM.cpp in Sources */,
+				430C2E5E1297333400AAA86E /* TeamColoursDock.cpp in Sources */,
+				430C2E5F1297333400AAA86E /* TransformDock.cpp in Sources */,
+				430C2E601297333400AAA86E /* Util.cpp in Sources */,
+				430C2E611297333400AAA86E /* UVEditor.cpp in Sources */,
+				430C2E621297333400AAA86E /* WZM.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43B5521D1299AAD7002AC030 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43B552781299AD28002AC030 /* atmosphere.c in Sources */,
+				43B5527A1299AD28002AC030 /* background.c in Sources */,
+				43B5527C1299AD28002AC030 /* camera.c in Sources */,
+				43B5527E1299AD28002AC030 /* chunk.c in Sources */,
+				43B552811299AD28002AC030 /* ease.c in Sources */,
+				43B552831299AD28002AC030 /* file.c in Sources */,
+				43B552851299AD28002AC030 /* io.c in Sources */,
+				43B552871299AD28002AC030 /* light.c in Sources */,
+				43B552891299AD28002AC030 /* material.c in Sources */,
+				43B5528B1299AD28002AC030 /* matrix.c in Sources */,
+				43B5528D1299AD28002AC030 /* mesh.c in Sources */,
+				43B5528F1299AD28002AC030 /* node.c in Sources */,
+				43B552911299AD28002AC030 /* quat.c in Sources */,
+				43B552931299AD28002AC030 /* shadow.c in Sources */,
+				43B552951299AD28002AC030 /* tcb.c in Sources */,
+				43B552971299AD28002AC030 /* tracks.c in Sources */,
+				43B5529A1299AD28002AC030 /* vector.c in Sources */,
+				43B5529C1299AD28002AC030 /* viewport.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43B5534A1299C1BF002AC030 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43B556101299E51E002AC030 /* camera.h.moc in Sources */,
+				43B556111299E51E002AC030 /* frame.h.moc in Sources */,
+				43B556121299E51E002AC030 /* keyFrameInterpolator.h.moc in Sources */,
+				43B556131299E51E002AC030 /* manipulatedCameraFrame.h.moc in Sources */,
+				43B556141299E51E002AC030 /* manipulatedFrame.h.moc in Sources */,
+				43B556151299E51E002AC030 /* qglviewer.h.moc in Sources */,
+				43B553C71299C759002AC030 /* ImageInterface.Qt4.ui in Sources */,
+				43B553F41299C759002AC030 /* VRenderInterface.Qt4.ui in Sources */,
+				43B553BF1299C759002AC030 /* camera.cpp in Sources */,
+				43B553C21299C759002AC030 /* constraint.cpp in Sources */,
+				43B553C51299C759002AC030 /* frame.cpp in Sources */,
+				43B553C81299C759002AC030 /* keyFrameInterpolator.cpp in Sources */,
+				43B553CA1299C759002AC030 /* manipulatedCameraFrame.cpp in Sources */,
+				43B553CC1299C759002AC030 /* manipulatedFrame.cpp in Sources */,
+				43B553CE1299C759002AC030 /* mouseGrabber.cpp in Sources */,
+				43B553D01299C759002AC030 /* qglviewer.cpp in Sources */,
+				43B553D31299C759002AC030 /* quaternion.cpp in Sources */,
+				43B553D51299C759002AC030 /* saveSnapshot.cpp in Sources */,
+				43B553D61299C759002AC030 /* vec.cpp in Sources */,
+				43B553D91299C759002AC030 /* BackFaceCullingOptimizer.cpp in Sources */,
+				43B553DA1299C759002AC030 /* BSPSortMethod.cpp in Sources */,
+				43B553DB1299C759002AC030 /* EPSExporter.cpp in Sources */,
+				43B553DC1299C759002AC030 /* Exporter.cpp in Sources */,
+				43B553DE1299C759002AC030 /* FIGExporter.cpp in Sources */,
+				43B553DF1299C759002AC030 /* gpc.cpp in Sources */,
+				43B553E11299C759002AC030 /* NVector3.cpp in Sources */,
+				43B553E41299C759002AC030 /* ParserGL.cpp in Sources */,
+				43B553E61299C759002AC030 /* Primitive.cpp in Sources */,
+				43B553E81299C759002AC030 /* PrimitivePositioning.cpp in Sources */,
+				43B553EB1299C759002AC030 /* TopologicalSortMethod.cpp in Sources */,
+				43B553ED1299C759002AC030 /* Vector2.cpp in Sources */,
+				43B553EF1299C759002AC030 /* Vector3.cpp in Sources */,
+				43B553F11299C759002AC030 /* VisibilityOptimizer.cpp in Sources */,
+				43B553F21299C759002AC030 /* VRender.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		430C2E68129737BB00AAA86E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 430C2E64129737AD00AAA86E /* Setup Prebuilt Components */;
+			targetProxy = 430C2E67129737BB00AAA86E /* PBXContainerItemProxy */;
+		};
+		43B552B61299BCBE002AC030 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 43B5521F1299AAD7002AC030 /* lib3ds */;
+			targetProxy = 43B552B51299BCBE002AC030 /* PBXContainerItemProxy */;
+		};
+		43B553781299C663002AC030 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 43B5534C1299C1BF002AC030 /* QGLViewer */;
+			targetProxy = 43B553771299C663002AC030 /* PBXContainerItemProxy */;
+		};
+		43B554071299CB50002AC030 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 430C2E64129737AD00AAA86E /* Setup Prebuilt Components */;
+			targetProxy = 43B554061299CB50002AC030 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		430C2DE512972FE700AAA86E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43703E2F129E0C7F00DDDB30 /* Project-All.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		430C2DE612972FE700AAA86E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43703E2F129E0C7F00DDDB30 /* Project-All.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		430C2E08129731D000AAA86E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43703E38129E100F00DDDB30 /* WMIT-Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		430C2E09129731D000AAA86E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43703E39129E100F00DDDB30 /* WMIT-Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		430C2E65129737AD00AAA86E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Setup Prebuilt Components";
+			};
+			name = Debug;
+		};
+		430C2E66129737AD00AAA86E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Setup Prebuilt Components";
+			};
+			name = Release;
+		};
+		43B552221299AAD8002AC030 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43703E41129E143600DDDB30 /* lib3ds-Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		43B552231299AAD8002AC030 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43703E42129E143600DDDB30 /* lib3ds-Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		43B5534F1299C1C0002AC030 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43703E44129E1AE600DDDB30 /* QGLViewer-Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		43B553501299C1C0002AC030 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43703E45129E1AE600DDDB30 /* QGLViewer-Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		430C2DE712972FE700AAA86E /* Build configuration list for PBXProject "WMIT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				430C2DE512972FE700AAA86E /* Debug */,
+				430C2DE612972FE700AAA86E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		430C2E0A129731D100AAA86E /* Build configuration list for PBXNativeTarget "Warzone Model Importer Tool" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				430C2E08129731D000AAA86E /* Debug */,
+				430C2E09129731D000AAA86E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		430C2E71129737C600AAA86E /* Build configuration list for PBXAggregateTarget "Setup Prebuilt Components" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				430C2E65129737AD00AAA86E /* Debug */,
+				430C2E66129737AD00AAA86E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		43B552241299AAD8002AC030 /* Build configuration list for PBXNativeTarget "lib3ds" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				43B552221299AAD8002AC030 /* Debug */,
+				43B552231299AAD8002AC030 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		43B553511299C1C0002AC030 /* Build configuration list for PBXNativeTarget "QGLViewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				43B5534F1299C1C0002AC030 /* Debug */,
+				43B553501299C1C0002AC030 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 430C2DE412972FE700AAA86E /* Project object */;
+}

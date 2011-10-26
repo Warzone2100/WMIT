@@ -1,0 +1,7 @@
+// Warzone Model Importer Tool settings for Release configuration
+
+#include "WMIT-All.xcconfig"
+
+
+GCC_ENABLE_FIX_AND_CONTINUE = NO
+ZERO_LINK = NO

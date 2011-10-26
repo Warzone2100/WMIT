@@ -1,0 +1,17 @@
+syntax: glob
+
+# Mac clutter
+.DS_Store
+Icon?
+._*
+
+# git clutter
+.git/*
+
+# Mac Build Stuff
+build/*
+external/*
+prebuilt/*
+.DS_Store
+*.pbxuser
+*.perspectivev3

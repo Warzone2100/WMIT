@@ -19,6 +19,11 @@
 
 #include "QtGLView.hpp"
 
+#ifdef Q_OS_MAC
+# include <CoreFoundation/CoreFoundation.h>
+# include <CoreFoundation/CFURL.h>
+#endif
+
 #include <QPixmap>
 #include <QImage>
 #include <QApplication>

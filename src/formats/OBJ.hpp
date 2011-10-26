@@ -24,7 +24,7 @@
 #include <vector>
 #include <set>
 
-#include <GL/gl.h>
+#include <QtOpengl/qgl.h>
 
 #include "VectorTypes.hpp"
 #include "Polygon.hpp"

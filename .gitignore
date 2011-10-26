@@ -1,2 +1,12 @@
 wmit.pro.user
 config.pri
+
+#Mac Stuff
+.DS_Store
+*.pbxuser
+*.perspectivev3
+
+# build folders
+build/
+external/
+prebuilt/
