@@ -201,7 +201,7 @@
 			outputFiles = (
 				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp",
 			);
-			script = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\nmoc -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp\" \"${INPUT_FILE_PATH}\" || exit 1\n# Files w/ \"Q_OBJECT\"";
+			script = "export PATH=/sw/lib/qt4-mac/bin:/sw/lib/qt4-x11/bin:/opt/local/bin:${PATH}\nmoc -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp\" \"${INPUT_FILE_PATH}\" || exit 1\n# Files w/ \"Q_OBJECT\"";
 		};
 		430C2EAF12975F3300AAA86E /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -213,7 +213,7 @@
 				"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h",
 				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp",
 			);
-			script = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\nuic -o \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\" \"${INPUT_FILE_PATH}\" || exit 1\nmoc -nw -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp\" \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\"\nexit 0";
+			script = "export PATH=/sw/lib/qt4-mac/bin:/sw/lib/qt4-x11/bin:/opt/local/bin:${PATH}\nuic -o \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\" \"${INPUT_FILE_PATH}\" || exit 1\nmoc -nw -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp\" \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\"\nexit 0";
 		};
 		4310EE5F1458D87800500D8A /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -224,7 +224,7 @@
 			outputFiles = (
 				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp",
 			);
-			script = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\nmoc -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp\" \"${INPUT_FILE_PATH}\" || exit 1\n# Files w/ \"Q_OBJECT\"";
+			script = "export PATH=/sw/lib/qt4-mac/bin:/sw/lib/qt4-x11/bin:/opt/local/bin:${PATH}\nmoc -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp\" \"${INPUT_FILE_PATH}\" || exit 1\n# Files w/ \"Q_OBJECT\"";
 		};
 		43B553741299C5EF002AC030 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -235,7 +235,7 @@
 			outputFiles = (
 				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp",
 			);
-			script = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\nmoc -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp\" \"${INPUT_FILE_PATH}\" || exit 1";
+			script = "export PATH=/sw/lib/qt4-mac/bin:/sw/lib/qt4-x11/bin:/opt/local/bin:${PATH}\nmoc -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.moc.cpp\" \"${INPUT_FILE_PATH}\" || exit 1";
 		};
 		43B553751299C5EF002AC030 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -247,7 +247,7 @@
 				"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h",
 				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp",
 			);
-			script = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\nuic -o \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\" \"${INPUT_FILE_PATH}\" || exit 1\nmoc -nw -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp\" \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\"\nexit 0";
+			script = "export PATH=/sw/lib/qt4-mac/bin:/sw/lib/qt4-x11/bin:/opt/local/bin:${PATH}\nuic -o \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\" \"${INPUT_FILE_PATH}\" || exit 1\nmoc -nw -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp\" \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\"\nexit 0";
 		};
 /* End PBXBuildRule section */
 
@@ -1045,7 +1045,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export PATH=/sw/lib/qt4-mac/bin:/opt/local/bin:${PATH}\necho \"Checking for moc...\"\nif ! type -aP moc; then\n    echo \"error: Fatal inability to properly moc the code. (Insure you have installed Qt or risk more mocing.)\" >&2\n    open ./README.BUILD.txt\n    exit 1\nelif [[ `moc -v 2>&1 | sed -e 's:.*Qt \\(4\\.6\\)\\..)$:\\1:'` < \"4.6\" ]]; then\n    echo \"error: Moc is not properly installed\" >&2\n    exit 1\nfi\nmoc -v\nexit 0";
+			shellScript = "export PATH=/sw/lib/qt4-mac/bin:/sw/lib/qt4-x11/bin:/opt/local/bin:${PATH}\necho \"Checking for moc...\"\nif ! type -aP moc; then\n    echo \"error: Fatal inability to properly moc the code. (Insure you have installed Qt or risk more mocing.)\" >&2\n    open ./README.BUILD.MAC.txt\n    exit 1\nelif [[ `moc -v 2>&1 | sed -e 's:.*Qt \\(4\\.6\\)\\..)$:\\1:'` < \"4.6\" ]]; then\n    echo \"error: Moc is not properly installed\" >&2\n    exit 1\nfi\nmoc -v\nexit 0";
 		};
 		43B54B2612998D9F002AC030 /* QT */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -250,8 +250,6 @@ protected:
 };
 
 // Include template implementations
-#define PIE_T_CPP
 #include "Pie_t.cpp"
-#undef PIE_T_CPP
 
 #endif // PIE_HPP

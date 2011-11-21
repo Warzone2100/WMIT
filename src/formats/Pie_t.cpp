@@ -16,9 +16,8 @@
 	You should have received a copy of the GNU General Public License
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
-//#ifdef PIE_T_CPP
-
-#pragma once
+#ifndef PIE_T_CPP
+#define PIE_T_CPP
 
 #include "Generic.hpp"
 #include "Util.hpp"
@@ -455,4 +454,4 @@ bool APieModel<L>::isValid() const
 	return true;
 }
 
-//#endif //PIE_T_CPP
+#endif //PIE_T_CPP
