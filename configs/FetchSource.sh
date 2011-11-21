@@ -32,14 +32,18 @@ elif [ -d "${DirectorY}" ]; then
     exit 1
 elif [[ -d "${OutDir}" ]] && [[ ! -f "${FileName}" ]]; then
     # Clean up when updating versions
-    echo "error: Cached file is outdated or incomplete, removing" >&2
-    rm -fR "${DirectorY}" "${OutDir}" "${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}" "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}" "${TARGET_TEMP_DIR}"
+    echo "warning: Cached file is outdated or incomplete, removing" >&2
+    rm -fR "${DirectorY}" "${OutDir}"
 elif [[ -d "${OutDir}" ]] && [[ -f "${FileName}" ]]; then
     # Check to make sure we have the right file
-    MD5SumLoc=`md5 -q "${FileName}"`
+    MD5SumLoc=`cat "${OutDir}/.MD5SumLoc"`
     if [ "${MD5SumLoc}" != "${MD5Sum}" ]; then
-        echo "error: Cached file is outdated or incorrect, removing" >&2
-        rm -fR "${FileName}" "${DirectorY}" "${OutDir}" "${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}" "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}" "${TARGET_TEMP_DIR}"
+        echo "warning: Cached file is outdated or incorrect, removing" >&2
+        rm -fR "${DirectorY}" "${OutDir}"
+		MD5SumFle=`md5 -q "${FileName}"`
+		if [ "${MD5SumFle}" != "${MD5Sum}" ]; then
+			rm -fR "${FileName}"
+		fi
     else
         # Do not do more work then we have to
         echo "${OutDir} already exists, skipping"
@@ -72,7 +76,7 @@ fi
 
 # Unpack
 ExtensioN=`echo ${FileName} | sed -e 's:^.*\.\([^.]*\):\1:'`
-if [ "${ExtensioN}" = "gz" ]; then
+if [[ "${ExtensioN}" = "gz" ]] || [[ "${ExtensioN}" = "tgz" ]]; then
     if ! tar -zxf "${FileName}"; then
         echo "error: Unpacking ${FileName} failed" >&2
         exit 1
@@ -92,13 +96,15 @@ else
     exit 1
 fi
 
+# Save the sum
+echo "${MD5SumLoc}" > "${DirectorY}/.MD5SumLoc"
+
 # Move
 if [ ! -d "${DirectorY}" ]; then
     echo "error: Can't find ${DirectorY} to rename" >&2
     exit 1
 else
     mv "${DirectorY}" "${OutDir}"
-    touch ${OutDir}/*
 fi
 
 exit 0
