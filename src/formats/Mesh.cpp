@@ -167,7 +167,9 @@ Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
 	// For each pie3 connector
 	for (itC = p3.m_connectors.begin(); itC != p3.m_connectors.end(); ++itC)
 	{
-		addConnector(WZMConnector((*itC).pos[0], (*itC).pos[1], (*itC).pos[2]));
+		addConnector(WZMConnector(itC->pos.operator[](0),
+                                  itC->pos.operator[](1),
+                                  itC->pos.operator[](2)));
 	}
 
 	recalculateBoundData();
@@ -396,9 +398,9 @@ Mesh::operator Pie3Level() const
 	for (itC = m_connectors.begin(); itC != m_connectors.end(); ++itC)
 	{
 		Pie3Connector conn;
-		conn.pos[0] = (*itC).getPos()[0];
-		conn.pos[1] = (*itC).getPos()[1];
-		conn.pos[2] = (*itC).getPos()[2];
+        conn.pos.operator[](0) = itC->getPos().operator[](0);
+		conn.pos.operator[](1) = itC->getPos().operator[](1);
+		conn.pos.operator[](2) = itC->getPos().operator[](2);
 		p3.m_connectors.push_back(conn);
 	}
 
@@ -1118,13 +1120,13 @@ void Mesh::mirrorFromPoint(const WZMVertex& point, int axis)
 		switch (axis)
 		{
 		case 0:
-			itC->m_pos[0] = -itC->m_pos[0] + 2 * point.x();
+			itC->m_pos.operator[](0) = -itC->m_pos.operator[](0) + 2 * point.x();
 			break;
 		case 1:
-			itC->m_pos[1] = -itC->m_pos[1] + 2 * point.y();
+			itC->m_pos.operator[](1) = -itC->m_pos.operator[](1) + 2 * point.y();
 			break;
 		default:
-			itC->m_pos[2] = -itC->m_pos[2] + 2 * point.z();
+			itC->m_pos.operator[](2) = -itC->m_pos.operator[](2) + 2 * point.z();
 		}
 	}
 
