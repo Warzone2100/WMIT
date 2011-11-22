@@ -402,6 +402,8 @@
 		4310EE111458D17300500D8A /* GLee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLee.h; path = 3rdparty/GLee/GLee.h; sourceTree = "<group>"; };
 		4322BCBA147BF02D008EB714 /* qglviewer_fr.qm */ = {isa = PBXFileReference; lastKnownFileType = file; name = qglviewer_fr.qm; path = external/libQGLViewer/QGLViewer/qglviewer_fr.qm; sourceTree = "<group>"; };
 		4322BCBC147BF05D008EB714 /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = usr/lib/libobjc.dylib; sourceTree = SDKROOT; };
+		4322BCF5147C1A46008EB714 /* GenericFramework-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GenericFramework-Info.plist"; path = "Resources/GenericFramework-Info.plist"; sourceTree = "<group>"; };
+		4322BCFA147C1DFC008EB714 /* Base-Framework.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Base-Framework.xcconfig"; path = "configs/Base-Framework.xcconfig"; sourceTree = "<group>"; };
 		43703E2F129E0C7F00DDDB30 /* Project-All.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Project-All.xcconfig"; path = "configs/Project-All.xcconfig"; sourceTree = "<group>"; };
 		43703E37129E100F00DDDB30 /* WMIT-All.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "WMIT-All.xcconfig"; path = "configs/WMIT-All.xcconfig"; sourceTree = "<group>"; };
 		43703E38129E100F00DDDB30 /* WMIT-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "WMIT-Debug.xcconfig"; path = "configs/WMIT-Debug.xcconfig"; sourceTree = "<group>"; };
@@ -418,9 +420,7 @@
 		43B551451299A5E4002AC030 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		43B551471299A5E4002AC030 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		43B552201299AAD7002AC030 /* lib3ds.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = lib3ds.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		43B552211299AAD7002AC030 /* lib3ds-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "lib3ds-Info.plist"; path = "Resources/lib3ds-Info.plist"; sourceTree = "<group>"; };
 		43B5534D1299C1BF002AC030 /* QGLViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = QGLViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		43B5534E1299C1BF002AC030 /* libQGLViewer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "libQGLViewer-Info.plist"; path = "Resources/libQGLViewer-Info.plist"; sourceTree = "<group>"; };
 		43B5535B1299C3AD002AC030 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		43B553881299C759002AC030 /* camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = camera.cpp; path = external/libQGLViewer/QGLViewer/camera.cpp; sourceTree = "<group>"; };
 		43B553891299C759002AC030 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = camera.h; path = external/libQGLViewer/QGLViewer/camera.h; sourceTree = "<group>"; };
@@ -561,10 +561,9 @@
 				4310ED991458CBDF00500D8A /* notex.png */,
 				4310ED9A1458CBDF00500D8A /* pie3.frag */,
 				4310ED9B1458CBDF00500D8A /* pie3.vert */,
-				43B5534E1299C1BF002AC030 /* libQGLViewer-Info.plist */,
-				43B552211299AAD7002AC030 /* lib3ds-Info.plist */,
 				430C2E0D1297326100AAA86E /* COPYING.nongpl */,
 				430C2E0E1297326100AAA86E /* COPYING.txt */,
+				4322BCF5147C1A46008EB714 /* GenericFramework-Info.plist */,
 				430C2E07129731CE00AAA86E /* Warzone Model Importer Tool-Info.plist */,
 			);
 			name = Resources;
@@ -672,6 +671,7 @@
 		43703E2E129E0C5500DDDB30 /* Configs */ = {
 			isa = PBXGroup;
 			children = (
+				4322BCFA147C1DFC008EB714 /* Base-Framework.xcconfig */,
 				43703E43129E1AE600DDDB30 /* QGLViewer-All.xcconfig */,
 				43703E44129E1AE600DDDB30 /* QGLViewer-Debug.xcconfig */,
 				43703E45129E1AE600DDDB30 /* QGLViewer-Release.xcconfig */,
@@ -884,9 +884,9 @@
 				4310EE5F1458D87800500D8A /* PBXBuildRule */,
 			);
 			dependencies = (
-				430C2E68129737BB00AAA86E /* PBXTargetDependency */,
 				43B552B61299BCBE002AC030 /* PBXTargetDependency */,
 				43B553781299C663002AC030 /* PBXTargetDependency */,
+				430C2E68129737BB00AAA86E /* PBXTargetDependency */,
 			);
 			name = "Warzone Model Importer Tool";
 			productName = "Warzone Model Importer Tool";

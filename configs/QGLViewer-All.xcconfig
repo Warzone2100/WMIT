@@ -1,17 +1,11 @@
 // QGLViewer settings for all configuration
 
+#include "Base-Framework.xcconfig"
 
-INSTALL_PATH = $(HOME)/Library/Frameworks
-DYLIB_COMPATIBILITY_VERSION = 1
-DYLIB_CURRENT_VERSION = 1
-LD_DYLIB_INSTALL_NAME = @executable_path/../Frameworks/$(EXECUTABLE_PATH)
-PREBINDING = NO
-FRAMEWORK_VERSION = A
-INFOPLIST_FILE = Resources/GenericFramework-Info.plist
+
 PRODUCT_NAME = QGLViewer
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
 
-ALWAYS_SEARCH_USER_PATHS = NO
 FRAMEWORK_SEARCH_PATHS = $(inherited)
 HEADER_SEARCH_PATHS = $(inherited) $(QTCORE_QUOTED) $(QTGUI_QUOTED) $(QTOPENGL_QUOTED) $(QTXML_QUOTED) $(QT3SUPPORT_QUOTED) $(QTSQL_QUOTED)
