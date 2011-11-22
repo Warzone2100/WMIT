@@ -1017,7 +1017,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "DirectorY=\"libQGLViewer-2.3.8\"\nOutDir=\"libQGLViewer\"\nFileName=\"libQGLViewer-2.3.8.tar.gz\"\nSourceDLP=\"http://www.libqglviewer.com/src/libQGLViewer-2.3.8.tar.gz\"\nMD5Sum=\"9dd2fe0d521d488378e2b108f559d60a\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}\n";
+			shellScript = "DirectorY=\"libQGLViewer-2.3.9\"\nOutDir=\"libQGLViewer\"\nFileName=\"libQGLViewer-2.3.9.tar.gz\"\nSourceDLP=\"http://www.libqglviewer.com/src/libQGLViewer-2.3.9.tar.gz\"\nMD5Sum=\"a882cb3a8da4ee904a33b46ebb44f905\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}\n";
 		};
 		430C2E63129737AD00AAA86E /* MOC */ = {
 			isa = PBXShellScriptBuildPhase;
