@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		4301BA3A147B24A10056AE5B /* Fetch Third Party Sources */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 4301BA43147B24D30056AE5B /* Build configuration list for PBXAggregateTarget "Fetch Third Party Sources" */;
+			buildPhases = (
+				4301BA45147B250D0056AE5B /* lib3ds - Fetch source */,
+				4301BA4B147B258E0056AE5B /* QGLViewer - Fetch source */,
+			);
+			dependencies = (
+			);
+			name = "Fetch Third Party Sources";
+			productName = "Fetch Third Party Sources";
+		};
 		430C2E64129737AD00AAA86E /* Setup Prebuilt Components */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 430C2E71129737C600AAA86E /* Build configuration list for PBXAggregateTarget "Setup Prebuilt Components" */;
@@ -252,6 +264,20 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		4301BA46147B255D0056AE5B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 430C2DE412972FE700AAA86E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4301BA3A147B24A10056AE5B;
+			remoteInfo = "Fetch Third Party Sources";
+		};
+		4301BA48147B25690056AE5B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 430C2DE412972FE700AAA86E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4301BA3A147B24A10056AE5B;
+			remoteInfo = "Fetch Third Party Sources";
+		};
 		430C2E67129737BB00AAA86E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 430C2DE412972FE700AAA86E /* Project object */;
@@ -933,7 +959,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 43B552241299AAD8002AC030 /* Build configuration list for PBXNativeTarget "lib3ds" */;
 			buildPhases = (
-				43B558311299F9A5002AC030 /* Fetch source */,
 				43B5521B1299AAD7002AC030 /* Headers */,
 				43B5521C1299AAD7002AC030 /* Resources */,
 				43B5521D1299AAD7002AC030 /* Sources */,
@@ -942,6 +967,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4301BA47147B255D0056AE5B /* PBXTargetDependency */,
 			);
 			name = lib3ds;
 			productName = lib3ds;
@@ -952,7 +978,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 43B553511299C1C0002AC030 /* Build configuration list for PBXNativeTarget "QGLViewer" */;
 			buildPhases = (
-				43B5583D1299F9CC002AC030 /* Fetch source */,
 				43B553481299C1BF002AC030 /* Headers */,
 				43B553491299C1BF002AC030 /* Resources */,
 				43B5534A1299C1BF002AC030 /* Sources */,
@@ -963,6 +988,7 @@
 				43B553741299C5EF002AC030 /* PBXBuildRule */,
 			);
 			dependencies = (
+				4301BA49147B25690056AE5B /* PBXTargetDependency */,
 				43B554071299CB50002AC030 /* PBXTargetDependency */,
 			);
 			name = QGLViewer;
@@ -995,6 +1021,7 @@
 			projectRoot = "";
 			targets = (
 				430C2E03129731CE00AAA86E /* Warzone Model Importer Tool */,
+				4301BA3A147B24A10056AE5B /* Fetch Third Party Sources */,
 				430C2E64129737AD00AAA86E /* Setup Prebuilt Components */,
 				43B5521F1299AAD7002AC030 /* lib3ds */,
 				43B5534C1299C1BF002AC030 /* QGLViewer */,
@@ -1033,6 +1060,34 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4301BA45147B250D0056AE5B /* lib3ds - Fetch source */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "lib3ds - Fetch source";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "DirectorY=\"lib3ds-1.3.0\"\nOutDir=\"lib3ds\"\nFileName=\"lib3ds-1.3.0.zip\"\nSourceDLP=\"http://lib3ds.googlecode.com/files/lib3ds-1.3.0.zip\"\nMD5Sum=\"2572f7b0f29b591d494c1a0658b35c86\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}\n";
+		};
+		4301BA4B147B258E0056AE5B /* QGLViewer - Fetch source */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "QGLViewer - Fetch source";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "DirectorY=\"libQGLViewer-2.3.8\"\nOutDir=\"libQGLViewer\"\nFileName=\"libQGLViewer-2.3.8.tar.gz\"\nSourceDLP=\"http://www.libqglviewer.com/src/libQGLViewer-2.3.8.tar.gz\"\nMD5Sum=\"9dd2fe0d521d488378e2b108f559d60a\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}\n";
+		};
 		430C2E63129737AD00AAA86E /* MOC */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1060,34 +1115,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "DirectorY=\"QT_\"\nOutDir=\"QT\"\nFileName=\"QT.tar.gz\"\nBuiltDLP=\"http://downloads.sourceforge.net/project/warzone2100/build-tools/mac/QT.tar.gz\"\nMD5Sum=\"8bd5dd347b391ab4a29105f144c64b4d\"\n\nconfigs/FetchPrebuilt.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${BuiltDLP}\" \"${MD5Sum}\"\nexit ${?}\n\n# tar -czf QT.tar.gz --exclude '.DS_Store' QT_";
-		};
-		43B558311299F9A5002AC030 /* Fetch source */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Fetch source";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "DirectorY=\"lib3ds-1.3.0\"\nOutDir=\"lib3ds\"\nFileName=\"lib3ds-1.3.0.zip\"\nSourceDLP=\"http://lib3ds.googlecode.com/files/lib3ds-1.3.0.zip\"\nMD5Sum=\"2572f7b0f29b591d494c1a0658b35c86\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}";
-		};
-		43B5583D1299F9CC002AC030 /* Fetch source */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Fetch source";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "DirectorY=\"libQGLViewer-2.3.8\"\nOutDir=\"libQGLViewer\"\nFileName=\"libQGLViewer-2.3.8.tar.gz\"\nSourceDLP=\"http://www.libqglviewer.com/src/libQGLViewer-2.3.8.tar.gz\"\nMD5Sum=\"9dd2fe0d521d488378e2b108f559d60a\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1206,6 +1233,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4301BA47147B255D0056AE5B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4301BA3A147B24A10056AE5B /* Fetch Third Party Sources */;
+			targetProxy = 4301BA46147B255D0056AE5B /* PBXContainerItemProxy */;
+		};
+		4301BA49147B25690056AE5B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4301BA3A147B24A10056AE5B /* Fetch Third Party Sources */;
+			targetProxy = 4301BA48147B25690056AE5B /* PBXContainerItemProxy */;
+		};
 		430C2E68129737BB00AAA86E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 430C2E64129737AD00AAA86E /* Setup Prebuilt Components */;
@@ -1229,6 +1266,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		4301BA3B147B24A20056AE5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Fetch Third Party Sources";
+			};
+			name = Debug;
+		};
+		4301BA3C147B24A20056AE5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Fetch Third Party Sources";
+			};
+			name = Release;
+		};
 		430C2DE512972FE700AAA86E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 43703E2F129E0C7F00DDDB30 /* Project-All.xcconfig */;
@@ -1302,6 +1353,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4301BA43147B24D30056AE5B /* Build configuration list for PBXAggregateTarget "Fetch Third Party Sources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4301BA3B147B24A20056AE5B /* Debug */,
+				4301BA3C147B24A20056AE5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		430C2DE712972FE700AAA86E /* Build configuration list for PBXProject "WMIT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
