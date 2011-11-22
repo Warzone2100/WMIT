@@ -104,6 +104,8 @@
 		4310EE851458D9F200500D8A /* keyFrameInterpolator.h in Sources */ = {isa = PBXBuildFile; fileRef = 43B553921299C759002AC030 /* keyFrameInterpolator.h */; };
 		4310EE861458D9F200500D8A /* frame.h in Sources */ = {isa = PBXBuildFile; fileRef = 43B5538F1299C759002AC030 /* frame.h */; };
 		4310EE871458D9F200500D8A /* camera.h in Sources */ = {isa = PBXBuildFile; fileRef = 43B553891299C759002AC030 /* camera.h */; };
+		4322BCBB147BF02D008EB714 /* qglviewer_fr.qm in Resources */ = {isa = PBXBuildFile; fileRef = 4322BCBA147BF02D008EB714 /* qglviewer_fr.qm */; };
+		4322BCBD147BF05D008EB714 /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4322BCBC147BF05D008EB714 /* libobjc.dylib */; };
 		43B54BED12998F21002AC030 /* QtCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BEC12998F21002AC030 /* QtCore.framework */; };
 		43B54BEF12998F22002AC030 /* QtGui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BEE12998F22002AC030 /* QtGui.framework */; };
 		43B54BF112998F22002AC030 /* QtOpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BF012998F22002AC030 /* QtOpenGL.framework */; };
@@ -398,6 +400,8 @@
 		4310EDE21458CCBC00500D8A /* wmit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wmit.h; path = src/wmit.h; sourceTree = "<group>"; };
 		4310EE101458D17300500D8A /* GLee.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLee.c; path = 3rdparty/GLee/GLee.c; sourceTree = "<group>"; };
 		4310EE111458D17300500D8A /* GLee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLee.h; path = 3rdparty/GLee/GLee.h; sourceTree = "<group>"; };
+		4322BCBA147BF02D008EB714 /* qglviewer_fr.qm */ = {isa = PBXFileReference; lastKnownFileType = file; name = qglviewer_fr.qm; path = external/libQGLViewer/QGLViewer/qglviewer_fr.qm; sourceTree = "<group>"; };
+		4322BCBC147BF05D008EB714 /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = usr/lib/libobjc.dylib; sourceTree = SDKROOT; };
 		43703E2F129E0C7F00DDDB30 /* Project-All.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Project-All.xcconfig"; path = "configs/Project-All.xcconfig"; sourceTree = "<group>"; };
 		43703E37129E100F00DDDB30 /* WMIT-All.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "WMIT-All.xcconfig"; path = "configs/WMIT-All.xcconfig"; sourceTree = "<group>"; };
 		43703E38129E100F00DDDB30 /* WMIT-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "WMIT-Debug.xcconfig"; path = "configs/WMIT-Debug.xcconfig"; sourceTree = "<group>"; };
@@ -515,6 +519,7 @@
 				43B554571299D88A002AC030 /* QtSql.framework in Frameworks */,
 				43B5535C1299C3AD002AC030 /* GLUT.framework in Frameworks */,
 				43B555D41299DA12002AC030 /* OpenGL.framework in Frameworks */,
+				4322BCBD147BF05D008EB714 /* libobjc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -688,6 +693,7 @@
 				43B558471299FD41002AC030 /* CoreFoundation.framework */,
 				43B551471299A5E4002AC030 /* OpenGL.framework */,
 				43B5535B1299C3AD002AC030 /* GLUT.framework */,
+				4322BCBC147BF05D008EB714 /* libobjc.dylib */,
 			);
 			name = "System Libs";
 			sourceTree = "<group>";
@@ -748,6 +754,7 @@
 		43B553581299C28E002AC030 /* libQGLViewer */ = {
 			isa = PBXGroup;
 			children = (
+				4322BCBA147BF02D008EB714 /* qglviewer_fr.qm */,
 				43B553881299C759002AC030 /* camera.cpp */,
 				43B553891299C759002AC030 /* camera.h */,
 				43B5538A1299C759002AC030 /* config.h */,
@@ -985,6 +992,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43B553D21299C759002AC030 /* qglviewer.icns in Resources */,
+				4322BCBB147BF02D008EB714 /* qglviewer_fr.qm in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1017,7 +1025,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "DirectorY=\"libQGLViewer-2.3.9\"\nOutDir=\"libQGLViewer\"\nFileName=\"libQGLViewer-2.3.9.tar.gz\"\nSourceDLP=\"http://www.libqglviewer.com/src/libQGLViewer-2.3.9.tar.gz\"\nMD5Sum=\"a882cb3a8da4ee904a33b46ebb44f905\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}\n";
+			shellScript = "DirectorY=\"libQGLViewer-2.3.10\"\nOutDir=\"libQGLViewer\"\nFileName=\"libQGLViewer-2.3.10.tar.gz\"\nSourceDLP=\"http://www.libqglviewer.com/src/libQGLViewer-2.3.10.tar.gz\"\nMD5Sum=\"259538c7036b4ae5fe3ed5d4299c8d31\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}\n";
 		};
 		430C2E63129737AD00AAA86E /* MOC */ = {
 			isa = PBXShellScriptBuildPhase;
