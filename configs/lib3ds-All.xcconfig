@@ -14,4 +14,4 @@ ALWAYS_SEARCH_USER_PATHS = NO
 FRAMEWORK_SEARCH_PATHS =
 HEADER_SEARCH_PATHS =
 
-WARNING_CFLAGS = -Wno-format -Wno-switch-enum -Wno-comment
+WARNING_CFLAGS = -Wno-switch-enum

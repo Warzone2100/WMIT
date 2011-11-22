@@ -6,7 +6,7 @@ PREBINDING = NO
 INFOPLIST_FILE = Resources/Warzone Model Importer Tool-Info.plist
 PRODUCT_NAME = Warzone Model Importer Tool
 
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) LIB3DS_VERSION_1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
 
 FRAMEWORK_SEARCH_PATHS = $(inherited)
 HEADER_SEARCH_PATHS = $(inherited) $(QTGUI_QUOTED) $(QTOPENGL_QUOTED) $(QTXML_QUOTED)

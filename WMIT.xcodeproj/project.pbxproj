@@ -34,6 +34,27 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		4301BB35147B4E8E0056AE5B /* lib3ds_atmosphere.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB20147B4E8E0056AE5B /* lib3ds_atmosphere.c */; };
+		4301BB36147B4E8E0056AE5B /* lib3ds_background.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB21147B4E8E0056AE5B /* lib3ds_background.c */; };
+		4301BB37147B4E8E0056AE5B /* lib3ds_camera.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB22147B4E8E0056AE5B /* lib3ds_camera.c */; };
+		4301BB38147B4E8E0056AE5B /* lib3ds_chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB23147B4E8E0056AE5B /* lib3ds_chunk.c */; };
+		4301BB39147B4E8E0056AE5B /* lib3ds_chunktable.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB24147B4E8E0056AE5B /* lib3ds_chunktable.c */; };
+		4301BB3A147B4E8E0056AE5B /* lib3ds_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB25147B4E8E0056AE5B /* lib3ds_file.c */; };
+		4301BB3B147B4E8E0056AE5B /* lib3ds_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 4301BB26147B4E8E0056AE5B /* lib3ds_impl.h */; settings = {ATTRIBUTES = (); }; };
+		4301BB3C147B4E8E0056AE5B /* lib3ds_io.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB27147B4E8E0056AE5B /* lib3ds_io.c */; };
+		4301BB3D147B4E8E0056AE5B /* lib3ds_light.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB28147B4E8E0056AE5B /* lib3ds_light.c */; };
+		4301BB3E147B4E8E0056AE5B /* lib3ds_material.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB29147B4E8E0056AE5B /* lib3ds_material.c */; };
+		4301BB3F147B4E8E0056AE5B /* lib3ds_math.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB2A147B4E8E0056AE5B /* lib3ds_math.c */; };
+		4301BB40147B4E8E0056AE5B /* lib3ds_matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB2B147B4E8E0056AE5B /* lib3ds_matrix.c */; };
+		4301BB41147B4E8E0056AE5B /* lib3ds_mesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB2C147B4E8E0056AE5B /* lib3ds_mesh.c */; };
+		4301BB42147B4E8E0056AE5B /* lib3ds_node.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB2D147B4E8E0056AE5B /* lib3ds_node.c */; };
+		4301BB43147B4E8E0056AE5B /* lib3ds_quat.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB2E147B4E8E0056AE5B /* lib3ds_quat.c */; };
+		4301BB44147B4E8E0056AE5B /* lib3ds_shadow.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB2F147B4E8E0056AE5B /* lib3ds_shadow.c */; };
+		4301BB45147B4E8E0056AE5B /* lib3ds_track.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB30147B4E8E0056AE5B /* lib3ds_track.c */; };
+		4301BB46147B4E8E0056AE5B /* lib3ds_util.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB31147B4E8E0056AE5B /* lib3ds_util.c */; };
+		4301BB47147B4E8E0056AE5B /* lib3ds_vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB32147B4E8E0056AE5B /* lib3ds_vector.c */; };
+		4301BB48147B4E8E0056AE5B /* lib3ds_viewport.c in Sources */ = {isa = PBXBuildFile; fileRef = 4301BB33147B4E8E0056AE5B /* lib3ds_viewport.c */; };
+		4301BB49147B4E8E0056AE5B /* lib3ds.h in Headers */ = {isa = PBXBuildFile; fileRef = 4301BB34147B4E8E0056AE5B /* lib3ds.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		430C2E111297326100AAA86E /* COPYING.nongpl in Resources */ = {isa = PBXBuildFile; fileRef = 430C2E0D1297326100AAA86E /* COPYING.nongpl */; };
 		430C2E121297326100AAA86E /* COPYING.txt in Resources */ = {isa = PBXBuildFile; fileRef = 430C2E0E1297326100AAA86E /* COPYING.txt */; };
 		4310ED9C1458CBDF00500D8A /* notex.png in Resources */ = {isa = PBXBuildFile; fileRef = 4310ED991458CBDF00500D8A /* notex.png */; };
@@ -88,44 +109,6 @@
 		43B54BF112998F22002AC030 /* QtOpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BF012998F22002AC030 /* QtOpenGL.framework */; };
 		43B551461299A5E4002AC030 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B551451299A5E4002AC030 /* Carbon.framework */; };
 		43B551481299A5E4002AC030 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B551471299A5E4002AC030 /* OpenGL.framework */; };
-		43B552781299AD28002AC030 /* atmosphere.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552521299AD28002AC030 /* atmosphere.c */; };
-		43B552791299AD28002AC030 /* atmosphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552531299AD28002AC030 /* atmosphere.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B5527A1299AD28002AC030 /* background.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552541299AD28002AC030 /* background.c */; };
-		43B5527B1299AD28002AC030 /* background.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552551299AD28002AC030 /* background.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B5527C1299AD28002AC030 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552561299AD28002AC030 /* camera.c */; };
-		43B5527D1299AD28002AC030 /* camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552571299AD28002AC030 /* camera.h */; };
-		43B5527E1299AD28002AC030 /* chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552581299AD28002AC030 /* chunk.c */; };
-		43B5527F1299AD28002AC030 /* chunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552591299AD28002AC030 /* chunk.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B552801299AD28002AC030 /* chunktable.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5525A1299AD28002AC030 /* chunktable.h */; };
-		43B552811299AD28002AC030 /* ease.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5525B1299AD28002AC030 /* ease.c */; };
-		43B552821299AD28002AC030 /* ease.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5525C1299AD28002AC030 /* ease.h */; };
-		43B552831299AD28002AC030 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5525D1299AD28002AC030 /* file.c */; };
-		43B552841299AD28002AC030 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5525E1299AD28002AC030 /* file.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B552851299AD28002AC030 /* io.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5525F1299AD28002AC030 /* io.c */; };
-		43B552861299AD28002AC030 /* io.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552601299AD28002AC030 /* io.h */; };
-		43B552871299AD28002AC030 /* light.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552611299AD28002AC030 /* light.c */; };
-		43B552881299AD28002AC030 /* light.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552621299AD28002AC030 /* light.h */; };
-		43B552891299AD28002AC030 /* material.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552631299AD28002AC030 /* material.c */; };
-		43B5528A1299AD28002AC030 /* material.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552641299AD28002AC030 /* material.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B5528B1299AD28002AC030 /* matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552651299AD28002AC030 /* matrix.c */; };
-		43B5528C1299AD28002AC030 /* matrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552661299AD28002AC030 /* matrix.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B5528D1299AD28002AC030 /* mesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552671299AD28002AC030 /* mesh.c */; };
-		43B5528E1299AD28002AC030 /* mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552681299AD28002AC030 /* mesh.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B5528F1299AD28002AC030 /* node.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552691299AD28002AC030 /* node.c */; };
-		43B552901299AD28002AC030 /* node.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5526A1299AD28002AC030 /* node.h */; };
-		43B552911299AD28002AC030 /* quat.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5526B1299AD28002AC030 /* quat.c */; };
-		43B552921299AD28002AC030 /* quat.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5526C1299AD28002AC030 /* quat.h */; };
-		43B552931299AD28002AC030 /* shadow.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5526D1299AD28002AC030 /* shadow.c */; };
-		43B552941299AD28002AC030 /* shadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5526E1299AD28002AC030 /* shadow.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B552951299AD28002AC030 /* tcb.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B5526F1299AD28002AC030 /* tcb.c */; };
-		43B552961299AD28002AC030 /* tcb.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552701299AD28002AC030 /* tcb.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B552971299AD28002AC030 /* tracks.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552711299AD28002AC030 /* tracks.c */; };
-		43B552981299AD28002AC030 /* tracks.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552721299AD28002AC030 /* tracks.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B552991299AD28002AC030 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552731299AD28002AC030 /* types.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B5529A1299AD28002AC030 /* vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552741299AD28002AC030 /* vector.c */; };
-		43B5529B1299AD28002AC030 /* vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552751299AD28002AC030 /* vector.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		43B5529C1299AD28002AC030 /* viewport.c in Sources */ = {isa = PBXBuildFile; fileRef = 43B552761299AD28002AC030 /* viewport.c */; };
-		43B5529D1299AD28002AC030 /* viewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B552771299AD28002AC030 /* viewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		43B552BF1299BD34002AC030 /* lib3ds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B552201299AAD7002AC030 /* lib3ds.framework */; };
 		43B552C01299BD3D002AC030 /* lib3ds.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B552201299AAD7002AC030 /* lib3ds.framework */; };
 		43B552D01299BD53002AC030 /* QtCore.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B54BEC12998F21002AC030 /* QtCore.framework */; };
@@ -331,6 +314,27 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4301BB20147B4E8E0056AE5B /* lib3ds_atmosphere.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_atmosphere.c; path = external/lib3ds/src/lib3ds_atmosphere.c; sourceTree = "<group>"; };
+		4301BB21147B4E8E0056AE5B /* lib3ds_background.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_background.c; path = external/lib3ds/src/lib3ds_background.c; sourceTree = "<group>"; };
+		4301BB22147B4E8E0056AE5B /* lib3ds_camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_camera.c; path = external/lib3ds/src/lib3ds_camera.c; sourceTree = "<group>"; };
+		4301BB23147B4E8E0056AE5B /* lib3ds_chunk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_chunk.c; path = external/lib3ds/src/lib3ds_chunk.c; sourceTree = "<group>"; };
+		4301BB24147B4E8E0056AE5B /* lib3ds_chunktable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_chunktable.c; path = external/lib3ds/src/lib3ds_chunktable.c; sourceTree = "<group>"; };
+		4301BB25147B4E8E0056AE5B /* lib3ds_file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_file.c; path = external/lib3ds/src/lib3ds_file.c; sourceTree = "<group>"; };
+		4301BB26147B4E8E0056AE5B /* lib3ds_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lib3ds_impl.h; path = external/lib3ds/src/lib3ds_impl.h; sourceTree = "<group>"; };
+		4301BB27147B4E8E0056AE5B /* lib3ds_io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_io.c; path = external/lib3ds/src/lib3ds_io.c; sourceTree = "<group>"; };
+		4301BB28147B4E8E0056AE5B /* lib3ds_light.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_light.c; path = external/lib3ds/src/lib3ds_light.c; sourceTree = "<group>"; };
+		4301BB29147B4E8E0056AE5B /* lib3ds_material.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_material.c; path = external/lib3ds/src/lib3ds_material.c; sourceTree = "<group>"; };
+		4301BB2A147B4E8E0056AE5B /* lib3ds_math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_math.c; path = external/lib3ds/src/lib3ds_math.c; sourceTree = "<group>"; };
+		4301BB2B147B4E8E0056AE5B /* lib3ds_matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_matrix.c; path = external/lib3ds/src/lib3ds_matrix.c; sourceTree = "<group>"; };
+		4301BB2C147B4E8E0056AE5B /* lib3ds_mesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_mesh.c; path = external/lib3ds/src/lib3ds_mesh.c; sourceTree = "<group>"; };
+		4301BB2D147B4E8E0056AE5B /* lib3ds_node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_node.c; path = external/lib3ds/src/lib3ds_node.c; sourceTree = "<group>"; };
+		4301BB2E147B4E8E0056AE5B /* lib3ds_quat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_quat.c; path = external/lib3ds/src/lib3ds_quat.c; sourceTree = "<group>"; };
+		4301BB2F147B4E8E0056AE5B /* lib3ds_shadow.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_shadow.c; path = external/lib3ds/src/lib3ds_shadow.c; sourceTree = "<group>"; };
+		4301BB30147B4E8E0056AE5B /* lib3ds_track.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_track.c; path = external/lib3ds/src/lib3ds_track.c; sourceTree = "<group>"; };
+		4301BB31147B4E8E0056AE5B /* lib3ds_util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_util.c; path = external/lib3ds/src/lib3ds_util.c; sourceTree = "<group>"; };
+		4301BB32147B4E8E0056AE5B /* lib3ds_vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_vector.c; path = external/lib3ds/src/lib3ds_vector.c; sourceTree = "<group>"; };
+		4301BB33147B4E8E0056AE5B /* lib3ds_viewport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lib3ds_viewport.c; path = external/lib3ds/src/lib3ds_viewport.c; sourceTree = "<group>"; };
+		4301BB34147B4E8E0056AE5B /* lib3ds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lib3ds.h; path = external/lib3ds/src/lib3ds.h; sourceTree = "<group>"; };
 		430C2E04129731CE00AAA86E /* Warzone Model Importer Tool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Warzone Model Importer Tool.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		430C2E07129731CE00AAA86E /* Warzone Model Importer Tool-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Warzone Model Importer Tool-Info.plist"; path = "Resources/Warzone Model Importer Tool-Info.plist"; sourceTree = "<group>"; };
 		430C2E0D1297326100AAA86E /* COPYING.nongpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING.nongpl; sourceTree = "<group>"; };
@@ -411,44 +415,6 @@
 		43B551471299A5E4002AC030 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		43B552201299AAD7002AC030 /* lib3ds.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = lib3ds.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43B552211299AAD7002AC030 /* lib3ds-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "lib3ds-Info.plist"; path = "Resources/lib3ds-Info.plist"; sourceTree = "<group>"; };
-		43B552521299AD28002AC030 /* atmosphere.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = atmosphere.c; path = external/lib3ds/lib3ds/atmosphere.c; sourceTree = "<group>"; };
-		43B552531299AD28002AC030 /* atmosphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = atmosphere.h; path = external/lib3ds/lib3ds/atmosphere.h; sourceTree = "<group>"; };
-		43B552541299AD28002AC030 /* background.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = background.c; path = external/lib3ds/lib3ds/background.c; sourceTree = "<group>"; };
-		43B552551299AD28002AC030 /* background.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = background.h; path = external/lib3ds/lib3ds/background.h; sourceTree = "<group>"; };
-		43B552561299AD28002AC030 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = camera.c; path = external/lib3ds/lib3ds/camera.c; sourceTree = "<group>"; };
-		43B552571299AD28002AC030 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = camera.h; path = external/lib3ds/lib3ds/camera.h; sourceTree = "<group>"; };
-		43B552581299AD28002AC030 /* chunk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = chunk.c; path = external/lib3ds/lib3ds/chunk.c; sourceTree = "<group>"; };
-		43B552591299AD28002AC030 /* chunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chunk.h; path = external/lib3ds/lib3ds/chunk.h; sourceTree = "<group>"; };
-		43B5525A1299AD28002AC030 /* chunktable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chunktable.h; path = external/lib3ds/lib3ds/chunktable.h; sourceTree = "<group>"; };
-		43B5525B1299AD28002AC030 /* ease.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ease.c; path = external/lib3ds/lib3ds/ease.c; sourceTree = "<group>"; };
-		43B5525C1299AD28002AC030 /* ease.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ease.h; path = external/lib3ds/lib3ds/ease.h; sourceTree = "<group>"; };
-		43B5525D1299AD28002AC030 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = file.c; path = external/lib3ds/lib3ds/file.c; sourceTree = "<group>"; };
-		43B5525E1299AD28002AC030 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file.h; path = external/lib3ds/lib3ds/file.h; sourceTree = "<group>"; };
-		43B5525F1299AD28002AC030 /* io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = io.c; path = external/lib3ds/lib3ds/io.c; sourceTree = "<group>"; };
-		43B552601299AD28002AC030 /* io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = io.h; path = external/lib3ds/lib3ds/io.h; sourceTree = "<group>"; };
-		43B552611299AD28002AC030 /* light.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = light.c; path = external/lib3ds/lib3ds/light.c; sourceTree = "<group>"; };
-		43B552621299AD28002AC030 /* light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = light.h; path = external/lib3ds/lib3ds/light.h; sourceTree = "<group>"; };
-		43B552631299AD28002AC030 /* material.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = material.c; path = external/lib3ds/lib3ds/material.c; sourceTree = "<group>"; };
-		43B552641299AD28002AC030 /* material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = material.h; path = external/lib3ds/lib3ds/material.h; sourceTree = "<group>"; };
-		43B552651299AD28002AC030 /* matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = matrix.c; path = external/lib3ds/lib3ds/matrix.c; sourceTree = "<group>"; };
-		43B552661299AD28002AC030 /* matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = matrix.h; path = external/lib3ds/lib3ds/matrix.h; sourceTree = "<group>"; };
-		43B552671299AD28002AC030 /* mesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mesh.c; path = external/lib3ds/lib3ds/mesh.c; sourceTree = "<group>"; };
-		43B552681299AD28002AC030 /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mesh.h; path = external/lib3ds/lib3ds/mesh.h; sourceTree = "<group>"; };
-		43B552691299AD28002AC030 /* node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = node.c; path = external/lib3ds/lib3ds/node.c; sourceTree = "<group>"; };
-		43B5526A1299AD28002AC030 /* node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = node.h; path = external/lib3ds/lib3ds/node.h; sourceTree = "<group>"; };
-		43B5526B1299AD28002AC030 /* quat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = quat.c; path = external/lib3ds/lib3ds/quat.c; sourceTree = "<group>"; };
-		43B5526C1299AD28002AC030 /* quat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = quat.h; path = external/lib3ds/lib3ds/quat.h; sourceTree = "<group>"; };
-		43B5526D1299AD28002AC030 /* shadow.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = shadow.c; path = external/lib3ds/lib3ds/shadow.c; sourceTree = "<group>"; };
-		43B5526E1299AD28002AC030 /* shadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shadow.h; path = external/lib3ds/lib3ds/shadow.h; sourceTree = "<group>"; };
-		43B5526F1299AD28002AC030 /* tcb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tcb.c; path = external/lib3ds/lib3ds/tcb.c; sourceTree = "<group>"; };
-		43B552701299AD28002AC030 /* tcb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tcb.h; path = external/lib3ds/lib3ds/tcb.h; sourceTree = "<group>"; };
-		43B552711299AD28002AC030 /* tracks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tracks.c; path = external/lib3ds/lib3ds/tracks.c; sourceTree = "<group>"; };
-		43B552721299AD28002AC030 /* tracks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tracks.h; path = external/lib3ds/lib3ds/tracks.h; sourceTree = "<group>"; };
-		43B552731299AD28002AC030 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = types.h; path = external/lib3ds/lib3ds/types.h; sourceTree = "<group>"; };
-		43B552741299AD28002AC030 /* vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vector.c; path = external/lib3ds/lib3ds/vector.c; sourceTree = "<group>"; };
-		43B552751299AD28002AC030 /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vector.h; path = external/lib3ds/lib3ds/vector.h; sourceTree = "<group>"; };
-		43B552761299AD28002AC030 /* viewport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = viewport.c; path = external/lib3ds/lib3ds/viewport.c; sourceTree = "<group>"; };
-		43B552771299AD28002AC030 /* viewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = viewport.h; path = external/lib3ds/lib3ds/viewport.h; sourceTree = "<group>"; };
 		43B5534D1299C1BF002AC030 /* QGLViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = QGLViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43B5534E1299C1BF002AC030 /* libQGLViewer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "libQGLViewer-Info.plist"; path = "Resources/libQGLViewer-Info.plist"; sourceTree = "<group>"; };
 		43B5535B1299C3AD002AC030 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
@@ -754,44 +720,27 @@
 		43B5524E1299AC05002AC030 /* lib3ds */ = {
 			isa = PBXGroup;
 			children = (
-				43B552521299AD28002AC030 /* atmosphere.c */,
-				43B552531299AD28002AC030 /* atmosphere.h */,
-				43B552541299AD28002AC030 /* background.c */,
-				43B552551299AD28002AC030 /* background.h */,
-				43B552561299AD28002AC030 /* camera.c */,
-				43B552571299AD28002AC030 /* camera.h */,
-				43B552581299AD28002AC030 /* chunk.c */,
-				43B552591299AD28002AC030 /* chunk.h */,
-				43B5525A1299AD28002AC030 /* chunktable.h */,
-				43B5525B1299AD28002AC030 /* ease.c */,
-				43B5525C1299AD28002AC030 /* ease.h */,
-				43B5525D1299AD28002AC030 /* file.c */,
-				43B5525E1299AD28002AC030 /* file.h */,
-				43B5525F1299AD28002AC030 /* io.c */,
-				43B552601299AD28002AC030 /* io.h */,
-				43B552611299AD28002AC030 /* light.c */,
-				43B552621299AD28002AC030 /* light.h */,
-				43B552631299AD28002AC030 /* material.c */,
-				43B552641299AD28002AC030 /* material.h */,
-				43B552651299AD28002AC030 /* matrix.c */,
-				43B552661299AD28002AC030 /* matrix.h */,
-				43B552671299AD28002AC030 /* mesh.c */,
-				43B552681299AD28002AC030 /* mesh.h */,
-				43B552691299AD28002AC030 /* node.c */,
-				43B5526A1299AD28002AC030 /* node.h */,
-				43B5526B1299AD28002AC030 /* quat.c */,
-				43B5526C1299AD28002AC030 /* quat.h */,
-				43B5526D1299AD28002AC030 /* shadow.c */,
-				43B5526E1299AD28002AC030 /* shadow.h */,
-				43B5526F1299AD28002AC030 /* tcb.c */,
-				43B552701299AD28002AC030 /* tcb.h */,
-				43B552711299AD28002AC030 /* tracks.c */,
-				43B552721299AD28002AC030 /* tracks.h */,
-				43B552731299AD28002AC030 /* types.h */,
-				43B552741299AD28002AC030 /* vector.c */,
-				43B552751299AD28002AC030 /* vector.h */,
-				43B552761299AD28002AC030 /* viewport.c */,
-				43B552771299AD28002AC030 /* viewport.h */,
+				4301BB20147B4E8E0056AE5B /* lib3ds_atmosphere.c */,
+				4301BB21147B4E8E0056AE5B /* lib3ds_background.c */,
+				4301BB22147B4E8E0056AE5B /* lib3ds_camera.c */,
+				4301BB23147B4E8E0056AE5B /* lib3ds_chunk.c */,
+				4301BB24147B4E8E0056AE5B /* lib3ds_chunktable.c */,
+				4301BB25147B4E8E0056AE5B /* lib3ds_file.c */,
+				4301BB26147B4E8E0056AE5B /* lib3ds_impl.h */,
+				4301BB27147B4E8E0056AE5B /* lib3ds_io.c */,
+				4301BB28147B4E8E0056AE5B /* lib3ds_light.c */,
+				4301BB29147B4E8E0056AE5B /* lib3ds_material.c */,
+				4301BB2A147B4E8E0056AE5B /* lib3ds_math.c */,
+				4301BB2B147B4E8E0056AE5B /* lib3ds_matrix.c */,
+				4301BB2C147B4E8E0056AE5B /* lib3ds_mesh.c */,
+				4301BB2D147B4E8E0056AE5B /* lib3ds_node.c */,
+				4301BB2E147B4E8E0056AE5B /* lib3ds_quat.c */,
+				4301BB2F147B4E8E0056AE5B /* lib3ds_shadow.c */,
+				4301BB30147B4E8E0056AE5B /* lib3ds_track.c */,
+				4301BB31147B4E8E0056AE5B /* lib3ds_util.c */,
+				4301BB32147B4E8E0056AE5B /* lib3ds_vector.c */,
+				4301BB33147B4E8E0056AE5B /* lib3ds_viewport.c */,
+				4301BB34147B4E8E0056AE5B /* lib3ds.h */,
 			);
 			name = lib3ds;
 			sourceTree = "<group>";
@@ -873,26 +822,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43B552791299AD28002AC030 /* atmosphere.h in Headers */,
-				43B5527B1299AD28002AC030 /* background.h in Headers */,
-				43B5527D1299AD28002AC030 /* camera.h in Headers */,
-				43B5527F1299AD28002AC030 /* chunk.h in Headers */,
-				43B552801299AD28002AC030 /* chunktable.h in Headers */,
-				43B552821299AD28002AC030 /* ease.h in Headers */,
-				43B552841299AD28002AC030 /* file.h in Headers */,
-				43B552861299AD28002AC030 /* io.h in Headers */,
-				43B552881299AD28002AC030 /* light.h in Headers */,
-				43B5528A1299AD28002AC030 /* material.h in Headers */,
-				43B5528C1299AD28002AC030 /* matrix.h in Headers */,
-				43B5528E1299AD28002AC030 /* mesh.h in Headers */,
-				43B552901299AD28002AC030 /* node.h in Headers */,
-				43B552921299AD28002AC030 /* quat.h in Headers */,
-				43B552941299AD28002AC030 /* shadow.h in Headers */,
-				43B552961299AD28002AC030 /* tcb.h in Headers */,
-				43B552981299AD28002AC030 /* tracks.h in Headers */,
-				43B552991299AD28002AC030 /* types.h in Headers */,
-				43B5529B1299AD28002AC030 /* vector.h in Headers */,
-				43B5529D1299AD28002AC030 /* viewport.h in Headers */,
+				4301BB3B147B4E8E0056AE5B /* lib3ds_impl.h in Headers */,
+				4301BB49147B4E8E0056AE5B /* lib3ds.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1072,7 +1003,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "DirectorY=\"lib3ds-1.3.0\"\nOutDir=\"lib3ds\"\nFileName=\"lib3ds-1.3.0.zip\"\nSourceDLP=\"http://lib3ds.googlecode.com/files/lib3ds-1.3.0.zip\"\nMD5Sum=\"2572f7b0f29b591d494c1a0658b35c86\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}\n";
+			shellScript = "DirectorY=\"lib3ds-20080909\"\nOutDir=\"lib3ds\"\nFileName=\"lib3ds-20080909.zip\"\nSourceDLP=\"http://lib3ds.googlecode.com/files/lib3ds-20080909.zip\"\nMD5Sum=\"5b8e4ccf089ed45752333ea6cf0dd19a\"\n\nconfigs/FetchSource.sh \"${DirectorY}\" \"${OutDir}\" \"${FileName}\" \"${SourceDLP}\" \"${MD5Sum}\"\nexit ${?}\n";
 		};
 		4301BA4B147B258E0056AE5B /* QGLViewer - Fetch source */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1168,24 +1099,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43B552781299AD28002AC030 /* atmosphere.c in Sources */,
-				43B5527A1299AD28002AC030 /* background.c in Sources */,
-				43B5527C1299AD28002AC030 /* camera.c in Sources */,
-				43B5527E1299AD28002AC030 /* chunk.c in Sources */,
-				43B552811299AD28002AC030 /* ease.c in Sources */,
-				43B552831299AD28002AC030 /* file.c in Sources */,
-				43B552851299AD28002AC030 /* io.c in Sources */,
-				43B552871299AD28002AC030 /* light.c in Sources */,
-				43B552891299AD28002AC030 /* material.c in Sources */,
-				43B5528B1299AD28002AC030 /* matrix.c in Sources */,
-				43B5528D1299AD28002AC030 /* mesh.c in Sources */,
-				43B5528F1299AD28002AC030 /* node.c in Sources */,
-				43B552911299AD28002AC030 /* quat.c in Sources */,
-				43B552931299AD28002AC030 /* shadow.c in Sources */,
-				43B552951299AD28002AC030 /* tcb.c in Sources */,
-				43B552971299AD28002AC030 /* tracks.c in Sources */,
-				43B5529A1299AD28002AC030 /* vector.c in Sources */,
-				43B5529C1299AD28002AC030 /* viewport.c in Sources */,
+				4301BB35147B4E8E0056AE5B /* lib3ds_atmosphere.c in Sources */,
+				4301BB36147B4E8E0056AE5B /* lib3ds_background.c in Sources */,
+				4301BB37147B4E8E0056AE5B /* lib3ds_camera.c in Sources */,
+				4301BB38147B4E8E0056AE5B /* lib3ds_chunk.c in Sources */,
+				4301BB39147B4E8E0056AE5B /* lib3ds_chunktable.c in Sources */,
+				4301BB3A147B4E8E0056AE5B /* lib3ds_file.c in Sources */,
+				4301BB3C147B4E8E0056AE5B /* lib3ds_io.c in Sources */,
+				4301BB3D147B4E8E0056AE5B /* lib3ds_light.c in Sources */,
+				4301BB3E147B4E8E0056AE5B /* lib3ds_material.c in Sources */,
+				4301BB3F147B4E8E0056AE5B /* lib3ds_math.c in Sources */,
+				4301BB40147B4E8E0056AE5B /* lib3ds_matrix.c in Sources */,
+				4301BB41147B4E8E0056AE5B /* lib3ds_mesh.c in Sources */,
+				4301BB42147B4E8E0056AE5B /* lib3ds_node.c in Sources */,
+				4301BB43147B4E8E0056AE5B /* lib3ds_quat.c in Sources */,
+				4301BB44147B4E8E0056AE5B /* lib3ds_shadow.c in Sources */,
+				4301BB45147B4E8E0056AE5B /* lib3ds_track.c in Sources */,
+				4301BB46147B4E8E0056AE5B /* lib3ds_util.c in Sources */,
+				4301BB47147B4E8E0056AE5B /* lib3ds_vector.c in Sources */,
+				4301BB48147B4E8E0056AE5B /* lib3ds_viewport.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
