@@ -20,7 +20,7 @@
 #ifndef GLTEXTURE_HPP
 #define GLTEXTURE_HPP
 
-#include <QtOpengl/qgl.h>
+#include <QtOpenGL/qgl.h>
 
 class GLTexture
 {

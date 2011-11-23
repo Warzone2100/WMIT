@@ -21,7 +21,7 @@
 
 #include <iostream>
 
-#include <QtOpengl/qgl.h>
+#include <QtOpenGL/qgl.h>
 
 #include "Vector.hpp"
 
