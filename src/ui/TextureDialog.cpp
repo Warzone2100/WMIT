@@ -42,6 +42,7 @@ TextureDialog::TextureDialog(QWidget *parent) :
 	ui->lwTextures->setMovement(QListView::Static);
 	ui->lwTextures->setFlow(QListView::LeftToRight);
 	ui->lwTextures->setFixedWidth(170);
+	setMinimumWidth(900);
 
 	connect(ui->lwTextures, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
 		this, SLOT(iconDoubleClicked(QListWidgetItem*)));
@@ -51,6 +52,20 @@ TextureDialog::TextureDialog(QWidget *parent) :
 		this, SLOT(setSearchDirs(QStringList)));
 
 	m_texConfigDialog->loadSearchDirs();
+
+	for (int i = WZM_TEX__FIRST; i < WZM_TEX__LAST; ++i)
+	{
+		QString textypename = QString::fromStdString(WZM::texTypeToString(static_cast<wzm_texture_type_t>(i)));
+		types[textypename] = static_cast<wzm_texture_type_t>(i);
+	}
+
+	QStringList items;
+	QMapIterator<QString, wzm_texture_type_t> it(types);
+	while (it.hasNext()) {
+		it.next();
+		items << it.key();
+	}
+	ui->cbType->insertItems(0, items);
 }
 
 TextureDialog::~TextureDialog()
@@ -89,7 +104,7 @@ void TextureDialog::addTextureIcon(wzm_texture_type_t type, const QString& filep
 
 	if (m_icons.find(type) == m_icons.end())
 	{
-		m_icons[type] = new QListWidgetItem(ui->lwTextures);
+		m_icons[type] = new QListWidgetItem();
 	}
 	QListWidgetItem *newicn = m_icons[type];
 
@@ -103,6 +118,9 @@ void TextureDialog::addTextureIcon(wzm_texture_type_t type, const QString& filep
 	newicn->setText(QString::fromStdString(WZM::texTypeToString(type)));
 	newicn->setTextAlignment(Qt::AlignHCenter);
 	newicn->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+	ui->lwTextures->addItem(newicn);
+	ui->lwTextures->setCurrentItem(newicn);
 }
 
 void TextureDialog::createTextureIcons(const QString& workdir, const QString& modelname)
@@ -238,30 +256,11 @@ void TextureDialog::iconDoubleClicked(QListWidgetItem *icon)
 // FIXME: probably this is NOT a good way to do it
 void TextureDialog::on_pbAddType_clicked()
 {
-	QMap<QString, wzm_texture_type_t> types;
-	for (int i = WZM_TEX__FIRST; i < WZM_TEX__LAST; ++i)
+	QString item = ui->cbType->currentText();
+	wzm_texture_type_t textype = types[item];
+	if (!m_icons.contains(textype))
 	{
-		QString textypename = QString::fromStdString(WZM::texTypeToString(static_cast<wzm_texture_type_t>(i)));
-		types[textypename] = static_cast<wzm_texture_type_t>(i);
-	}
-
-	QStringList items;
-	QMapIterator<QString, wzm_texture_type_t> it(types);
-	while (it.hasNext()) {
-		it.next();
-		items << it.key();
-	}
-
-	bool ok;
-	QString item = QInputDialog::getItem(this, tr("New texture mapping"),
-					     tr("Select texture type:"), items, 0, false, &ok);
-	if (ok && !item.isEmpty())
-	{
-		wzm_texture_type_t textype = types[item];
-		if (!m_icons.contains(textype))
-		{
-			addTextureIcon(textype);
-		}
+		addTextureIcon(textype);
 	}
 }
 

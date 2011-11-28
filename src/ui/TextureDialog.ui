@@ -22,6 +22,10 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
+        <widget class="QComboBox" name="cbType">
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="pbAddType">
          <property name="text">
           <string>Add</string>

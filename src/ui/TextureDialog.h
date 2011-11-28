@@ -63,6 +63,7 @@ private:
 	QString m_model_filepath;
 	QMap<wzm_texture_type_t, QString> m_texnames; // actual data read from model
 
+	QMap<QString, wzm_texture_type_t> types;
 	QMap<wzm_texture_type_t, QListWidgetItem*> m_icons;
 	QStringList m_predefined_textures; // for predefined searches
 	QString m_work_dir; // for open dialogs
