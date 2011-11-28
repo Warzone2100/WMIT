@@ -1,5 +1,6 @@
 wmit.pro.user
 config.pri
+/Makefile
 
 #Mac Stuff
 .DS_Store
@@ -10,3 +11,8 @@ config.pri
 build/
 external/
 prebuilt/
+/bin/
+/moc/
+/ui/
+/wmit
+qrc_*
