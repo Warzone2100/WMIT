@@ -377,7 +377,7 @@ void WZM::exportToOBJ(std::ostream &out) const
 
 	if (!getTextureName(WZM_TEX_DIFFUSE).empty())
 	{
-		out << "# texture: " << getTextureName(WZM_TEX_DIFFUSE) << '\n';
+		out << "mtllib " << getTextureName(WZM_TEX_DIFFUSE) << ".mtl\nusemtl " << getTextureName(WZM_TEX_DIFFUSE) << "\n\n";
 	}
 
 	for (itM = m_meshes.begin(); itM != m_meshes.end(); ++itM)
