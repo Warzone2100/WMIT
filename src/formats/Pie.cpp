@@ -181,7 +181,6 @@ int Pie3Polygon::upConvert(const Pie2Polygon& pie2Poly, std::back_insert_iterato
 		p3.m_texCoords[2] = pie2Poly.m_texCoords[i+2];
 
 		p3.m_vertices = 3;
-#pragma message "FIXME"
 		p3.m_flags = pie2Poly.m_flags; // FIXME: need to check whether these flags are supported
 
 		p3.m_frames = pie2Poly.m_frames;
@@ -319,7 +318,6 @@ Pie3Model::Pie3Model(const Pie2Model& p2)
 	std::transform(p2.m_levels.begin(), p2.m_levels.end(),
 				   back_inserter(m_levels), Pie3Level::upConvert);
 	m_type = p2.m_type;
-#pragma message "FIXME: need to check whether these type flags are supported"
 }
 
 Pie3Model::~Pie3Model()
@@ -340,7 +338,6 @@ Pie3Model::operator Pie2Model() const
 				   back_inserter(p2.m_levels), Pie3Level::backConvert);
 	p2.m_type = m_type;
 	return p2;
-#pragma message "FIXME: need to check whether these type flags are supported"
 }
 
 unsigned Pie3Model::textureHeight() const

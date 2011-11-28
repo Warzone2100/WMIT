@@ -383,7 +383,6 @@ Mesh::operator Pie3Level() const
 				p3Poly.m_indices[i] = std::distance(p3.m_points.begin(), itPV);
 			}
 
-#pragma message "unfinished"
 			// TODO: deal with UV animation
 			p3UV.u() = m_textureArrays[0][(*itTri)[i]].u();
 			p3UV.v() = m_textureArrays[0][(*itTri)[i]].v();
@@ -554,7 +553,6 @@ bool Mesh::read(std::istream& in)
 	if (i > 0)
 	{
 		// TODO: animation frames
-#pragma message "unfinished"
 		for(; i > 0; --i)
 		{
 			in >> f >> f >> f >> f >> f >> f >> f >> f;
@@ -578,7 +576,6 @@ bool Mesh::read(std::istream& in)
 	if ( i > 0)
 	{
 		// TODO: Connectors
-#pragma message "unfinished"
 		for(; i > 0; --i)
 		{
 			in >> str >> f >> f >> f >> f >> f >> f ;
@@ -651,7 +648,6 @@ void Mesh::write(std::ostream &out) const
 	}
 
 	// TODO: Frames and connectors
-#pragma message "unfinished"
 	out <<"FRAMES 0\nCONNECTORS 0\n";
 }
 
@@ -1027,7 +1023,6 @@ unsigned Mesh::indices() const
 bool Mesh::isValid() const
 {
 	// TODO: check m_frameArray, m_connectors
-#pragma message "unfinished"
 	if (!isValidWzName(m_name))
 	{
 		return false;
@@ -1088,7 +1083,6 @@ void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
 	m_mesh_aabb_min.scale(x, y, z);
 	m_mesh_aabb_max.scale(x, y, z);
 
-#pragma message "TODO: Mesh::scale - Frames"
 }
 
 void Mesh::mirrorUsingLocalCenter(int axis)

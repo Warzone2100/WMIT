@@ -49,7 +49,6 @@ public:
 private:
 	WZMVertex m_pos;
 	///TODO: Types for wzm connectors
-#pragma message "TODO"
 };
 
 struct Frame
