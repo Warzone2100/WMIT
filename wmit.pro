@@ -76,7 +76,7 @@ OTHER_FILES += \
     data/shaders/pie3.frag \
     data/images/notex.png \
     WMIT.xcodeproj/project.pbxproj \
-    Resources/Warzone\ Model\ Importer\ Tool-Info.plist \
+    Resources/Warzone\\ Model\\ Importer\\ Tool-Info.plist \
     Resources/GenericFramework-Info.plist \
     configs/FetchPrebuilt.sh \
     configs/FetchSource.sh \
