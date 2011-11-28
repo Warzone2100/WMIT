@@ -361,7 +361,8 @@ void MainWindow::on_actionSave_As_triggered()
 	{
 		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
 		Pie3Model p3 = m_model;
-		p3.write(out);
+		Pie2Model p2 = p3;
+		p2.write(out);
 	}
 }
 
