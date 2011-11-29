@@ -57,9 +57,6 @@
 		4301BB49147B4E8E0056AE5B /* lib3ds.h in Headers */ = {isa = PBXBuildFile; fileRef = 4301BB34147B4E8E0056AE5B /* lib3ds.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		430C2E111297326100AAA86E /* COPYING.nongpl in Resources */ = {isa = PBXBuildFile; fileRef = 430C2E0D1297326100AAA86E /* COPYING.nongpl */; };
 		430C2E121297326100AAA86E /* COPYING.txt in Resources */ = {isa = PBXBuildFile; fileRef = 430C2E0E1297326100AAA86E /* COPYING.txt */; };
-		4310ED9C1458CBDF00500D8A /* notex.png in Resources */ = {isa = PBXBuildFile; fileRef = 4310ED991458CBDF00500D8A /* notex.png */; };
-		4310ED9D1458CBDF00500D8A /* pie3.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4310ED9A1458CBDF00500D8A /* pie3.frag */; };
-		4310ED9E1458CBDF00500D8A /* pie3.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4310ED9B1458CBDF00500D8A /* pie3.vert */; };
 		4310EDE31458CCBC00500D8A /* GLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4310EDA21458CCBC00500D8A /* GLTexture.cpp */; };
 		4310EDE41458CCBC00500D8A /* Polygon_t.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4310EDAB1458CCBC00500D8A /* Polygon_t.cpp */; };
 		4310EDE51458CCBC00500D8A /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4310EDAF1458CCBC00500D8A /* Mesh.cpp */; };
@@ -186,6 +183,7 @@
 		43B555D41299DA12002AC030 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B551471299A5E4002AC030 /* OpenGL.framework */; };
 		43B556C01299F361002AC030 /* QtNetwork.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 43B556711299F308002AC030 /* QtNetwork.framework */; };
 		43B558481299FD41002AC030 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B558471299FD41002AC030 /* CoreFoundation.framework */; };
+		43EE82D214856E5100B0E0C4 /* resources.qrc in Sources */ = {isa = PBXBuildFile; fileRef = 43EE82D114856E5100B0E0C4 /* resources.qrc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -245,6 +243,17 @@
 				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp",
 			);
 			script = "export PATH=/sw/lib/qt4-mac/bin:/sw/lib/qt4-x11/bin:/opt/local/bin:${PATH}\nuic -o \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\" \"${INPUT_FILE_PATH}\" || exit 1\nmoc -nw -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.ui.moc.cpp\" \"${DERIVED_FILES_DIR}/ui_${INPUT_FILE_BASE}.h\"\nexit 0";
+		};
+		43EE830214856F1900B0E0C4 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.qrc";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.rcc.cpp",
+			);
+			script = "export PATH=/sw/lib/qt4-mac/bin:/sw/lib/qt4-x11/bin:/opt/local/bin:${PATH}\nrcc -o \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.rcc.cpp\" \"${INPUT_FILE_PATH}\" || exit 1\nexit 0";
 		};
 /* End PBXBuildRule section */
 
@@ -481,6 +490,7 @@
 		43B554561299D88A002AC030 /* QtSql.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtSql.framework; path = external/QT/QtSql.framework; sourceTree = "<group>"; };
 		43B556711299F308002AC030 /* QtNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtNetwork.framework; path = external/QT/QtNetwork.framework; sourceTree = "<group>"; };
 		43B558471299FD41002AC030 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		43EE82D114856E5100B0E0C4 /* resources.qrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = resources.qrc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -558,6 +568,7 @@
 		430C2DFF129730B600AAA86E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				43EE82D114856E5100B0E0C4 /* resources.qrc */,
 				4310ED991458CBDF00500D8A /* notex.png */,
 				4310ED9A1458CBDF00500D8A /* pie3.frag */,
 				4310ED9B1458CBDF00500D8A /* pie3.vert */,
@@ -879,6 +890,7 @@
 				43B552BE1299BD24002AC030 /* Copy Frameworks */,
 			);
 			buildRules = (
+				43EE830214856F1900B0E0C4 /* PBXBuildRule */,
 				430C2EAF12975F3300AAA86E /* PBXBuildRule */,
 				430C2EAB12975E0900AAA86E /* PBXBuildRule */,
 				4310EE5F1458D87800500D8A /* PBXBuildRule */,
@@ -972,11 +984,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4310ED9D1458CBDF00500D8A /* pie3.frag in Resources */,
-				4310ED9E1458CBDF00500D8A /* pie3.vert in Resources */,
 				430C2E111297326100AAA86E /* COPYING.nongpl in Resources */,
 				430C2E121297326100AAA86E /* COPYING.txt in Resources */,
-				4310ED9C1458CBDF00500D8A /* notex.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1062,6 +1071,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43EE82D214856E5100B0E0C4 /* resources.qrc in Sources */,
 				4310EE701458D8BA00500D8A /* UVEditor.hpp in Sources */,
 				4310EE711458D8BA00500D8A /* TransformDock.hpp in Sources */,
 				4310EE721458D8BA00500D8A /* TextureDialog.h in Sources */,
