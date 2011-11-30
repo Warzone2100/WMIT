@@ -2,5 +2,11 @@
 
 cat > $1.mtl << EOF
 newmtl $1
+Ka 1.000 1.000 1.000
+Kd 1.000 1.000 1.000
+Ks 0.000 0.000 0.000
+d 1.0
+illum 2
+map_Ka $1
 map_Kd $1
 EOF
