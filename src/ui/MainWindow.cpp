@@ -294,13 +294,11 @@ bool MainWindow::fireTextureDialog(const bool reinit)
 
 	if (m_textureDialog->exec() == QDialog::Accepted)
 	{
-		QMap<wzm_texture_type_t, QString>::const_iterator it;
-
 		m_model.clearTextureNames();
 		m_model.clearGLRenderTextures();
 
 		m_textureDialog->getTexturesFilepath(texmap);
-		for (it = texmap.begin(); it != texmap.end(); ++it)
+		for (QMap<wzm_texture_type_t, QString>::const_iterator it = texmap.begin(); it != texmap.end(); ++it)
 		{
 			if (!it.value().isEmpty())
 			{
