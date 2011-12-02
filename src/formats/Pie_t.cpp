@@ -80,6 +80,7 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 	{
 		V point;
 		in >> point.x() >> point.y() >> point.z();
+		point.scale(-1.0, 1.0, 1.0);
 		m_points.push_back(point);
 	}
 
@@ -147,9 +148,10 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 	out << "POINTS " << points() << '\n';
 	for (ptIt = m_points.begin(); ptIt != m_points.end(); ++ptIt)
 	{
-		out << '\t' << ptIt->x()
-				<< ' ' << ptIt->y()
-				<< ' ' << ptIt->z() << '\n';
+		V p;
+		p = *ptIt;
+		p.scale(-1.0, 1.0, 1.0);
+		out << '\t' << p.x() << ' ' << p.y() << ' ' << p.z() << '\n';
 	}
 
 	out << "POLYGONS " << polygons() << '\n';
