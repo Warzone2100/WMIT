@@ -49,6 +49,7 @@ static GLfloat lightCol0[LIGHT_TYPE_MAX][4] = {
 QtGLView::QtGLView(QWidget *parent) :
 		QGLViewer(parent)
 {
+	setStateFileName(QString::null);
 	connect(&textureUpdater, SIGNAL(fileChanged(QString)), this, SLOT(textureChanged(QString)));
 
 	setShortcut(DISPLAY_FPS, 0); // Disable stuff that won't work.
