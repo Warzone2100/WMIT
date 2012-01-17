@@ -17,13 +17,16 @@
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="iconPreviewlLayout">
      <item>
-      <widget class="QListWidget" name="lwTextures"/>
+      <widget class="QListWidget" name="lwTextures">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+      </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QComboBox" name="cbType">
-        </widget>
+        <widget class="QComboBox" name="cbType"/>
        </item>
        <item>
         <widget class="QPushButton" name="pbAddType">
