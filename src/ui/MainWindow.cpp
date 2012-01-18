@@ -423,12 +423,16 @@ void MainWindow::_on_viewerInitialized()
 	connect(m_shaderSignalMapper, SIGNAL(mapped(int)),
 		     this, SLOT(_on_shaderActionTriggered(int)));
 
-	QMenu* rendererMenu = menuBar()->addMenu(tr("Rendered"));
+	QMenu* rendererMenu = menuBar()->addMenu(tr("Renderer"));
 	rendererMenu->addActions(shaderGroup->actions());
 
-	if (shaderGroup->actions().size())
+	for (int i = shaderGroup->actions().size() - 1; i >= 0; --i)
 	{
-		shaderGroup->actions().at(shaderGroup->actions().size() - 1)->activate(QAction::Trigger);
+		if (shaderGroup->actions().at(i)->isEnabled())
+		{
+			shaderGroup->actions().at(i)->activate(QAction::Trigger);
+			break;
+		}
 	}
 }
 
