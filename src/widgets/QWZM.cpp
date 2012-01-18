@@ -89,7 +89,7 @@ void QWZM::render()
 		glMaterialf(GL_FRONT, GL_SHININESS, m_materials[0].shininess);
 
 		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
-		glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArrays[0][0]);
+		glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArray[0]);
 
 		CPP0X_FEATURED(static_assert(sizeof(WZMVertex) == sizeof(GLfloat)*3, "WZMVertex has become fat."));
 		glVertexPointer(3, GL_FLOAT, 0, &msh.m_vertexArray[0]);

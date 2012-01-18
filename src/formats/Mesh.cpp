@@ -71,7 +71,6 @@ Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
 
 	unsigned vIdx;
 	unsigned vert;
-	unsigned frame;
 	bool foundMatch;
 
 	defaultConstructor();
@@ -83,11 +82,6 @@ Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
 	 *	so that our transformed vertex cache isn't
 	 *	completely useless.
 	 */
-
-	if (m_textureArrays.size() == 0)
-	{
-		m_textureArrays.push_back(TexArray());
-	}
 
 	// For each pie3 polygon
 	for (itL = p3.m_polygons.begin(); itL != p3.m_polygons.end(); ++itL)
@@ -101,58 +95,29 @@ Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
 			ret = tmpMMap.equal_range(wzmVert);
 			foundMatch = false;
 
-			// Only check if match is possible
-			if (itL->m_frames <= m_textureArrays.size())
+			// For each potential match
+			for (itMM = ret.first; itMM != ret.second; ++itMM)
 			{
-				// For each potential match
-				for (itMM = ret.first; itMM != ret.second; ++itMM)
+				vIdx = itMM->second;
+
+				// Approximate comparison, helps kill duplicates
+				const WZMUV::equal_wEps compare(uvEps);
+				if (compare(m_textureArray[vIdx], itL->getUV(vert, 0)))
 				{
-					vIdx = itMM->second;
-
-					// Compare each animation frame
-					for (frame = 0; frame < itL->m_frames; ++frame)
-					{
-						// Approximate comparison, helps kill duplicates
-						const WZMUV::equal_wEps compare(uvEps);
-						if (!compare(m_textureArrays[frame][vIdx], itL->getUV(vert, frame)))
-						{
-							break; // Not equal
-						}
-					}
-
-					// if all frames were equal
-					if (!(frame < itL->m_frames))
-					{
-						foundMatch = true;
-						break; // Stop looking
-					}
+					foundMatch = true;
+					break; // Stop looking
 				}
 			}
 
 			if (!foundMatch)
 			{
-				unsigned frames2Do = std::max<size_t>(itL->m_frames, m_textureArrays.size());
 				vIdx = m_vertexArray.size();
 				// add the vertex to both the multimap and the vertex array
 				m_vertexArray.push_back(wzmVert);
 				tmpMMap.insert(std::make_pair(wzmVert, vIdx));
 
-				m_textureArrays.reserve(frames2Do);
-
 				// add the uv's to the texture arrays
-				for (frame = 0; frame < frames2Do; ++frame)
-				{
-					if (m_textureArrays.size() < frame + 1)
-					{
-						// Expand the texture array arrays
-						m_textureArrays.push_back(m_textureArrays.back());
-						m_textureArrays[frame][vIdx] = itL->getUV(vert, frame % itL->m_frames);
-					}
-					else
-					{
-						m_textureArrays[frame].push_back(itL->getUV(vert, frame % itL->m_frames));
-					}
-				}
+				m_textureArray.push_back(itL->getUV(vert, 0));
 			}
 
 			// Set the index
@@ -201,14 +166,13 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	WZMVertex tmpVert;
 	WZMUV tmpUV;
 
-	m_textureArrays.push_back(TexArray()); // only one supported from 3DS
 #ifdef LIB3DS_VERSION_1
 	m_vertexArray.reserve(mesh3ds.points);
-	m_textureArrays[0].reserve(mesh3ds.points);
+	m_textureArray.reserve(mesh3ds.points);
 	m_indexArray.reserve(mesh3ds.faces);
 #else
 	m_vertexArray.reserve(mesh3ds.nvertices);
-	m_textureArrays[0].reserve(mesh3ds.nvertices);
+	m_textureArray.reserve(mesh3ds.nvertices);
 	m_indexArray.reserve(mesh3ds.nfaces);
 #endif
 
@@ -317,7 +281,7 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 				mapping.insert(itMap, m_vertexArray.size());
 				idx[j] = m_vertexArray.size();
 				m_vertexArray.push_back(tmpVert);
-				m_textureArrays[0].push_back(tmpUV);
+				m_textureArray.push_back(tmpUV);
 			}
 		}
 
@@ -384,8 +348,8 @@ Mesh::operator Pie3Level() const
 			}
 
 			// TODO: deal with UV animation
-			p3UV.u() = m_textureArrays[0][(*itTri)[i]].u();
-			p3UV.v() = m_textureArrays[0][(*itTri)[i]].v();
+			p3UV.u() = m_textureArray[(*itTri)[i]].u();
+			p3UV.v() = m_textureArray[(*itTri)[i]].v();
 			p3Poly.m_texCoords[i] = p3UV;
 		}
 		p3.m_polygons.push_back(p3Poly);
@@ -409,7 +373,7 @@ Mesh::operator Pie3Level() const
 bool Mesh::read(std::istream& in)
 {
 	std::string str;
-	unsigned i,j,vertices,indices;
+	unsigned i,vertices,indices;
 	GLfloat f;
 
 	clear();
@@ -453,7 +417,7 @@ bool Mesh::read(std::istream& in)
 	}
 
 	in >> str;
-	if (str.compare("VERTEXARRAY") !=0)
+	if (in.fail() || str.compare("VERTEXARRAY") !=0)
 	{
 		std::cerr << "Mesh::read - Expected VERTEXARRAY directive found " << str;
 		clear();
@@ -474,48 +438,32 @@ bool Mesh::read(std::istream& in)
 		m_vertexArray.push_back(vert);
 	}
 
-	in >> str >> i;
-	if (in.fail() || str.compare("TEXTUREARRAYS") != 0)
+	in >> str;
+	if ( in.fail() || str.compare("TEXTUREARRAY") != 0)
 	{
-		std::cerr << "Mesh::read - Expected TEXTUREARRAYS directive found " << str;
+		std::cerr << "Mesh::read - Expected TEXTUREARRAY directive found " << str;
 		clear();
 		return false;
 	}
 
-	m_vertexArray.reserve(i);
-	for (; i > 0; --i)
+	m_textureArray.reserve(m_vertexArray.size());
+	for (i = 0; i < m_vertexArray.size(); ++i)
 	{
-		std::vector<WZMUV> tmp;
-		tmp.clear();
-
-		// j is currently ignored
-		in >> str >> j;
-		if ( in.fail() || str.compare("TEXTUREARRAY") != 0)
+		WZMUV uv;
+		in >> uv.u() >> uv.v();
+		if (in.fail())
 		{
-			std::cerr << "Mesh::read - Expected TEXTUREARRAY directive found " << str;
+			std::cerr << "Mesh::read - Error reading uv coords.";
 			clear();
 			return false;
 		}
-
-		for (j = 0; j < m_vertexArray.size(); ++j)
+		else if (uv.u() > 1 || uv.v() > 1)
 		{
-			WZMUV uv;
-			in >> uv.u() >> uv.v();
-			if (in.fail())
-			{
-				std::cerr << "Mesh::read - Error reading uv coords.";
-				clear();
-				return false;
-			}
-			else if(uv.u()>1||uv.v()>1)
-			{
-				std::cerr << "Mesh::read - Error uv coords out of range";
-				clear();
-				return false;
-			}
-			tmp.push_back(uv);
+			std::cerr << "Mesh::read - Error uv coords out of range";
+			clear();
+			return false;
 		}
-		m_textureArrays.push_back(tmp);
+		m_textureArray.push_back(uv);
 	}
 
 	in >> str;
@@ -610,8 +558,8 @@ void Mesh::write(std::ostream &out) const
 
 	out << "VERTICES " << vertices() << '\n';
 	out << "FACES " << faces() << '\n';
-	out << "VERTEXARRAY\n" ;
 
+	out << "VERTEXARRAY\n" ;
 	std::vector<WZMVertex>::const_iterator vertIt;
 	for (vertIt=m_vertexArray.begin(); vertIt < m_vertexArray.end(); vertIt++ )
 	{
@@ -621,23 +569,16 @@ void Mesh::write(std::ostream &out) const
 				<< vertIt->z() << '\n';
 	}
 
-	out << "TEXTUREARRAYS " << textureArrays() << '\n';
-
-	std::vector< std::vector<WZMUV> >::const_iterator texArrIt;
-	for (texArrIt=m_textureArrays.begin(); texArrIt < m_textureArrays.end(); texArrIt++ )
+	out << "TEXTUREARRAY\n";
+	std::vector<WZMUV>::const_iterator texIt;
+	for (texIt=m_textureArray.begin(); texIt < m_textureArray.end(); texIt++ )
 	{
-		out << "TEXTUREARRAY " << std::distance(m_textureArrays.begin(),texArrIt) << '\n';
-		std::vector<WZMUV>::const_iterator texIt;
-		for (texIt=texArrIt->begin(); texIt < texArrIt->end(); texIt++ )
-		{
-			out << '\t';
-			out	<< texIt->u() << ' '
-					<< texIt->v() << '\n';
-		}
+		out << '\t';
+		out	<< texIt->u() << ' '
+			<< texIt->v() << '\n';
 	}
 
 	out << "INDEXARRAY\n";
-
 	std::vector<IndexedTri>::const_iterator indIt;
 	for (indIt=m_indexArray.begin(); indIt < m_indexArray.end(); indIt++ )
 	{
@@ -677,8 +618,6 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 
 	clear();
 
-	m_textureArrays.push_back(TexArray());
-
 	for (itF = faces.begin(); itF != faces.end(); ++itF)
 	{
 		for (i = 0; i < 3; ++i)
@@ -711,7 +650,7 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 				mapping.insert(itMap, m_vertexArray.size());
 				tmpTri[i] = m_vertexArray.size();
 				m_vertexArray.push_back(verts[itF->tri[i]-1]);
-				m_textureArrays[0].push_back(tmpUv);
+				m_textureArray.push_back(tmpUv);
 			}
 		}
 		m_indexArray.push_back(tmpTri);
@@ -763,7 +702,7 @@ std::stringstream* Mesh::exportToOBJ(const Mesh_exportToOBJ_InOutParams& params)
 
 			*out << '/';
 
-			uv = m_textureArrays[0][itF->operator [](i)];
+			uv = m_textureArray[itF->operator [](i)];
 			if (invertV)
 			{
 				uv.v() = 1 - uv.v();
@@ -829,14 +768,14 @@ Mesh::operator Lib3dsMesh*() const
 			mesh->pointL[i].pos[2] = m_vertexArray[i].z();
 		}
 
-		mesh->texelL[i][0] = m_textureArrays[0][i].u();
+		mesh->texelL[i][0] = m_textureArray[i].u();
 		if (invertV)
 		{
-			mesh->texelL[i][1] = 1.0f - m_textureArrays[0][i].v();
+			mesh->texelL[i][1] = 1.0f - m_textureArray[i].v();
 		}
 		else
 		{
-			mesh->texelL[i][1] = m_textureArrays[0][i].v();
+			mesh->texelL[i][1] = m_textureArray[i].v();
 		}
 
 	}
@@ -962,39 +901,6 @@ int Mesh::connectors() const
 	return m_connectors.size();
 }
 
-int Mesh::textureArrays() const
-{
-	return m_textureArrays.size();
-}
-
-const TexArray& Mesh::getTexArray (int index) const
-{
-	return m_textureArrays.at(index);
-}
-
-#if 0
-void Mesh::addTexArray (const TexArray& tex, int index)
-{
-	if(tex.size()!=indices())
-	{
-		return;
-	}
-	m_textureArrays.insert(m_textureArrays.begin() + index,tex);
-}
-#endif
-#if 0
-void Mesh::rmTexArray(int index)
-{
-	std::vector<TexArray>::iterator pos;
-	pos=m_textureArrays.begin()+index;
-	if(pos==m_textureArrays.end())
-	{
-		return;
-	}
-	m_textureArrays.erase(pos);
-}
-#endif
-
 unsigned Mesh::vertices() const
 {
 	return m_vertexArray.size();
@@ -1059,7 +965,7 @@ void Mesh::clear()
 	m_name.clear();
 	m_frameArray.clear();
 	m_vertexArray.clear();
-	m_textureArrays.clear();
+	m_textureArray.clear();
 	m_indexArray.clear();
 	m_connectors.clear();
 	m_teamColours = false;

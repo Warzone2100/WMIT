@@ -579,20 +579,6 @@ void WZM::rmMesh (int index)
 	m_meshes.erase(pos);
 }
 
-bool WZM::couldHaveTCArrays() const
-{
-	std::vector<Mesh>::const_iterator it;
-
-	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
-	{
-		if (it->textureArrays() == 8)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
 bool WZM::isValid() const
 {
 	std::vector<Mesh>::const_iterator it;

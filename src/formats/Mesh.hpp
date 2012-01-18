@@ -34,7 +34,6 @@
 
 typedef Vertex<GLfloat> WZMVertex;
 typedef UV<GLclampf> WZMUV;
-typedef std::vector<WZMUV> TexArray;
 
 class Mesh;
 
@@ -96,10 +95,6 @@ public:
 	void rmConnector (int index);
 	int connectors() const;
 
-
-	int textureArrays() const;
-	const TexArray& getTexArray (int index) const;
-
 	unsigned vertices() const;
 	unsigned faces() const;
 	unsigned triangles() const;
@@ -117,12 +112,14 @@ public:
 protected:
 	std::string m_name;
 	std::vector<Frame> m_frameArray;
-	std::vector<WZMVertex> m_vertexArray;
-	std::vector<TexArray> m_textureArrays;
-	std::vector<IndexedTri> m_indexArray;
-	std::list<WZMConnector> m_connectors;
-	bool m_teamColours;
 
+	std::vector<WZMVertex> m_vertexArray;
+	std::vector<WZMUV> m_textureArray;
+	std::vector<IndexedTri> m_indexArray;
+
+	std::list<WZMConnector> m_connectors;
+
+	bool m_teamColours;
 	WZMVertex m_mesh_weightcenter, m_mesh_aabb_min, m_mesh_aabb_max;
 
 	void clear();

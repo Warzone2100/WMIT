@@ -79,8 +79,6 @@ public:
 
 	static std::string texTypeToString(wzm_texture_type_t type);
 
-	bool couldHaveTCArrays() const;
-
 	/// might throw out_of_range exception? not decided yet
 	Mesh& getMesh(int index);
 	void addMesh (const Mesh& mesh);

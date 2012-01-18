@@ -105,7 +105,6 @@ public:
 	inline std::string getTextureName(wzm_texture_type_t type) const {return WZM::getTextureName(type);}
 	inline void clearTextureNames() {WZM::clearTextureNames();}
 
-	inline bool couldHaveTCArrays() const {return WZM::couldHaveTCArrays();}
 	inline void reverseWinding(int mesh = -1) {WZM::reverseWinding(mesh);}
 
 	inline Mesh& getMesh(int index) {return WZM::getMesh(index);}
