@@ -35,17 +35,24 @@ typedef UV<GLclampf> OBJUV;
 struct OBJTri
 {
 	IndexedTri tri;
-	// ignoring normals
-	Vector<short, 3> uvs; // signed short: -1 means not specified
+
+	// signed short: -1 means not specified
+	Vector<short, 3> nrm;
+	Vector<short, 3> uvs;
+
 	bool operator == (const OBJTri& rhs)
 	{
-		return (tri == rhs.tri) && (uvs == rhs.uvs);
+		return (tri == rhs.tri) && (uvs == rhs.uvs) && (nrm == rhs.nrm);
 	}
 	bool operator < (const OBJTri& rhs)
 	{
 		if (tri == rhs.tri)
 		{
-			return uvs < rhs.uvs;
+			if (nrm == rhs.nrm)
+			{
+				return uvs < rhs.uvs;
+			}
+			return nrm < rhs.nrm;
 		}
 		return tri < rhs.tri;
 	}
@@ -63,6 +70,13 @@ inline void writeOBJUV(const OBJUV& uv, std::ostream& out)
 			<< uv.v() << '\n';
 }
 
+inline void writeOBJNormal(const OBJVertex& norm, std::ostream& out)
+{
+	out << "vn " << norm.x() << ' '
+			<< norm.y()  << ' '
+			<< norm.z() << '\n';
+}
+
 /* Ugh, those wretched template parameters have a way of fuglying things up
  * so I'm burrying them here so that hopefuly no-one sees them...
  * these are function parameters, currently assumed to be valid pointers,
@@ -76,6 +90,9 @@ struct Mesh_exportToOBJ_InOutParams
 	std::vector<OBJUV>* uvs;
 	std::set<OBJUV, OBJUV::less_wEps>* uvSet;
 	std::vector<unsigned>* uvMapping;
+	std::vector<OBJVertex>* normals;
+	std::set<OBJVertex, OBJVertex::less_wEps>* normSet;
+	std::vector<unsigned>* normMapping;
 };
 
 #endif // OBJ_HPP

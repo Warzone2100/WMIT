@@ -173,10 +173,8 @@ void WZM::write(std::ostream& out) const
 bool WZM::importFromOBJ(std::istream& in)
 {
 	const bool invertV = true;
-	std::vector<OBJVertex> vertArray;
-
+	std::vector<OBJVertex> vertArray, normArray;
 	std::vector<OBJUV> uvArray;
-
 	std::vector<OBJTri> groupedFaces;
 
 	std::string name("Default"); //Default name of default obj group is default
@@ -214,8 +212,6 @@ bool WZM::importFromOBJ(std::istream& in)
 		ss.seekg(0);
 		ss.clear();
 
-		// We're forgiving of leading whitespaces (though we don't need/shouldn't to be)
-		skipWhitespace(ss);
 		if (str.empty() || ss.fail())
 		{
 			continue;
@@ -223,6 +219,9 @@ bool WZM::importFromOBJ(std::istream& in)
 
 		switch(ss.get())
 		{
+		case '#':
+			// ignore comments
+			continue;
 		case 'v':
 			switch(ss.get())
 			{
@@ -238,7 +237,14 @@ bool WZM::importFromOBJ(std::istream& in)
 				}
 				uvArray.push_back(uv);
 				break;
-			case 'n':	// Ignore normals
+			case 'n':	// normals
+				ss >> vert.x() >> vert.y() >> vert.z();
+				if (ss.fail())
+				{
+					return false;
+				}
+				normArray.push_back(vert);
+				break;
 			case 'p':	// and parameter vertices
 				break;
 			default:
@@ -290,10 +296,18 @@ bool WZM::importFromOBJ(std::istream& in)
 				else
 				{
 					tri.uvs.operator [](pos) = -1;
+					tri.nrm.operator [](pos) = -1;
 				}
 
 				if (indices.size() == 3 && !indices[2].empty())
-				{} // ignoring normals
+				{
+					ss.str(indices[2]), ss.clear(), ss.seekg(0);
+					ss >> tri.nrm.operator [](pos);
+				}
+				else
+				{
+					tri.nrm.operator [](pos) = -1;
+				}
 
 				if (i >= 2)
 				{
@@ -320,7 +334,7 @@ bool WZM::importFromOBJ(std::istream& in)
 		case 'o':
 			if (!groupedFaces.empty())
 			{
-				mesh.importFromOBJ(groupedFaces,vertArray,uvArray);
+				mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray);
 				mesh.setTeamColours(false);
 				mesh.setName(name);
 				m_meshes.push_back(mesh);
@@ -338,7 +352,7 @@ bool WZM::importFromOBJ(std::istream& in)
 	}
 	if (!groupedFaces.empty())
 	{
-		mesh.importFromOBJ(groupedFaces,vertArray,uvArray);
+		mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray);
 		mesh.setTeamColours(false);
 		mesh.setName(name);
 		m_meshes.push_back(mesh);
@@ -370,9 +384,19 @@ void WZM::exportToOBJ(std::ostream &out) const
 	params.uvSet = &uvSet;
 	params.uvMapping = &uvMapping;
 
+	OBJVertex::less_wEps normCompare;
+	std::set<OBJVertex, OBJVertex::less_wEps> normSet(normCompare);
+	std::vector<OBJVertex> normals;
+	std::vector<unsigned> normMapping;
+
+	params.normals = &normals;
+	params.normSet = &normSet;
+	params.normMapping = &normMapping;
+
 	std::vector<Mesh>::const_iterator itM;
 	std::vector<OBJVertex>::iterator itVert;
 	std::vector<OBJUV>::iterator	itUV;
+	std::vector<OBJVertex>::iterator itNorm;
 	std::stringstream* pSSS;
 
 	if (!getTextureName(WZM_TEX_DIFFUSE).empty())
@@ -385,6 +409,7 @@ void WZM::exportToOBJ(std::ostream &out) const
 		objectBuffers.push_back(itM->exportToOBJ(params));
 	}
 
+	out << "# " << vertices.size() << " vertices\n";
 	for (itVert = vertices.begin(); itVert != vertices.end(); ++itVert)
 	{
 		writeOBJVertex(*itVert, out);
@@ -392,9 +417,18 @@ void WZM::exportToOBJ(std::ostream &out) const
 
 	out << '\n';
 
+	out << "# " << uvs.size() << " texture coords\n";
 	for (itUV = uvs.begin(); itUV != uvs.end(); ++itUV)
 	{
 		writeOBJUV(*itUV, out);
+	}
+
+	out << '\n';
+
+	out << "# " << normals.size() << " vertex normals\n";
+	for (itNorm = normals.begin(); itNorm != normals.end(); ++itNorm)
+	{
+		writeOBJNormal(*itNorm, out);
 	}
 
 	while (!objectBuffers.empty())
@@ -402,7 +436,7 @@ void WZM::exportToOBJ(std::ostream &out) const
 		pSSS = objectBuffers.front();
 		objectBuffers.pop_front();
 
-		out << "\n\n" << pSSS->str();
+		out << "\n" << pSSS->str();
 
 		delete pSSS;
 	}

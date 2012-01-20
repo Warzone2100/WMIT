@@ -77,8 +77,9 @@ public:
 	void write(std::ostream& out) const;
 
 	bool importFromOBJ(const std::vector<OBJTri>&	faces,
-					   const std::vector<OBJVertex>& verts,
-					   const std::vector<OBJUV>&	uvArray);
+			   const std::vector<OBJVertex>& verts,
+			   const std::vector<OBJUV>&	uvArray,
+			   const std::vector<OBJVertex>& normals);
 
 	std::stringstream* exportToOBJ(const Mesh_exportToOBJ_InOutParams& params) const;
 
@@ -109,12 +110,14 @@ public:
 	void reverseWinding();
 
 	WZMVertex getCenterPoint() const;
+
 protected:
 	std::string m_name;
 	std::vector<Frame> m_frameArray;
 
 	std::vector<WZMVertex> m_vertexArray;
 	std::vector<WZMUV> m_textureArray;
+	std::vector<WZMVertex> m_normalArray;
 	std::vector<IndexedTri> m_indexArray;
 
 	std::list<WZMConnector> m_connectors;
@@ -127,6 +130,8 @@ protected:
 private:
 	void defaultConstructor();
 };
+
+WZMVertex normalizeVector(const WZMVertex &ver);
 
 
 #endif // MESH_HPP

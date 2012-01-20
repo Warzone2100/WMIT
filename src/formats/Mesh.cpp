@@ -23,6 +23,7 @@
 #include <iterator>
 #include <map>
 #include <set>
+#include <tuple>
 
 #include <cmath>
 
@@ -41,6 +42,14 @@
 #include "Util.hpp"
 #include "Pie.hpp"
 #include "Vector.hpp"
+
+WZMVertex normalizeVector(const WZMVertex& ver)
+{
+	GLfloat sq = ver * ver;
+	if (sq == 0.0f)
+		return WZMVertex();
+	return WZMVertex(ver / sqrt(sq));
+}
 
 
 WZMConnector::WZMConnector(GLfloat x, GLfloat y, GLfloat z):
@@ -62,16 +71,17 @@ Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
 {
 	std::vector<Pie3Polygon>::const_iterator itL;
 
-	WZMVertex::less_wEps compare(vertEps);
-	std::multimap<WZMVertex, unsigned, WZMVertex::less_wEps> tmpMMap(compare);
+	typedef std::tuple<WZMVertex, WZMUV, WZMVertex> t_wzpoint;
+	typedef std::set<t_wzpoint> t_tupleSet;
+	t_tupleSet tupleSet;
+	std::pair<t_tupleSet::iterator, bool> inResult;
 
-	std::multimap<WZMVertex, unsigned>::iterator itMM;
-	std::pair<std::multimap<WZMVertex, unsigned>::iterator,
-				std::multimap<WZMVertex, unsigned>::iterator> ret;
+	std::vector<unsigned> mapping;
+	std::vector<unsigned>::iterator itMap;
 
-	unsigned vIdx;
-	unsigned vert;
-	bool foundMatch;
+	IndexedTri iTri;
+	WZMVertex wzmVert, tmpNrm;
+	WZMUV tmpUv;
 
 	defaultConstructor();
 
@@ -86,44 +96,32 @@ Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
 	// For each pie3 polygon
 	for (itL = p3.m_polygons.begin(); itL != p3.m_polygons.end(); ++itL)
 	{
-		IndexedTri iTri;
+		tmpNrm = normalizeVector(WZMVertex::crossProduct(WZMVertex(p3.m_points[itL->getIndex(1)]) - WZMVertex(p3.m_points[itL->getIndex(0)]),
+							      WZMVertex(p3.m_points[itL->getIndex(2)]) - WZMVertex(p3.m_points[itL->getIndex(0)])));;
 
 		// For all 3 vertices of the triangle
-		for (vert = 0; vert < 3; ++vert)
+		for (int i = 0; i < 3; ++i)
 		{
-			WZMVertex wzmVert = p3.m_points[itL->getIndex(vert)];
-			ret = tmpMMap.equal_range(wzmVert);
-			foundMatch = false;
+			wzmVert = p3.m_points[itL->getIndex(i)];
+			tmpUv = itL->getUV(i, 0);
 
-			// For each potential match
-			for (itMM = ret.first; itMM != ret.second; ++itMM)
+			inResult = tupleSet.insert(t_wzpoint(wzmVert, tmpUv, tmpNrm));
+
+			if (!inResult.second)
 			{
-				vIdx = itMM->second;
-
-				// Approximate comparison, helps kill duplicates
-				const WZMUV::equal_wEps compare(uvEps);
-				if (compare(m_textureArray[vIdx], itL->getUV(vert, 0)))
-				{
-					foundMatch = true;
-					break; // Stop looking
-				}
+				iTri[i] = mapping[std::distance(tupleSet.begin(), inResult.first)];
 			}
-
-			if (!foundMatch)
+			else
 			{
-				vIdx = m_vertexArray.size();
-				// add the vertex to both the multimap and the vertex array
+				itMap = mapping.begin();
+				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
+				mapping.insert(itMap, m_vertexArray.size());
+				iTri[i] = m_vertexArray.size();
 				m_vertexArray.push_back(wzmVert);
-				tmpMMap.insert(std::make_pair(wzmVert, vIdx));
-
-				// add the uv's to the texture arrays
-				m_textureArray.push_back(itL->getUV(vert, 0));
+				m_textureArray.push_back(tmpUv);
+				m_normalArray.push_back(tmpNrm);
 			}
-
-			// Set the index
-			iTri[vert] = vIdx;
 		}
-
 		m_indexArray.push_back(iTri);
 	}
 
@@ -150,12 +148,11 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	const WZMVertex::less_wEps vertLess; // For make_mypair
 	const WZMUV::less_wEps uvLess;
 
-	typedef std::set<mypair<WZMVertex, WZMUV,
-		WZMVertex::less_wEps, WZMUV::less_wEps> > t_pairSet;
+	typedef std::tuple<WZMVertex, WZMUV, WZMVertex> t_wzpoint;
+	typedef std::set<t_wzpoint> t_tupleSet;
+	t_tupleSet tupleSet;
 
-	t_pairSet pairSet;
-
-	std::pair<t_pairSet::iterator, bool> inResult;
+	std::pair<t_tupleSet::iterator, bool> inResult;
 
 	std::vector<unsigned> mapping;
 	std::vector<unsigned>::iterator itMap;
@@ -163,16 +160,18 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	unsigned i, j;
 
 	IndexedTri idx; // temporaries
-	WZMVertex tmpVert;
+	WZMVertex tmpVert, tmpNorm;
 	WZMUV tmpUV;
 
 #ifdef LIB3DS_VERSION_1
 	m_vertexArray.reserve(mesh3ds.points);
 	m_textureArray.reserve(mesh3ds.points);
+	m_normalArray.reserve(mesh3ds.points);
 	m_indexArray.reserve(mesh3ds.faces);
 #else
 	m_vertexArray.reserve(mesh3ds.nvertices);
 	m_textureArray.reserve(mesh3ds.nvertices);
+	m_normalArray.reserve(mesh3ds.nvertices);
 	m_indexArray.reserve(mesh3ds.nfaces);
 #endif
 
@@ -190,6 +189,43 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	{
 		Lib3dsFace* face = &mesh3ds.faces[i];
 #endif
+
+#ifdef LIB3DS_VERSION_1
+		Lib3dsVector nrm3ds;
+
+		if (transform)
+		{
+			lib3ds_vector_transform(nrm3ds,	const_cast<Lib3dsMatrix&>(mesh3ds.matrix), face->normal);
+		}
+		else
+		{
+			lib3ds_vector_copy(nrm3ds, face->normal);
+		}
+#else
+		float nrm3ds[3];
+
+		if (transform)
+		{
+			lib3ds_vector_transform(nrm3ds, const_cast<float (*)[4]>(mesh3ds.matrix), face->normal]);
+		}
+		else
+		{
+			lib3ds_vector_copy(nrm3ds, face->normal);
+		}
+#endif
+
+		if (swapYZ)
+		{
+			tmpNorm.x() = nrm3ds[0];
+			tmpNorm.y() = nrm3ds[2];
+			tmpNorm.z() = nrm3ds[1];
+		}
+		else
+		{
+			tmpNorm.x() = nrm3ds[0];
+			tmpNorm.y() = nrm3ds[1];
+			tmpNorm.z() = nrm3ds[2];
+		}
 
 		for (j = 0; j < 3; ++j)
 		{
@@ -265,23 +301,21 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 			}
 #endif
 
-			inResult = pairSet.insert(make_mypair(tmpVert,
-												  tmpUV,
-												  vertLess,
-												  uvLess));
+			inResult = tupleSet.insert(t_wzpoint(tmpVert, tmpUV, tmpNorm));
 
 			if (!inResult.second)
 			{
-				idx[j] = mapping[std::distance(pairSet.begin(), inResult.first)];
+				idx[j] = mapping[std::distance(tupleSet.begin(), inResult.first)];
 			}
 			else
 			{
 				itMap = mapping.begin();
-				std::advance(itMap, std::distance(pairSet.begin(), inResult.first));
+				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
 				mapping.insert(itMap, m_vertexArray.size());
 				idx[j] = m_vertexArray.size();
 				m_vertexArray.push_back(tmpVert);
 				m_textureArray.push_back(tmpUV);
+				m_normalArray.push_back(tmpNorm);
 			}
 		}
 
@@ -361,7 +395,7 @@ Mesh::operator Pie3Level() const
 	for (itC = m_connectors.begin(); itC != m_connectors.end(); ++itC)
 	{
 		Pie3Connector conn;
-        conn.pos.operator[](0) = itC->getPos().operator[](0);
+		conn.pos.operator[](0) = itC->getPos().operator[](0);
 		conn.pos.operator[](1) = itC->getPos().operator[](1);
 		conn.pos.operator[](2) = itC->getPos().operator[](2);
 		p3.m_connectors.push_back(conn);
@@ -425,31 +459,23 @@ bool Mesh::read(std::istream& in)
 	}
 
 	m_vertexArray.reserve(vertices);
+	m_textureArray.reserve(vertices);
+	m_normalArray.reserve(vertices);
+
+	WZMVertex vert, normal;
+	WZMUV uv;
+
 	for (; vertices > 0; --vertices)
 	{
-		WZMVertex vert;
 		in >> vert.x() >> vert.y() >> vert.z();
 		if (in.fail())
 		{
-			std::cerr << "Mesh::read - Error reading number of faces";
+			std::cerr << "Mesh::read - Error reading vertex";
 			clear();
 			return false;
 		}
 		m_vertexArray.push_back(vert);
-	}
 
-	in >> str;
-	if ( in.fail() || str.compare("TEXTUREARRAY") != 0)
-	{
-		std::cerr << "Mesh::read - Expected TEXTUREARRAY directive found " << str;
-		clear();
-		return false;
-	}
-
-	m_textureArray.reserve(m_vertexArray.size());
-	for (i = 0; i < m_vertexArray.size(); ++i)
-	{
-		WZMUV uv;
 		in >> uv.u() >> uv.v();
 		if (in.fail())
 		{
@@ -464,6 +490,15 @@ bool Mesh::read(std::istream& in)
 			return false;
 		}
 		m_textureArray.push_back(uv);
+
+		in >> normal.x() >> normal.y() >> normal.z();
+		if (in.fail())
+		{
+			std::cerr << "Mesh::read - Error reading normal";
+			clear();
+			return false;
+		}
+		m_normalArray.push_back(normal);
 	}
 
 	in >> str;
@@ -488,29 +523,6 @@ bool Mesh::read(std::istream& in)
 			return false;
 		}
 		m_indexArray.push_back(tri);
-	}
-
-	in >> str >> i;
-	if (in.fail() || str.compare("FRAMES") != 0)
-	{
-		std::cerr << "Mesh::read - Expected FRAMES directive found " << str;
-		clear();
-		return false;
-	}
-
-	if (i > 0)
-	{
-		// TODO: animation frames
-		for(; i > 0; --i)
-		{
-			in >> f >> f >> f >> f >> f >> f >> f >> f;
-		}
-		if (in.fail())
-		{
-			std::cerr << "Mesh::read - Error reading frames";
-			clear();
-			return false;
-		}
 	}
 
 	in >> str >> i;
@@ -560,22 +572,17 @@ void Mesh::write(std::ostream &out) const
 	out << "FACES " << faces() << '\n';
 
 	out << "VERTEXARRAY\n" ;
-	std::vector<WZMVertex>::const_iterator vertIt;
-	for (vertIt=m_vertexArray.begin(); vertIt < m_vertexArray.end(); vertIt++ )
-	{
-		out << '\t';
-		out		<< vertIt->x() << ' '
-				<< vertIt->y() << ' '
-				<< vertIt->z() << '\n';
-	}
-
-	out << "TEXTUREARRAY\n";
+	std::vector<WZMVertex>::const_iterator vertIt, normIt;
 	std::vector<WZMUV>::const_iterator texIt;
-	for (texIt=m_textureArray.begin(); texIt < m_textureArray.end(); texIt++ )
+
+	for (vertIt = m_vertexArray.begin(), texIt = m_textureArray.begin(), normIt = m_normalArray.begin();
+	     vertIt < m_vertexArray.end();
+	     ++vertIt, ++texIt, ++normIt)
 	{
 		out << '\t';
-		out	<< texIt->u() << ' '
-			<< texIt->v() << '\n';
+		out		<< vertIt->x() << ' ' << vertIt->y() << ' ' << vertIt->z() << ' '
+				<< texIt->u() << ' ' << texIt->v() << ' '
+				<< normIt->x() << ' ' << normIt->y() << ' ' << normIt->z() << '\n' ;
 	}
 
 	out << "INDEXARRAY\n";
@@ -589,24 +596,20 @@ void Mesh::write(std::ostream &out) const
 	}
 
 	// TODO: Frames and connectors
-	out <<"FRAMES 0\nCONNECTORS 0\n";
+	out <<"CONNECTORS 0\n";
 }
 
 bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
-						 const std::vector<OBJVertex>& verts,
-						 const std::vector<OBJUV>&	uvArray)
+			 const std::vector<OBJVertex>&  verts,
+			 const std::vector<OBJUV>&	uvArray,
+			 const std::vector<OBJVertex>&  normals)
 {
-	const WZMVertex::less_wEps vertLess; // For make_mypair
-	const WZMUV::less_wEps uvLess;
+	typedef std::tuple<WZMVertex, WZMUV, WZMVertex> t_wzpoint;
+	typedef std::set<t_wzpoint> t_tupleSet;
+	t_tupleSet tupleSet;
 
-	typedef std::set<mypair<WZMVertex, WZMUV,
-		WZMVertex::less_wEps, WZMUV::less_wEps> > t_pairSet;
-
-	t_pairSet pairSet;
-
-	std::vector<OBJTri>::const_iterator itF;
-
-	std::pair<t_pairSet::iterator, bool> inResult;
+	std::vector<OBJTri>::const_iterator itFaces;
+	std::pair<t_tupleSet::iterator, bool> inResult;
 
 	std::vector<unsigned> mapping;
 	std::vector<unsigned>::iterator itMap;
@@ -615,42 +618,35 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 
 	IndexedTri tmpTri;
 	WZMUV tmpUv;
+	WZMVertex tmpNrm;
 
 	clear();
 
-	for (itF = faces.begin(); itF != faces.end(); ++itF)
+	for (itFaces = faces.begin(); itFaces != faces.end(); ++itFaces)
 	{
 		for (i = 0; i < 3; ++i)
 		{
-			/* in the uv's, -1 is "not specified," but the OBJ indices
+			/* in the uv's and nrm's, -1 is "not specified," but the OBJ indices
 			 * are 0 based, hence < 1
 			 */
-			if (itF->uvs.operator [](i) < 1)
-			{
-				tmpUv.u() = 0;
-				tmpUv.v() = 0;
-			}
-			else
-			{
-				tmpUv = uvArray[itF->uvs.operator [](i)-1];
-			}
-			inResult = pairSet.insert(make_mypair(verts[itF->tri[i]-1],
-												  tmpUv,
-												  vertLess,
-												  uvLess));
+			tmpUv = itFaces->uvs.operator [](i) < 1 ? WZMUV() : uvArray[itFaces->uvs.operator [](i) - 1];
+#pragma message "precalculate missing OBJ normal"
+			tmpNrm = itFaces->nrm.operator [](i) < 1 ? WZMVertex() : normals[itFaces->nrm.operator [](i) - 1]; //FIXME
+			inResult = tupleSet.insert(t_wzpoint(verts[itFaces->tri[i]-1], tmpUv, tmpNrm));
 
 			if (!inResult.second)
 			{
-				tmpTri[i] = mapping[std::distance(pairSet.begin(), inResult.first)];
+				tmpTri[i] = mapping[std::distance(tupleSet.begin(), inResult.first)];
 			}
 			else
 			{
 				itMap = mapping.begin();
-				std::advance(itMap, std::distance(pairSet.begin(), inResult.first));
+				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
 				mapping.insert(itMap, m_vertexArray.size());
 				tmpTri[i] = m_vertexArray.size();
-				m_vertexArray.push_back(verts[itF->tri[i]-1]);
+				m_vertexArray.push_back(verts[itFaces->tri[i]-1]);
 				m_textureArray.push_back(tmpUv);
+				m_normalArray.push_back(tmpNrm);
 			}
 		}
 		m_indexArray.push_back(tmpTri);
@@ -668,6 +664,7 @@ std::stringstream* Mesh::exportToOBJ(const Mesh_exportToOBJ_InOutParams& params)
 
 	std::pair<std::set<OBJVertex, OBJVertex::less_wEps>::iterator, bool> vertInResult;
 	std::pair<std::set<OBJUV, OBJUV::less_wEps>::iterator, bool> uvInResult;
+	std::pair<std::set<OBJVertex, OBJVertex::less_wEps>::iterator, bool> normInResult;
 
 	std::vector<IndexedTri>::const_iterator itF;
 	std::vector<unsigned>::iterator itMap;
@@ -675,7 +672,7 @@ std::stringstream* Mesh::exportToOBJ(const Mesh_exportToOBJ_InOutParams& params)
 
 	OBJUV uv;
 
-	*out << "o " << m_name << "\n\n";
+	*out << "o " << m_name << "\n";
 
 	for (itF = m_indexArray.begin(); itF != m_indexArray.end(); ++itF)
 	{
@@ -720,6 +717,23 @@ std::stringstream* Mesh::exportToOBJ(const Mesh_exportToOBJ_InOutParams& params)
 				params.uvMapping->insert(itMap, params.uvs->size());
 				params.uvs->push_back(uv);
 				*out << params.uvs->size();
+			}
+
+			*out << '/';
+
+			normInResult = params.normSet->insert(m_normalArray[itF->operator [](i)]);
+
+			if (!normInResult.second)
+			{
+				*out << (*params.normMapping)[std::distance(params.normSet->begin(), normInResult.first)] + 1;
+			}
+			else
+			{
+				itMap = params.normMapping->begin();
+				std::advance(itMap, std::distance(params.normSet->begin(), normInResult.first));
+				params.normMapping->insert(itMap, params.normals->size());
+				params.normals->push_back(m_normalArray[itF->operator [](i)]);
+				*out << params.normals->size();
 			}
 		}
 		*out << '\n';
@@ -966,6 +980,7 @@ void Mesh::clear()
 	m_frameArray.clear();
 	m_vertexArray.clear();
 	m_textureArray.clear();
+	m_normalArray.clear();
 	m_indexArray.clear();
 	m_connectors.clear();
 	m_teamColours = false;
