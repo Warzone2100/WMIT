@@ -29,6 +29,8 @@ struct UV : public Vector<T,2>
 		u() = u; v() = v;
 	}
 
+	UV(const Vector<T,2>& rhs): Vector<T,2>(rhs) {}
+
 	inline T& u() {
 		return this->operator [](0);
 	}
@@ -54,12 +56,14 @@ struct Vertex : public Vector<T,3>
 		z() = 0;
 	}
 
-	Vertex (T x, T y, T z)
+	Vertex(T x, T y, T z)
 	{
 		this->x() = x;
 		this->y() = y;
 		this->z() = z;
 	}
+
+	Vertex(const Vector<T,3>& rhs): Vector<T,3>(rhs) {}
 
 	inline T& x() {
 		return this->operator [](0);
@@ -86,6 +90,18 @@ struct Vertex : public Vector<T,3>
 		this->operator [](0) *= xfac;
 		this->operator [](1) *= yfac;
 		this->operator [](2) *= zfac;
+	}
+
+	static Vertex crossProduct(const Vertex& lhs, const Vertex& rhs)
+	{
+		return Vertex(lhs.y() * rhs.z() - lhs.z() * rhs.y(),
+			      lhs.z() * rhs.x() - lhs.x() * rhs.z(),
+			      lhs.x() * rhs.y() - lhs.y() * rhs.x());
+	}
+
+	T operator *(const Vertex& rhs) const
+	{
+		return x() * rhs.x() + y() * rhs.y() + z() * rhs.z();
 	}
 };
 

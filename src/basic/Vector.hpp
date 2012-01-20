@@ -26,6 +26,22 @@
 template <typename T, size_t COMPONENTS>
 struct Vector
 {
+	Vector() {}
+	Vector(const Vector& rhs)
+	{
+		*this = rhs;
+	}
+
+	Vector& operator = (const Vector& rhs)
+	{
+		unsigned i;
+		for (i = 0; i < COMPONENTS; ++i)
+		{
+			component[i] = rhs.component[i];
+		}
+		return *this;
+	}
+
 	inline T  operator [](unsigned i) const {
 		return component[i];
 	}
@@ -82,7 +98,60 @@ struct Vector
 		return true;
 	}
 
-	bool operator < (const Vector& rhs) const
+	Vector& operator += (const Vector& rhs)
+	{
+		unsigned i;
+		for (i = 0; i < COMPONENTS; ++i)
+		{
+			component[i] += rhs.component[i];
+		}
+		return *this;
+	}
+
+	Vector& operator -= (const Vector& rhs)
+	{
+		unsigned i;
+		for (i = 0; i < COMPONENTS; ++i)
+		{
+			component[i] -= rhs.component[i];
+		}
+		return *this;
+	}
+
+	Vector operator + (const Vector& rhs) const
+	{
+		unsigned i;
+		Vector tmpV;
+		for (i = 0; i < COMPONENTS; ++i)
+		{
+			tmpV.component[i] = component[i] + rhs.component[i];
+		}
+		return tmpV;
+	}
+
+	Vector operator - (const Vector& rhs) const
+	{
+		unsigned i;
+		Vector tmpV;
+		for (i = 0; i < COMPONENTS; ++i)
+		{
+			tmpV.component[i] = component[i] - rhs.component[i];
+		}
+		return tmpV;
+	}
+
+	Vector operator / (const T& s) const
+	{
+		unsigned i;
+		Vector tmpV;
+		for (i = 0; i < COMPONENTS; ++i)
+		{
+			tmpV.component[i] = component[i] / s;
+		}
+		return tmpV;
+	}
+
+	bool operator < (const Vector& rhs)
 	{
 		unsigned i;
 		for (i = 0; i < COMPONENTS-1; ++i)
