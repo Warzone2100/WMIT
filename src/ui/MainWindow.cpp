@@ -218,8 +218,8 @@ void MainWindow::on_actionOpen_triggered()
 	QFileDialog* fileDialog = new QFileDialog(this,
 						  tr("Select File to open"),
 						  m_pathImport,
-						  tr("All Compatible (*.pie *.3ds *.obj);;"
-						     /// "WZM models (*.wzm);;"
+						  tr("All Compatible (*.wzm *.pie *.3ds *.obj);;"
+						     "WZM models (*.wzm);;"
 						     "PIE models (*.pie);;"
 						     "3DS files (*.3ds);;"
 						     "OBJ files (*.obj)"));
