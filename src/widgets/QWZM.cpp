@@ -59,7 +59,7 @@ void QWZM::render()
 
 	glClientActiveTexture(GL_TEXTURE0);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
+	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 
 	// check for desired
@@ -90,6 +90,8 @@ void QWZM::render()
 
 		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
 		glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArray[0]);
+
+		glNormalPointer(GL_FLOAT, 0, &msh.m_normalArray[0]);
 
 		CPP0X_FEATURED(static_assert(sizeof(WZMVertex) == sizeof(GLfloat)*3, "WZMVertex has become fat."));
 		glVertexPointer(3, GL_FLOAT, 0, &msh.m_vertexArray[0]);
