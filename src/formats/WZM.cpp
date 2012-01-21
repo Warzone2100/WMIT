@@ -63,9 +63,14 @@ WZM::WZM(const Pie3Model &p3)
 	for (it = p3.m_levels.begin(); it != p3.m_levels.end(); ++it)
 	{
 		m_meshes.push_back(*it);
+
+		// name
 		ss << m_meshes.size();
 		m_meshes.back().setName(ss.str());
 		ss.str(std::string());
+
+		// per-mesh team colors
+		m_meshes.back().setTeamColours(isTextureSet(WZM_TEX_TCMASK));
 	}
 }
 
@@ -89,9 +94,9 @@ bool WZM::read(std::istream& in)
 
 	clear();
 	in >> str;
-	if (in.fail() || str.compare("WZM") != 0)
+	if (in.fail() || str.compare(WZM_MODEL_SIGNATURE) != 0)
 	{
-		std::cerr << "WZM::read - Missing WZM header";
+		std::cerr << "WZM::read - Missing header";
 		return false;
 	}
 
@@ -109,21 +114,55 @@ bool WZM::read(std::istream& in)
 
 	// TEXTURE %s
 	in >> str;
-	if (str.compare("TEXTURE") != 0)
+	if (str.compare(WZM_MODEL_DIRECTIVE_TEXTURE) != 0)
 	{
-		std::cerr << "WZM::read - Expected TEXTURE directive but got" << str;
+		std::cerr << "WZM::read - Expected " << WZM_MODEL_DIRECTIVE_TEXTURE << " directive but got" << str;
 		return false;
 	}
 	in >> m_textures[WZM_TEX_DIFFUSE];
 	if (in.fail())
 	{
-		std::cerr << "WZM::read - Error reading WZM version";
-		m_textures[WZM_TEX_DIFFUSE].clear();
+		std::cerr << "WZM::read - Error reading texture name";
+		clear();
 		return false;
 	}
 
+	// read next token
+	in >> str;
+
+	// TCMASK ?
+	if (!str.compare(WZM_MODEL_DIRECTIVE_TCMASK))
+	{
+		in >> m_textures[WZM_TEX_TCMASK];
+		if (in.fail())
+		{
+			std::cerr << "WZM::read - Error reading TCMask name";
+			clear();
+			return false;
+		}
+
+		// pre read next token
+		in >> str;
+	}
+
+	// NORMALMAP ?
+	if (!str.compare(WZM_MODEL_DIRECTIVE_NORMALMAP))
+	{
+		in >> m_textures[WZM_TEX_NORMALMAP];
+		if (in.fail())
+		{
+			std::cerr << "WZM::read - Error reading NORMALMAP name";
+			clear();
+			return false;
+		}
+
+		// pre read next token
+		in >> str;
+	}
+
+	// token was pre read here
 	// MESHES %u
-	in >> str >> meshes;
+	in >> meshes;
 	if (in.fail() || str.compare("MESHES") != 0)
 	{
 		std::cerr << "WZM::read - Expected MESHES directive but got " << str;
@@ -151,15 +190,31 @@ void WZM::write(std::ostream& out) const
 
 	out << "WZM\t" << version() << '\n';
 
-	if (!getTextureName(WZM_TEX_DIFFUSE).empty())
+	// TEXTURE
+	if (isTextureSet(WZM_TEX_DIFFUSE))
 	{
-		out << "TEXTURE " << getTextureName(WZM_TEX_DIFFUSE) << '\n';
+		out << WZM_MODEL_DIRECTIVE_TEXTURE << ' ' << getTextureName(WZM_TEX_DIFFUSE) << '\n';
 	}
 	else
 	{
-		out << "TEXTURE emptytex.png\n";
+		// do it in a fail-safe way
+		out << WZM_MODEL_DIRECTIVE_TEXTURE << " notexture.set\n";
 	}
-	out << "MESHES " << meshes() << '\n';
+
+	// TCMASK
+	if (isTextureSet(WZM_TEX_TCMASK))
+	{
+		out << WZM_MODEL_DIRECTIVE_TCMASK << ' ' << getTextureName(WZM_TEX_TCMASK) << '\n';
+	}
+
+	// NORMALMAP
+	if (isTextureSet(WZM_TEX_NORMALMAP))
+	{
+		out << WZM_MODEL_DIRECTIVE_NORMALMAP << ' ' << getTextureName(WZM_TEX_NORMALMAP) << '\n';
+	}
+
+	// MESHES
+	out << WZM_MODEL_DIRECTIVE_MESHES << " " << meshes() << '\n';
 	for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
 	{
 		it->write(out);
@@ -559,6 +614,17 @@ std::string WZM::getTextureName(wzm_texture_type_t type) const
 		return it->second;
 
 	return std::string();
+}
+
+bool WZM::isTextureSet(wzm_texture_type_t type) const
+{
+	std::map<wzm_texture_type_t, std::string>::const_iterator it;
+
+	it = m_textures.find(type);
+	if (it != m_textures.end())
+		return true;
+
+	return !(it->second.empty());
 }
 
 void WZM::clearTextureNames()

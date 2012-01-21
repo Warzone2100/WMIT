@@ -188,6 +188,8 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	WZMVertex tmpVert, tmpNorm;
 	WZMUV tmpUV;
 
+	defaultConstructor();
+
 #ifdef LIB3DS_VERSION_1
 	m_vertexArray.reserve(mesh3ds.points);
 	m_textureArray.reserve(mesh3ds.points);

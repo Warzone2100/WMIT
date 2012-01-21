@@ -26,6 +26,12 @@
 
 #include "Mesh.hpp"
 
+#define WZM_MODEL_SIGNATURE "WZM"
+#define WZM_MODEL_DIRECTIVE_TEXTURE "TEXTURE"
+#define WZM_MODEL_DIRECTIVE_TCMASK "TCMASK"
+#define WZM_MODEL_DIRECTIVE_NORMALMAP "NORMALMAP"
+#define WZM_MODEL_DIRECTIVE_MESHES "MESHES"
+
 class Pie3Model;
 
 enum wzm_texture_type_t {WZM_TEX_DIFFUSE = 0, WZM_TEX_TCMASK, WZM_TEX_NORMALMAP, WZM_TEX_SPECULAR,
@@ -75,6 +81,7 @@ public:
 
 	void setTextureName(wzm_texture_type_t type, std::string name);
 	std::string getTextureName(wzm_texture_type_t type) const;
+	bool isTextureSet(wzm_texture_type_t type) const;
 	void clearTextureNames();
 
 	static std::string texTypeToString(wzm_texture_type_t type);
