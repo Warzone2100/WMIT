@@ -48,11 +48,11 @@ struct OBJTri
 	{
 		if (tri == rhs.tri)
 		{
-			if (nrm == rhs.nrm)
+			if (uvs == rhs.uvs)
 			{
-				return uvs < rhs.uvs;
+				return nrm < rhs.nrm;
 			}
-			return nrm < rhs.nrm;
+			return uvs < rhs.uvs;
 		}
 		return tri < rhs.tri;
 	}

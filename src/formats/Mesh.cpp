@@ -20,10 +20,10 @@
 #include "Mesh.hpp"
 
 #include <algorithm>
+#include <functional>
 #include <iterator>
 #include <map>
 #include <set>
-#include <tuple>
 
 #include <cmath>
 
@@ -51,6 +51,31 @@ WZMVertex normalizeVector(const WZMVertex& ver)
 	return WZMVertex(ver / sqrt(sq));
 }
 
+struct compareWZMPoint_less_wEps: public std::binary_function<WZMPoint&, WZMPoint&, bool>
+{
+	const WZMVertex::less_wEps vertLess;
+	const WZMUV::less_wEps uvLess;
+
+public:
+	compareWZMPoint_less_wEps(float vertEps = 0.0001, float uvEps = 0.0001):
+		vertLess(vertEps), uvLess(uvEps) {}
+
+	bool operator() (const WZMPoint& lhs, const WZMPoint& rhs) const
+	{
+		if (vertLess(std::get<0>(lhs), std::get<0>(rhs)))
+		{
+			return true;
+		}
+		else
+		{
+			if (uvLess(std::get<1>(lhs), std::get<1>(rhs)))
+			{
+				return true;
+			}
+			return vertLess(std::get<2>(lhs), std::get<2>(rhs));
+		}
+	}
+};
 
 WZMConnector::WZMConnector(GLfloat x, GLfloat y, GLfloat z):
 	m_pos(x, y, z)
@@ -72,12 +97,11 @@ Mesh::Mesh()
 	defaultConstructor();
 }
 
-Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
+Mesh::Mesh(const Pie3Level& p3)
 {
 	std::vector<Pie3Polygon>::const_iterator itL;
 
-	typedef std::tuple<WZMVertex, WZMUV, WZMVertex> t_wzpoint;
-	typedef std::set<t_wzpoint> t_tupleSet;
+	typedef std::set<WZMPoint, compareWZMPoint_less_wEps> t_tupleSet;
 	t_tupleSet tupleSet;
 	std::pair<t_tupleSet::iterator, bool> inResult;
 
@@ -110,7 +134,7 @@ Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps)
 			wzmVert = p3.m_points[itL->getIndex(i)];
 			tmpUv = itL->getUV(i, 0);
 
-			inResult = tupleSet.insert(t_wzpoint(wzmVert, tmpUv, tmpNrm));
+			inResult = tupleSet.insert(WZMPoint(wzmVert, tmpUv, tmpNrm));
 
 			if (!inResult.second)
 			{
@@ -150,11 +174,7 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	const bool invertV = true;
 	const bool transform = true;
 
-	const WZMVertex::less_wEps vertLess; // For make_mypair
-	const WZMUV::less_wEps uvLess;
-
-	typedef std::tuple<WZMVertex, WZMUV, WZMVertex> t_wzpoint;
-	typedef std::set<t_wzpoint> t_tupleSet;
+	typedef std::set<WZMPoint, compareWZMPoint_less_wEps> t_tupleSet;
 	t_tupleSet tupleSet;
 
 	std::pair<t_tupleSet::iterator, bool> inResult;
@@ -173,11 +193,17 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	m_textureArray.reserve(mesh3ds.points);
 	m_normalArray.reserve(mesh3ds.points);
 	m_indexArray.reserve(mesh3ds.faces);
+
+	Lib3dsVector *normals = new Lib3dsVector[mesh3ds.faces * 3];
+	lib3ds_mesh_calculate_normals(const_cast<Lib3dsMesh*>(&mesh3ds), normals);
 #else
 	m_vertexArray.reserve(mesh3ds.nvertices);
 	m_textureArray.reserve(mesh3ds.nvertices);
 	m_normalArray.reserve(mesh3ds.nvertices);
 	m_indexArray.reserve(mesh3ds.nfaces);
+
+	Lib3dsVector *normals = new Lib3dsVector[mesh3ds.nfaces * 3]; //FIXME
+	lib3ds_mesh_calculate_normals(&mesh3ds, &normals); //FIXME
 #endif
 
 	if (isValidWzName(mesh3ds.name))
@@ -194,43 +220,6 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	{
 		Lib3dsFace* face = &mesh3ds.faces[i];
 #endif
-
-#ifdef LIB3DS_VERSION_1
-		Lib3dsVector nrm3ds;
-
-		if (transform)
-		{
-			lib3ds_vector_transform(nrm3ds,	const_cast<Lib3dsMatrix&>(mesh3ds.matrix), face->normal);
-		}
-		else
-		{
-			lib3ds_vector_copy(nrm3ds, face->normal);
-		}
-#else
-		float nrm3ds[3];
-
-		if (transform)
-		{
-			lib3ds_vector_transform(nrm3ds, const_cast<float (*)[4]>(mesh3ds.matrix), face->normal]);
-		}
-		else
-		{
-			lib3ds_vector_copy(nrm3ds, face->normal);
-		}
-#endif
-
-		if (swapYZ)
-		{
-			tmpNorm.x() = nrm3ds[0];
-			tmpNorm.y() = nrm3ds[2];
-			tmpNorm.z() = nrm3ds[1];
-		}
-		else
-		{
-			tmpNorm.x() = nrm3ds[0];
-			tmpNorm.y() = nrm3ds[1];
-			tmpNorm.z() = nrm3ds[2];
-		}
 
 		for (j = 0; j < 3; ++j)
 		{
@@ -305,8 +294,21 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 				tmpUV.v() = mesh3ds.texcos[face->index[j]][1];
 			}
 #endif
+			// normals
+			if (swapYZ)
+			{
+				tmpNorm.x() = normals[i * 3 + j][0];
+				tmpNorm.y() = normals[i * 3 + j][2];
+				tmpNorm.z() = normals[i * 3 + j][1];
+			}
+			else
+			{
+				tmpNorm.x() = normals[i * 3 + j][0];
+				tmpNorm.y() = normals[i * 3 + j][1];
+				tmpNorm.z() = normals[i * 3 + j][2];
+			}
 
-			inResult = tupleSet.insert(t_wzpoint(tmpVert, tmpUV, tmpNorm));
+			inResult = tupleSet.insert(WZMPoint(tmpVert, tmpUV, tmpNorm));
 
 			if (!inResult.second)
 			{
@@ -618,8 +620,7 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 			 const std::vector<OBJUV>&	uvArray,
 			 const std::vector<OBJVertex>&  normals)
 {
-	typedef std::tuple<WZMVertex, WZMUV, WZMVertex> t_wzpoint;
-	typedef std::set<t_wzpoint> t_tupleSet;
+	typedef std::set<WZMPoint, compareWZMPoint_less_wEps> t_tupleSet;
 	t_tupleSet tupleSet;
 
 	std::vector<OBJTri>::const_iterator itFaces;
@@ -646,7 +647,7 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 			tmpUv = itFaces->uvs.operator [](i) < 1 ? WZMUV() : uvArray[itFaces->uvs.operator [](i) - 1];
 #pragma message "precalculate missing OBJ normal"
 			tmpNrm = itFaces->nrm.operator [](i) < 1 ? WZMVertex() : normals[itFaces->nrm.operator [](i) - 1]; //FIXME
-			inResult = tupleSet.insert(t_wzpoint(verts[itFaces->tri[i]-1], tmpUv, tmpNrm));
+			inResult = tupleSet.insert(WZMPoint(verts[itFaces->tri[i]-1], tmpUv, tmpNrm));
 
 			if (!inResult.second)
 			{

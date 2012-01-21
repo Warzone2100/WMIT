@@ -49,7 +49,7 @@ template<typename V, typename P, typename C>
 class APieLevel
 {
 	friend Mesh::operator Pie3Level() const;
-	friend Mesh::Mesh(const Pie3Level& p3, float uvEps, float vertEps);
+	friend Mesh::Mesh(const Pie3Level& p3);
 public:
 	APieLevel();
 	virtual ~APieLevel(){}

@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <tuple>
 
 #include <QtOpenGL/qgl.h>
 
@@ -34,6 +35,7 @@
 
 typedef Vertex<GLfloat> WZMVertex;
 typedef UV<GLclampf> WZMUV;
+typedef std::tuple<WZMVertex, WZMUV, WZMVertex> WZMPoint;
 
 class Mesh;
 
@@ -67,7 +69,7 @@ class Mesh
 	friend class QWZM; // For rendering
 public:
 	Mesh();
-	Mesh(const Pie3Level& p3, float uvEps = 0.0001, float vertEps = -1);
+	Mesh(const Pie3Level& p3);
 	Mesh(const Lib3dsMesh& mesh3ds);
 	virtual ~Mesh();
 
