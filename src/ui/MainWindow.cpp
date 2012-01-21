@@ -94,7 +94,9 @@ void MainWindow::clear()
 	setWindowTitle(WMIT_APPNAME);
 
 	ui->actionClose->setDisabled(true);
+	ui->actionSave_As->setDisabled(true);
 	ui->actionSetupTextures->setDisabled(true);
+	ui->actionAppend_Model->setDisabled(true);
 }
 
 void MainWindow::changeEvent(QEvent *e)
@@ -249,7 +251,9 @@ void MainWindow::on_actionOpen_triggered()
 
 			setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
 			ui->actionClose->setEnabled(true);
+			ui->actionSave_As->setEnabled(true);
 			ui->actionSetupTextures->setEnabled(true);
+			ui->actionAppend_Model->setEnabled(true);
 
 			if (!fireTextureDialog(true))
 			{
