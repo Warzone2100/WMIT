@@ -53,7 +53,12 @@ WZMVertex normalizeVector(const WZMVertex& ver)
 
 
 WZMConnector::WZMConnector(GLfloat x, GLfloat y, GLfloat z):
-	m_pos(Vertex<GLfloat>(x, y, z))
+	m_pos(x, y, z)
+{
+}
+
+WZMConnector::WZMConnector(const WZMVertex &pos):
+	m_pos(pos)
 {
 }
 
@@ -408,7 +413,6 @@ bool Mesh::read(std::istream& in)
 {
 	std::string str;
 	unsigned i,vertices,indices;
-	GLfloat f;
 
 	clear();
 
@@ -533,19 +537,21 @@ bool Mesh::read(std::istream& in)
 		return false;
 	}
 
-	if ( i > 0)
+	if (i > 0)
 	{
-		// TODO: Connectors
+		WZMVertex con;
+
 		for(; i > 0; --i)
 		{
-			in >> str >> f >> f >> f >> f >> f >> f ;
+			in >> con.x() >> con.y() >> con.z();
 		}
-		if(in.fail())
+		if (in.fail())
 		{
 			std::cerr << "Mesh::read - Error reading connectors";
 			clear();
 			return false;
 		}
+		m_connectors.push_back(con);
 	}
 
 	recalculateBoundData();
@@ -595,8 +601,16 @@ void Mesh::write(std::ostream &out) const
 				<< indIt->c() << '\n';
 	}
 
-	// TODO: Frames and connectors
-	out <<"CONNECTORS 0\n";
+	out <<"CONNECTORS " << m_connectors.size() << "\n";
+	std::list<WZMConnector>::const_iterator conIt;
+	for (conIt = m_connectors.begin(); conIt != m_connectors.end(); ++conIt)
+	{
+		WZMVertex con = conIt->getPos();
+		out << '\t';
+		out		<< con.x() << ' '
+				<< con.y() << ' '
+				<< con.z() << '\n';
+	}
 }
 
 bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,

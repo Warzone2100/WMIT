@@ -42,6 +42,7 @@ class WZMConnector
 	friend class Mesh;
 public:
 	WZMConnector(GLfloat x = 0., GLfloat y = 0., GLfloat z = 0.);
+	WZMConnector(const WZMVertex& pos);
 	virtual ~WZMConnector(){}
 
 	const WZMVertex& getPos() const;
