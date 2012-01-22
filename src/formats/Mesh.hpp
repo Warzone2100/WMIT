@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 #include <list>
-#include <tuple>
+#include <tr1/tuple>
 
 #include <QtOpenGL/qgl.h>
 
@@ -35,7 +35,7 @@
 
 typedef Vertex<GLfloat> WZMVertex;
 typedef UV<GLclampf> WZMUV;
-typedef std::tuple<WZMVertex, WZMUV, WZMVertex> WZMPoint;
+typedef std::tr1::tuple<WZMVertex, WZMUV, WZMVertex> WZMPoint;
 
 class Mesh;
 

@@ -64,23 +64,23 @@ public:
 
 	bool operator() (const WZMPoint& lhs, const WZMPoint& rhs) const
 	{
-		if (vertLess(std::get<0>(lhs), std::get<0>(rhs)))
+		if (vertLess(std::tr1::get<0>(lhs), std::tr1::get<0>(rhs)))
 		{
 			return true;
 		}
 		else
 		{
-			if (vertEq(std::get<0>(lhs), std::get<0>(rhs)))
+			if (vertEq(std::tr1::get<0>(lhs), std::tr1::get<0>(rhs)))
 			{
-				if (uvLess(std::get<1>(lhs), std::get<1>(rhs)))
+				if (uvLess(std::tr1::get<1>(lhs), std::tr1::get<1>(rhs)))
 				{
 					return true;
 				}
 				else
 				{
-					if (uvEq(std::get<1>(lhs), std::get<1>(rhs)))
+					if (uvEq(std::tr1::get<1>(lhs), std::tr1::get<1>(rhs)))
 					{
-						return vertLess(std::get<2>(lhs), std::get<2>(rhs));
+						return vertLess(std::tr1::get<2>(lhs), std::tr1::get<2>(rhs));
 					}
 				}
 			}
@@ -150,14 +150,14 @@ Mesh::Mesh(const Pie3Level& p3)
 
 			if (!inResult.second)
 			{
-				iTri[i] = mapping[std::distance(tupleSet.begin(), inResult.first)];
+				iTri.operator[](i) = mapping[std::distance(tupleSet.begin(), inResult.first)];
 			}
 			else
 			{
 				itMap = mapping.begin();
 				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
 				mapping.insert(itMap, m_vertexArray.size());
-				iTri[i] = m_vertexArray.size();
+				iTri.operator[](i) = m_vertexArray.size();
 				m_vertexArray.push_back(wzmVert);
 				m_textureArray.push_back(tmpUv);
 				m_normalArray.push_back(tmpNrm);
@@ -216,8 +216,8 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	m_normalArray.reserve(mesh3ds.nvertices);
 	m_indexArray.reserve(mesh3ds.nfaces);
 
-	Lib3dsVector *normals = new Lib3dsVector[mesh3ds.nfaces * 3]; //FIXME
-	lib3ds_mesh_calculate_normals(&mesh3ds, &normals); //FIXME
+	float *normals = new float[mesh3ds.nfaces * 3 * 3];
+	lib3ds_mesh_calculate_vertex_normals(const_cast<Lib3dsMesh*>(&mesh3ds), (float (*)[3])normals);
 #endif
 
 	if (isValidWzName(mesh3ds.name))
@@ -308,7 +308,9 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 				tmpUV.v() = mesh3ds.texcos[face->index[j]][1];
 			}
 #endif
+
 			// normals
+#ifdef LIB3DS_VERSION_1
 			if (swapYZ)
 			{
 				tmpNorm.x() = normals[i * 3 + j][0];
@@ -321,6 +323,25 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 				tmpNorm.y() = normals[i * 3 + j][1];
 				tmpNorm.z() = normals[i * 3 + j][2];
 			}
+#else
+
+#define GET_IDX_FOR_NRM_PORTION(face, veridx, portion) (face * 3 + veridx) * 3 + portion
+			if (swapYZ)
+			{
+				tmpNorm.x() = normals[GET_IDX_FOR_NRM_PORTION(i, j, 0)];
+				tmpNorm.y() = normals[GET_IDX_FOR_NRM_PORTION(i, j, 2)];
+				tmpNorm.z() = normals[GET_IDX_FOR_NRM_PORTION(i, j, 1)];
+			}
+			else
+			{
+				tmpNorm.x() = normals[GET_IDX_FOR_NRM_PORTION(i, j, 0)];
+				tmpNorm.y() = normals[GET_IDX_FOR_NRM_PORTION(i, j, 1)];
+				tmpNorm.z() = normals[GET_IDX_FOR_NRM_PORTION(i, j, 2)];
+			}
+
+#undef GET_IDX_FOR_NRM_PORTION
+
+#endif
 
 			inResult = tupleSet.insert(WZMPoint(tmpVert, tmpUV, tmpNorm));
 
@@ -347,6 +368,8 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 
 		m_indexArray.push_back(idx);
 	}
+
+	delete[] normals;
 
 	recalculateBoundData();
 
@@ -858,14 +881,14 @@ Mesh::operator Lib3dsMesh*() const
 			mesh->vertices[i][2] = m_vertexArray[i].z();
 		}
 		
-		mesh->texcos[i][0] = m_textureArrays[0][i].u();
+		mesh->texcos[i][0] = m_textureArray[i].u();
 		if (invertV)
 		{
-			mesh->texcos[i][1] = 1.0f - m_textureArrays[0][i].v();
+			mesh->texcos[i][1] = 1.0f - m_textureArray[i].v();
 		}
 		else
 		{
-			mesh->texcos[i][1] = m_textureArrays[0][i].v();
+			mesh->texcos[i][1] = m_textureArray[i].v();
 		}
 		
 	}
