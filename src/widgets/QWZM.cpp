@@ -20,6 +20,8 @@
 #include "QWZM.hpp"
 #include "Pie.hpp"
 
+#include "QtGLView.hpp"
+
 #ifdef CPP0X_AVAILABLE
 #  define CPP0X_FEATURED(x) x
 #else
@@ -28,7 +30,8 @@
 
 const GLint QWZM::winding = GL_CCW;
 
-QWZM::QWZM(QObject *parent): QObject(parent), m_tcmaskColour(0, 0x60, 0, 0xFF)
+QWZM::QWZM(QObject *parent):
+	QObject(parent), m_tcmaskColour(0, 0x60, 0, 0xFF), m_drawNormals(false), m_drawCenterPoint(false)
 {
 	defaultConstructor();
 }
@@ -50,7 +53,12 @@ void QWZM::render()
 	glScalef(1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
 
 	// before shaders
-	drawCenterPoint();
+	if (m_drawCenterPoint)
+		drawCenterPoint();
+	if (m_drawNormals)
+		drawNormals();
+
+	// actual draw code starts here
 
 	glColor3f(1.f, 1.f, 1.f);
 
@@ -76,6 +84,7 @@ void QWZM::render()
 	for (int i = 0; i < (int)m_meshes.size(); ++i)
 	{
 		const Mesh& msh = m_meshes.at(i);
+
 		if (m_active_mesh == i)
 		{
 			glPushMatrix();
@@ -121,7 +130,6 @@ void QWZM::render()
 
 void QWZM::drawCenterPoint()
 {
-#ifdef _DEBUG
 	WZMVertex center;
 
 	if (m_active_mesh < 0 || !m_meshes.size())
@@ -141,7 +149,8 @@ void QWZM::drawCenterPoint()
 
 	GLboolean lighting;
 	glGetBooleanv(GL_LIGHTING, &lighting);
-	glDisable(GL_LIGHTING);
+	if (lighting)
+		glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
 
 	glEnable(GL_LINE_SMOOTH);
@@ -163,7 +172,38 @@ void QWZM::drawCenterPoint()
 	{
 		glEnable(GL_LIGHTING);
 	}
-#endif
+}
+
+void QWZM::drawNormals()
+{
+	GLboolean lighting;
+	glGetBooleanv(GL_LIGHTING, &lighting);
+
+	if (lighting)
+		glDisable(GL_LIGHTING);
+
+	glDisable(GL_TEXTURE_2D);
+	glColor3f(0.7f, 1.0f, 0.7f);
+
+	for (int i = 0; i < (int)m_meshes.size(); ++i)
+	{
+		const Mesh& msh = m_meshes.at(i);
+		WZMVertex nrm;
+
+		for (int j = 0; j < (int)msh.m_vertexArray.size(); ++j)
+		{
+			nrm = msh.m_normalArray[j];// / 0.5; // FIXME: multiplier
+			qglviewer::Vec from(msh.m_vertexArray[j].x(), msh.m_vertexArray[j].y(), msh.m_vertexArray[j].z());
+			qglviewer::Vec to(msh.m_vertexArray[j].x() + nrm.x(),
+					     msh.m_vertexArray[j].y() + nrm.y(),
+					     msh.m_vertexArray[j].z() + nrm.z());
+			QGLViewer::drawArrow(from, to);
+		}
+	}
+
+	glEnable(GL_TEXTURE_2D);
+	if (lighting)
+		glEnable(GL_LIGHTING);
 }
 
 void QWZM::animate()
@@ -529,6 +569,16 @@ void QWZM::resetAllPendingChanges()
 {
 	scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
 	m_pending_changes = false;
+}
+
+void QWZM::setDrawNormalsFlag(bool draw)
+{
+	m_drawNormals = draw;
+}
+
+void QWZM::setDrawCenterPointFlag(bool draw)
+{
+	m_drawCenterPoint = draw;
 }
 
 /************** Mesh control wrappers *****************/

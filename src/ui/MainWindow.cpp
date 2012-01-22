@@ -438,6 +438,21 @@ void MainWindow::_on_viewerInitialized()
 			break;
 		}
 	}
+
+	QAction* action = new QAction("Show model center", this);
+	action->setCheckable(true);
+	connect(action, SIGNAL(triggered(bool)),
+		&m_model, SLOT(setDrawCenterPointFlag(bool)));
+
+	rendererMenu->insertAction(0, action);
+	rendererMenu->insertSeparator(action);
+
+	action = new QAction("Show normals", this);
+	action->setCheckable(true);
+	connect(action, SIGNAL(triggered(bool)),
+		&m_model, SLOT(setDrawNormalsFlag(bool)));
+
+	rendererMenu->insertAction(0, action);
 }
 
 void MainWindow::_on_shaderActionTriggered(int type)
@@ -518,8 +533,8 @@ void MainWindow::on_actionAppend_Model_triggered()
 	QFileDialog* fileDialog = new QFileDialog(this,
 						  tr("Select file to append"),
 						  m_pathImport,
-						  tr("All Compatible (*.pie *.3ds *.obj);;"
-						     /// "WZM models (*.wzm);;"
+						  tr("All Compatible (*.wzm *.pie *.3ds *.obj);;"
+						     "WZM models (*.wzm);;"
 						     "PIE models (*.pie);;"
 						     "3DS files (*.3ds);;"
 						     "OBJ files (*.obj)"));

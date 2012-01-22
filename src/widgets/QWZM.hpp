@@ -77,6 +77,9 @@ public slots:
 	void setActiveMesh(int mesh = -1);
 	void applyTransformations();
 
+	void setDrawNormalsFlag(bool draw);
+	void setDrawCenterPointFlag(bool draw);
+
 public:
 	/// IAnimatable
 	void animate();
@@ -116,6 +119,7 @@ private:
 	Q_DISABLE_COPY(QWZM)
 	void defaultConstructor();
 	void drawCenterPoint();
+	void drawNormals();
 
 	bool setupTextureUnits(int type);
 	void clearTextureUnits(int type);
@@ -132,6 +136,9 @@ private:
 	bool m_pending_changes;
 
 	QColor m_tcmaskColour;
+
+	bool m_drawNormals;
+	bool m_drawCenterPoint;
 };
 
 #endif // QWZM_HPP
