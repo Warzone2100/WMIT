@@ -55,10 +55,12 @@ struct compareWZMPoint_less_wEps: public std::binary_function<WZMPoint&, WZMPoin
 {
 	const WZMVertex::less_wEps vertLess;
 	const WZMUV::less_wEps uvLess;
+	const WZMVertex::equal_wEps vertEq;
+	const WZMUV::equal_wEps uvEq;
 
 public:
 	compareWZMPoint_less_wEps(float vertEps = 0.0001, float uvEps = 0.0001):
-		vertLess(vertEps), uvLess(uvEps) {}
+		vertLess(vertEps), uvLess(uvEps), vertEq(vertEps), uvEq(uvEps) {}
 
 	bool operator() (const WZMPoint& lhs, const WZMPoint& rhs) const
 	{
@@ -68,12 +70,22 @@ public:
 		}
 		else
 		{
-			if (uvLess(std::get<1>(lhs), std::get<1>(rhs)))
+			if (vertEq(std::get<0>(lhs), std::get<0>(rhs)))
 			{
-				return true;
+				if (uvLess(std::get<1>(lhs), std::get<1>(rhs)))
+				{
+					return true;
+				}
+				else
+				{
+					if (uvEq(std::get<1>(lhs), std::get<1>(rhs)))
+					{
+						return vertLess(std::get<2>(lhs), std::get<2>(rhs));
+					}
+				}
 			}
-			return vertLess(std::get<2>(lhs), std::get<2>(rhs));
 		}
+		return false;
 	}
 };
 

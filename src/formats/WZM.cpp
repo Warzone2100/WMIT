@@ -621,8 +621,8 @@ bool WZM::isTextureSet(wzm_texture_type_t type) const
 	std::map<wzm_texture_type_t, std::string>::const_iterator it;
 
 	it = m_textures.find(type);
-	if (it != m_textures.end())
-		return true;
+	if (it == m_textures.end())
+		return false;
 
 	return !(it->second.empty());
 }
