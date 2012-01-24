@@ -156,8 +156,8 @@ Mesh::Mesh(const Pie3Level& p3)
 			{
 				itMap = mapping.begin();
 				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
-				mapping.insert(itMap, m_vertexArray.size());
-				iTri.operator[](i) = m_vertexArray.size();
+				mapping.insert(itMap, vertices());
+				iTri.operator[](i) = vertices();
 				m_vertexArray.push_back(wzmVert);
 				m_textureArray.push_back(tmpUv);
 				m_normalArray.push_back(tmpNrm);
@@ -203,18 +203,14 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	defaultConstructor();
 
 #ifdef LIB3DS_VERSION_1
-	m_vertexArray.reserve(mesh3ds.points);
-	m_textureArray.reserve(mesh3ds.points);
-	m_normalArray.reserve(mesh3ds.points);
-	m_indexArray.reserve(mesh3ds.faces);
+	reservePoints(mesh3ds.points);
+	reserveIndices(mesh3ds.faces);
 
 	Lib3dsVector *normals = new Lib3dsVector[mesh3ds.faces * 3];
 	lib3ds_mesh_calculate_normals(const_cast<Lib3dsMesh*>(&mesh3ds), normals);
 #else
-	m_vertexArray.reserve(mesh3ds.nvertices);
-	m_textureArray.reserve(mesh3ds.nvertices);
-	m_normalArray.reserve(mesh3ds.nvertices);
-	m_indexArray.reserve(mesh3ds.nfaces);
+	reservePoints(mesh3ds.nvertices);
+	reserveIndices(mesh3ds.nfaces);
 
 	float *normals = new float[mesh3ds.nfaces * 3 * 3];
 	lib3ds_mesh_calculate_vertex_normals(const_cast<Lib3dsMesh*>(&mesh3ds), (float (*)[3])normals);
@@ -353,8 +349,8 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 			{
 				itMap = mapping.begin();
 				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
-				mapping.insert(itMap, m_vertexArray.size());
-				idx[j] = m_vertexArray.size();
+				mapping.insert(itMap, vertices());
+				idx[j] = vertices();
 				m_vertexArray.push_back(tmpVert);
 				m_textureArray.push_back(tmpUV);
 				m_normalArray.push_back(tmpNorm);
@@ -456,9 +452,9 @@ bool Mesh::read(std::istream& in)
 	clear();
 
 	in >> str >> m_name;
-	if (in.fail() || str.compare("MESH") != 0)
+	if (in.fail() || str.compare(WZM_MESH_SIGNATURE) != 0)
 	{
-		std::cerr << "Mesh::read - Expected MESH directive found " << str;
+		std::cerr << "Mesh::read - Expected " << WZM_MESH_SIGNATURE << " directive found " << str;
 		clear();
 		return false;
 	}
@@ -486,9 +482,9 @@ bool Mesh::read(std::istream& in)
 	}
 
 	in >> str >> indices;
-	if (in.fail() || str.compare("FACES") != 0)
+	if (in.fail() || str.compare(WZM_MESH_DIRECTIVE_INDICES) != 0)
 	{
-		std::cerr << "Mesh::read - Expected FACES directive found " << str;
+		std::cerr << "Mesh::read - Expected " << WZM_MESH_DIRECTIVE_INDICES << " directive found " << str;
 		clear();
 		return false;
 	}
@@ -501,9 +497,7 @@ bool Mesh::read(std::istream& in)
 		return false;
 	}
 
-	m_vertexArray.reserve(vertices);
-	m_textureArray.reserve(vertices);
-	m_normalArray.reserve(vertices);
+	reservePoints(vertices);
 
 	WZMVertex vert, normal;
 	WZMUV uv;
@@ -552,8 +546,8 @@ bool Mesh::read(std::istream& in)
 		return false;
 	}
 
-	m_indexArray.reserve(indices);
-	for(;indices>0;indices--)
+	reserveIndices(indices);
+	for(; indices > 0; --indices)
 	{
 		IndexedTri tri;
 
@@ -600,21 +594,12 @@ bool Mesh::read(std::istream& in)
 
 void Mesh::write(std::ostream &out) const
 {
-	out << "MESH ";
-	if (m_name.empty())
-	{
-		out << "_noname_\n";
-	}
-	else
-	{
-		out << m_name << '\n';
-	}
+	out << WZM_MESH_SIGNATURE << ' ' << (m_name.empty() ? "_noname_" : m_name ) << '\n';
 
 	// noboolalpha should be default...
-	out << "TEAMCOLOURS " << std::noboolalpha << teamColours() << '\n';
-
-	out << "VERTICES " << vertices() << '\n';
-	out << "FACES " << faces() << '\n';
+	out << WZM_MESH_DIRECTIVE_TEAMCOLOURS << " " << std::noboolalpha << teamColours() << '\n';
+	out << WZM_MESH_DIRECTIVE_VERTICES << " " << vertices() << '\n';
+	out << WZM_MESH_DIRECTIVE_INDICES << " " << indices() << '\n';
 
 	out << "VERTEXARRAY\n" ;
 	std::vector<WZMVertex>::const_iterator vertIt, normIt;
@@ -674,6 +659,9 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 
 	clear();
 
+	reservePoints(verts.size());
+	reserveIndices(faces.size());
+
 	for (itFaces = faces.begin(); itFaces != faces.end(); ++itFaces)
 	{
 		for (i = 0; i < 3; ++i)
@@ -694,8 +682,8 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 			{
 				itMap = mapping.begin();
 				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
-				mapping.insert(itMap, m_vertexArray.size());
-				tmpTri[i] = m_vertexArray.size();
+				mapping.insert(itMap, vertices());
+				tmpTri[i] = vertices();
 				m_vertexArray.push_back(verts[itFaces->tri[i]-1]);
 				m_textureArray.push_back(tmpUv);
 				m_normalArray.push_back(tmpNrm);
@@ -816,8 +804,8 @@ Mesh::operator Lib3dsMesh*() const
 	}
 
 #ifdef LIB3DS_VERSION_1
-	lib3ds_mesh_new_point_list(mesh, m_vertexArray.size());
-	lib3ds_mesh_new_texel_list(mesh, m_vertexArray.size());
+	lib3ds_mesh_new_point_list(mesh, vertices());
+	lib3ds_mesh_new_texel_list(mesh, vertices());
 
 	for (i = 0; i < mesh->points; ++i)
 	{
@@ -962,32 +950,22 @@ void Mesh::rmConnector (int index)
 	m_connectors.erase(pos);
 }
 
-int Mesh::connectors() const
+inline int Mesh::connectors() const
 {
 	return m_connectors.size();
 }
 
-unsigned Mesh::vertices() const
+inline unsigned Mesh::vertices() const
 {
 	return m_vertexArray.size();
 }
 
-unsigned Mesh::faces() const
-{
-	return triangles();
-}
-
-unsigned Mesh::triangles() const
-{
-	return m_indexArray.size();
-}
-
-unsigned Mesh::frames() const
+inline unsigned Mesh::frames() const
 {
 	return m_frameArray.size();
 }
 
-unsigned Mesh::indices() const
+inline unsigned Mesh::indices() const
 {
 	return m_indexArray.size();
 }
@@ -1004,15 +982,15 @@ bool Mesh::isValid() const
 	std::vector<IndexedTri>::const_iterator it;
 	for (it = m_indexArray.begin(); it != m_indexArray.end(); ++it)
 	{
-		if ((*it).a() >= m_vertexArray.size())
+		if ((*it).a() >= vertices())
 		{
 			return false;
 		}
-		if ((*it).b() >= m_vertexArray.size())
+		if ((*it).b() >= vertices())
 		{
 			return false;
 		}
-		if ((*it).c() >= m_vertexArray.size())
+		if ((*it).c() >= vertices())
 		{
 			return false;
 		}
@@ -1036,6 +1014,18 @@ void Mesh::clear()
 	m_indexArray.clear();
 	m_connectors.clear();
 	m_teamColours = false;
+}
+
+inline void Mesh::reservePoints(const unsigned size)
+{
+	m_vertexArray.reserve(size);
+	m_textureArray.reserve(size);
+	m_normalArray.reserve(size);
+}
+
+inline void Mesh::reserveIndices(const unsigned size)
+{
+	m_indexArray.reserve(size);
 }
 
 void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
@@ -1116,7 +1106,7 @@ void Mesh::recalculateBoundData()
 {
 	WZMVertex weight, min, max;
 
-	if (m_vertexArray.size())
+	if (vertices())
 	{
 		min = max = m_vertexArray.at(0);
 
@@ -1136,9 +1126,9 @@ void Mesh::recalculateBoundData()
 			if (max.z() < vertIt->z()) max.z() = vertIt->z();
 		}
 
-		weight.x() /= m_vertexArray.size();
-		weight.y() /= m_vertexArray.size();
-		weight.z() /= m_vertexArray.size();
+		weight.x() /= vertices();
+		weight.y() /= vertices();
+		weight.z() /= vertices();
 	}
 
 	m_mesh_weightcenter = weight;

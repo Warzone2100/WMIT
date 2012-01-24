@@ -33,6 +33,12 @@
 
 #include "OBJ.hpp"
 
+#define WZM_MESH_SIGNATURE "MESH"
+#define WZM_MESH_DIRECTIVE_TEAMCOLOURS "TEAMCOLOURS"
+#define WZM_MESH_DIRECTIVE_VERTICES "VERTICES"
+#define WZM_MESH_DIRECTIVE_INDICES "INDICES"
+
+
 typedef Vertex<GLfloat> WZMVertex;
 typedef UV<GLclampf> WZMUV;
 typedef std::tr1::tuple<WZMVertex, WZMUV, WZMVertex> WZMPoint;
@@ -100,8 +106,6 @@ public:
 	int connectors() const;
 
 	unsigned vertices() const;
-	unsigned faces() const;
-	unsigned triangles() const;
 	unsigned indices() const;
 	unsigned frames() const;
 
@@ -129,6 +133,9 @@ protected:
 	WZMVertex m_mesh_weightcenter, m_mesh_aabb_min, m_mesh_aabb_max;
 
 	void clear();
+	void reservePoints(const unsigned size);
+	void reserveIndices(const unsigned size);
+
 	void recalculateBoundData();
 private:
 	void defaultConstructor();
