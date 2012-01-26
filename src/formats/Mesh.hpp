@@ -40,6 +40,7 @@
 
 
 typedef Vertex<GLfloat> WZMVertex;
+typedef Vertex4<GLfloat> WZMVertex4;
 typedef UV<GLclampf> WZMUV;
 typedef std::tr1::tuple<WZMVertex, WZMUV, WZMVertex> WZMPoint;
 
@@ -105,6 +106,8 @@ public:
 	void rmConnector (int index);
 	int connectors() const;
 
+
+
 	unsigned vertices() const;
 	unsigned indices() const;
 	unsigned frames() const;
@@ -125,6 +128,8 @@ protected:
 	std::vector<WZMVertex> m_vertexArray;
 	std::vector<WZMUV> m_textureArray;
 	std::vector<WZMVertex> m_normalArray;
+	std::vector<WZMVertex4> m_tangentArray;
+	std::vector<WZMVertex> m_bitangentArray; // WARNING: used only for non-WZM import, dont rely on it
 	std::vector<IndexedTri> m_indexArray;
 
 	std::list<WZMConnector> m_connectors;
@@ -135,6 +140,9 @@ protected:
 	void clear();
 	void reservePoints(const unsigned size);
 	void reserveIndices(const unsigned size);
+	void addIndices(const IndexedTri& trio);
+	void addPoint(const WZMPoint& point);
+	void finishImport();
 
 	void recalculateBoundData();
 private:

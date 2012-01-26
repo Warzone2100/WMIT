@@ -20,8 +20,8 @@
 #define VERTEXTYPES_HPP
 #include "Vector.hpp"
 
-template <typename T>
-struct UV : public Vector<T,2>
+template <typename T, size_t COMPONENTS = 2>
+struct UV : public Vector<T, COMPONENTS>
 {
 	UV() {u() = 0, v() =0;}
 
@@ -29,7 +29,15 @@ struct UV : public Vector<T,2>
 		u() = u; v() = v;
 	}
 
-	UV(const Vector<T,2>& rhs): Vector<T,2>(rhs) {}
+	UV(const UV& rhs): Vector<T, COMPONENTS>(rhs) {}
+
+	UV& operator = (const UV& rhs)
+	{
+		Vector<T, COMPONENTS>::operator=(rhs);
+		return *this;
+	}
+
+	UV(const Vector<T, COMPONENTS>& rhs): Vector<T, COMPONENTS>(rhs) {}
 
 	inline T& u() {
 		return this->operator [](0);
@@ -46,8 +54,8 @@ struct UV : public Vector<T,2>
 	}
 };
 
-template <typename T>
-struct Vertex : public Vector<T,3>
+template <typename T, size_t COMPONENTS = 3>
+struct Vertex : public Vector<T, COMPONENTS>
 {
 	Vertex()
 	{
@@ -63,7 +71,15 @@ struct Vertex : public Vector<T,3>
 		this->z() = z;
 	}
 
-	Vertex(const Vector<T,3>& rhs): Vector<T,3>(rhs) {}
+	Vertex(const Vertex& rhs): Vector<T, COMPONENTS>(rhs) {}
+
+	Vertex& operator = (const Vertex& rhs)
+	{
+		Vector<T, COMPONENTS>::operator=(rhs);
+		return *this;
+	}
+
+	Vertex(const Vector<T, COMPONENTS>& rhs): Vector<T, COMPONENTS>(rhs) {}
 
 	inline T& x() {
 		return this->operator [](0);
@@ -76,7 +92,7 @@ struct Vertex : public Vector<T,3>
 		return this->operator [](1);
 	}
 	inline T y() const {
-	return this->operator [](1);
+		return this->operator [](1);
 	}
 
 	inline T& z() {
@@ -92,16 +108,95 @@ struct Vertex : public Vector<T,3>
 		this->operator [](2) *= zfac;
 	}
 
-	static Vertex crossProduct(const Vertex& lhs, const Vertex& rhs)
+	Vertex crossProduct(const Vertex& rhs) const
 	{
-		return Vertex(lhs.y() * rhs.z() - lhs.z() * rhs.y(),
-			      lhs.z() * rhs.x() - lhs.x() * rhs.z(),
-			      lhs.x() * rhs.y() - lhs.y() * rhs.x());
+		return Vertex(y() * rhs.z() - z() * rhs.y(),
+			      z() * rhs.x() - x() * rhs.z(),
+			      x() * rhs.y() - y() * rhs.x());
 	}
 
-	T operator *(const Vertex& rhs) const
+	T dotProduct(const Vertex& rhs) const
 	{
 		return x() * rhs.x() + y() * rhs.y() + z() * rhs.z();
+	}
+};
+
+template <typename T, size_t COMPONENTS = 4>
+struct Vertex4 : public Vector<T, COMPONENTS>
+{
+	Vertex4()
+	{
+		x() = 0;
+		y() = 0;
+		z() = 0;
+		w() = 0;
+	}
+
+	Vertex4(const T x, const T y, const T z, const T w)
+	{
+		x() = x;
+		y() = y;
+		z() = z;
+		w() = w;
+	}
+
+	Vertex4(const Vertex4& rhs): Vector<T, COMPONENTS>(rhs) {}
+	Vertex4(const Vertex<T>& rhs): Vector<T, COMPONENTS>()
+	{
+		x() = rhs.x();
+		y() = rhs.y();
+		z() = rhs.z();
+		w() = 0;
+	}
+
+	Vertex4& operator = (const Vertex4& rhs)
+	{
+		Vector<T, COMPONENTS>::operator=(rhs);
+		return *this;
+	}
+
+	inline T& x() {
+		return this->operator [](0);
+	}
+	inline T x() const {
+		return this->operator [](0);
+	}
+
+	inline T& y() {
+		return this->operator [](1);
+	}
+	inline T y() const {
+		return this->operator [](1);
+	}
+
+	inline T& z() {
+		return this->operator [](2);
+	}
+	inline T z() const {
+		return this->operator [](2);
+	}
+
+	T& w() {
+		return this->operator [](3);
+	}
+	T w() const {
+		return this->operator [](3);
+	}
+
+	Vertex<T> xyz()
+	{
+		return Vertex<T>(x(), y(), z());
+	}
+
+	Vertex<T> swizzle(size_t x, size_t y, size_t z)
+	{
+		return Vertex<T>(this->operator [](x), this->operator [](y), this->operator [](z));
+	}
+
+	Vertex4 swizzle(size_t x, size_t y, size_t z, size_t w)
+	{
+		return Vertex4(this->operator [](x), this->operator [](y),
+			       this->operator [](z), this->operator [](w));
 	}
 };
 

@@ -140,6 +140,28 @@ struct Vector
 		return tmpV;
 	}
 
+	Vector operator * (const Vector& rhs) const
+	{
+		unsigned i;
+		Vector tmpV;
+		for (i = 0; i < COMPONENTS; ++i)
+		{
+			tmpV.component[i] = component[i] * rhs.component[i];
+		}
+		return tmpV;
+	}
+
+	Vector operator * (const T& s) const
+	{
+		unsigned i;
+		Vector tmpV;
+		for (i = 0; i < COMPONENTS; ++i)
+		{
+			tmpV.component[i] = component[i] * s;
+		}
+		return tmpV;
+	}
+
 	Vector operator / (const T& s) const
 	{
 		unsigned i;

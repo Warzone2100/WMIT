@@ -45,10 +45,10 @@
 
 WZMVertex normalizeVector(const WZMVertex& ver)
 {
-	GLfloat sq = ver * ver;
+	GLfloat sq = ver.dotProduct(ver);
 	if (sq == 0.0f)
 		return WZMVertex();
-	return WZMVertex(ver / sqrt(sq));
+	return ver / sqrt(sq);
 }
 
 struct compareWZMPoint_less_wEps: public std::binary_function<WZMPoint&, WZMPoint&, bool>
@@ -121,8 +121,7 @@ Mesh::Mesh(const Pie3Level& p3)
 	std::vector<unsigned>::iterator itMap;
 
 	IndexedTri iTri;
-	WZMVertex wzmVert, tmpNrm;
-	WZMUV tmpUv;
+	WZMVertex tmpNrm;
 
 	defaultConstructor();
 
@@ -137,16 +136,13 @@ Mesh::Mesh(const Pie3Level& p3)
 	// For each pie3 polygon
 	for (itL = p3.m_polygons.begin(); itL != p3.m_polygons.end(); ++itL)
 	{
-		tmpNrm = normalizeVector(WZMVertex::crossProduct(WZMVertex(p3.m_points[itL->getIndex(1)]) - WZMVertex(p3.m_points[itL->getIndex(0)]),
-							      WZMVertex(p3.m_points[itL->getIndex(2)]) - WZMVertex(p3.m_points[itL->getIndex(0)])));;
+		tmpNrm = normalizeVector(WZMVertex(WZMVertex(p3.m_points[itL->getIndex(1)]) - WZMVertex(p3.m_points[itL->getIndex(0)]))
+					 .crossProduct(WZMVertex(p3.m_points[itL->getIndex(2)]) - WZMVertex(p3.m_points[itL->getIndex(0)])));;
 
 		// For all 3 vertices of the triangle
 		for (int i = 0; i < 3; ++i)
 		{
-			wzmVert = p3.m_points[itL->getIndex(i)];
-			tmpUv = itL->getUV(i, 0);
-
-			inResult = tupleSet.insert(WZMPoint(wzmVert, tmpUv, tmpNrm));
+			inResult = tupleSet.insert(WZMPoint(p3.m_points[itL->getIndex(i)], itL->getUV(i, 0), tmpNrm));
 
 			if (!inResult.second)
 			{
@@ -158,12 +154,10 @@ Mesh::Mesh(const Pie3Level& p3)
 				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
 				mapping.insert(itMap, vertices());
 				iTri.operator[](i) = vertices();
-				m_vertexArray.push_back(wzmVert);
-				m_textureArray.push_back(tmpUv);
-				m_normalArray.push_back(tmpNrm);
+				addPoint(*inResult.first);
 			}
 		}
-		m_indexArray.push_back(iTri);
+		addIndices(iTri);
 	}
 
 	std::list<Pie3Connector>::const_iterator itC;
@@ -176,6 +170,7 @@ Mesh::Mesh(const Pie3Level& p3)
                                   itC->pos.operator[](2)));
 	}
 
+	finishImport();
 	recalculateBoundData();
 }
 
@@ -184,7 +179,7 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 	const bool swapYZ = true;
 	const bool reverseWinding = true;
 	const bool invertV = true;
-	const bool transform = true;
+	const bool transform = false;
 
 	typedef std::set<WZMPoint, compareWZMPoint_less_wEps> t_tupleSet;
 	t_tupleSet tupleSet;
@@ -351,9 +346,7 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
 				mapping.insert(itMap, vertices());
 				idx[j] = vertices();
-				m_vertexArray.push_back(tmpVert);
-				m_textureArray.push_back(tmpUV);
-				m_normalArray.push_back(tmpNorm);
+				addPoint(*inResult.first);
 			}
 		}
 
@@ -362,11 +355,12 @@ Mesh::Mesh(const Lib3dsMesh& mesh3ds)
 			std::swap(idx.b(), idx.c());
 		}
 
-		m_indexArray.push_back(idx);
+		addIndices(idx);
 	}
 
 	delete[] normals;
 
+	finishImport();
 	recalculateBoundData();
 
 	// TODO: Check if 3DS animation data can be used with our Frames
@@ -500,6 +494,7 @@ bool Mesh::read(std::istream& in)
 	reservePoints(vertices);
 
 	WZMVertex vert, normal;
+	WZMVertex4 tangent;
 	WZMUV uv;
 
 	for (; vertices > 0; --vertices)
@@ -536,6 +531,15 @@ bool Mesh::read(std::istream& in)
 			return false;
 		}
 		m_normalArray.push_back(normal);
+
+		in >> tangent.x() >> tangent.y() >> tangent.z() >> tangent.w();
+		if (in.fail())
+		{
+			std::cerr << "Mesh::read - Error reading t";
+			clear();
+			return false;
+		}
+		m_tangentArray.push_back(tangent);
 	}
 
 	in >> str;
@@ -602,27 +606,23 @@ void Mesh::write(std::ostream &out) const
 	out << WZM_MESH_DIRECTIVE_INDICES << " " << indices() << '\n';
 
 	out << "VERTEXARRAY\n" ;
-	std::vector<WZMVertex>::const_iterator vertIt, normIt;
-	std::vector<WZMUV>::const_iterator texIt;
 
-	for (vertIt = m_vertexArray.begin(), texIt = m_textureArray.begin(), normIt = m_normalArray.begin();
-	     vertIt < m_vertexArray.end();
-	     ++vertIt, ++texIt, ++normIt)
+	for (unsigned int i = 0; i < vertices(); ++i)
 	{
 		out << '\t';
-		out		<< vertIt->x() << ' ' << vertIt->y() << ' ' << vertIt->z() << ' '
-				<< texIt->u() << ' ' << texIt->v() << ' '
-				<< normIt->x() << ' ' << normIt->y() << ' ' << normIt->z() << '\n' ;
+		out << m_vertexArray[i].x() << ' ' << m_vertexArray[i].y() << ' ' << m_vertexArray[i].z() << ' ';
+		out << m_textureArray[i].u() << ' ' << m_textureArray[i].v() << ' ';
+		out << m_normalArray[i].x() << ' ' << m_normalArray[i].y() << ' ' << m_normalArray[i].z() << ' ';
+		out << m_tangentArray[i].x() << ' ' << m_tangentArray[i].y() << ' ' << m_tangentArray[i].z() << ' '
+		    << m_tangentArray[i].w() << '\n';
 	}
 
 	out << "INDEXARRAY\n";
 	std::vector<IndexedTri>::const_iterator indIt;
-	for (indIt=m_indexArray.begin(); indIt < m_indexArray.end(); indIt++ )
+	for (indIt = m_indexArray.begin(); indIt < m_indexArray.end(); ++indIt)
 	{
 		out << '\t';
-		out		<< indIt->a() << ' '
-				<< indIt->b() << ' '
-				<< indIt->c() << '\n';
+		out << indIt->a() << ' ' << indIt->b() << ' ' << indIt->c() << '\n';
 	}
 
 	out <<"CONNECTORS " << m_connectors.size() << "\n";
@@ -684,14 +684,13 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
 				mapping.insert(itMap, vertices());
 				tmpTri[i] = vertices();
-				m_vertexArray.push_back(verts[itFaces->tri[i]-1]);
-				m_textureArray.push_back(tmpUv);
-				m_normalArray.push_back(tmpNrm);
+				addPoint(*inResult.first);
 			}
 		}
-		m_indexArray.push_back(tmpTri);
+		addIndices(tmpTri);
 	}
 
+	finishImport();
 	recalculateBoundData();
 
 	return true;
@@ -1008,10 +1007,14 @@ void Mesh::clear()
 {
 	m_name.clear();
 	m_frameArray.clear();
+
 	m_vertexArray.clear();
 	m_textureArray.clear();
 	m_normalArray.clear();
+	m_tangentArray.clear();
+	m_bitangentArray.clear();
 	m_indexArray.clear();
+
 	m_connectors.clear();
 	m_teamColours = false;
 }
@@ -1021,11 +1024,83 @@ inline void Mesh::reservePoints(const unsigned size)
 	m_vertexArray.reserve(size);
 	m_textureArray.reserve(size);
 	m_normalArray.reserve(size);
+	m_tangentArray.reserve(size);
+	m_bitangentArray.reserve(size);
 }
 
 inline void Mesh::reserveIndices(const unsigned size)
 {
 	m_indexArray.reserve(size);
+}
+
+void Mesh::addPoint(const WZMPoint &point)
+{
+	m_vertexArray.push_back(std::tr1::get<0>(point));
+	m_textureArray.push_back(std::tr1::get<1>(point));
+	m_normalArray.push_back(std::tr1::get<2>(point));
+	m_tangentArray.resize(m_tangentArray.size() + 1);
+	m_bitangentArray.resize(m_bitangentArray.size() + 1);
+}
+
+void Mesh::addIndices(const IndexedTri &trio)
+{
+	if (trio.a() < vertices() && trio.b() < vertices() && trio.c() < vertices())
+	{
+		m_indexArray.push_back(trio);
+
+		// TB-calculation part
+
+		// Shortcuts for vertices
+		WZMVertex &v0 = m_vertexArray[trio.a()];
+		WZMVertex &v1 = m_vertexArray[trio.b()];
+		WZMVertex &v2 = m_vertexArray[trio.c()];
+
+		// Shortcuts for UVs
+		WZMUV &uv0 = m_textureArray[trio.a()];
+		WZMUV &uv1 = m_textureArray[trio.b()];
+		WZMUV &uv2 = m_textureArray[trio.c()];
+
+		// Edges of the triangle : postion delta
+		WZMVertex deltaPos1 = v1 - v0;
+		WZMVertex deltaPos2 = v2 - v0;
+
+		// UV delta
+		WZMUV deltaUV1 = uv1 - uv0;
+		WZMUV deltaUV2 = uv2 - uv0;
+
+		float r = 1.0f / (deltaUV1.u() * deltaUV2.v() - deltaUV1.v() * deltaUV2.u());
+		WZMVertex4 tangent = WZMVertex((deltaPos1 * deltaUV2.v() - deltaPos2 * deltaUV1.v()) * r);
+		WZMVertex bitangent = (deltaPos2 * deltaUV1.u() - deltaPos1 * deltaUV2.u()) * r;
+
+		m_tangentArray[trio.a()] += tangent;
+		m_tangentArray[trio.b()] += tangent;
+		m_tangentArray[trio.c()] += tangent;
+
+		m_bitangentArray[trio.a()] += bitangent;
+		m_bitangentArray[trio.b()] += bitangent;
+		m_bitangentArray[trio.c()] += bitangent;
+	}
+}
+
+void Mesh::finishImport()
+{
+	for (unsigned int i = 0; i < vertices(); ++i)
+	{
+		WZMVertex n = m_normalArray[i];
+
+		// Gram-Schmidt orthogonalize
+		m_tangentArray[i] = WZMVertex4(normalizeVector(m_tangentArray[i].xyz() - n * n.dotProduct(m_tangentArray[i].xyz())));
+
+		// Calculate handedness
+		if (n.crossProduct(m_tangentArray[i].xyz()).dotProduct(m_bitangentArray[i]) < 0.0f)
+		{
+			m_tangentArray[i].w() = -1.0f;
+		}
+		else
+		{
+			m_tangentArray[i].w() = 1.0f;
+		}
+	}
 }
 
 void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
