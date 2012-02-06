@@ -106,7 +106,7 @@ bool WZM::read(std::istream& in)
 		std::cerr << "WZM::read - Error reading WZM version";
 		return false;
 	}
-	else if(i!=2)
+	else if(i != WZM_MODEL_VERSION_FD)
 	{
 		std::cerr << "WZM::read - Unsupported WZM version " << i;
 		return false;
@@ -188,7 +188,7 @@ void WZM::write(std::ostream& out) const
 {
 	std::vector<Mesh>::const_iterator it;
 
-	out << "WZM\t" << version() << '\n';
+	out << "WZM " << version() << '\n';
 
 	// TEXTURE
 	if (isTextureSet(WZM_TEX_DIFFUSE))
@@ -592,7 +592,7 @@ bool WZM::exportTo3DS(std::string fileName) const
 
 int WZM::version() const
 {
-	return 2;
+	return WZM_MODEL_VERSION_FD;
 }
 
 int WZM::meshes() const
