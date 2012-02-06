@@ -53,6 +53,7 @@ public:
 
 	void disableShaders();
 	static QString shaderTypeToString(wz_shader_type_t type);
+	bool isFixedPipelineRenderer() const;
 
 	// GLTexture controls
 	void loadGLRenderTexture(wzm_texture_type_t type, QString fileName);
@@ -63,7 +64,6 @@ public:
 	// TCMask part
 	void setTCMaskEnvironment(const QColor& tcmaskColour);
 	void resetTCMaskEnvironment();
-	//void setCenterPointState(bool draw = true);
 signals:
 	void meshCountChanged(int, QStringList);
 

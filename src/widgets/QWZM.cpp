@@ -100,6 +100,13 @@ void QWZM::render()
 		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
 		glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArray[0]);
 
+		if (!isFixedPipelineRenderer())
+		{
+			glClientActiveTexture(GL_TEXTURE1);
+			glTexCoordPointer(4, GL_FLOAT, 0, &msh.m_tangentArray);
+			glClientActiveTexture(GL_TEXTURE0);
+		}
+
 		glNormalPointer(GL_FLOAT, 0, &msh.m_normalArray[0]);
 
 		CPP0X_FEATURED(static_assert(sizeof(WZMVertex) == sizeof(GLfloat)*3, "WZMVertex has become fat."));
@@ -346,6 +353,11 @@ QString QWZM::shaderTypeToString(wz_shader_type_t type)
 	}
 
 	return str;
+}
+
+inline bool QWZM::isFixedPipelineRenderer() const
+{
+	return getActiveShader() == WZ_SHADER_NONE;
 }
 
 static inline void activateAndBindTexture(int unit, GLuint texture)

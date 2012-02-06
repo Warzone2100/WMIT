@@ -44,6 +44,7 @@ public:
 
 		return false;
 	}
+	virtual int getActiveShader() const {return m_active_shader;}
 
 protected:
 	virtual bool initShader(const int type) = 0;
