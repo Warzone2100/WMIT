@@ -22,23 +22,46 @@
 #include <QTextCodec>
 #include <QSettings>
 
+#include <fstream>
+
 #include "MainWindow.hpp"
+#include "WZM.hpp"
+#include "Pie.hpp"
 #include "wmit.h"
 
 int main(int argc, char *argv[])
 {
 	QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
-	//	if (command line mode)
-	//		QCoreApplication a(argc, argv);
-	//		TODO: Command line functionality
-	//	else // gui mode1
-	QApplication a(argc, argv);
-	a.setApplicationName(WMIT_APPNAME);
-	a.setOrganizationName(WMIT_ORG);
-	QSettings::setDefaultFormat(QSettings::IniFormat);
 
-	MainWindow w;
-	w.show();
+	if (argc > 2)
+	{
+		// command line conversion mode
+		QString inname = argv[1];
+		QString outname = argv[2];
 
-	return a.exec();
+		wmit_filetype_t outtype;
+
+		if (!MainWindow::guessModelTypeFromFilename(outname, outtype))
+			return 1;
+
+		WZM model;
+
+		if (!MainWindow::loadModel(inname, model))
+			return 1;
+
+		return !MainWindow::saveModel(outname, model, outtype);
+	}
+	else
+	{
+		QApplication a(argc, argv);
+
+		a.setApplicationName(WMIT_APPNAME);
+		a.setOrganizationName(WMIT_ORG);
+		QSettings::setDefaultFormat(QSettings::IniFormat);
+
+		MainWindow w;
+		w.show();
+
+		return a.exec();
+	}
 }

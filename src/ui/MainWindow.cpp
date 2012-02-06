@@ -35,7 +35,6 @@
 #include <QVariant>
 
 #include "Pie.hpp"
-#include "wmit.h"
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -99,6 +98,90 @@ void MainWindow::clear()
 	ui->actionAppend_Model->setDisabled(true);
 }
 
+bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_t& type)
+{
+	QString ext = fname.right(fname.size() - fname.lastIndexOf('.') - 1);
+
+	if (ext.compare(QString("wzm"), Qt::CaseInsensitive) == 0)
+	{
+		type = WMIT_FT_WZM;
+	}
+	else if (ext.compare(QString("3ds"), Qt::CaseInsensitive) == 0)
+	{
+		type = WMIT_FT_3DS;
+	}
+	else if (ext.compare(QString("obj"), Qt::CaseInsensitive) == 0)
+	{
+		type = WMIT_FT_OBJ;
+	}
+	else if (ext.compare(QString("pie"), Qt::CaseInsensitive) == 0)
+	{
+		type = WMIT_FT_PIE;
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool MainWindow::saveModel(const QString &file, const WZM &model, const wmit_filetype_t &type)
+{
+	std::ofstream out;
+	out.open(file.toLocal8Bit().constData());
+
+	switch (type)
+	{
+	case WMIT_FT_WZM:
+		model.write(out);
+		break;
+	case WMIT_FT_3DS:
+		out.close();
+		model.exportTo3DS(std::string(file.toLocal8Bit().constData()));
+		break;
+	case WMIT_FT_OBJ:
+		model.exportToOBJ(out);
+		break;
+	case WMIT_FT_PIE:
+	default:
+		Pie3Model p3 = model;
+		p3.write(out);
+	}
+
+	out.close();
+
+	return true;
+}
+
+bool MainWindow::saveModel(const QString &file, const QWZM &model, const wmit_filetype_t &type)
+{
+	std::ofstream out;
+	out.open(file.toLocal8Bit().constData());
+
+	switch (type)
+	{
+	case WMIT_FT_WZM:
+		model.write(out);
+		break;
+	case WMIT_FT_3DS:
+		out.close();
+		model.exportTo3DS(std::string(file.toLocal8Bit().constData()));
+		break;
+	case WMIT_FT_OBJ:
+		model.exportToOBJ(out);
+		break;
+	case WMIT_FT_PIE:
+	default:
+		Pie3Model p3 = model;
+		p3.write(out);
+	}
+
+	out.close();
+
+	return true;
+}
+
 void MainWindow::changeEvent(QEvent *e)
 {
 	QMainWindow::changeEvent(e);
@@ -114,37 +197,17 @@ void MainWindow::changeEvent(QEvent *e)
 
 bool MainWindow::loadModel(const QString& file, WZM& model)
 {
-	QFileInfo modelFileNfo(file);
-
-	if (!modelFileNfo.exists())
-	{
-		return false;
-	}
-
-
 	wmit_filetype_t type;
 
-	if (modelFileNfo.completeSuffix().compare(QString("wzm"), Qt::CaseInsensitive) == 0)
+	if (!guessModelTypeFromFilename(file, type))
 	{
-		type = WMIT_FT_WZM;
-	}
-	else if (modelFileNfo.completeSuffix().compare(QString("3ds"), Qt::CaseInsensitive) == 0)
-	{
-		type = WMIT_FT_3DS;
-	}
-	else if (modelFileNfo.completeSuffix().compare(QString("obj"), Qt::CaseInsensitive) == 0)
-	{
-		type = WMIT_FT_OBJ;
-	}
-	else
-	{
-		type = WMIT_FT_PIE;
+		return false;
 	}
 
 	bool read_success = false;
 	std::ifstream f;
 
-	f.open(modelFileNfo.absoluteFilePath().toLocal8Bit(), std::ios::in | std::ios::binary);
+	f.open(file.toLocal8Bit(), std::ios::in | std::ios::binary);
 
 	switch (type)
 	{
@@ -152,7 +215,8 @@ bool MainWindow::loadModel(const QString& file, WZM& model)
 		read_success = model.read(f);
 		break;
 	case WMIT_FT_3DS:
-		read_success = model.importFrom3DS(std::string(modelFileNfo.absoluteFilePath().toLocal8Bit().constData()));
+		f.close();
+		read_success = model.importFrom3DS(std::string(file.toLocal8Bit().constData()));
 		break;
 	case WMIT_FT_OBJ:
 		read_success = model.importFromOBJ(f);
@@ -278,10 +342,6 @@ void MainWindow::on_actionSave_triggered()
 void MainWindow::on_actionSave_As_triggered()
 {
 	QFileDialog* fDialog = new QFileDialog();
-	std::ofstream out;
-	QFileInfo nfo;
-
-	wmit_filetype_t type;
 
 	fDialog->setFileMode(QFileDialog::AnyFile);
 	fDialog->setAcceptMode(QFileDialog::AcceptSave);
@@ -303,23 +363,10 @@ void MainWindow::on_actionSave_As_triggered()
 	m_pathExport = fDialog->directory().absolutePath();
 	m_settings->setValue(WMIT_SETTINGS_EXPORTVAL, m_pathExport);
 
-	nfo.setFile(fDialog->selectedFiles().first());
-
-	if (nfo.completeSuffix().compare(QString("wzm"), Qt::CaseInsensitive) == 0)
+	wmit_filetype_t type;
+	if (!guessModelTypeFromFilename(fDialog->selectedFiles().first(), type))
 	{
-		type = WMIT_FT_WZM;
-	}
-	else if (nfo.completeSuffix().compare(QString("3ds"), Qt::CaseInsensitive) == 0)
-	{
-		type = WMIT_FT_3DS;
-	}
-	else if (nfo.completeSuffix().compare(QString("obj"), Qt::CaseInsensitive) == 0)
-	{
-		type = WMIT_FT_OBJ;
-	}
-	else
-	{
-		type = WMIT_FT_PIE;
+		return;
 	}
 
 /* Disabled till ready
@@ -347,26 +394,7 @@ void MainWindow::on_actionSave_As_triggered()
 	exportDialog = NULL;
 */
 
-	if (type == WMIT_FT_WZM)
-	{
-		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
-		m_model.write(out);
-	}
-	else if(type == WMIT_FT_3DS)
-	{
-		m_model.exportTo3DS(std::string(nfo.absoluteFilePath().toLocal8Bit().constData()));
-	}
-	else if(type == WMIT_FT_OBJ)
-	{
-		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
-		m_model.exportToOBJ(out);
-	}
-	else //if(type == WMIT_FT_PIE)
-	{
-		out.open(nfo.absoluteFilePath().toLocal8Bit().constData());
-		Pie3Model p3 = m_model;
-        p3.write(out);
-	}
+	saveModel(fDialog->selectedFiles().first(), m_model, type);
 }
 
 void MainWindow::_on_viewerInitialized()
