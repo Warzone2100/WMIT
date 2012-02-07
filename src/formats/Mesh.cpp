@@ -136,6 +136,16 @@ Mesh::Mesh(const Pie3Level& p3)
 	// For each pie3 polygon
 	for (itL = p3.m_polygons.begin(); itL != p3.m_polygons.end(); ++itL)
 	{
+		// pie2 integer-type problem?
+		if (itL->getIndex(0) == itL->getIndex(1) || itL->getIndex(1) == itL->getIndex(2) || itL->getIndex(0) == itL->getIndex(2))
+		{
+			continue;
+		}
+		if (itL->m_texCoords[0] == itL->m_texCoords[1] || itL->m_texCoords[1] == itL->m_texCoords[2] || itL->m_texCoords[0] == itL->m_texCoords[2])
+		{
+			continue;
+		}
+
 		tmpNrm = normalizeVector(WZMVertex(WZMVertex(p3.m_points[itL->getIndex(1)]) - WZMVertex(p3.m_points[itL->getIndex(0)]))
 					 .crossProduct(WZMVertex(p3.m_points[itL->getIndex(2)]) - WZMVertex(p3.m_points[itL->getIndex(0)])));;
 
@@ -1044,42 +1054,49 @@ void Mesh::addPoint(const WZMPoint &point)
 
 void Mesh::addIndices(const IndexedTri &trio)
 {
-	if (trio.a() < vertices() && trio.b() < vertices() && trio.c() < vertices())
+	// out of index
+	if (trio.a() >= vertices() && trio.b() >= vertices() && trio.c() >= vertices())
 	{
-		m_indexArray.push_back(trio);
-
-		// TB-calculation part
-
-		// Shortcuts for vertices
-		WZMVertex &v0 = m_vertexArray[trio.a()];
-		WZMVertex &v1 = m_vertexArray[trio.b()];
-		WZMVertex &v2 = m_vertexArray[trio.c()];
-
-		// Shortcuts for UVs
-		WZMUV &uv0 = m_textureArray[trio.a()];
-		WZMUV &uv1 = m_textureArray[trio.b()];
-		WZMUV &uv2 = m_textureArray[trio.c()];
-
-		// Edges of the triangle : postion delta
-		WZMVertex deltaPos1 = v1 - v0;
-		WZMVertex deltaPos2 = v2 - v0;
-
-		// UV delta
-		WZMUV deltaUV1 = uv1 - uv0;
-		WZMUV deltaUV2 = uv2 - uv0;
-
-		float r = 1.0f / (deltaUV1.u() * deltaUV2.v() - deltaUV1.v() * deltaUV2.u());
-		WZMVertex4 tangent = WZMVertex((deltaPos1 * deltaUV2.v() - deltaPos2 * deltaUV1.v()) * r);
-		WZMVertex bitangent = (deltaPos2 * deltaUV1.u() - deltaPos1 * deltaUV2.u()) * r;
-
-		m_tangentArray[trio.a()] += tangent;
-		m_tangentArray[trio.b()] += tangent;
-		m_tangentArray[trio.c()] += tangent;
-
-		m_bitangentArray[trio.a()] += bitangent;
-		m_bitangentArray[trio.b()] += bitangent;
-		m_bitangentArray[trio.c()] += bitangent;
+		return;
 	}
+
+	m_indexArray.push_back(trio);
+
+	// TB-calculation part
+
+	// Shortcuts for vertices
+	WZMVertex &v0 = m_vertexArray[trio.a()];
+	WZMVertex &v1 = m_vertexArray[trio.b()];
+	WZMVertex &v2 = m_vertexArray[trio.c()];
+
+	// Shortcuts for UVs
+	WZMUV &uv0 = m_textureArray[trio.a()];
+	WZMUV &uv1 = m_textureArray[trio.b()];
+	WZMUV &uv2 = m_textureArray[trio.c()];
+
+	// Edges of the triangle : postion delta
+	WZMVertex deltaPos1 = v1 - v0;
+	WZMVertex deltaPos2 = v2 - v0;
+
+	// UV delta
+	WZMUV deltaUV1 = uv1 - uv0;
+	WZMUV deltaUV2 = uv2 - uv0;
+
+	// check for nan
+	float r = (deltaUV1.u() * deltaUV2.v() - deltaUV1.v() * deltaUV2.u());
+	if (r)
+		r = 1.f / r;
+
+	WZMVertex4 tangent = WZMVertex((deltaPos1 * deltaUV2.v() - deltaPos2 * deltaUV1.v()) * r);
+	WZMVertex bitangent = (deltaPos2 * deltaUV1.u() - deltaPos1 * deltaUV2.u()) * r;
+
+	m_tangentArray[trio.a()] += tangent;
+	m_tangentArray[trio.b()] += tangent;
+	m_tangentArray[trio.c()] += tangent;
+
+	m_bitangentArray[trio.a()] += bitangent;
+	m_bitangentArray[trio.b()] += bitangent;
+	m_bitangentArray[trio.c()] += bitangent;
 }
 
 void Mesh::finishImport()
@@ -1106,7 +1123,7 @@ void Mesh::finishImport()
 void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
 {
 	std::vector<WZMVertex>::iterator vertIt;
-	for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt )
+	for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt)
 	{
 		vertIt->scale(x, y, z);
 	}

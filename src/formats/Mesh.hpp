@@ -106,8 +106,6 @@ public:
 	void rmConnector (int index);
 	int connectors() const;
 
-
-
 	unsigned vertices() const;
 	unsigned indices() const;
 	unsigned frames() const;
