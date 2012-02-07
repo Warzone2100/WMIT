@@ -183,17 +183,17 @@ struct Vertex4 : public Vector<T, COMPONENTS>
 		return this->operator [](3);
 	}
 
-	Vertex<T> xyz()
+	Vertex<T> xyz() const
 	{
 		return Vertex<T>(x(), y(), z());
 	}
 
-	Vertex<T> swizzle(size_t x, size_t y, size_t z)
+	Vertex<T> swizzle(size_t x, size_t y, size_t z) const
 	{
 		return Vertex<T>(this->operator [](x), this->operator [](y), this->operator [](z));
 	}
 
-	Vertex4 swizzle(size_t x, size_t y, size_t z, size_t w)
+	Vertex4 swizzle(size_t x, size_t y, size_t z, size_t w) const
 	{
 		return Vertex4(this->operator [](x), this->operator [](y),
 			       this->operator [](z), this->operator [](w));

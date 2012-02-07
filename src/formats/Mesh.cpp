@@ -1147,19 +1147,24 @@ void Mesh::mirrorUsingLocalCenter(int axis)
 
 void Mesh::mirrorFromPoint(const WZMVertex& point, int axis)
 {
-	std::vector<WZMVertex>::iterator vertIt;
-	for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt )
+	for (unsigned int i = 0; i < vertices(); ++i)
 	{
 		switch (axis)
 		{
 		case 0:
-			vertIt->x() = -vertIt->x() + 2 * point.x();
+			m_vertexArray[i].x() = -m_vertexArray[i].x() + 2 * point.x();
+			m_normalArray[i].x() = -m_normalArray[i].x();
+			m_tangentArray[i].x() = -m_tangentArray[i].x();
 			break;
 		case 1:
-			vertIt->y() = -vertIt->y() + 2 * point.y();
+			m_vertexArray[i].y() = -m_vertexArray[i].y() + 2 * point.y();
+			m_normalArray[i].y() = -m_normalArray[i].y();
+			m_tangentArray[i].y() = -m_tangentArray[i].y();
 			break;
 		default:
-			vertIt->z() = -vertIt->z() + 2 * point.z();
+			m_vertexArray[i].z() = -m_vertexArray[i].z() + 2 * point.z();
+			m_normalArray[i].z() = -m_normalArray[i].z();
+			m_tangentArray[i].z() = -m_tangentArray[i].z();
 		}
 	}
 
@@ -1178,9 +1183,6 @@ void Mesh::mirrorFromPoint(const WZMVertex& point, int axis)
 			itC->m_pos.operator[](2) = -itC->m_pos.operator[](2) + 2 * point.z();
 		}
 	}
-
-	// for convenience
-	reverseWinding();
 
 	recalculateBoundData();
 }

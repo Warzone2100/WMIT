@@ -740,20 +740,16 @@ void WZM::mirror(int axis, int mesh)
 			switch (axis)
 			{
 			case 3:
-				it->scale(-1., 1., 1.);
-				it->reverseWinding();
-				break;
 			case 4:
-				it->scale(1., -1., 1.);
-				it->reverseWinding();
-				break;
 			case 5:
-				it->scale(1., 1., -1.);
-				it->reverseWinding();
+				it->mirrorFromPoint(WZMVertex(), axis - 3);
 				break;
 			default:
 				it->mirrorFromPoint(center, axis);
 			}
+
+			// for convenience
+			it->reverseWinding();
 		}
 	}
 	else
@@ -762,20 +758,16 @@ void WZM::mirror(int axis, int mesh)
 		switch (axis)
 		{
 		case 3:
-			meshobj.scale(-1., 1., 1.);
-			meshobj.reverseWinding();
-			break;
 		case 4:
-			meshobj.scale(1., -1., 1.);
-			meshobj.reverseWinding();
-			break;
 		case 5:
-			meshobj.scale(1., 1., -1.);
-			meshobj.reverseWinding();
+			meshobj.mirrorFromPoint(WZMVertex(), axis - 3);
 			break;
 		default:
 			meshobj.mirrorUsingLocalCenter(axis);
 		}
+
+		// for convenience
+		meshobj.reverseWinding();
 	}
 }
 
