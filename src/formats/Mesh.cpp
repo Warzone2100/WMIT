@@ -258,29 +258,44 @@ bool Mesh::read(std::istream& in)
 	if (in.fail() || str.compare(WZM_MESH_SIGNATURE) != 0)
 	{
 		std::cerr << "Mesh::read - Expected " << WZM_MESH_SIGNATURE << " directive found " << str;
-		clear();
 		return false;
 	}
 
 	if (!isValidWzName(m_name))
 	{
-		std::cerr << "Mesh::read - Invalid Mesh name.";
+		std::cerr << "Mesh::read - Invalid mesh name: " << m_name;
 		m_name = std::string();
 	}
 
 	in >> str >> m_teamColours;
-	if (in.fail() || str.compare("TEAMCOLOURS") != 0)
+	if (in.fail() || str.compare(WZM_MESH_DIRECTIVE_TEAMCOLOURS) != 0)
 	{
-		std::cerr << "Mesh::read - Expected TEAMCOLOURS directive found " << str;
-		clear();
+		std::cerr << "Mesh::read - Expected " << WZM_MESH_DIRECTIVE_TEAMCOLOURS << " directive found " << str;
 		return false;
 	}
 
-	in >> str >> vertices;
-	if (in.fail() || str.compare("VERTICES") != 0)
+	in >> str;
+	if (in.fail() || str.compare(WZM_MESH_DIRECTIVE_MINMAXTSCEN) != 0)
 	{
-		std::cerr << "Mesh::read - Expected VERTICES directive found " << str;
-		clear();
+		std::cerr << "Mesh::read - Expected " << WZM_MESH_DIRECTIVE_MINMAXTSCEN << " directive found " << str;
+		return false;
+	}
+	else
+	{
+		// ignore those, they will be recalculated later (support for manual editing for example)
+		float f;
+		in >> f >> f >> f >> f >> f >> f >> f >> f >> f;
+		if (in.fail())
+		{
+			std::cerr << "Mesh::read - Error reading minmaxtspcen values";
+			return false;
+		}
+	}
+
+	in >> str >> vertices;
+	if (in.fail() || str.compare(WZM_MESH_DIRECTIVE_VERTICES) != 0)
+	{
+		std::cerr << "Mesh::read - Expected " << WZM_MESH_DIRECTIVE_VERTICES << " directive found " << str;
 		return false;
 	}
 
@@ -288,15 +303,13 @@ bool Mesh::read(std::istream& in)
 	if (in.fail() || str.compare(WZM_MESH_DIRECTIVE_INDICES) != 0)
 	{
 		std::cerr << "Mesh::read - Expected " << WZM_MESH_DIRECTIVE_INDICES << " directive found " << str;
-		clear();
 		return false;
 	}
 
 	in >> str;
-	if (in.fail() || str.compare("VERTEXARRAY") !=0)
+	if (in.fail() || str.compare(WZM_MESH_DIRECTIVE_VERTEXARRAY) != 0)
 	{
-		std::cerr << "Mesh::read - Expected VERTEXARRAY directive found " << str;
-		clear();
+		std::cerr << "Mesh::read - Expected " << WZM_MESH_DIRECTIVE_VERTEXARRAY << " directive found " << str;
 		return false;
 	}
 
@@ -312,7 +325,6 @@ bool Mesh::read(std::istream& in)
 		if (in.fail())
 		{
 			std::cerr << "Mesh::read - Error reading vertex";
-			clear();
 			return false;
 		}
 		m_vertexArray.push_back(vert);
@@ -321,13 +333,11 @@ bool Mesh::read(std::istream& in)
 		if (in.fail())
 		{
 			std::cerr << "Mesh::read - Error reading uv coords.";
-			clear();
 			return false;
 		}
 		else if (uv.u() > 1 || uv.v() > 1)
 		{
 			std::cerr << "Mesh::read - Error uv coords out of range";
-			clear();
 			return false;
 		}
 		m_textureArray.push_back(uv);
@@ -336,7 +346,6 @@ bool Mesh::read(std::istream& in)
 		if (in.fail())
 		{
 			std::cerr << "Mesh::read - Error reading normal";
-			clear();
 			return false;
 		}
 		m_normalArray.push_back(normal);
@@ -345,17 +354,15 @@ bool Mesh::read(std::istream& in)
 		if (in.fail())
 		{
 			std::cerr << "Mesh::read - Error reading t";
-			clear();
 			return false;
 		}
 		m_tangentArray.push_back(tangent);
 	}
 
 	in >> str;
-	if (str.compare("INDEXARRAY") != 0)
+	if (str.compare(WZM_MESH_DIRECTIVE_INDEXARRAY) != 0)
 	{
-		std::cerr << "Mesh::read - Expected INDEXARRAY directive found " << str;
-		clear();
+		std::cerr << "Mesh::read - Expected " << WZM_MESH_DIRECTIVE_INDEXARRAY << " directive found " << str;
 		return false;
 	}
 
@@ -369,17 +376,15 @@ bool Mesh::read(std::istream& in)
 		if (in.fail())
 		{
 			std::cerr << "Mesh::read - Error reading indices";
-			clear();
 			return false;
 		}
 		m_indexArray.push_back(tri);
 	}
 
 	in >> str >> i;
-	if (in.fail() || str.compare("CONNECTORS") != 0)
+	if (in.fail() || str.compare(WZM_MESH_DIRECTIVE_CONNECTORS) != 0)
 	{
-		std::cerr << "Mesh::read - Expected CONNECTORS directive found " << str;
-		clear();
+		std::cerr << "Mesh::read - Expected " << WZM_MESH_DIRECTIVE_CONNECTORS << " directive found " << str;
 		return false;
 	}
 
@@ -394,7 +399,6 @@ bool Mesh::read(std::istream& in)
 		if (in.fail())
 		{
 			std::cerr << "Mesh::read - Error reading connectors";
-			clear();
 			return false;
 		}
 		m_connectors.push_back(con);
@@ -411,11 +415,17 @@ void Mesh::write(std::ostream &out) const
 
 	// noboolalpha should be default...
 	out << WZM_MESH_DIRECTIVE_TEAMCOLOURS << " " << std::noboolalpha << teamColours() << '\n';
+
+	out << WZM_MESH_DIRECTIVE_MINMAXTSCEN << " "
+	    << m_mesh_aabb_min.x() << ' ' << m_mesh_aabb_min.y() << ' ' << m_mesh_aabb_min.z() << ' '
+	    << m_mesh_aabb_max.x() << ' ' << m_mesh_aabb_max.y() << ' ' << m_mesh_aabb_max.z() << ' '
+	    << m_mesh_tspcenter.x() << ' ' << m_mesh_tspcenter.y() << ' ' << m_mesh_tspcenter.z() << ' '
+	    << '\n';
+
 	out << WZM_MESH_DIRECTIVE_VERTICES << " " << vertices() << '\n';
 	out << WZM_MESH_DIRECTIVE_INDICES << " " << indices() << '\n';
 
-	out << "VERTEXARRAY\n" ;
-
+	out << WZM_MESH_DIRECTIVE_VERTEXARRAY << '\n';
 	for (unsigned int i = 0; i < vertices(); ++i)
 	{
 		out << '\t';
@@ -426,7 +436,7 @@ void Mesh::write(std::ostream &out) const
 		    << m_tangentArray[i].w() << '\n';
 	}
 
-	out << "INDEXARRAY\n";
+	out << WZM_MESH_DIRECTIVE_INDEXARRAY << '\n';
 	std::vector<IndexedTri>::const_iterator indIt;
 	for (indIt = m_indexArray.begin(); indIt < m_indexArray.end(); ++indIt)
 	{
@@ -434,7 +444,7 @@ void Mesh::write(std::ostream &out) const
 		out << indIt->a() << ' ' << indIt->b() << ' ' << indIt->c() << '\n';
 	}
 
-	out <<"CONNECTORS " << m_connectors.size() << "\n";
+	out << WZM_MESH_DIRECTIVE_CONNECTORS << " " << m_connectors.size() << "\n";
 	std::list<WZMConnector>::const_iterator conIt;
 	for (conIt = m_connectors.begin(); conIt != m_connectors.end(); ++conIt)
 	{
