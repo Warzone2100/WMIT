@@ -28,6 +28,8 @@
 #  define CPP0X_FEATURED(x) do {} while (0)
 #endif
 
+static const char tangentAtributeName[] = "tangent";
+
 const GLint QWZM::winding = GL_CCW;
 
 QWZM::QWZM(QObject *parent):
@@ -62,8 +64,23 @@ void QWZM::render()
 
 	glColor3f(1.f, 1.f, 1.f);
 
-	if (setupTextureUnits(m_active_shader))
-		bindShader(m_active_shader);
+	QGLShaderProgram* shader = 0;
+
+	// prepare shader data
+	if (setupTextureUnits(getActiveShader()))
+	{
+		if (!isFixedPipelineRenderer())
+		{
+			if (bindShader(getActiveShader()))
+			{
+				shader = m_shaderman->getShader(getActiveShader());
+				if (shader)
+				{
+					shader->enableAttributeArray(tangentAtributeName);
+				}
+			}
+		}
+	}
 
 	glClientActiveTexture(GL_TEXTURE0);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -100,11 +117,9 @@ void QWZM::render()
 		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
 		glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArray[0]);
 
-		if (!isFixedPipelineRenderer())
+		if (shader)
 		{
-			glClientActiveTexture(GL_TEXTURE1);
-			glTexCoordPointer(4, GL_FLOAT, 0, &msh.m_tangentArray);
-			glClientActiveTexture(GL_TEXTURE0);
+			shader->setAttributeArray(tangentAtributeName, (GLfloat*)&msh.m_tangentArray[0], 4);
 		}
 
 		glNormalPointer(GL_FLOAT, 0, &msh.m_normalArray[0]);
@@ -121,14 +136,19 @@ void QWZM::render()
 		}
 	}
 
+	// release shader data
+	if (shader)
+	{
+		shader->disableAttributeArray(tangentAtributeName);
+	}
+	releaseShader(getActiveShader());
+	clearTextureUnits(getActiveShader());
+
 	// set it back
 	if (frontFace != winding)
 	{
 		glFrontFace(frontFace);
 	}
-
-	releaseShader(m_active_shader);
-	clearTextureUnits(m_active_shader);
 
 	glPopMatrix();
 	glPopClientAttrib();
