@@ -1198,36 +1198,131 @@ void Mesh::reverseWinding()
 
 void Mesh::recalculateBoundData()
 {
-	WZMVertex weight, min, max;
+	WZMVertex weight, min, max, vxmin, vxmax, vymin, vymax, vzmin, vzmax;
 
-	if (vertices())
+	if (!vertices())
 	{
-		min = max = m_vertexArray.at(0);
-
-		std::vector<WZMVertex>::const_iterator vertIt;
-		for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt )
-		{
-			weight.x() += vertIt->x();
-			weight.y() += vertIt->y();
-			weight.z() += vertIt->z();
-
-			if (min.x() > vertIt->x()) min.x() = vertIt->x();
-			if (min.y() > vertIt->y()) min.y() = vertIt->y();
-			if (min.z() > vertIt->z()) min.z() = vertIt->z();
-
-			if (max.x() < vertIt->x()) max.x() = vertIt->x();
-			if (max.y() < vertIt->y()) max.y() = vertIt->y();
-			if (max.z() < vertIt->z()) max.z() = vertIt->z();
-		}
-
-		weight.x() /= vertices();
-		weight.y() /= vertices();
-		weight.z() /= vertices();
+		return;
 	}
+
+	min = max = vxmax = vymax = vzmax = vxmin = vymin = vzmin = m_vertexArray.at(0);
+
+	std::vector<WZMVertex>::const_iterator vertIt;
+	for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt)
+	{
+		weight.x() += vertIt->x();
+		weight.y() += vertIt->y();
+		weight.z() += vertIt->z();
+
+		if (min.x() > vertIt->x()) min.x() = vertIt->x();
+		if (min.y() > vertIt->y()) min.y() = vertIt->y();
+		if (min.z() > vertIt->z()) min.z() = vertIt->z();
+
+		if (max.x() < vertIt->x()) max.x() = vertIt->x();
+		if (max.y() < vertIt->y()) max.y() = vertIt->y();
+		if (max.z() < vertIt->z()) max.z() = vertIt->z();
+
+		if (vxmin.x() > vertIt->x()) vxmin = *vertIt;
+		if (vymin.y() > vertIt->y()) vymin = *vertIt;
+		if (vzmin.z() > vertIt->z()) vzmin = *vertIt;
+
+		if (vxmax.x() < vertIt->x()) vxmax = *vertIt;
+		if (vymax.y() < vertIt->y()) vymax = *vertIt;
+		if (vzmax.z() < vertIt->z()) vzmax = *vertIt;
+	}
+
+	weight.x() /= vertices();
+	weight.y() /= vertices();
+	weight.z() /= vertices();
 
 	m_mesh_weightcenter = weight;
 	m_mesh_aabb_min = min;
 	m_mesh_aabb_max = max;
+
+// START: tight bounding sphere
+
+	double dx, dy, dz, rad_sq, rad, old_to_p_sq, old_to_p, old_to_new;
+	double xspan, yspan, zspan, maxspan;
+	WZMVertex dia1, dia2, cen;
+
+	// set xspan = distance between 2 points xmin & xmax (squared)
+	dx = vxmax.x() - vxmin.x();
+	dy = vxmax.y() - vxmin.y();
+	dz = vxmax.z() - vxmin.z();
+	xspan = dx*dx + dy*dy + dz*dz;
+
+	// same for yspan
+	dx = vymax.x() - vymin.x();
+	dy = vymax.y() - vymin.y();
+	dz = vymax.z() - vymin.z();
+	yspan = dx*dx + dy*dy + dz*dz;
+
+	// and ofcourse zspan
+	dx = vzmax.x() - vzmin.x();
+	dy = vzmax.y() - vzmin.y();
+	dz = vzmax.z() - vzmin.z();
+	zspan = dx*dx + dy*dy + dz*dz;
+
+	// set points dia1 & dia2 to maximally seperated pair
+	// assume xspan biggest
+	dia1 = vxmin;
+	dia2 = vxmax;
+	maxspan = xspan;
+
+	if (yspan > maxspan)
+	{
+		maxspan = yspan;
+		dia1 = vymin;
+		dia2 = vymax;
+	}
+
+	if (zspan > maxspan)
+	{
+		dia1 = vzmin;
+		dia2 = vzmax;
+	}
+
+	// dia1, dia2 diameter of initial sphere
+	cen.x() = (dia1.x() + dia2.x()) / 2.;
+	cen.y() = (dia1.y() + dia2.y()) / 2.;
+	cen.z() = (dia1.z() + dia2.z()) / 2.;
+
+	// calc initial radius
+	dx = dia2.x() - cen.x();
+	dy = dia2.y() - cen.y();
+	dz = dia2.z() - cen.z();
+
+	rad_sq = dx*dx + dy*dy + dz*dz;
+	rad = sqrt((double)rad_sq);
+
+	// second pass (find tight sphere)
+	for (vertIt = m_vertexArray.begin(); vertIt < m_vertexArray.end(); ++vertIt)
+	{
+		dx = vertIt->x() - cen.x();
+		dy = vertIt->y() - cen.y();
+		dz = vertIt->z() - cen.z();
+		old_to_p_sq = dx*dx + dy*dy + dz*dz;
+
+		// do r**2 first
+		if (old_to_p_sq>rad_sq)
+		{
+			// this point outside current sphere
+			old_to_p = sqrt((double)old_to_p_sq);
+			// radius of new sphere
+			rad = (rad + old_to_p) / 2.;
+			// rad**2 for next compare
+			rad_sq = rad*rad;
+			old_to_new = old_to_p - rad;
+			// centre of new sphere
+			cen.x() = (rad * cen.x() + old_to_new * vertIt->x()) / old_to_p;
+			cen.y() = (rad * cen.y() + old_to_new * vertIt->y()) / old_to_p;
+			cen.z() = (rad * cen.z() + old_to_new * vertIt->z()) / old_to_p;
+		}
+	}
+
+	m_mesh_tspcenter = cen;
+
+// END: tight bounding sphere
 }
 
 WZMVertex Mesh::getCenterPoint() const

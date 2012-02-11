@@ -133,7 +133,7 @@ protected:
 	std::list<WZMConnector> m_connectors;
 
 	bool m_teamColours;
-	WZMVertex m_mesh_weightcenter, m_mesh_aabb_min, m_mesh_aabb_max;
+	WZMVertex m_mesh_weightcenter, m_mesh_aabb_min, m_mesh_aabb_max, m_mesh_tspcenter;
 
 	void clear();
 	void reservePoints(const unsigned size);
