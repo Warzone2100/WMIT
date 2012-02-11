@@ -8,8 +8,8 @@ find_package(Lib3ds)
 find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
 
-find_path(GLEE_INCLUDE_DIR NAMES GLee.h PATHS /usr/include)
-find_library(GLEE_LIBRARY NAMES glee PATHS /usr/lib)
+# find_path(GLEE_INCLUDE_DIR NAMES GLee.h PATHS /usr/include)
+# find_library(GLEE_LIBRARY NAMES glee PATHS /usr/lib)
 
 add_definitions(-DLIB3DS_VERSION_1)
 
