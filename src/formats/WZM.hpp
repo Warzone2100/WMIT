@@ -75,9 +75,6 @@ public:
 	bool importFromOBJ(std::istream& in);
 	void exportToOBJ(std::ostream& out) const;
 
-	bool importFrom3DS(std::string fileName);
-	bool exportTo3DS(std::string fileName) const;
-
 	int version() const;
 	int meshes() const;
 

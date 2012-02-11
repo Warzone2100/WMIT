@@ -73,23 +73,8 @@ OTHER_FILES += \
     HACKING.txt \
     COPYING.nongpl \
     data/shaders/pie3.vert \
-    data/shaders/pie3.frag \
-    data/images/notex.png \
-    WMIT.xcodeproj/project.pbxproj \
-    Resources/Warzone\\ Model\\ Importer\\ Tool-Info.plist \
-    Resources/GenericFramework-Info.plist \
-    configs/FetchPrebuilt.sh \
-    configs/FetchSource.sh \
-    configs/lib3ds-All.xcconfig \
-    configs/lib3ds-Debug.xcconfig \
-    configs/lib3ds-Release.xcconfig \
-    configs/Project-All.xcconfig \
-    configs/QGLViewer-All.xcconfig \
-    configs/QGLViewer-Debug.xcconfig \
-    configs/QGLViewer-Release.xcconfig \
-    configs/WMIT-All.xcconfig \
-    configs/WMIT-Debug.xcconfig \
-    configs/WMIT-Release.xcconfig
+    data/shaders/pie3.frag
+
 
 CONFIG(debug, debug|release) {
     DEFINES *= DEBUG _DEBUG
@@ -103,7 +88,7 @@ CONFIG(debug, debug|release) {
     DEFINES += CPP0X_AVAILABLE
 }
     
-LIBS += -l3ds -lm
+LIBS += -lm
 
 RESOURCES += \
     resources.qrc

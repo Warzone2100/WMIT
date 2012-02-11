@@ -101,9 +101,6 @@ public:
 	bool importFromOBJ(std::istream& in);
 	void exportToOBJ(std::ostream& out) const;
 
-	bool importFrom3DS(std::string fileName);
-	bool exportTo3DS(std::string fileName) const;
-
 	inline void setTextureName(wzm_texture_type_t type, std::string name) {WZM::setTextureName(type, name);}
 	inline std::string getTextureName(wzm_texture_type_t type) const {return WZM::getTextureName(type);}
 	inline void clearTextureNames() {WZM::clearTextureNames();}

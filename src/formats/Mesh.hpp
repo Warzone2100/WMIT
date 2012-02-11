@@ -77,7 +77,6 @@ class Mesh
 public:
 	Mesh();
 	Mesh(const Pie3Level& p3);
-	Mesh(const Lib3dsMesh& mesh3ds);
 	virtual ~Mesh();
 
 	static Pie3Level backConvert(const Mesh& wzmMesh);
@@ -90,10 +89,7 @@ public:
 			   const std::vector<OBJVertex>& verts,
 			   const std::vector<OBJUV>&	uvArray,
 			   const std::vector<OBJVertex>& normals);
-
 	std::stringstream* exportToOBJ(const Mesh_exportToOBJ_InOutParams& params) const;
-
-	virtual operator Lib3dsMesh*() const;
 
 	std::string getName() const;
 	void setName(const std::string& name);

@@ -25,13 +25,6 @@
 #include <QTextStream>
 #include <QRegExp>
 
-#ifdef LIB3DS_VERSION_1
-#include <lib3ds/file.h>
-#include <lib3ds/material.h>
-#else
-#include <lib3ds.h>
-#endif
-
 #include "Pie.hpp"
 #include "wmit.h"
 
@@ -81,7 +74,6 @@ std::string makeWzTCMaskName(const std::string& name)
 
 inline QString getWZMTextureName(const QString& filePath);
 inline QString getPIETextureName(const QString& filePath);
-inline QString get3DSTextureName(const QString& filePath);
 //inline QString getOBJTextureName(const QString& filePath); // OBJ uses material files which contain the texture info
 QString getTextureName(const QString& filePath)
 {
@@ -184,32 +176,3 @@ inline QString getPIETextureName(const QString& filePath)
 	}
 	return qstr;
 }
-
-inline QString get3DSTextureName(const QString& filePath)
-{
-#ifdef LIB3DS_VERSION_1
-	Lib3dsFile *f = lib3ds_file_load(filePath.toLocal8Bit().constData());
-#else
-	Lib3dsFile *f = lib3ds_file_open(filePath.toLocal8Bit().constData());
-#endif
-	
-	if (f == NULL)
-	{
-		std::cerr << "Loading 3DS file failed.\n";
-		return QString();
-	}
-	
-#ifdef LIB3DS_VERSION_1
-	if (f->materials != NULL)
-	{
-		return f->materials->texture1_map.name;
-	}
-#else
-	if (f->nmaterials >= 0)
-	{
-		return (*f->materials)->texture1_map.name;
-	}
-#endif
-	return QString();
-}
-

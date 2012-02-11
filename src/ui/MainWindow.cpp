@@ -106,10 +106,6 @@ bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_
 	{
 		type = WMIT_FT_WZM;
 	}
-	else if (ext.compare(QString("3ds"), Qt::CaseInsensitive) == 0)
-	{
-		type = WMIT_FT_3DS;
-	}
 	else if (ext.compare(QString("obj"), Qt::CaseInsensitive) == 0)
 	{
 		type = WMIT_FT_OBJ;
@@ -136,10 +132,6 @@ bool MainWindow::saveModel(const QString &file, const WZM &model, const wmit_fil
 	case WMIT_FT_WZM:
 		model.write(out);
 		break;
-	case WMIT_FT_3DS:
-		out.close();
-		model.exportTo3DS(std::string(file.toLocal8Bit().constData()));
-		break;
 	case WMIT_FT_OBJ:
 		model.exportToOBJ(out);
 		break;
@@ -163,10 +155,6 @@ bool MainWindow::saveModel(const QString &file, const QWZM &model, const wmit_fi
 	{
 	case WMIT_FT_WZM:
 		model.write(out);
-		break;
-	case WMIT_FT_3DS:
-		out.close();
-		model.exportTo3DS(std::string(file.toLocal8Bit().constData()));
 		break;
 	case WMIT_FT_OBJ:
 		model.exportToOBJ(out);
@@ -214,10 +202,6 @@ bool MainWindow::loadModel(const QString& file, WZM& model)
 	case WMIT_FT_WZM:
 		read_success = model.read(f);
 		break;
-	case WMIT_FT_3DS:
-		f.close();
-		read_success = model.importFrom3DS(std::string(file.toLocal8Bit().constData()));
-		break;
 	case WMIT_FT_OBJ:
 		read_success = model.importFromOBJ(f);
 		break;
@@ -239,6 +223,8 @@ bool MainWindow::loadModel(const QString& file, WZM& model)
 				model = WZM(p3);
 		}
 	}
+
+	f.close();
 
 	return read_success;
 }
@@ -284,10 +270,9 @@ void MainWindow::on_actionOpen_triggered()
 	QFileDialog* fileDialog = new QFileDialog(this,
 						  tr("Select File to open"),
 						  m_pathImport,
-						  tr("All Compatible (*.wzm *.pie *.3ds *.obj);;"
+						  tr("All Compatible (*.wzm *.pie *.obj);;"
 						     "WZM models (*.wzm);;"
 						     "PIE models (*.pie);;"
-						     "3DS files (*.3ds);;"
 						     "OBJ files (*.obj)"));
 	fileDialog->setFileMode(QFileDialog::ExistingFile);
 	fileDialog->exec();
@@ -347,7 +332,6 @@ void MainWindow::on_actionSave_As_triggered()
 	fDialog->setAcceptMode(QFileDialog::AcceptSave);
 	fDialog->setFilter("PIE models (*.pie);;"
 			   "WZM models (*.wzm);;"
-			   "3DS files (*.3ds);;"
 			   "OBJ files (*.obj)");
 	fDialog->setWindowTitle(tr("Choose output file"));
 	fDialog->setDefaultSuffix("pie");
@@ -561,10 +545,9 @@ void MainWindow::on_actionAppend_Model_triggered()
 	QFileDialog* fileDialog = new QFileDialog(this,
 						  tr("Select file to append"),
 						  m_pathImport,
-						  tr("All Compatible (*.wzm *.pie *.3ds *.obj);;"
+						  tr("All Compatible (*.wzm *.pie *.obj);;"
 						     "WZM models (*.wzm);;"
 						     "PIE models (*.pie);;"
-						     "3DS files (*.3ds);;"
 						     "OBJ files (*.obj)"));
 	fileDialog->setFileMode(QFileDialog::ExistingFile);
 	fileDialog->exec();

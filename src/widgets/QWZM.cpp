@@ -646,18 +646,6 @@ bool QWZM::importFromOBJ(std::istream& in)
 	return false;
 }
 
-bool QWZM::importFrom3DS(std::string fileName)
-{
-	if (WZM::importFrom3DS(fileName))
-	{
-		meshCountChanged(meshes(), getMeshNames());
-		return true;
-	}
-
-	clear();
-	return false;
-}
-
 // apply any pending transformations to temp object on export
 
 QWZM::operator Pie3Model() const
@@ -694,16 +682,4 @@ void QWZM::exportToOBJ(std::ostream& out) const
 	}
 
 	WZM::exportToOBJ(out);
-}
-
-bool QWZM::exportTo3DS(std::string fileName) const
-{
-	if (m_pending_changes)
-	{
-		WZM res = *this;
-		applyPendingChangesToModel(res);
-		res.exportTo3DS(fileName);
-	}
-
-	return WZM::exportTo3DS(fileName);
 }
