@@ -98,6 +98,36 @@ void MainWindow::clear()
 	ui->actionAppend_Model->setDisabled(true);
 }
 
+bool MainWindow::openFile(const QString &filePath)
+{
+	if (filePath.isEmpty())
+	{
+		return false;
+	}
+
+	WZM tmpmodel;
+	if (loadModel(filePath, tmpmodel))
+	{
+		QFileInfo modelFileNfo(filePath);
+		m_model = tmpmodel;
+		m_currentFile = modelFileNfo.absoluteFilePath();
+
+		setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
+		ui->actionClose->setEnabled(true);
+		ui->actionSave_As->setEnabled(true);
+		ui->actionSetupTextures->setEnabled(true);
+		ui->actionAppend_Model->setEnabled(true);
+
+		if (!fireTextureDialog(true))
+		{
+			clear();
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_t& type)
 {
 	QString ext = fname.right(fname.size() - fname.lastIndexOf('.') - 1);
@@ -290,27 +320,8 @@ void MainWindow::on_actionOpen_triggered()
 
 	if (!filePath.isEmpty())
 	{
-		WZM tmpmodel;
-
-		if (loadModel(filePath, tmpmodel))
-		{
-			QFileInfo modelFileNfo(filePath);
-			m_model = tmpmodel;
-			m_currentFile = modelFileNfo.absoluteFilePath();
-
-			setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
-			ui->actionClose->setEnabled(true);
-			ui->actionSave_As->setEnabled(true);
-			ui->actionSetupTextures->setEnabled(true);
-			ui->actionAppend_Model->setEnabled(true);
-
-			if (!fireTextureDialog(true))
-			{
-				clear();
-				return;
-			}
-		}
-		// else inf popup on fail?
+		openFile(filePath);
+		// else popup on fail?
 	}
 }
 

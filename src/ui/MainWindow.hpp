@@ -50,6 +50,8 @@ public:
 
 	void clear();
 
+	bool openFile(const QString& file);
+
 	static bool loadModel(const QString& file, WZM& model);
 	static bool guessModelTypeFromFilename(const QString &fname, wmit_filetype_t &type);
 	static bool saveModel(const QString& file, const WZM& model, const wmit_filetype_t &type);

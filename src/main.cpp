@@ -62,6 +62,12 @@ int main(int argc, char *argv[])
 		MainWindow w;
 		w.show();
 
+		if (argc == 2)
+		{
+			QString inname = argv[1];
+			w.openFile(inname);
+		}
+
 		return a.exec();
 	}
 }
