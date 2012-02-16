@@ -60,8 +60,12 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_UVEditor->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
+
 	connect(ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(_on_viewerInitialized()));
 	connect(ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
+	connect(ui->actionShowAxes, SIGNAL(toggled(bool)), ui->centralWidget, SLOT(setAxisIsDrawn(bool)));
+	connect(ui->actionShowGrid, SIGNAL(toggled(bool)), ui->centralWidget, SLOT(setGridIsDrawn(bool)));
+	connect(ui->actionShowLightSource, SIGNAL(toggled(bool)), ui->centralWidget, SLOT(setDrawLightSource(bool)));
 
 	// transformations
 	connect(transformDock, SIGNAL(scaleXYZChanged(double)), this, SLOT(_on_scaleXYZChanged(double)));

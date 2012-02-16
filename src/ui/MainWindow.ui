@@ -75,6 +75,9 @@
     <addaction name="actionRenderer"/>
     <addaction name="actionShowModelCenter"/>
     <addaction name="actionShowNormals"/>
+    <addaction name="actionShowAxes"/>
+    <addaction name="actionShowGrid"/>
+    <addaction name="actionShowLightSource"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -206,6 +209,39 @@
   <action name="actionTakeScreenshot">
    <property name="text">
     <string>Take Screenshot...</string>
+   </property>
+  </action>
+  <action name="actionShowAxes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Axes</string>
+   </property>
+  </action>
+  <action name="actionShowGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Grid</string>
+   </property>
+  </action>
+  <action name="actionShowLightSource">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Light Source</string>
    </property>
   </action>
  </widget>
