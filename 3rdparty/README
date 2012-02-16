@@ -1,4 +1,4 @@
 Extract the source files into the proper directories such that:
 
 If build QGLViewer then:
-3rdparty -> libQGLViewer-2.3.9 -> QGLViewer -> qglviewer.h
+3rdparty -> libQGLViewer -> QGLViewer -> qglviewer.h

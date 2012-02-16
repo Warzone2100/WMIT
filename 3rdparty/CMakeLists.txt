@@ -11,7 +11,7 @@ macro (CHECK_EXISTS THISFILE RESULT)
 endmacro ()
 
 # QGLViewer Section
-set (QGLVIEWER_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libQGLViewer-2.3.9)
+set (QGLVIEWER_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libQGLViewer)
 if (BUILD_QGLVIEWER)
   # Basic test to see if files are in the right place
   CHECK_EXISTS (${QGLVIEWER_SRC_DIR}/QGLViewer/qglviewer.h HAVE_QGLVIEWER)
