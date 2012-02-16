@@ -99,7 +99,7 @@
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>Open</string>
+    <string>Open...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -148,7 +148,7 @@
   </action>
   <action name="actionTransform">
    <property name="text">
-    <string>Transform</string>
+    <string>Transform...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
@@ -156,12 +156,12 @@
   </action>
   <action name="actionSetupTextures">
    <property name="text">
-    <string>Setup Textures</string>
+    <string>Setup Textures...</string>
    </property>
   </action>
   <action name="actionAppendModel">
    <property name="text">
-    <string>Append Model</string>
+    <string>Append Model...</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -190,7 +190,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show model center</string>
+    <string>Show Model Center</string>
    </property>
   </action>
   <action name="actionShowNormals">
@@ -198,7 +198,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show normals</string>
+    <string>Show Normals</string>
    </property>
   </action>
  </widget>

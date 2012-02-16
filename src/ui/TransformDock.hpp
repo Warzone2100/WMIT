@@ -64,15 +64,15 @@ private:
 	void setScaleValueOnUI(double value);
 
 private slots:
-	void on_comboBox_currentIndexChanged(int index);
-	void on_horizontalSlider_valueChanged(int value);
-	void on_doubleSpinBox_valueChanged(double );
-	void on_pb_revWindings_clicked();
-	void on_cbMeshIdx_currentIndexChanged(int index);
-	void on_pbMirrorX_clicked();
-	void on_pbMirrorY_clicked();
-	void on_pbMirrorZ_clicked();
-	void on_pbRemoveMesh_clicked();
+	void on_scaleComboBox_currentIndexChanged(int index);
+	void on_scaleSlider_valueChanged(int value);
+	void on_scaleSpinBox_valueChanged(double );
+	void on_reverseWindingsButton_clicked();
+	void on_meshComboBox_currentIndexChanged(int index);
+	void on_mirrorXButton_clicked();
+	void on_mirrorYButton_clicked();
+	void on_mirrorZButton_clicked();
+	void on_removeMeshButton_clicked();
 };
 
 #endif // TRANSFORMDOCK_HPP
