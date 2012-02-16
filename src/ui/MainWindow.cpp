@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	this->addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
 	connect(ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(_on_viewerInitialized()));
+	connect(ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
 
 	// transformations
 	connect(transformDock, SIGNAL(scaleXYZChanged(double)), this, SLOT(_on_scaleXYZChanged(double)));
@@ -93,9 +94,9 @@ void MainWindow::clear()
 	setWindowTitle(WMIT_APPNAME);
 
 	ui->actionClose->setDisabled(true);
-	ui->actionSave_As->setDisabled(true);
+	ui->actionSaveAs->setDisabled(true);
 	ui->actionSetupTextures->setDisabled(true);
-	ui->actionAppend_Model->setDisabled(true);
+	ui->actionAppendModel->setDisabled(true);
 }
 
 bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_t& type)
@@ -300,9 +301,9 @@ void MainWindow::on_actionOpen_triggered()
 
 			setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
 			ui->actionClose->setEnabled(true);
-			ui->actionSave_As->setEnabled(true);
+			ui->actionSaveAs->setEnabled(true);
 			ui->actionSetupTextures->setEnabled(true);
-			ui->actionAppend_Model->setEnabled(true);
+			ui->actionAppendModel->setEnabled(true);
 
 			if (!fireTextureDialog(true))
 			{
@@ -324,7 +325,7 @@ void MainWindow::on_actionSave_triggered()
 //todo
 }
 
-void MainWindow::on_actionSave_As_triggered()
+void MainWindow::on_actionSaveAs_triggered()
 {
 	QFileDialog* fDialog = new QFileDialog();
 
@@ -439,7 +440,7 @@ void MainWindow::_on_viewerInitialized()
 	connect(m_shaderSignalMapper, SIGNAL(mapped(int)),
 		     this, SLOT(_on_shaderActionTriggered(int)));
 
-	QMenu* rendererMenu = menuBar()->addMenu(tr("Renderer"));
+	QMenu* rendererMenu = new QMenu(this);
 	rendererMenu->addActions(shaderGroup->actions());
 
 	for (int i = shaderGroup->actions().size() - 1; i >= 0; --i)
@@ -451,20 +452,12 @@ void MainWindow::_on_viewerInitialized()
 		}
 	}
 
-	QAction* action = new QAction("Show model center", this);
-	action->setCheckable(true);
-	connect(action, SIGNAL(triggered(bool)),
+	ui->actionRenderer->setMenu(rendererMenu);
+
+	connect(ui->actionShowModelCenter, SIGNAL(triggered(bool)),
 		&m_model, SLOT(setDrawCenterPointFlag(bool)));
-
-	rendererMenu->insertAction(0, action);
-	rendererMenu->insertSeparator(action);
-
-	action = new QAction("Show normals", this);
-	action->setCheckable(true);
-	connect(action, SIGNAL(triggered(bool)),
+	connect(ui->actionShowNormals, SIGNAL(triggered(bool)),
 		&m_model, SLOT(setDrawNormalsFlag(bool)));
-
-	rendererMenu->insertAction(0, action);
 }
 
 void MainWindow::_on_shaderActionTriggered(int type)
@@ -539,7 +532,7 @@ void MainWindow::on_actionSetupTextures_triggered()
 	fireTextureDialog();
 }
 
-void MainWindow::on_actionAppend_Model_triggered()
+void MainWindow::on_actionAppendModel_triggered()
 {
 	QString filePath;
 	QFileDialog* fileDialog = new QFileDialog(this,
