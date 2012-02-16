@@ -456,7 +456,7 @@ bool QWZM::initShader(int type)
 	{
 	case WZ_SHADER_PIE3:
 	case WZ_SHADER_PIE3_USER:
-		int baseTexLoc, tcTexLoc, nmTexLoc, smTexLoc, fogFlagLoc;
+		int uniLoc, baseTexLoc, tcTexLoc, nmTexLoc, smTexLoc;
 
 		baseTexLoc = shader->uniformLocation("Texture0");
 		tcTexLoc = shader->uniformLocation("Texture1");
@@ -468,8 +468,11 @@ bool QWZM::initShader(int type)
 		shader->setUniformValue(nmTexLoc, GLint(2));
 		shader->setUniformValue(smTexLoc, GLint(3));
 
-		fogFlagLoc = shader->uniformLocation("fogEnabled");
-		shader->setUniformValue(fogFlagLoc, GLint(0));
+		uniLoc = shader->uniformLocation("fogEnabled");
+		shader->setUniformValue(uniLoc, GLint(0));
+
+		uniLoc = shader->uniformLocation("ecmEffect");
+		shader->setUniformValue(uniLoc, GLint(0));
 
 		break;
 	}
