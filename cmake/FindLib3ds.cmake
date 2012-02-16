@@ -1,36 +1,39 @@
-# find lib3ds includes and library
+# - Try to find lib3ds
+# Once done this will define
 #
-# LIB3DS_INCLUDE_DIR - where the lib3ds directory containing the headers can be
-#                      found
-# LIB3DS_LIB     - full path to the lib3ds library
-# LIB3DS_FOUND       - TRUE if lib3ds was found
+# LIB3DS_FOUND - system has lib3ds
+# LIB3DS_INCLUDE_DIR - the lib3ds include directory
+# LIB3DS_LIB - link these to use lib3ds
 
-FIND_PATH(LIB3DS_INCLUDE_DIR lib3ds/file.h
-	/usr/include
-	/usr/local/include
-    $ENV{INCLUDE}
+find_path(LIB3DS_INCLUDE_DIR
+	NAMES lib3ds/file.h
+	PATHS /usr/include
+		/usr/local/include
+		$ENV{INCLUDE}
 )
-FIND_LIBRARY(LIB3DS_LIB NAMES 3ds lib3ds)
 
-IF(LIB3DS_INCLUDE_DIR)
-	MESSAGE(STATUS "Found lib3ds include dir: ${LIB3DS_INCLUDE_DIR}")
-ELSE(LIB3DS_INCLUDE_DIR)
-	MESSAGE(STATUS "Could NOT find lib3ds headers.")
-ENDIF(LIB3DS_INCLUDE_DIR)
+find_library(LIB3DS_LIB
+	NAMES 3ds
+		lib3ds
+)
 
-IF(LIB3DS_LIB)
-	MESSAGE(STATUS "Found lib3ds library: ${LIB3DS_LIB}")
-ELSE(LIB3DS_LIB)
-	MESSAGE(STATUS "Could NOT find lib3ds library.")
-ENDIF(LIB3DS_LIB)
+if(LIB3DS_INCLUDE_DIR)
+	message(STATUS "Found lib3ds include dir: ${LIB3DS_INCLUDE_DIR}")
+else(LIB3DS_INCLUDE_DIR)
+	message(STATUS "Could NOT find lib3ds headers.")
+endif(LIB3DS_INCLUDE_DIR)
 
+if(LIB3DS_LIB)
+	message(STATUS "Found lib3ds library: ${LIB3DS_LIB}")
+else(LIB3DS_LIB)
+	message(STATUS "Could NOT find lib3ds library.")
+endif(LIB3DS_LIB)
 
-IF(LIB3DS_INCLUDE_DIR AND LIB3DS_LIB)
-	SET(LIB3DS_FOUND TRUE)
-ELSE(LIB3DS_INCLUDE_DIR AND LIB3DS_LIB)
-	SET(LIB3DS_FOUND FALSE)
-	IF(Lib3ds_FIND_REQUIRED)
-		MESSAGE(FATAL_ERROR "Could not find lib3ds. Please install lib3ds (http://lib3ds.sourceforge.net)")
-	ENDIF(Lib3ds_FIND_REQUIRED)
-ENDIF(LIB3DS_INCLUDE_DIR AND LIB3DS_LIB)
-
+if(LIB3DS_INCLUDE_DIR AND LIB3DS_LIB)
+	set(LIB3DS_FOUND TRUE)
+else(LIB3DS_INCLUDE_DIR AND LIB3DS_LIB)
+	set(LIB3DS_FOUND FALSE)
+	if(Lib3ds_FIND_REQUIRED)
+		message(FATAL_ERROR "Could not find lib3ds. Please install lib3ds (http://lib3ds.sourceforge.net)")
+	endif(Lib3ds_FIND_REQUIRED)
+endif(LIB3DS_INCLUDE_DIR AND LIB3DS_LIB)

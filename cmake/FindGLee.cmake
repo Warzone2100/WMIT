@@ -12,7 +12,10 @@ find_path(GLEE_INCLUDE_DIR
 		$ENV{INCLUDE}
 )
 
-find_library(GLEE_LIB NAMES glee PATHS /usr/lib)
+find_library(GLEE_LIB
+	NAMES glee
+	PATHS /usr/lib
+)
 
 if(GLEE_INCLUDE_DIR)
 	message(STATUS "Found GLee include dir: ${GLEE_INCLUDE_DIR}")
