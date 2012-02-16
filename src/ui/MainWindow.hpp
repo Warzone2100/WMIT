@@ -66,6 +66,7 @@ private slots:
 	void on_actionUVEditor_toggled(bool);
 	void on_actionSetupTextures_triggered();
 	void on_actionAppendModel_triggered();
+	void on_actionTakeScreenshot_triggered();
 
 	void _on_viewerInitialized();
 	void _on_shaderActionTriggered(int);

@@ -565,3 +565,8 @@ void MainWindow::on_actionAppendModel_triggered()
 		}
 	}
 }
+
+void MainWindow::on_actionTakeScreenshot_triggered()
+{
+	ui->centralWidget->saveSnapshot(false);
+}
