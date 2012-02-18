@@ -72,7 +72,6 @@ struct Frame
 };
 
 class Pie3Level;
-class Lib3dsMesh;
 struct Mesh_exportToOBJ_InOutParams;
 
 class Mesh
