@@ -64,20 +64,20 @@ bool WZMaterial::isDefault() const
 
 std::istream& operator>> (std::istream& in, WZMaterial& mat)
 {
-	in >> mat.vals[WZM_MAT_EMISSIVE][0] >> mat.vals[WZM_MAT_EMISSIVE][1] >> mat.vals[WZM_MAT_EMISSIVE][2]
-	   >> mat.vals[WZM_MAT_AMBIENT][0]  >> mat.vals[WZM_MAT_AMBIENT][1]  >> mat.vals[WZM_MAT_AMBIENT][2]
-	   >> mat.vals[WZM_MAT_DIFFUSE][0]  >> mat.vals[WZM_MAT_DIFFUSE][1]  >> mat.vals[WZM_MAT_DIFFUSE][2]
-	   >> mat.vals[WZM_MAT_SPECULAR][0] >> mat.vals[WZM_MAT_SPECULAR][1] >> mat.vals[WZM_MAT_SPECULAR][2];
+	in >> mat.vals[WZM_MAT_EMISSIVE].x() >> mat.vals[WZM_MAT_EMISSIVE].y() >> mat.vals[WZM_MAT_EMISSIVE].z()
+	   >> mat.vals[WZM_MAT_AMBIENT].x()  >> mat.vals[WZM_MAT_AMBIENT].y()  >> mat.vals[WZM_MAT_AMBIENT].z()
+	   >> mat.vals[WZM_MAT_DIFFUSE].x()  >> mat.vals[WZM_MAT_DIFFUSE].y()  >> mat.vals[WZM_MAT_DIFFUSE].z()
+	   >> mat.vals[WZM_MAT_SPECULAR].x() >> mat.vals[WZM_MAT_SPECULAR].y() >> mat.vals[WZM_MAT_SPECULAR].z();
 	in >> mat.shininess;
 	return in;
 }
 
 std::ostream& operator<< (std::ostream& out, const WZMaterial& mat)
 {
-	out << mat.vals[WZM_MAT_EMISSIVE][0] << ' ' << mat.vals[WZM_MAT_EMISSIVE][1] << ' ' << mat.vals[WZM_MAT_EMISSIVE][2] << ' '
-	    << mat.vals[WZM_MAT_AMBIENT][0]  << ' ' << mat.vals[WZM_MAT_AMBIENT][1]  << ' ' << mat.vals[WZM_MAT_AMBIENT][2]  << ' '
-	    << mat.vals[WZM_MAT_DIFFUSE][0]  << ' ' << mat.vals[WZM_MAT_DIFFUSE][1]  << ' ' << mat.vals[WZM_MAT_DIFFUSE][2]  << ' '
-	    << mat.vals[WZM_MAT_SPECULAR][0] << ' ' << mat.vals[WZM_MAT_SPECULAR][1] << ' ' << mat.vals[WZM_MAT_SPECULAR][2] << ' ';
+	out << mat.vals[WZM_MAT_EMISSIVE].x() << ' ' << mat.vals[WZM_MAT_EMISSIVE].y() << ' ' << mat.vals[WZM_MAT_EMISSIVE].z() << ' '
+	    << mat.vals[WZM_MAT_AMBIENT].x()  << ' ' << mat.vals[WZM_MAT_AMBIENT].y()  << ' ' << mat.vals[WZM_MAT_AMBIENT].z()  << ' '
+	    << mat.vals[WZM_MAT_DIFFUSE].x()  << ' ' << mat.vals[WZM_MAT_DIFFUSE].y()  << ' ' << mat.vals[WZM_MAT_DIFFUSE].z()  << ' '
+	    << mat.vals[WZM_MAT_SPECULAR].x() << ' ' << mat.vals[WZM_MAT_SPECULAR].y() << ' ' << mat.vals[WZM_MAT_SPECULAR].z() << ' ';
 	out << mat.shininess;
 	return out;
 }
