@@ -90,10 +90,6 @@ QString getTextureName(const QString& filePath)
 	{
 		return getPIETextureName(modelFileNfo.absoluteFilePath());
 	}
-	else if(modelFileNfo.completeSuffix().compare(QString("3ds"), Qt::CaseInsensitive) == 0)
-	{
-		return getWZMTextureName(modelFileNfo.absoluteFilePath());
-	}
 #ifdef getOBJTextureName
 	else if(modelFileNfo.completeSuffix().compare(QString("obj"), Qt::CaseInsensitive) == 0)
 	{
