@@ -32,6 +32,7 @@
 #define WZM_MODEL_DIRECTIVE_TEXTURE "TEXTURE"
 #define WZM_MODEL_DIRECTIVE_TCMASK "TCMASK"
 #define WZM_MODEL_DIRECTIVE_NORMALMAP "NORMALMAP"
+#define WZM_MODEL_DIRECTIVE_MATERIAL "MATERIAL"
 #define WZM_MODEL_DIRECTIVE_MESHES "MESHES"
 
 class Pie3Model;
@@ -39,26 +40,20 @@ class Pie3Model;
 enum wzm_texture_type_t {WZM_TEX_DIFFUSE = 0, WZM_TEX_TCMASK, WZM_TEX_NORMALMAP, WZM_TEX_SPECULAR,
 			 WZM_TEX__LAST, WZM_TEX__FIRST = WZM_TEX_DIFFUSE};
 
+// do not reorder
 enum wzm_material_t {WZM_MAT_EMISSIVE = 0, WZM_MAT_AMBIENT, WZM_MAT_DIFFUSE, WZM_MAT_SPECULAR,
 		     WZM_MAT__LAST, WZM_MAT__FIRST = WZM_MAT_EMISSIVE};
 
 struct WZMaterial
 {
-	GLfloat vals[WZM_MAT__LAST][4];
+	WZMVertex4 vals[WZM_MAT__LAST];
 	GLfloat shininess;
 
-	WZMaterial(): shininess(10.f)
-	{
-		for (int i = WZM_MAT__FIRST; i < WZM_MAT__LAST; ++i)
-		{
-			wzm_material_t mattype = static_cast<wzm_material_t>(i);
-			vals[mattype][0] = vals[mattype][1] = vals[mattype][2] = vals[mattype][3] = 1.f;
-		}
-
-		vals[WZM_MAT_EMISSIVE][0] = vals[WZM_MAT_EMISSIVE][1] = vals[WZM_MAT_EMISSIVE][2] = vals[WZM_MAT_EMISSIVE][3] = 0.f;
-	}
+	void setDefaults();
+	bool isDefault() const;
 };
-
+std::istream& operator>> (std::istream& in, WZMaterial& mat);
+std::ostream& operator<< (std::ostream& out, const WZMaterial& mat);
 
 class WZM
 {
@@ -102,8 +97,8 @@ protected:
 	void clear();
 
 	std::vector<Mesh> m_meshes;
-	std::vector<WZMaterial> m_materials;
 	std::map<wzm_texture_type_t, std::string> m_textures;
+	WZMaterial m_material;
 };
 
 #endif // WZM_HPP

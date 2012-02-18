@@ -124,12 +124,9 @@ struct Vertex : public Vector<T, COMPONENTS>
 template <typename T, size_t COMPONENTS = 4>
 struct Vertex4 : public Vector<T, COMPONENTS>
 {
-	Vertex4()
+	Vertex4(const T val = 0)
 	{
-		x() = 0;
-		y() = 0;
-		z() = 0;
-		w() = 0;
+		x() = y() = z() = w() = val;
 	}
 
 	Vertex4(const T x, const T y, const T z, const T w)

@@ -197,6 +197,17 @@ struct Vector
 		equal_wEps compare;
 	};
 
+	bool sameComponents(const T& val) const
+	{
+		unsigned i;
+		for (i = 0; i < COMPONENTS; ++i)
+		{
+			if (component[i] != val)
+				return false;
+		}
+		return true;
+	}
+
 protected:
 	T component[COMPONENTS];
 };

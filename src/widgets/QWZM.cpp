@@ -108,11 +108,11 @@ void QWZM::render()
 			glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 		}
 
-		glMaterialfv(GL_FRONT, GL_EMISSION, m_materials[0].vals[WZM_MAT_EMISSIVE]);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, m_materials[0].vals[WZM_MAT_AMBIENT]);
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, m_materials[0].vals[WZM_MAT_DIFFUSE]);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, m_materials[0].vals[WZM_MAT_SPECULAR]);
-		glMaterialf(GL_FRONT, GL_SHININESS, m_materials[0].shininess);
+		glMaterialfv(GL_FRONT, GL_EMISSION, m_material.vals[WZM_MAT_EMISSIVE]);
+		glMaterialfv(GL_FRONT, GL_AMBIENT, m_material.vals[WZM_MAT_AMBIENT]);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, m_material.vals[WZM_MAT_DIFFUSE]);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, m_material.vals[WZM_MAT_SPECULAR]);
+		glMaterialf(GL_FRONT, GL_SHININESS, m_material.shininess);
 
 		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
 		glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArray[0]);

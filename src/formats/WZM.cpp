@@ -36,17 +36,63 @@
 
 #include "OBJ.hpp"
 
+void WZMaterial::setDefaults()
+{
+	shininess = 10.f;
+
+	for (int i = WZM_MAT_EMISSIVE + 1; i < WZM_MAT__LAST; ++i)
+	{
+		wzm_material_t mattype = static_cast<wzm_material_t>(i);
+		vals[mattype] = WZMVertex4(1.f);
+	}
+}
+
+bool WZMaterial::isDefault() const
+{
+	if (shininess != 10.f)
+		return false;
+	for (int i = WZM_MAT_EMISSIVE + 1; i < WZM_MAT__LAST; ++i)
+	{
+		wzm_material_t mattype = static_cast<wzm_material_t>(i);
+		if (!vals[mattype].sameComponents(1.f))
+			return false;
+	}
+	if (!vals[WZM_MAT_EMISSIVE].sameComponents(0.f))
+		return false;
+	return true;
+}
+
+std::istream& operator>> (std::istream& in, WZMaterial& mat)
+{
+	in >> mat.vals[WZM_MAT_EMISSIVE][0] >> mat.vals[WZM_MAT_EMISSIVE][1] >> mat.vals[WZM_MAT_EMISSIVE][2]
+	   >> mat.vals[WZM_MAT_AMBIENT][0]  >> mat.vals[WZM_MAT_AMBIENT][1]  >> mat.vals[WZM_MAT_AMBIENT][2]
+	   >> mat.vals[WZM_MAT_DIFFUSE][0]  >> mat.vals[WZM_MAT_DIFFUSE][1]  >> mat.vals[WZM_MAT_DIFFUSE][2]
+	   >> mat.vals[WZM_MAT_SPECULAR][0] >> mat.vals[WZM_MAT_SPECULAR][1] >> mat.vals[WZM_MAT_SPECULAR][2];
+	in >> mat.shininess;
+	return in;
+}
+
+std::ostream& operator<< (std::ostream& out, const WZMaterial& mat)
+{
+	out << mat.vals[WZM_MAT_EMISSIVE][0] << ' ' << mat.vals[WZM_MAT_EMISSIVE][1] << ' ' << mat.vals[WZM_MAT_EMISSIVE][2] << ' '
+	    << mat.vals[WZM_MAT_AMBIENT][0]  << ' ' << mat.vals[WZM_MAT_AMBIENT][1]  << ' ' << mat.vals[WZM_MAT_AMBIENT][2]  << ' '
+	    << mat.vals[WZM_MAT_DIFFUSE][0]  << ' ' << mat.vals[WZM_MAT_DIFFUSE][1]  << ' ' << mat.vals[WZM_MAT_DIFFUSE][2]  << ' '
+	    << mat.vals[WZM_MAT_SPECULAR][0] << ' ' << mat.vals[WZM_MAT_SPECULAR][1] << ' ' << mat.vals[WZM_MAT_SPECULAR][2] << ' ';
+	out << mat.shininess;
+	return out;
+}
+
 WZM::WZM()
 {
-	m_materials.resize(1);
+	m_material.setDefaults();
 }
 
 WZM::WZM(const Pie3Model &p3)
 {
-	m_materials.resize(1);
-
 	std::vector<Pie3Level>::const_iterator it;
 	std::stringstream ss;
+
+	m_material.setDefaults();
 
 	setTextureName(WZM_TEX_DIFFUSE, p3.m_texture);
 	setTextureName(WZM_TEX_NORMALMAP, p3.m_texture_normalmap);
@@ -122,7 +168,7 @@ bool WZM::read(std::istream& in)
 	// read next token
 	in >> str;
 
-	// TCMASK ?
+	// optional: team color mask
 	if (!str.compare(WZM_MODEL_DIRECTIVE_TCMASK))
 	{
 		in >> m_textures[WZM_TEX_TCMASK];
@@ -137,13 +183,28 @@ bool WZM::read(std::istream& in)
 		in >> str;
 	}
 
-	// NORMALMAP ?
+	// optional: normalmap
 	if (!str.compare(WZM_MODEL_DIRECTIVE_NORMALMAP))
 	{
 		in >> m_textures[WZM_TEX_NORMALMAP];
 		if (in.fail())
 		{
 			std::cerr << "WZM::read - Error reading NORMALMAP name";
+			clear();
+			return false;
+		}
+
+		// pre read next token
+		in >> str;
+	}
+
+	// optional: material
+	if (!str.compare(WZM_MODEL_DIRECTIVE_MATERIAL))
+	{
+		in >> m_material;
+		if (in.fail())
+		{
+			std::cerr << "WZM::read - Error reading material values";
 			clear();
 			return false;
 		}
@@ -193,16 +254,22 @@ void WZM::write(std::ostream& out) const
 		out << WZM_MODEL_DIRECTIVE_TEXTURE << " notexture.set\n";
 	}
 
-	// TCMASK
+	// optional: team color mask
 	if (isTextureSet(WZM_TEX_TCMASK))
 	{
 		out << WZM_MODEL_DIRECTIVE_TCMASK << ' ' << getTextureName(WZM_TEX_TCMASK) << '\n';
 	}
 
-	// NORMALMAP
+	// optional: normalmap
 	if (isTextureSet(WZM_TEX_NORMALMAP))
 	{
 		out << WZM_MODEL_DIRECTIVE_NORMALMAP << ' ' << getTextureName(WZM_TEX_NORMALMAP) << '\n';
+	}
+
+	// optional: material
+	if (!m_material.isDefault())
+	{
+		out << WZM_MODEL_DIRECTIVE_MATERIAL << ' ' << m_material << '\n';
 	}
 
 	// MESHES
@@ -601,6 +668,7 @@ void WZM::clear()
 {
 	m_meshes.clear();
 	m_textures.clear();
+	m_material.setDefaults();
 }
 
 void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)
