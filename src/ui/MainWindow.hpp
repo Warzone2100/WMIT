@@ -61,13 +61,14 @@ protected:
 
 private slots:
 	void on_actionOpen_triggered();
-	void on_actionSave_As_triggered();
+	void on_actionSaveAs_triggered();
 	void on_actionSave_triggered();
 	void on_actionClose_triggered();
 	void on_actionTransform_triggered();
-	void on_actionUVEditor_toggled(bool );
+	void on_actionUVEditor_toggled(bool);
 	void on_actionSetupTextures_triggered();
-	void on_actionAppend_Model_triggered();
+	void on_actionAppendModel_triggered();
+	void on_actionTakeScreenshot_triggered();
 
 	void _on_viewerInitialized();
 	void _on_shaderActionTriggered(int);

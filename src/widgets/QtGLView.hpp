@@ -65,6 +65,9 @@ public:
 	virtual bool loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag);
 	virtual void unloadShader(int type);
 
+public slots:
+	void setDrawLightSource(bool draw);
+
 signals:
 	void viewerInitialized();
 
@@ -96,6 +99,7 @@ private:
 
 	QFileSystemWatcher textureUpdater;
 	QBasicTimer updateTimer;
+	bool drawLightSource;
 
 	void dynamicManagedSetup(IGLRenderable* object, bool remove = false);
 

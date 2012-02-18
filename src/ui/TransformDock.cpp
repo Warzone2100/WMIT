@@ -26,10 +26,10 @@ TransformDock::TransformDock(QWidget *parent) :
 {
 	 ui->setupUi(this);
 
-	 ui->cbMeshIdx->setEditable(false);
+	 ui->meshComboBox->setEditable(false);
 	 setMeshCount(0, QStringList());
 
-	 ui->pbRemoveMesh->setIcon(style()->standardIcon(QStyle::SP_TrashIcon, 0, ui->pbRemoveMesh));
+	 ui->removeMeshButton->setIcon(style()->standardIcon(QStyle::SP_TrashIcon, 0, ui->removeMeshButton));
 
 	 reset(true);
 }
@@ -52,26 +52,26 @@ void TransformDock::reset(bool reset_prev_values)
 
 void TransformDock::setMeshCount(int value, QStringList names)
 {
-	int selected = ui->cbMeshIdx->currentIndex();
+	int selected = ui->meshComboBox->currentIndex();
 
-	ui->cbMeshIdx->blockSignals(true);
+	ui->meshComboBox->blockSignals(true);
 
-	ui->cbMeshIdx->clear();
-	ui->cbMeshIdx->addItem("All meshes");
+	ui->meshComboBox->clear();
+	ui->meshComboBox->addItem("All meshes");
 	for (int i = 1; i <= value; ++i)
 	{
-		ui->cbMeshIdx->addItem(QString::number(i) + " [" + names.value(i - 1) + "]");
+		ui->meshComboBox->addItem(QString::number(i) + " [" + names.value(i - 1) + "]");
 	}
 
 	if (selected > value || selected < 0)
 	{
 		selected = 0;
 	}
-	ui->cbMeshIdx->setCurrentIndex(selected);
+	ui->meshComboBox->setCurrentIndex(selected);
 
-	ui->cbMeshIdx->blockSignals(false);
+	ui->meshComboBox->blockSignals(false);
 
-	on_cbMeshIdx_currentIndexChanged(selected); // force this because of possible mesh stack pop
+	on_meshComboBox_currentIndexChanged(selected); // force this because of possible mesh stack pop
 }
 
 void TransformDock::changeEvent(QEvent *e)
@@ -102,12 +102,12 @@ void TransformDock::acceptTransformations()
 
 void TransformDock::setScaleValueOnUI(double value)
 {
-	ui->doubleSpinBox->blockSignals(true);
-	ui->doubleSpinBox->setValue(value);
-	ui->doubleSpinBox->blockSignals(false);
-	ui->horizontalSlider->blockSignals(true);
-	ui->horizontalSlider->setValue(value);
-	ui->horizontalSlider->blockSignals(false);
+	ui->scaleSpinBox->blockSignals(true);
+	ui->scaleSpinBox->setValue(value);
+	ui->scaleSpinBox->blockSignals(false);
+	ui->scaleSlider->blockSignals(true);
+	ui->scaleSlider->setValue(value);
+	ui->scaleSlider->blockSignals(false);
 }
 
 void TransformDock::closeEvent(QCloseEvent *event)
@@ -116,18 +116,18 @@ void TransformDock::closeEvent(QCloseEvent *event)
 	event->accept();
 }
 
-void TransformDock::on_pb_revWindings_clicked()
+void TransformDock::on_reverseWindingsButton_clicked()
 {
 	emit reverseWindings(m_selected_mesh);
 }
 
-void TransformDock::on_doubleSpinBox_valueChanged(double value)
+void TransformDock::on_scaleSpinBox_valueChanged(double value)
 {
-	if (ui->doubleSpinBox->value() != value)
+	if (ui->scaleSpinBox->value() != value)
 	{
-		ui->doubleSpinBox->setValue(value);
+		ui->scaleSpinBox->setValue(value);
 	}
-	switch(ui->comboBox->currentIndex())
+	switch(ui->scaleComboBox->currentIndex())
 	{
 	case 0: //XYZ
 		scale_all = value;
@@ -148,15 +148,15 @@ void TransformDock::on_doubleSpinBox_valueChanged(double value)
 	}
 }
 
-void TransformDock::on_horizontalSlider_valueChanged(int value)
+void TransformDock::on_scaleSlider_valueChanged(int value)
 {
-	if (ui->doubleSpinBox->value() != value)
+	if (ui->scaleSpinBox->value() != value)
 	{
-		ui->doubleSpinBox->setValue(value);
+		ui->scaleSpinBox->setValue(value);
 	}
 }
 
-void TransformDock::on_comboBox_currentIndexChanged(int index)
+void TransformDock::on_scaleComboBox_currentIndexChanged(int index)
 {
 	switch(index)
 	{
@@ -175,9 +175,9 @@ void TransformDock::on_comboBox_currentIndexChanged(int index)
 	}
 }
 
-void TransformDock::on_cbMeshIdx_currentIndexChanged(int index)
+void TransformDock::on_meshComboBox_currentIndexChanged(int index)
 {
-	ui->pbRemoveMesh->setDisabled(!index || ui->cbMeshIdx->count() <= 2); // FIXME: can't remove all and shouldn't remove last remaining mesh
+	ui->removeMeshButton->setDisabled(!index || ui->meshComboBox->count() <= 2); // FIXME: can't remove all and shouldn't remove last remaining mesh
 
 	if (index < 0)
 		return;
@@ -189,22 +189,22 @@ void TransformDock::on_cbMeshIdx_currentIndexChanged(int index)
 	emit setActiveMeshIdx(m_selected_mesh);
 }
 
-void TransformDock::on_pbMirrorX_clicked()
+void TransformDock::on_mirrorXButton_clicked()
 {
-	emit mirrorAxis(ui->cbGlobalMirror->isChecked() ? 3 : 0);
+	emit mirrorAxis(ui->globalMirrorCheckBox->isChecked() ? 3 : 0);
 }
 
-void TransformDock::on_pbMirrorY_clicked()
+void TransformDock::on_mirrorYButton_clicked()
 {
-	emit mirrorAxis(ui->cbGlobalMirror->isChecked() ? 4 : 1);
+	emit mirrorAxis(ui->globalMirrorCheckBox->isChecked() ? 4 : 1);
 }
 
-void TransformDock::on_pbMirrorZ_clicked()
+void TransformDock::on_mirrorZButton_clicked()
 {
-	emit mirrorAxis(ui->cbGlobalMirror->isChecked() ? 5 : 2);
+	emit mirrorAxis(ui->globalMirrorCheckBox->isChecked() ? 5 : 2);
 }
 
-void TransformDock::on_pbRemoveMesh_clicked()
+void TransformDock::on_removeMeshButton_clicked()
 {
 	emit removeMeshIdx(m_selected_mesh);
 }
