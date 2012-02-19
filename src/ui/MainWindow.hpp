@@ -83,7 +83,7 @@ private slots:
 	void _on_removeMesh(int mesh);
 
 private:
-	Ui::MainWindow* ui;
+	Ui::MainWindow* m_ui;
 
 	ImportDialog* importDialog;
 	ExportDialog* exportDialog;

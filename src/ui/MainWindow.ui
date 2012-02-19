@@ -83,7 +83,7 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout"/>
+    <addaction name="actionAboutApplication"/>
     <addaction name="actionAboutQt"/>
    </widget>
    <addaction name="menuFile"/>
@@ -169,7 +169,7 @@
     <string>Append Model...</string>
    </property>
   </action>
-  <action name="actionAbout">
+  <action name="actionAboutApplication">
    <property name="text">
     <string>About...</string>
    </property>
