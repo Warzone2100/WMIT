@@ -18,7 +18,7 @@
 */
 #ifndef VERTEXTYPES_HPP
 #define VERTEXTYPES_HPP
-#include "Vector.hpp"
+#include "Vector.h"
 
 template <typename T, size_t COMPONENTS = 2>
 struct UV : public Vector<T, COMPONENTS>

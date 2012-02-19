@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "WZM.hpp"
+#include "WZM.h"
 
 #include <algorithm>
 #include <iterator>
@@ -29,12 +29,12 @@
 
 #include <sstream>
 
-#include "Generic.hpp"
-#include "Util.hpp"
-#include "Pie.hpp"
-#include "Vector.hpp"
+#include "Generic.h"
+#include "Util.h"
+#include "Pie.h"
+#include "Vector.h"
 
-#include "OBJ.hpp"
+#include "OBJ.h"
 
 void WZMaterial::setDefaults()
 {

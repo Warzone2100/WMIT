@@ -28,7 +28,7 @@
 #include <QSettings>
 #include <QSignalMapper>
 
-#include "QWZM.hpp"
+#include "QWZM.h"
 #include "wmit.h"
 
 class TransformDock;
@@ -58,6 +58,7 @@ public:
 	static bool guessModelTypeFromFilename(const QString &fname, wmit_filetype_t &type);
 	static bool saveModel(const QString& file, const WZM& model, const wmit_filetype_t &type);
 	static bool saveModel(const QString& file, const QWZM& model, const wmit_filetype_t &type);
+
 protected:
 	void changeEvent(QEvent *event);
 

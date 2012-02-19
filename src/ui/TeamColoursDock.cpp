@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "TeamColoursDock.hpp"
+#include "TeamColoursDock.h"
 #include "ui_TeamColoursDock.h"
 
 TeamColoursDock::TeamColoursDock(QWidget *parent) :

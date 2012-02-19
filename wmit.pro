@@ -6,34 +6,34 @@ QT += opengl xml
 INCLUDEPATH += src src/basic src/formats src/ui src/widgets 3rdparty/GLee
 
 HEADERS += \
-    src/formats/WZM.hpp \
-    src/formats/Pie.hpp \
-    src/formats/OBJ.hpp \
-    src/formats/Mesh.hpp \
-    src/ui/UVEditor.hpp \
-    src/ui/TransformDock.hpp \
-    src/ui/TeamColoursDock.hpp \
-    src/ui/MainWindow.hpp \
-    src/ui/ImportDialog.hpp \
-    src/ui/ExportDialog.hpp \
-    src/Util.hpp \
-    src/Generic.hpp \
-    src/basic/VectorTypes.hpp \
-    src/basic/Vector.hpp \
-    src/basic/Polygon.hpp \
-    src/basic/IGLTextureManager.hpp \
-    src/basic/IGLRenderable.hpp \
-    src/basic/IAnimatable.hpp \
-    src/basic/GLTexture.hpp \
     3rdparty/GLee/GLee.h \
-    src/widgets/QWZM.hpp \
-    src/widgets/QtGLView.hpp \
     src/wmit.h \
-    src/basic/IGLTexturedRenderable.hpp \
     src/basic/IGLShaderManager.h \
     src/basic/IGLShaderRenderable.h \
     src/ui/TextureDialog.h \
-    src/ui/TexConfigDialog.hpp
+    src/Generic.h \
+    src/Util.h \
+    src/widgets/QtGLView.h \
+    src/ui/ExportDialog.h \
+    src/ui/ImportDialog.h \
+    src/ui/MainWindow.h \
+    src/ui/TeamColoursDock.h \
+    src/ui/TexConfigDialog.h \
+    src/ui/TransformDock.h \
+    src/ui/UVEditor.h \
+    src/formats/Mesh.h \
+    src/formats/OBJ.h \
+    src/formats/Pie.h \
+    src/formats/WZM.h \
+    src/basic/GLTexture.h \
+    src/basic/IAnimatable.h \
+    src/basic/IGLRenderable.h \
+    src/basic/IGLTexturedRenderable.h \
+    src/basic/IGLTextureManager.h \
+    src/basic/Polygon.h \
+    src/basic/Vector.h \
+    src/basic/VectorTypes.h \
+    src/widgets/QWZM.h
     
 SOURCES += \
     src/formats/WZM.cpp \

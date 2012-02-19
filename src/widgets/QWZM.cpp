@@ -17,10 +17,10 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "QWZM.hpp"
-#include "Pie.hpp"
+#include "QWZM.h"
+#include "Pie.h"
 
-#include "QtGLView.hpp"
+#include "QtGLView.h"
 
 #ifdef CPP0X_AVAILABLE
 #  define CPP0X_FEATURED(x) x

@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Mesh.hpp"
+#include "Mesh.h"
 
 #include <algorithm>
 #include <functional>
@@ -29,10 +29,10 @@
 
 #include <sstream>
 
-#include "Generic.hpp"
-#include "Util.hpp"
-#include "Pie.hpp"
-#include "Vector.hpp"
+#include "Generic.h"
+#include "Util.h"
+#include "Pie.h"
+#include "Vector.h"
 
 WZMVertex normalizeVector(const WZMVertex& ver)
 {

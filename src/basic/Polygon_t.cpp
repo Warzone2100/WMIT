@@ -21,7 +21,7 @@
 #include <algorithm>
 
 
-#include "Polygon.hpp" // Hack for autocomplete
+#include "Polygon.h" // Hack for autocomplete
 
 /*
   *

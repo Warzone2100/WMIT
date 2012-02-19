@@ -23,10 +23,10 @@
 #include <vector>
 #include <list>
 #include <QtOpenGL/qgl.h>
-#include "VectorTypes.hpp"
-#include "Polygon.hpp"
+#include "VectorTypes.h"
+#include "Polygon.h"
 
-#include "WZM.hpp" // for friends
+#include "WZM.h" // for friends
 
 /**
   * Templates used to remove tedious code

@@ -21,9 +21,9 @@
 
 #include <QString>
 
-#include "GLTexture.hpp"
-#include "IGLTextureManager.hpp"
-#include "IGLRenderable.hpp"
+#include "GLTexture.h"
+#include "IGLTextureManager.h"
+#include "IGLRenderable.h"
 
 class IGLTexturedRenderable : virtual public IGLRenderable
 {

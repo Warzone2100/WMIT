@@ -22,7 +22,7 @@
 #include <QDialog>
 #include <QMap>
 
-#include "WZM.hpp"
+#include "WZM.h"
 
 class QListWidgetItem;
 class TexConfigDialog;

@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Generic.hpp"
+#include "Generic.h"
 
 std::vector<std::string> split(std::istringstream& iss)
 {

@@ -17,13 +17,13 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "MainWindow.hpp"
+#include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "TransformDock.hpp"
-#include "ImportDialog.hpp"
-#include "ExportDialog.hpp"
+#include "TransformDock.h"
+#include "ImportDialog.h"
+#include "ExportDialog.h"
 #include "TextureDialog.h"
-#include "UVEditor.hpp"
+#include "UVEditor.h"
 
 #include <fstream>
 
@@ -34,7 +34,7 @@
 #include <QtDebug>
 #include <QVariant>
 
-#include "Pie.hpp"
+#include "Pie.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_ui(new Ui::MainWindow),

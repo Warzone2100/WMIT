@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Util.hpp"
+#include "Util.h"
 
 #include <QtDebug>
 
@@ -25,7 +25,7 @@
 #include <QTextStream>
 #include <QRegExp>
 
-#include "Pie.hpp"
+#include "Pie.h"
 #include "wmit.h"
 
 bool isValidWzName(const std::string name)

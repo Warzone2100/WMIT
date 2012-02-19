@@ -30,8 +30,8 @@
 
 #include <QGLViewer/qglviewer.h>
 
-#include "GLTexture.hpp"
-#include "IGLTextureManager.hpp"
+#include "GLTexture.h"
+#include "IGLTextureManager.h"
 #include "IGLShaderManager.h"
 
 class IGLRenderable;

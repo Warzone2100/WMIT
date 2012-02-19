@@ -27,9 +27,9 @@
 
 #include "GLee.h"
 
-#include "WZM.hpp"
-#include "IAnimatable.hpp"
-#include "IGLTexturedRenderable.hpp"
+#include "WZM.h"
+#include "IAnimatable.h"
+#include "IGLTexturedRenderable.h"
 #include "IGLShaderRenderable.h"
 
 enum wz_shader_type_t {WZ_SHADER_NONE = 0, WZ_SHADER_PIE3, WZ_SHADER_PIE3_USER,

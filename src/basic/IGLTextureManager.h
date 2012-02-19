@@ -21,7 +21,7 @@
 
 #include <QString>
 
-#include "GLTexture.hpp"
+#include "GLTexture.h"
 
 class IGLTextureManager
 {

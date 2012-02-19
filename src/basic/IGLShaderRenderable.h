@@ -20,7 +20,7 @@
 #pragma once
 
 #include "IGLShaderManager.h"
-#include "IGLRenderable.hpp"
+#include "IGLRenderable.h"
 
 class IGLShaderRenderable: virtual public IGLRenderable
 {

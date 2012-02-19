@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include "Pie.hpp"
+#include "Pie.h"
 
 int pieVersion(std::istream& in)
 {

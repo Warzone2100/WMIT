@@ -19,10 +19,10 @@
 #ifndef PIE_T_CPP
 #define PIE_T_CPP
 
-#include "Generic.hpp"
-#include "Util.hpp"
+#include "Generic.h"
+#include "Util.h"
 
-#include "Pie.hpp" // Hack for autocomplete
+#include "Pie.h" // Hack for autocomplete
 
 /*
   *
