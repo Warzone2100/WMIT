@@ -38,9 +38,9 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_ui(new Ui::MainWindow),
-	importDialog(new ImportDialog(this)),
-	exportDialog(NULL),
-	transformDock(new TransformDock(this)),
+	m_importDialog(new ImportDialog(this)),
+	m_exportDialog(NULL),
+	m_transformDock(new TransformDock(this)),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
 	m_settings(new QSettings(this)),
@@ -51,10 +51,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_pathImport = m_settings->value(WMIT_SETTINGS_IMPORTVAL, QDir::currentPath()).toString();
 	m_pathExport = m_settings->value(WMIT_SETTINGS_EXPORTVAL, QDir::currentPath()).toString();
 
-	transformDock->setAllowedAreas(Qt::RightDockWidgetArea);
-	transformDock->hide();
+	m_transformDock->setAllowedAreas(Qt::RightDockWidgetArea);
+	m_transformDock->hide();
 
-	addDockWidget(Qt::RightDockWidgetArea, transformDock, Qt::Horizontal);
+	addDockWidget(Qt::RightDockWidgetArea, m_transformDock, Qt::Horizontal);
 
 	m_UVEditor->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	m_UVEditor->hide();
@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionSave, SIGNAL(triggered()), this, SLOT(actionSave()));
 	connect(m_ui->actionSaveAs, SIGNAL(triggered()), this, SLOT(actionSaveAs()));
 	connect(m_ui->actionClose, SIGNAL(triggered()), this, SLOT(actionClose()));
-	connect(m_ui->actionTransform, SIGNAL(triggered()), this, SLOT(actionTransform()));
+	connect(m_ui->actionTransform, SIGNAL(toggled(bool)), m_transformDock, SLOT(setVisible(bool)));
 	connect(m_ui->actionUVEditor, SIGNAL(toggled(bool)), m_UVEditor, SLOT(setVisible(bool)));
 	connect(m_ui->actionSetupTextures, SIGNAL(triggered()), this, SLOT(actionSetupTextures()));
 	connect(m_ui->actionAppendModel, SIGNAL(triggered()), this, SLOT(actionAppendModel()));
@@ -83,16 +83,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
 
 	// transformations
-	connect(transformDock, SIGNAL(scaleXYZChanged(double)), this, SLOT(scaleXYZChanged(double)));
-	connect(transformDock, SIGNAL(scaleXChanged(double)), this, SLOT(scaleXChanged(double)));
-	connect(transformDock, SIGNAL(scaleYChanged(double)), this, SLOT(scaleYChanged(double)));
-	connect(transformDock, SIGNAL(scaleZChanged(double)), this, SLOT(scaleZChanged(double)));
-	connect(transformDock, SIGNAL(reverseWindings(int)), this, SLOT(reverseWindings(int)));
-	connect(transformDock, SIGNAL(applyTransformations()), &m_model, SLOT(applyTransformations()));
-	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), transformDock, SLOT(setMeshCount(int,QStringList)));
-	connect(transformDock, SIGNAL(setActiveMeshIdx(int)), &m_model, SLOT(setActiveMesh(int)));
-	connect(transformDock, SIGNAL(removeMeshIdx(int)), this, SLOT(removeMesh(int)));
-	connect(transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
+	connect(m_transformDock, SIGNAL(scaleXYZChanged(double)), this, SLOT(scaleXYZChanged(double)));
+	connect(m_transformDock, SIGNAL(scaleXChanged(double)), this, SLOT(scaleXChanged(double)));
+	connect(m_transformDock, SIGNAL(scaleYChanged(double)), this, SLOT(scaleYChanged(double)));
+	connect(m_transformDock, SIGNAL(scaleZChanged(double)), this, SLOT(scaleZChanged(double)));
+	connect(m_transformDock, SIGNAL(reverseWindings(int)), this, SLOT(reverseWindings(int)));
+	connect(m_transformDock, SIGNAL(applyTransformations()), &m_model, SLOT(applyTransformations()));
+	connect(m_transformDock, SIGNAL(setActiveMeshIdx(int)), &m_model, SLOT(setActiveMesh(int)));
+	connect(m_transformDock, SIGNAL(removeMeshIdx(int)), this, SLOT(removeMesh(int)));
+	connect(m_transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
+	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_transformDock, SLOT(setMeshCount(int,QStringList)));
 
 	clear();
 
@@ -384,26 +384,26 @@ void MainWindow::actionSaveAs()
 /* Disabled till ready
 	if (type == PIE)
 	{
-		exportDialog = new PieExportDialog(this);
-		exportDialog->exec();
+		m_exportDialog = new PieExportDialog(this);
+		m_exportDialog->exec();
 	}
 	else
 	{
-		exportDialog = new ExportDialog(this);
-		exportDialog->exec();
+		m_exportDialog = new ExportDialog(this);
+		m_exportDialog->exec();
 	}
 
-	if (exportDialog->result() != QDialog::Accepted)
+	if (m_exportDialog->result() != QDialog::Accepted)
 	{
 		return;
 	}
 
-	if (exportDialog->optimisationSelected() == 0)
+	if (m_exportDialog->optimisationSelected() == 0)
 	{
 //		model.optimizeForsyth();
 	}
-	delete exportDialog;
-	exportDialog = NULL;
+	delete m_exportDialog;
+	m_exportDialog = NULL;
 */
 
 	saveModel(fDialog->selectedFiles().first(), m_model, type);
@@ -547,11 +547,6 @@ void MainWindow::removeMesh(int mesh)
 void MainWindow::actionClose()
 {
 	clear();
-}
-
-void MainWindow::actionTransform()
-{
-	transformDock->isVisible() ? transformDock->hide() : transformDock->show();
 }
 
 void MainWindow::actionSetupTextures()
