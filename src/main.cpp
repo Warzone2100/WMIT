@@ -24,9 +24,9 @@
 
 #include <fstream>
 
-#include "MainWindow.hpp"
-#include "WZM.hpp"
-#include "Pie.hpp"
+#include "MainWindow.h"
+#include "WZM.h"
+#include "Pie.h"
 #include "wmit.h"
 
 int main(int argc, char *argv[])

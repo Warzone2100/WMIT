@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "TransformDock.hpp"
+#include "TransformDock.h"
 #include "ui_TransformDock.h"
 
 TransformDock::TransformDock(QWidget *parent) :

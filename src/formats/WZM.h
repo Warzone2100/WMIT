@@ -24,7 +24,7 @@
 #include <vector>
 #include <map>
 
-#include "Mesh.hpp"
+#include "Mesh.h"
 
 #define WZM_MODEL_SIGNATURE "WZM"
 #define WZM_MODEL_VERSION_FD 3 // First draft version

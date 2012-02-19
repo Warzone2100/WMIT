@@ -23,7 +23,7 @@
 
 #include <QtOpenGL/qgl.h>
 
-#include "Vector.hpp"
+#include "Vector.h"
 
 
 struct IndexedTri : public Vector<GLushort,3>

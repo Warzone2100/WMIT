@@ -26,8 +26,8 @@
 
 #include <QtOpenGL/qgl.h>
 
-#include "VectorTypes.hpp"
-#include "Polygon.hpp"
+#include "VectorTypes.h"
+#include "Polygon.h"
 
 typedef Vertex<GLfloat> OBJVertex;
 typedef UV<GLclampf> OBJUV;

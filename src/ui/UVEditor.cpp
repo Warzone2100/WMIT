@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "UVEditor.hpp"
+#include "UVEditor.h"
 #include "ui_UVEditor.h"
 
 UVEditor::UVEditor(QWidget *parent) :

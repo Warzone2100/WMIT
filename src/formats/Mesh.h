@@ -28,10 +28,10 @@
 
 #include <QtOpenGL/qgl.h>
 
-#include "VectorTypes.hpp"
-#include "Polygon.hpp"
+#include "VectorTypes.h"
+#include "Polygon.h"
 
-#include "OBJ.hpp"
+#include "OBJ.h"
 
 #define WZM_MESH_SIGNATURE "MESH"
 #define WZM_MESH_DIRECTIVE_TEAMCOLOURS "TEAMCOLOURS"

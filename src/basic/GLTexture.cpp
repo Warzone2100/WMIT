@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GLTexture.hpp"
+#include "GLTexture.h"
 
 GLTexture::GLTexture() : m_id(0), m_w(0), m_h(0)
 {

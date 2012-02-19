@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ExportDialog.hpp"
+#include "ExportDialog.h"
 #include "ui_ExportDialog.h"
 
 ExportDialog::ExportDialog(QWidget *parent) :

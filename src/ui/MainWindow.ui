@@ -253,7 +253,7 @@
   <customwidget>
    <class>QtGLView</class>
    <extends>QWidget</extends>
-   <header>QtGLView.hpp</header>
+   <header>QtGLView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

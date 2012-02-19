@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "QtGLView.hpp"
+#include "QtGLView.h"
 
 #ifdef Q_OS_MAC
 # include <CoreFoundation/CoreFoundation.h>
@@ -33,7 +33,7 @@
 
 #include <QGLViewer/vec.h>
 
-#include "IGLTexturedRenderable.hpp"
+#include "IGLTexturedRenderable.h"
 #include "IGLShaderRenderable.h"
 
 enum LIGHTING_TYPE {

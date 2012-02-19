@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "TexConfigDialog.hpp"
+#include "TexConfigDialog.h"
 #include "ui_TexConfigDialog.h"
 
 #include <QFileDialog>

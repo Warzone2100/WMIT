@@ -27,7 +27,7 @@
 
 #include "wmit.h"
 
-#include "TexConfigDialog.hpp"
+#include "TexConfigDialog.h"
 
 TextureDialog::TextureDialog(QWidget *parent) :
 	QDialog(parent),

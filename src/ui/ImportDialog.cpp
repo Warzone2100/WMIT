@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ImportDialog.hpp"
+#include "ImportDialog.h"
 #include "ui_ImportDialog.h"
 
 #include <QFileDialog>

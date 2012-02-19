@@ -24,21 +24,21 @@ include_directories(
 )
 
 set( wmit_HDRS
-	src/formats/WZM.hpp
-	src/formats/Pie.hpp
-	src/formats/OBJ.hpp
-	src/formats/Mesh.hpp
-	src/Util.hpp
-	src/Generic.hpp
-	src/basic/VectorTypes.hpp
-	src/basic/Vector.hpp
-	src/basic/Polygon.hpp
-	src/basic/IGLTextureManager.hpp
-	src/basic/IGLRenderable.hpp
-	src/basic/IAnimatable.hpp
-	src/basic/GLTexture.hpp
+	src/formats/WZM.h
+	src/formats/Pie.h
+	src/formats/OBJ.h
+	src/formats/Mesh.h
+	src/Util.h
+	src/Generic.h
+	src/basic/VectorTypes.h
+	src/basic/Vector.h
+	src/basic/Polygon.h
+	src/basic/IGLTextureManager.h
+	src/basic/IGLRenderable.h
+	src/basic/IAnimatable.h
+	src/basic/GLTexture.h
 	src/wmit.h
-	src/basic/IGLTexturedRenderable.hpp
+	src/basic/IGLTexturedRenderable.h
 	src/basic/IGLShaderManager.h
 	src/basic/IGLShaderRenderable.h
 	3rdparty/GLee/GLee.h
@@ -83,16 +83,16 @@ set( wmit_RSCS
 )
 
 set( wmit_MOCS
-	src/ui/UVEditor.hpp
-	src/ui/TransformDock.hpp
-	src/ui/TeamColoursDock.hpp
-	src/ui/MainWindow.hpp
-	src/ui/ImportDialog.hpp
-	src/ui/ExportDialog.hpp
-	src/widgets/QWZM.hpp
-	src/widgets/QtGLView.hpp
+	src/ui/UVEditor.h
+	src/ui/TransformDock.h
+	src/ui/TeamColoursDock.h
+	src/ui/MainWindow.h
+	src/ui/ImportDialog.h
+	src/ui/ExportDialog.h
+	src/widgets/QWZM.h
+	src/widgets/QtGLView.h
 	src/ui/TextureDialog.h
-	src/ui/TexConfigDialog.hpp
+	src/ui/TexConfigDialog.h
 )
 
 QT4_WRAP_UI(UIS ${wmit_UIS})
