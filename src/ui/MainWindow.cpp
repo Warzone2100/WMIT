@@ -187,9 +187,18 @@ bool MainWindow::saveModel(const QString &file, const WZM &model, const wmit_fil
 		model.exportToOBJ(out);
 		break;
 	case WMIT_FT_PIE:
+	case WMIT_FT_PIE2:
 	default:
 		Pie3Model p3 = model;
-		p3.write(out);
+		if (type == WMIT_FT_PIE2)
+		{
+			Pie2Model p2 = p3;
+			p2.write(out);
+		}
+		else
+		{
+			p3.write(out);
+		}
 	}
 
 	out.close();
@@ -211,9 +220,18 @@ bool MainWindow::saveModel(const QString &file, const QWZM &model, const wmit_fi
 		model.exportToOBJ(out);
 		break;
 	case WMIT_FT_PIE:
+	case WMIT_FT_PIE2:
 	default:
 		Pie3Model p3 = model;
-		p3.write(out);
+		if (type == WMIT_FT_PIE2)
+		{
+			Pie2Model p2 = p3;
+			p2.write(out);
+		}
+		else
+		{
+			p3.write(out);
+		}
 	}
 
 	out.close();
@@ -258,6 +276,7 @@ bool MainWindow::loadModel(const QString& file, WZM& model)
 		read_success = model.importFromOBJ(f);
 		break;
 	case WMIT_FT_PIE:
+	case WMIT_FT_PIE2:
 	default:
 		int pieversion = pieVersion(f);
 		if (pieversion <= 2)
@@ -352,13 +371,17 @@ void MainWindow::actionSave()
 
 void MainWindow::actionSaveAs()
 {
+	QStringList filters;
+	filters << "PIE2 models (*.pie)" << "PIE3 models (**.pie)" << "WZM models (*.wzm)" << "OBJ files (*.obj)";
+
+	QList<wmit_filetype_t> types;
+	types << WMIT_FT_PIE2 << WMIT_FT_PIE << WMIT_FT_WZM << WMIT_FT_OBJ;
+
 	QFileDialog* fDialog = new QFileDialog();
 
 	fDialog->setFileMode(QFileDialog::AnyFile);
 	fDialog->setAcceptMode(QFileDialog::AcceptSave);
-	fDialog->setFilter("PIE models (*.pie);;"
-			   "WZM models (*.wzm);;"
-			   "OBJ files (*.obj)");
+	fDialog->setFilter(filters.join(";;"));
 	fDialog->setWindowTitle(tr("Choose output file"));
 	fDialog->setDefaultSuffix("pie");
 	fDialog->setDirectory(m_pathExport);
@@ -373,8 +396,7 @@ void MainWindow::actionSaveAs()
 	m_pathExport = fDialog->directory().absolutePath();
 	m_settings->setValue(WMIT_SETTINGS_EXPORTVAL, m_pathExport);
 
-	wmit_filetype_t type;
-	if (!guessModelTypeFromFilename(fDialog->selectedFiles().first(), type))
+	if (!filters.contains(fDialog->selectedNameFilter()))
 	{
 		return;
 	}
@@ -404,7 +426,7 @@ void MainWindow::actionSaveAs()
 	m_exportDialog = NULL;
 */
 
-	saveModel(fDialog->selectedFiles().first(), m_model, type);
+	saveModel(fDialog->selectedFiles().first(), m_model, types[filters.indexOf(fDialog->selectedNameFilter())]);
 }
 
 void MainWindow::viewerInitialized()
