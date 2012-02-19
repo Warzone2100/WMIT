@@ -38,12 +38,15 @@ class ExportDialog;
 class TextureDialog;
 class UVEditor;
 
-namespace Ui {
+namespace Ui
+{
 	class MainWindow;
 }
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
 	Q_OBJECT
+
 public:
 	MainWindow(QWidget *parent = 0);
 	~MainWindow();
@@ -57,30 +60,29 @@ public:
 	static bool saveModel(const QString& file, const WZM& model, const wmit_filetype_t &type);
 	static bool saveModel(const QString& file, const QWZM& model, const wmit_filetype_t &type);
 protected:
-	void changeEvent(QEvent *e);
+	void changeEvent(QEvent *event);
 
 private slots:
-	void on_actionOpen_triggered();
-	void on_actionSaveAs_triggered();
-	void on_actionSave_triggered();
-	void on_actionClose_triggered();
-	void on_actionTransform_triggered();
-	void on_actionUVEditor_toggled(bool);
-	void on_actionSetupTextures_triggered();
-	void on_actionAppendModel_triggered();
-	void on_actionTakeScreenshot_triggered();
+	void actionOpen();
+	void actionSave();
+	void actionSaveAs();
+	void actionClose();
+	void actionTransform();
+	void actionSetupTextures();
+	void actionAppendModel();
+	void actionTakeScreenshot();
 
-	void _on_viewerInitialized();
-	void _on_shaderActionTriggered(int);
+	void viewerInitialized();
+	void shaderAction(int);
 
 	// transformations
-	void _on_scaleXYZChanged(double);
-	void _on_scaleXChanged(double);
-	void _on_scaleYChanged(double);
-	void _on_scaleZChanged(double);
-	void _on_reverseWindings(int mesh);
-	void _on_mirrorAxis(int axis);
-	void _on_removeMesh(int mesh);
+	void scaleXYZChanged(double scale);
+	void scaleXChanged(double scale);
+	void scaleYChanged(double scale);
+	void scaleZChanged(double scale);
+	void reverseWindings(int mesh);
+	void mirrorAxis(int axis);
+	void removeMesh(int mesh);
 
 private:
 	Ui::MainWindow* m_ui;
