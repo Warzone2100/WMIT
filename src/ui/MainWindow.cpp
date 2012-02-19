@@ -62,6 +62,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
 	m_ui->actionOpen->setIcon(QIcon::fromTheme("document-open", style()->standardIcon(QStyle::SP_DirOpenIcon)));
+	m_ui->menuOpenRecent->setIcon(QIcon::fromTheme("document-open-recent"));
+	m_ui->actionClearRecentFiles->setIcon(QIcon::fromTheme("edit-clear-list"));
 	m_ui->actionSave->setIcon(QIcon::fromTheme("document-save", style()->standardIcon(QStyle::SP_DialogSaveButton)));
 	m_ui->actionSaveAs->setIcon(QIcon::fromTheme("document-save-as"));
 	m_ui->actionClose->setIcon(QIcon::fromTheme("window-close"));
@@ -69,7 +71,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_ui->actionAboutApplication->setIcon(QIcon::fromTheme("help-about"));
 
 	connect(m_ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(viewerInitialized()));
+	connect(m_ui->menuFile, SIGNAL(aboutToShow()), this, SLOT(updateRecentFilesMenu()));
 	connect(m_ui->actionOpen, SIGNAL(triggered()), this, SLOT(actionOpen()));
+	connect(m_ui->menuOpenRecent, SIGNAL(triggered(QAction*)), this, SLOT(actionOpenRecent(QAction*)));
+	connect(m_ui->actionClearRecentFiles, SIGNAL(triggered()), this, SLOT(actionClearRecentFiles()));
 	connect(m_ui->actionSave, SIGNAL(triggered()), this, SLOT(actionSave()));
 	connect(m_ui->actionSaveAs, SIGNAL(triggered()), this, SLOT(actionSaveAs()));
 	connect(m_ui->actionClose, SIGNAL(triggered()), this, SLOT(actionClose()));
@@ -353,7 +358,16 @@ void MainWindow::actionOpen()
 		// refresh import working dir
 		m_pathImport = fileDialog->directory().absolutePath();
 		m_settings->setValue(WMIT_SETTINGS_IMPORTVAL, m_pathImport);
+
+		QFileInfo fileInfo(filePath);
+		QStringList recentFiles = QSettings().value("recentFiles").toStringList();
+		recentFiles.removeAll(fileInfo.absoluteFilePath());
+		recentFiles.prepend(fileInfo.absoluteFilePath());
+		recentFiles = recentFiles.mid(0, 10);
+
+		QSettings().setValue("recentFiles", recentFiles);
 	}
+
 	delete fileDialog;
 	fileDialog = 0;
 
@@ -362,6 +376,19 @@ void MainWindow::actionOpen()
 		openFile(filePath);
 		// else popup on fail?
 	}
+}
+
+void MainWindow::actionOpenRecent(QAction *action)
+{
+	if (!action->data().toString().isEmpty())
+	{
+		openFile(action->data().toString());
+	}
+}
+
+void MainWindow::actionClearRecentFiles()
+{
+	QSettings().remove("recentFiles");
 }
 
 void MainWindow::actionSave()
@@ -400,6 +427,14 @@ void MainWindow::actionSaveAs()
 	{
 		return;
 	}
+	
+	QFileInfo fileInfo(fDialog->selectedFiles().first());
+	QStringList recentFiles = QSettings().value("recentFiles").toStringList();
+	recentFiles.removeAll(fileInfo.absoluteFilePath());
+	recentFiles.prepend(fileInfo.absoluteFilePath());
+	recentFiles = recentFiles.mid(0, 10);
+
+	QSettings().setValue("recentFiles", recentFiles);
 
 /* Disabled till ready
 	if (type == PIE)
@@ -611,4 +646,27 @@ void MainWindow::actionAppendModel()
 void MainWindow::actionTakeScreenshot()
 {
 	m_ui->centralWidget->saveSnapshot(false);
+}
+
+void MainWindow::updateRecentFilesMenu()
+{
+	QStringList recentFiles = QSettings().value("recentFiles").toStringList();
+
+	for (int i = 0; i < 10; ++i)
+	{
+		if (i < recentFiles.count())
+		{
+			QFileInfo fileInfo(recentFiles.at(i));
+
+			m_ui->menuOpenRecent->actions().at(i)->setText(QString("%1. %2 (%3)").arg(i + 1).arg(fileInfo.fileName()).arg(recentFiles.at(i)));
+			m_ui->menuOpenRecent->actions().at(i)->setData(recentFiles.at(i));
+			m_ui->menuOpenRecent->actions().at(i)->setVisible(true);
+		}
+		else
+		{
+			m_ui->menuOpenRecent->actions().at(i)->setVisible(false);
+		}
+	}
+
+	m_ui->menuOpenRecent->setEnabled(recentFiles.count());
 }
