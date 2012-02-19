@@ -36,8 +36,7 @@
 
 #include "Pie.hpp"
 
-MainWindow::MainWindow(QWidget *parent) :
-	QMainWindow(parent),
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_ui(new Ui::MainWindow),
 	importDialog(new ImportDialog(this)),
 	exportDialog(NULL),
@@ -69,23 +68,31 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_ui->actionExit->setIcon(QIcon::fromTheme("application-exit", style()->standardIcon(QStyle::SP_DialogCloseButton)));
 	m_ui->actionAboutApplication->setIcon(QIcon::fromTheme("help-about"));
 
-	connect(m_ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(_on_viewerInitialized()));
-	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
+	connect(m_ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(viewerInitialized()));
+	connect(m_ui->actionOpen, SIGNAL(triggered()), this, SLOT(actionOpen()));
+	connect(m_ui->actionSave, SIGNAL(triggered()), this, SLOT(actionSave()));
+	connect(m_ui->actionSaveAs, SIGNAL(triggered()), this, SLOT(actionSaveAs()));
+	connect(m_ui->actionClose, SIGNAL(triggered()), this, SLOT(actionClose()));
+	connect(m_ui->actionTransform, SIGNAL(triggered()), this, SLOT(actionTransform()));
+	connect(m_ui->actionUVEditor, SIGNAL(toggled(bool)), m_UVEditor, SLOT(setVisible(bool)));
+	connect(m_ui->actionSetupTextures, SIGNAL(triggered()), this, SLOT(actionSetupTextures()));
+	connect(m_ui->actionAppendModel, SIGNAL(triggered()), this, SLOT(actionAppendModel()));
 	connect(m_ui->actionShowAxes, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setAxisIsDrawn(bool)));
 	connect(m_ui->actionShowGrid, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setGridIsDrawn(bool)));
 	connect(m_ui->actionShowLightSource, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setDrawLightSource(bool)));
+	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
 
 	// transformations
-	connect(transformDock, SIGNAL(scaleXYZChanged(double)), this, SLOT(_on_scaleXYZChanged(double)));
-	connect(transformDock, SIGNAL(scaleXChanged(double)), this, SLOT(_on_scaleXChanged(double)));
-	connect(transformDock, SIGNAL(scaleYChanged(double)), this, SLOT(_on_scaleYChanged(double)));
-	connect(transformDock, SIGNAL(scaleZChanged(double)), this, SLOT(_on_scaleZChanged(double)));
-	connect(transformDock, SIGNAL(reverseWindings(int)), this, SLOT(_on_reverseWindings(int)));
+	connect(transformDock, SIGNAL(scaleXYZChanged(double)), this, SLOT(scaleXYZChanged(double)));
+	connect(transformDock, SIGNAL(scaleXChanged(double)), this, SLOT(scaleXChanged(double)));
+	connect(transformDock, SIGNAL(scaleYChanged(double)), this, SLOT(scaleYChanged(double)));
+	connect(transformDock, SIGNAL(scaleZChanged(double)), this, SLOT(scaleZChanged(double)));
+	connect(transformDock, SIGNAL(reverseWindings(int)), this, SLOT(reverseWindings(int)));
 	connect(transformDock, SIGNAL(applyTransformations()), &m_model, SLOT(applyTransformations()));
 	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), transformDock, SLOT(setMeshCount(int,QStringList)));
 	connect(transformDock, SIGNAL(setActiveMeshIdx(int)), &m_model, SLOT(setActiveMesh(int)));
-	connect(transformDock, SIGNAL(removeMeshIdx(int)), this, SLOT(_on_removeMesh(int)));
-	connect(transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(_on_mirrorAxis(int)));
+	connect(transformDock, SIGNAL(removeMeshIdx(int)), this, SLOT(removeMesh(int)));
+	connect(transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
 
 	clear();
 
@@ -119,6 +126,7 @@ bool MainWindow::openFile(const QString &filePath)
 	}
 
 	WZM tmpmodel;
+
 	if (loadModel(filePath, tmpmodel))
 	{
 		QFileInfo modelFileNfo(filePath);
@@ -143,7 +151,7 @@ bool MainWindow::openFile(const QString &filePath)
 
 bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_t& type)
 {
-	QString ext = fname.right(fname.size() - fname.lastIndexOf('.') - 1);
+	const QString ext = fname.right(fname.size() - fname.lastIndexOf('.') - 1);
 
 	if (ext.compare(QString("wzm"), Qt::CaseInsensitive) == 0)
 	{
@@ -213,11 +221,11 @@ bool MainWindow::saveModel(const QString &file, const QWZM &model, const wmit_fi
 	return true;
 }
 
-void MainWindow::changeEvent(QEvent *e)
+void MainWindow::changeEvent(QEvent *event)
 {
-	QMainWindow::changeEvent(e);
+	QMainWindow::changeEvent(event);
 
-	switch (e->type())
+	switch (event->type())
 	{
 	case QEvent::LanguageChange:
 		m_ui->retranslateUi(this);
@@ -308,7 +316,7 @@ bool MainWindow::fireTextureDialog(const bool reinit)
 	return false;
 }
 
-void MainWindow::on_actionOpen_triggered()
+void MainWindow::actionOpen()
 {
 	QString filePath;
 	QFileDialog* fileDialog = new QFileDialog(this,
@@ -339,17 +347,12 @@ void MainWindow::on_actionOpen_triggered()
 	}
 }
 
-void MainWindow::on_actionUVEditor_toggled(bool show)
-{
-	show? m_UVEditor->show() : m_UVEditor->hide();
-}
-
-void MainWindow::on_actionSave_triggered()
+void MainWindow::actionSave()
 {
 //todo
 }
 
-void MainWindow::on_actionSaveAs_triggered()
+void MainWindow::actionSaveAs()
 {
 	QFileDialog* fDialog = new QFileDialog();
 
@@ -406,7 +409,7 @@ void MainWindow::on_actionSaveAs_triggered()
 	saveModel(fDialog->selectedFiles().first(), m_model, type);
 }
 
-void MainWindow::_on_viewerInitialized()
+void MainWindow::viewerInitialized()
 {
 	m_ui->centralWidget->addToRenderList(&m_model);
 
@@ -462,7 +465,7 @@ void MainWindow::_on_viewerInitialized()
 	}
 
 	connect(m_shaderSignalMapper, SIGNAL(mapped(int)),
-		     this, SLOT(_on_shaderActionTriggered(int)));
+		     this, SLOT(shaderAction(int)));
 
 	QMenu* rendererMenu = new QMenu(this);
 	rendererMenu->addActions(shaderGroup->actions());
@@ -484,7 +487,7 @@ void MainWindow::_on_viewerInitialized()
 		&m_model, SLOT(setDrawNormalsFlag(bool)));
 }
 
-void MainWindow::_on_shaderActionTriggered(int type)
+void MainWindow::shaderAction(int type)
 {
 	if (static_cast<wz_shader_type_t>(type) != WZ_SHADER_NONE)
 	{
@@ -496,43 +499,43 @@ void MainWindow::_on_shaderActionTriggered(int type)
 	}
 }
 
-void MainWindow::_on_scaleXYZChanged(double val)
+void MainWindow::scaleXYZChanged(double val)
 {
 	m_model.setScaleXYZ(val);
 	m_ui->centralWidget->updateGL();
 }
 
-void MainWindow::_on_scaleXChanged(double val)
+void MainWindow::scaleXChanged(double val)
 {
 	m_model.setScaleX(val);
 	m_ui->centralWidget->updateGL();
 }
 
-void MainWindow::_on_scaleYChanged(double val)
+void MainWindow::scaleYChanged(double val)
 {
 	m_model.setScaleY(val);
 	m_ui->centralWidget->updateGL();
 }
 
-void MainWindow::_on_scaleZChanged(double val)
+void MainWindow::scaleZChanged(double val)
 {
 	m_model.setScaleZ(val);
 	m_ui->centralWidget->updateGL();
 }
 
-void MainWindow::_on_reverseWindings(int mesh)
+void MainWindow::reverseWindings(int mesh)
 {
 	m_model.reverseWinding(mesh);
 	m_ui->centralWidget->updateGL();
 }
 
-void MainWindow::_on_mirrorAxis(int axis)
+void MainWindow::mirrorAxis(int axis)
 {
 	m_model.slotMirrorAxis(axis);
 	m_ui->centralWidget->updateGL();
 }
 
-void MainWindow::_on_removeMesh(int mesh)
+void MainWindow::removeMesh(int mesh)
 {
 	if (mesh < 0 || mesh > m_model.meshes())
 		return;
@@ -541,22 +544,22 @@ void MainWindow::_on_removeMesh(int mesh)
 	m_ui->centralWidget->updateGL();
 }
 
-void MainWindow::on_actionClose_triggered()
+void MainWindow::actionClose()
 {
 	clear();
 }
 
-void MainWindow::on_actionTransform_triggered()
+void MainWindow::actionTransform()
 {
 	transformDock->isVisible() ? transformDock->hide() : transformDock->show();
 }
 
-void MainWindow::on_actionSetupTextures_triggered()
+void MainWindow::actionSetupTextures()
 {
 	fireTextureDialog();
 }
 
-void MainWindow::on_actionAppendModel_triggered()
+void MainWindow::actionAppendModel()
 {
 	QString filePath;
 	QFileDialog* fileDialog = new QFileDialog(this,
@@ -590,7 +593,7 @@ void MainWindow::on_actionAppendModel_triggered()
 	}
 }
 
-void MainWindow::on_actionTakeScreenshot_triggered()
+void MainWindow::actionTakeScreenshot()
 {
 	m_ui->centralWidget->saveSnapshot(false);
 }
