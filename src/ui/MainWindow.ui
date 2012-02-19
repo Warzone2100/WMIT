@@ -48,7 +48,28 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuOpenRecent">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Open Recent</string>
+     </property>
+     <addaction name="actionOpenRecentFile_0"/>
+     <addaction name="actionOpenRecentFile_1"/>
+     <addaction name="actionOpenRecentFile_2"/>
+     <addaction name="actionOpenRecentFile_3"/>
+     <addaction name="actionOpenRecentFile_4"/>
+     <addaction name="actionOpenRecentFile_5"/>
+     <addaction name="actionOpenRecentFile_6"/>
+     <addaction name="actionOpenRecentFile_7"/>
+     <addaction name="actionOpenRecentFile_8"/>
+     <addaction name="actionOpenRecentFile_9"/>
+     <addaction name="separator"/>
+     <addaction name="actionClearRecentFiles"/>
+    </widget>
     <addaction name="actionOpen"/>
+    <addaction name="menuOpenRecent"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
@@ -86,9 +107,15 @@
     <addaction name="actionAboutApplication"/>
     <addaction name="actionAboutQt"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuModel"/>
    <addaction name="menuView"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionExit">
@@ -100,14 +127,6 @@
    </property>
    <property name="menuRole">
     <enum>QAction::QuitRole</enum>
-   </property>
-  </action>
-  <action name="actionOpen">
-   <property name="text">
-    <string>Open...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionUVEditor">
@@ -245,6 +264,30 @@
    </property>
    <property name="text">
     <string>Show Light Source</string>
+   </property>
+  </action>
+  <action name="actionClearRecentFiles">
+   <property name="text">
+    <string>Clear List</string>
+   </property>
+  </action>
+  <action name="actionOpenRecentFile_1"/>
+  <action name="actionOpenRecentFile_2"/>
+  <action name="actionOpenRecentFile_3"/>
+  <action name="actionOpenRecentFile_4"/>
+  <action name="actionOpenRecentFile_5"/>
+  <action name="actionOpenRecentFile_6"/>
+  <action name="actionOpenRecentFile_7"/>
+  <action name="actionOpenRecentFile_8"/>
+  <action name="actionOpenRecentFile_9"/>
+  <action name="actionOpenRecentFile_0">
+   <property name="text">
+    <string/>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open...</string>
    </property>
   </action>
  </widget>

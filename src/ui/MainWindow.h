@@ -64,12 +64,15 @@ protected:
 
 private slots:
 	void actionOpen();
+	void actionOpenRecent(QAction *action);
+	void actionClearRecentFiles();
 	void actionSave();
 	void actionSaveAs();
 	void actionClose();
 	void actionSetupTextures();
 	void actionAppendModel();
 	void actionTakeScreenshot();
+	void updateRecentFilesMenu();
 
 	void viewerInitialized();
 	void shaderAction(int);
