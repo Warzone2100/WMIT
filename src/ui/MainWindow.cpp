@@ -38,7 +38,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::MainWindow),
+	m_ui(new Ui::MainWindow),
 	importDialog(new ImportDialog(this)),
 	exportDialog(NULL),
 	transformDock(new TransformDock(this)),
@@ -47,25 +47,33 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_settings(new QSettings(this)),
 	m_shaderSignalMapper(new QSignalMapper(this))
 {
-	ui->setupUi(this);
+	m_ui->setupUi(this);
 
 	m_pathImport = m_settings->value(WMIT_SETTINGS_IMPORTVAL, QDir::currentPath()).toString();
 	m_pathExport = m_settings->value(WMIT_SETTINGS_EXPORTVAL, QDir::currentPath()).toString();
 
 	transformDock->setAllowedAreas(Qt::RightDockWidgetArea);
 	transformDock->hide();
-	this->addDockWidget(Qt::RightDockWidgetArea, transformDock, Qt::Horizontal);
+
+	addDockWidget(Qt::RightDockWidgetArea, transformDock, Qt::Horizontal);
 
 	m_UVEditor->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	m_UVEditor->hide();
-	this->addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
+	addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
-	connect(ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(_on_viewerInitialized()));
-	connect(ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
-	connect(ui->actionShowAxes, SIGNAL(toggled(bool)), ui->centralWidget, SLOT(setAxisIsDrawn(bool)));
-	connect(ui->actionShowGrid, SIGNAL(toggled(bool)), ui->centralWidget, SLOT(setGridIsDrawn(bool)));
-	connect(ui->actionShowLightSource, SIGNAL(toggled(bool)), ui->centralWidget, SLOT(setDrawLightSource(bool)));
+	m_ui->actionOpen->setIcon(QIcon::fromTheme("document-open", style()->standardIcon(QStyle::SP_DirOpenIcon)));
+	m_ui->actionSave->setIcon(QIcon::fromTheme("document-save", style()->standardIcon(QStyle::SP_DialogSaveButton)));
+	m_ui->actionSaveAs->setIcon(QIcon::fromTheme("document-save-as"));
+	m_ui->actionClose->setIcon(QIcon::fromTheme("window-close"));
+	m_ui->actionExit->setIcon(QIcon::fromTheme("application-exit", style()->standardIcon(QStyle::SP_DialogCloseButton)));
+	m_ui->actionAboutApplication->setIcon(QIcon::fromTheme("help-about"));
+
+	connect(m_ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(_on_viewerInitialized()));
+	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
+	connect(m_ui->actionShowAxes, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setAxisIsDrawn(bool)));
+	connect(m_ui->actionShowGrid, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setGridIsDrawn(bool)));
+	connect(m_ui->actionShowLightSource, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setDrawLightSource(bool)));
 
 	// transformations
 	connect(transformDock, SIGNAL(scaleXYZChanged(double)), this, SLOT(_on_scaleXYZChanged(double)));
@@ -82,12 +90,12 @@ MainWindow::MainWindow(QWidget *parent) :
 	clear();
 
 	// disable wip-parts
-	ui->actionSave->setDisabled(true);
+	m_ui->actionSave->setDisabled(true);
 }
 
 MainWindow::~MainWindow()
 {
-	delete ui;
+	delete m_ui;
 }
 
 void MainWindow::clear()
@@ -97,10 +105,10 @@ void MainWindow::clear()
 
 	setWindowTitle(WMIT_APPNAME);
 
-	ui->actionClose->setDisabled(true);
-	ui->actionSaveAs->setDisabled(true);
-	ui->actionSetupTextures->setDisabled(true);
-	ui->actionAppendModel->setDisabled(true);
+	m_ui->actionClose->setDisabled(true);
+	m_ui->actionSaveAs->setDisabled(true);
+	m_ui->actionSetupTextures->setDisabled(true);
+	m_ui->actionAppendModel->setDisabled(true);
 }
 
 bool MainWindow::openFile(const QString &filePath)
@@ -118,10 +126,10 @@ bool MainWindow::openFile(const QString &filePath)
 		m_currentFile = modelFileNfo.absoluteFilePath();
 
 		setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
-		ui->actionClose->setEnabled(true);
-		ui->actionSaveAs->setEnabled(true);
-		ui->actionSetupTextures->setEnabled(true);
-		ui->actionAppendModel->setEnabled(true);
+		m_ui->actionClose->setEnabled(true);
+		m_ui->actionSaveAs->setEnabled(true);
+		m_ui->actionSetupTextures->setEnabled(true);
+		m_ui->actionAppendModel->setEnabled(true);
 
 		if (!fireTextureDialog(true))
 		{
@@ -208,10 +216,11 @@ bool MainWindow::saveModel(const QString &file, const QWZM &model, const wmit_fi
 void MainWindow::changeEvent(QEvent *e)
 {
 	QMainWindow::changeEvent(e);
+
 	switch (e->type())
 	{
 	case QEvent::LanguageChange:
-		ui->retranslateUi(this);
+		m_ui->retranslateUi(this);
 		break;
 	default:
 		break;
@@ -399,7 +408,7 @@ void MainWindow::on_actionSaveAs_triggered()
 
 void MainWindow::_on_viewerInitialized()
 {
-	ui->centralWidget->addToRenderList(&m_model);
+	m_ui->centralWidget->addToRenderList(&m_model);
 
 	QActionGroup* shaderGroup = new QActionGroup(this);
 
@@ -438,7 +447,7 @@ void MainWindow::_on_viewerInitialized()
 				finfo.setFile(pathfrag);
 				if (finfo.exists())
 				{
-					if (ui->centralWidget->loadShader(static_cast<wz_shader_type_t>(i), pathvert, pathfrag))
+					if (m_ui->centralWidget->loadShader(static_cast<wz_shader_type_t>(i), pathvert, pathfrag))
 					{
 						shaderAct->setEnabled(true);
 					}
@@ -467,11 +476,11 @@ void MainWindow::_on_viewerInitialized()
 		}
 	}
 
-	ui->actionRenderer->setMenu(rendererMenu);
+	m_ui->actionRenderer->setMenu(rendererMenu);
 
-	connect(ui->actionShowModelCenter, SIGNAL(triggered(bool)),
+	connect(m_ui->actionShowModelCenter, SIGNAL(triggered(bool)),
 		&m_model, SLOT(setDrawCenterPointFlag(bool)));
-	connect(ui->actionShowNormals, SIGNAL(triggered(bool)),
+	connect(m_ui->actionShowNormals, SIGNAL(triggered(bool)),
 		&m_model, SLOT(setDrawNormalsFlag(bool)));
 }
 
@@ -490,37 +499,37 @@ void MainWindow::_on_shaderActionTriggered(int type)
 void MainWindow::_on_scaleXYZChanged(double val)
 {
 	m_model.setScaleXYZ(val);
-	ui->centralWidget->updateGL();
+	m_ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_scaleXChanged(double val)
 {
 	m_model.setScaleX(val);
-	ui->centralWidget->updateGL();
+	m_ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_scaleYChanged(double val)
 {
 	m_model.setScaleY(val);
-	ui->centralWidget->updateGL();
+	m_ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_scaleZChanged(double val)
 {
 	m_model.setScaleZ(val);
-	ui->centralWidget->updateGL();
+	m_ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_reverseWindings(int mesh)
 {
 	m_model.reverseWinding(mesh);
-	ui->centralWidget->updateGL();
+	m_ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_mirrorAxis(int axis)
 {
 	m_model.slotMirrorAxis(axis);
-	ui->centralWidget->updateGL();
+	m_ui->centralWidget->updateGL();
 }
 
 void MainWindow::_on_removeMesh(int mesh)
@@ -529,7 +538,7 @@ void MainWindow::_on_removeMesh(int mesh)
 		return;
 
 	m_model.rmMesh(mesh);
-	ui->centralWidget->updateGL();
+	m_ui->centralWidget->updateGL();
 }
 
 void MainWindow::on_actionClose_triggered()
@@ -583,5 +592,5 @@ void MainWindow::on_actionAppendModel_triggered()
 
 void MainWindow::on_actionTakeScreenshot_triggered()
 {
-	ui->centralWidget->saveSnapshot(false);
+	m_ui->centralWidget->saveSnapshot(false);
 }
