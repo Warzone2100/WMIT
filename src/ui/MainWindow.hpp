@@ -21,7 +21,6 @@
 
 #include <QMainWindow>
 
-#include <QString>
 #include <QList>
 #include <QSet>
 #include <QPair>
@@ -67,7 +66,6 @@ private slots:
 	void actionSave();
 	void actionSaveAs();
 	void actionClose();
-	void actionTransform();
 	void actionSetupTextures();
 	void actionAppendModel();
 	void actionTakeScreenshot();
@@ -87,9 +85,9 @@ private slots:
 private:
 	Ui::MainWindow* m_ui;
 
-	ImportDialog* importDialog;
-	ExportDialog* exportDialog;
-	TransformDock* transformDock;
+	ImportDialog* m_importDialog;
+	ExportDialog* m_exportDialog;
+	TransformDock* m_transformDock;
 
 	TextureDialog* m_textureDialog;
 	UVEditor* m_UVEditor;

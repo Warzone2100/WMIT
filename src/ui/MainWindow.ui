@@ -152,6 +152,9 @@
    </property>
   </action>
   <action name="actionTransform">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Transform...</string>
    </property>
