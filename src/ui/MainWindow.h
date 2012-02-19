@@ -61,6 +61,7 @@ public:
 
 protected:
 	void changeEvent(QEvent *event);
+	void closeEvent(QCloseEvent *event);
 
 private slots:
 	void actionOpen();

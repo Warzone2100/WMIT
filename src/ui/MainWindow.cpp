@@ -48,6 +48,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 {
 	m_ui->setupUi(this);
 
+	resize(QSettings().value("Window/size", size()).toSize());
+	move(QSettings().value("Window/position", pos()).toPoint());
+	restoreState(QSettings().value("Window/state", QByteArray()).toByteArray());
+
 	m_pathImport = m_settings->value(WMIT_SETTINGS_IMPORTVAL, QDir::currentPath()).toString();
 	m_pathExport = m_settings->value(WMIT_SETTINGS_EXPORTVAL, QDir::currentPath()).toString();
 
@@ -256,6 +260,16 @@ void MainWindow::changeEvent(QEvent *event)
 	default:
 		break;
 	}
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+	QSettings settings;
+	settings.setValue("Window/size", size());
+	settings.setValue("Window/position", pos());
+	settings.setValue("Window/state", saveState());
+
+	event->accept();
 }
 
 bool MainWindow::loadModel(const QString& file, WZM& model)
