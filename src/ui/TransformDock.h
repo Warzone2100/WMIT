@@ -22,18 +22,49 @@
 #include <QDockWidget>
 #include <QCloseEvent>
 
-namespace Ui {
-    class TransformDock;
+namespace Ui
+{
+	class TransformDock;
 }
 
 class TransformDock : public QDockWidget
 {
-    Q_OBJECT
+	Q_OBJECT
+
 public:
 	TransformDock(QWidget *parent = 0);
 	~TransformDock();
 
 	void reset(bool reset_prev_values = false);
+
+public slots:
+	void setMeshCount(int value, QStringList names);
+
+protected:
+	void changeEvent(QEvent *event);
+	void closeEvent(QCloseEvent *event);
+
+private:
+	double m_scale_all;
+	double m_scale_xyz[3];
+	double m_scale_all_prev;
+	double m_scale_xyz_prev[3];
+	int m_selected_mesh;
+	Ui::TransformDock *m_ui;
+
+	void acceptTransformations();
+	void setScaleValueOnUI(double value);
+
+private slots:
+	void selectScale(int index);
+	void setScale(int value);
+	void setScale(double value);
+	void reverseWindings();
+	void selectMesh(int index);
+	void removeMesh();
+	void mirrorX();
+	void mirrorY();
+	void mirrorZ();
 
 signals:
 	void scaleXYZChanged(double);
@@ -44,35 +75,8 @@ signals:
 	void mirrorAxis(int);
 
 	void applyTransformations();
-	void setActiveMeshIdx(int);
-	void removeMeshIdx(int);
-
-public slots:
-	void setMeshCount(int value, QStringList names);
-
-protected:
-	void changeEvent(QEvent *e);
-	virtual void closeEvent(QCloseEvent *event);
-
-private:
-	Ui::TransformDock *ui;
-	int m_selected_mesh;
-	double scale_all, scale_xyz[3];
-	double scale_all_prev, scale_xyz_prev[3];
-
-	void acceptTransformations();
-	void setScaleValueOnUI(double value);
-
-private slots:
-	void on_scaleComboBox_currentIndexChanged(int index);
-	void on_scaleSlider_valueChanged(int value);
-	void on_scaleSpinBox_valueChanged(double );
-	void on_reverseWindingsButton_clicked();
-	void on_meshComboBox_currentIndexChanged(int index);
-	void on_mirrorXButton_clicked();
-	void on_mirrorYButton_clicked();
-	void on_mirrorZButton_clicked();
-	void on_removeMeshButton_clicked();
+	void changeActiveMesh(int index);
+	void removeMesh(int index);
 };
 
 #endif // TRANSFORMDOCK_HPP
