@@ -23,33 +23,13 @@ include_directories(
 	3rdparty/GLee
 )
 
-set( wmit_HDRS
-	src/formats/WZM.h
-	src/formats/Pie.h
-	src/formats/OBJ.h
-	src/formats/Mesh.h
-	src/Util.h
-	src/Generic.h
-	src/basic/VectorTypes.h
-	src/basic/Vector.h
-	src/basic/Polygon.h
-	src/basic/IGLTextureManager.h
-	src/basic/IGLRenderable.h
-	src/basic/IAnimatable.h
-	src/basic/GLTexture.h
-	src/wmit.h
-	src/basic/IGLTexturedRenderable.h
-	src/basic/IGLShaderManager.h
-	src/basic/IGLShaderRenderable.h
-	3rdparty/GLee/GLee.h
-)
-
 set( wmit_SRCS
 	src/formats/WZM.cpp
 	src/formats/Pie_t.cpp
 	src/formats/Pie.cpp
 	src/formats/Mesh.cpp
 	src/ui/UVEditor.cpp
+	src/ui/MaterialDock.cpp
 	src/ui/TransformDock.cpp
 	src/ui/TeamColoursDock.cpp
 	src/ui/MainWindow.cpp
@@ -69,6 +49,7 @@ set( wmit_SRCS
 
 set( wmit_UIS
 	src/ui/UVEditor.ui
+	src/ui/MaterialDock.ui
 	src/ui/TransformDock.ui
 	src/ui/TeamColoursDock.ui
 	src/ui/MainWindow.ui
@@ -84,6 +65,7 @@ set( wmit_RSCS
 
 set( wmit_MOCS
 	src/ui/UVEditor.h
+	src/ui/MaterialDock.h
 	src/ui/TransformDock.h
 	src/ui/TeamColoursDock.h
 	src/ui/MainWindow.h

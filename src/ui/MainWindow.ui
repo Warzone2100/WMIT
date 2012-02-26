@@ -10,26 +10,14 @@
     <height>540</height>
    </rect>
   </property>
-  <property name="font">
-   <font>
-    <stylestrategy>PreferDefault</stylestrategy>
-    <kerning>true</kerning>
-   </font>
-  </property>
   <property name="contextMenuPolicy">
    <enum>Qt::PreventContextMenu</enum>
   </property>
   <property name="windowTitle">
    <string>WMIT</string>
   </property>
-  <property name="autoFillBackground">
-   <bool>false</bool>
-  </property>
-  <property name="animated">
+  <property name="dockNestingEnabled">
    <bool>true</bool>
-  </property>
-  <property name="dockOptions">
-   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
   </property>
   <widget class="QtGLView" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
@@ -83,6 +71,7 @@
      <string>Model</string>
     </property>
     <addaction name="actionTransform"/>
+    <addaction name="actionMaterial"/>
     <addaction name="actionSetupTextures"/>
     <addaction name="separator"/>
     <addaction name="actionAppendModel"/>
@@ -175,7 +164,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Transform...</string>
+    <string>Transform</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
@@ -288,6 +277,17 @@
   <action name="actionOpen">
    <property name="text">
     <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionMaterial">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Material</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
  </widget>
