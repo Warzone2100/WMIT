@@ -22,77 +22,98 @@
 
 TransformDock::TransformDock(QWidget *parent) :
 	QDockWidget(parent),
-	ui(new Ui::TransformDock), m_selected_mesh(-1)
+	m_selected_mesh(-1),
+	m_ui(new Ui::TransformDock) 
 {
-	 ui->setupUi(this);
+	m_ui->setupUi(this);
+	m_ui->removeMeshButton->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
 
-	 ui->meshComboBox->setEditable(false);
-	 setMeshCount(0, QStringList());
+	setMeshCount(0, QStringList());
+	reset(true);
 
-	 ui->removeMeshButton->setIcon(style()->standardIcon(QStyle::SP_TrashIcon, 0, ui->removeMeshButton));
-
-	 reset(true);
+	connect(m_ui->scaleSlider, SIGNAL(valueChanged(int)), this, SLOT(setScale(int)));
+	connect(m_ui->scaleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setScale(double)));
+	connect(m_ui->scaleComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectScale(int)));
+	connect(m_ui->meshComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectMesh(int)));
+	connect(m_ui->removeMeshButton, SIGNAL(clicked()), this, SLOT(removeMesh()));
+	connect(m_ui->reverseWindingsButton, SIGNAL(clicked()), this, SLOT(reverseWindings()));
+	connect(m_ui->mirrorXButton, SIGNAL(clicked()), this, SLOT(mirrorX()));
+	connect(m_ui->mirrorYButton, SIGNAL(clicked()), this, SLOT(mirrorY()));
+	connect(m_ui->mirrorZButton, SIGNAL(clicked()), this, SLOT(mirrorZ()));
 }
 
 TransformDock::~TransformDock()
 {
-	delete ui;
+	delete m_ui;
 }
 
-void TransformDock::reset(bool reset_prev_values)
+void TransformDock::changeEvent(QEvent *event)
 {
-	// reset preview values
-	scale_all = scale_xyz[0] = scale_xyz[1] = scale_xyz[2] = 1.;
-	if (reset_prev_values)
-		scale_all_prev = scale_xyz_prev[0] = scale_xyz_prev[1] = scale_xyz_prev[2] = 1.;
-
-	// UI
-	setScaleValueOnUI(scale_all);
-}
-
-void TransformDock::setMeshCount(int value, QStringList names)
-{
-	int selected = ui->meshComboBox->currentIndex();
-
-	ui->meshComboBox->blockSignals(true);
-
-	ui->meshComboBox->clear();
-	ui->meshComboBox->addItem("All meshes");
-	for (int i = 1; i <= value; ++i)
+	QDockWidget::changeEvent(event);
+	
+	switch (event->type())
 	{
-		ui->meshComboBox->addItem(QString::number(i) + " [" + names.value(i - 1) + "]");
-	}
-
-	if (selected > value || selected < 0)
-	{
-		selected = 0;
-	}
-	ui->meshComboBox->setCurrentIndex(selected);
-
-	ui->meshComboBox->blockSignals(false);
-
-	on_meshComboBox_currentIndexChanged(selected); // force this because of possible mesh stack pop
-}
-
-void TransformDock::changeEvent(QEvent *e)
-{
-	QDockWidget::changeEvent(e);
-	switch (e->type()) {
 	case QEvent::LanguageChange:
-		ui->retranslateUi(this);
+		m_ui->retranslateUi(this);
+
 		break;
 	default:
 		break;
 	}
 }
 
+void TransformDock::closeEvent(QCloseEvent *event)
+{
+	acceptTransformations();
+
+	event->accept();
+}
+
+void TransformDock::reset(bool reset_prev_values)
+{
+	// reset preview values
+	m_scale_all = m_scale_xyz[0] = m_scale_xyz[1] = m_scale_xyz[2] = 1.;
+
+	if (reset_prev_values)
+	{
+		m_scale_all_prev = m_scale_xyz_prev[0] = m_scale_xyz_prev[1] = m_scale_xyz_prev[2] = 1.;
+	}
+
+	// UI
+	setScaleValueOnUI(m_scale_all);
+}
+
+void TransformDock::setMeshCount(int value, QStringList names)
+{
+	int selected = m_ui->meshComboBox->currentIndex();
+
+	m_ui->meshComboBox->blockSignals(true);
+	m_ui->meshComboBox->clear();
+	m_ui->meshComboBox->addItem("All meshes");
+
+	for (int i = 1; i <= value; ++i)
+	{
+		m_ui->meshComboBox->addItem(QString::number(i) + " [" + names.value(i - 1) + "]");
+	}
+
+	if (selected > value || selected < 0)
+	{
+		selected = 0;
+	}
+
+	m_ui->meshComboBox->setCurrentIndex(selected);
+	m_ui->meshComboBox->blockSignals(false);
+
+	selectMesh(selected); // force this because of possible mesh stack pop
+}
+
 void TransformDock::acceptTransformations()
 {
 	// save and apply
-	scale_all_prev = scale_all;
-	scale_xyz_prev[0] = scale_xyz[0];
-	scale_xyz_prev[1] = scale_xyz[1];
-	scale_xyz_prev[2] = scale_xyz[2];
+	m_scale_all_prev = m_scale_all;
+	m_scale_xyz_prev[0] = m_scale_xyz[0];
+	m_scale_xyz_prev[1] = m_scale_xyz[1];
+	m_scale_xyz_prev[2] = m_scale_xyz[2];
 
 	emit applyTransformations();
 
@@ -102,109 +123,118 @@ void TransformDock::acceptTransformations()
 
 void TransformDock::setScaleValueOnUI(double value)
 {
-	ui->scaleSpinBox->blockSignals(true);
-	ui->scaleSpinBox->setValue(value);
-	ui->scaleSpinBox->blockSignals(false);
-	ui->scaleSlider->blockSignals(true);
-	ui->scaleSlider->setValue(value);
-	ui->scaleSlider->blockSignals(false);
+	m_ui->scaleSpinBox->blockSignals(true);
+	m_ui->scaleSpinBox->setValue(value);
+	m_ui->scaleSpinBox->blockSignals(false);
+	m_ui->scaleSlider->blockSignals(true);
+	m_ui->scaleSlider->setValue(value);
+	m_ui->scaleSlider->blockSignals(false);
 }
 
-void TransformDock::closeEvent(QCloseEvent *event)
-{
-	acceptTransformations();
-	event->accept();
-}
-
-void TransformDock::on_reverseWindingsButton_clicked()
+void TransformDock::reverseWindings()
 {
 	emit reverseWindings(m_selected_mesh);
 }
 
-void TransformDock::on_scaleSpinBox_valueChanged(double value)
+void TransformDock::setScale(int value)
 {
-	if (ui->scaleSpinBox->value() != value)
+	if (m_ui->scaleSpinBox->value() != value)
 	{
-		ui->scaleSpinBox->setValue(value);
+		m_ui->scaleSpinBox->setValue(value);
 	}
-	switch(ui->scaleComboBox->currentIndex())
+}
+
+void TransformDock::setScale(double value)
+{
+	if (m_ui->scaleSpinBox->value() != value)
+	{
+		m_ui->scaleSpinBox->setValue(value);
+	}
+
+	switch(m_ui->scaleComboBox->currentIndex())
 	{
 	case 0: //XYZ
-		scale_all = value;
+		m_scale_all = value;
+
 		emit scaleXYZChanged(value);
+
 		break;
 	case 1: // X
-		scale_xyz[0] = value;
+		m_scale_xyz[0] = value;
+
 		emit scaleXChanged(value);
+
 		break;
 	case 2: // Y
-		scale_xyz[1] = value;
+		m_scale_xyz[1] = value;
+	
 		emit scaleYChanged(value);
+	
 		break;
 	case 3: // Z
-		scale_xyz[2] = value;
+		m_scale_xyz[2] = value;
+
 		emit scaleZChanged(value);
+
 		break;
 	}
 }
 
-void TransformDock::on_scaleSlider_valueChanged(int value)
-{
-	if (ui->scaleSpinBox->value() != value)
-	{
-		ui->scaleSpinBox->setValue(value);
-	}
-}
-
-void TransformDock::on_scaleComboBox_currentIndexChanged(int index)
+void TransformDock::selectScale(int index)
 {
 	switch(index)
 	{
 	case 0: //XYZ
-		setScaleValueOnUI(scale_all);
+		setScaleValueOnUI(m_scale_all);
+
 		break;
 	case 1: // X
-		setScaleValueOnUI(scale_xyz[0]);
+		setScaleValueOnUI(m_scale_xyz[0]);
+
 		break;
 	case 2: // Y
-		setScaleValueOnUI(scale_xyz[1]);
+		setScaleValueOnUI(m_scale_xyz[1]);
+
 		break;
 	case 3: // Z
-		setScaleValueOnUI(scale_xyz[2]);
+		setScaleValueOnUI(m_scale_xyz[2]);
+
 		break;
 	}
 }
 
-void TransformDock::on_meshComboBox_currentIndexChanged(int index)
+void TransformDock::selectMesh(int index)
 {
-	ui->removeMeshButton->setDisabled(!index || ui->meshComboBox->count() <= 2); // FIXME: can't remove all and shouldn't remove last remaining mesh
+	m_ui->removeMeshButton->setDisabled(!index || m_ui->meshComboBox->count() <= 2); // FIXME: can't remove all and shouldn't remove last remaining mesh
 
 	if (index < 0)
+	{
 		return;
+	}
 
 	acceptTransformations();
 
 	m_selected_mesh = index - 1; // all is 0, 1st is 1 and so on... -1 to corresponding mesh
 
-	emit setActiveMeshIdx(m_selected_mesh);
+	emit changeActiveMesh(m_selected_mesh);
 }
 
-void TransformDock::on_mirrorXButton_clicked()
+void TransformDock::removeMesh()
 {
-	emit mirrorAxis(ui->globalMirrorCheckBox->isChecked() ? 3 : 0);
+	emit removeMesh(m_selected_mesh);
 }
 
-void TransformDock::on_mirrorYButton_clicked()
+void TransformDock::mirrorX()
 {
-	emit mirrorAxis(ui->globalMirrorCheckBox->isChecked() ? 4 : 1);
+	emit mirrorAxis(m_ui->globalMirrorCheckBox->isChecked() ? 3 : 0);
 }
 
-void TransformDock::on_mirrorZButton_clicked()
+void TransformDock::mirrorY()
 {
-	emit mirrorAxis(ui->globalMirrorCheckBox->isChecked() ? 5 : 2);
+	emit mirrorAxis(m_ui->globalMirrorCheckBox->isChecked() ? 4 : 1);
 }
 
-void TransformDock::on_removeMeshButton_clicked()
+void TransformDock::mirrorZ()
 {
-	emit removeMeshIdx(m_selected_mesh);
+	emit mirrorAxis(m_ui->globalMirrorCheckBox->isChecked() ? 5 : 2);
 }

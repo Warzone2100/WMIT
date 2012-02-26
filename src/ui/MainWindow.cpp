@@ -55,14 +55,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_pathImport = m_settings->value(WMIT_SETTINGS_IMPORTVAL, QDir::currentPath()).toString();
 	m_pathExport = m_settings->value(WMIT_SETTINGS_EXPORTVAL, QDir::currentPath()).toString();
 
-	m_transformDock->setAllowedAreas(Qt::RightDockWidgetArea);
+	m_transformDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	m_transformDock->hide();
 
-	addDockWidget(Qt::RightDockWidgetArea, m_transformDock, Qt::Horizontal);
-
-	m_UVEditor->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	m_UVEditor->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	m_UVEditor->hide();
 
+	addDockWidget(Qt::RightDockWidgetArea, m_transformDock, Qt::Horizontal);
 	addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
 	m_ui->actionOpen->setIcon(QIcon::fromTheme("document-open", style()->standardIcon(QStyle::SP_DirOpenIcon)));
@@ -98,8 +97,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_transformDock, SIGNAL(scaleZChanged(double)), this, SLOT(scaleZChanged(double)));
 	connect(m_transformDock, SIGNAL(reverseWindings(int)), this, SLOT(reverseWindings(int)));
 	connect(m_transformDock, SIGNAL(applyTransformations()), &m_model, SLOT(applyTransformations()));
-	connect(m_transformDock, SIGNAL(setActiveMeshIdx(int)), &m_model, SLOT(setActiveMesh(int)));
-	connect(m_transformDock, SIGNAL(removeMeshIdx(int)), this, SLOT(removeMesh(int)));
+	connect(m_transformDock, SIGNAL(changeActiveMesh(int)), &m_model, SLOT(setActiveMesh(int)));
+	connect(m_transformDock, SIGNAL(removeMesh(int)), this, SLOT(removeMesh(int)));
 	connect(m_transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
 	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_transformDock, SLOT(setMeshCount(int,QStringList)));
 
