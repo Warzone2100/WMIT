@@ -31,6 +31,7 @@
 #include "QWZM.h"
 #include "wmit.h"
 
+class MaterialDock;
 class TransformDock;
 class ImportDialog;
 class ExportDialog;
@@ -88,15 +89,16 @@ private slots:
 	void removeMesh(int mesh);
 
 private:
-	Ui::MainWindow* m_ui;
+	Ui::MainWindow *m_ui;
 
-	ImportDialog* m_importDialog;
-	ExportDialog* m_exportDialog;
-	TransformDock* m_transformDock;
+	ImportDialog *m_importDialog;
+	ExportDialog *m_exportDialog;
+	MaterialDock *m_materialDock;
+	TransformDock *m_transformDock;
 
-	TextureDialog* m_textureDialog;
-	UVEditor* m_UVEditor;
-	QSettings* m_settings;
+	TextureDialog *m_textureDialog;
+	UVEditor *m_UVEditor;
+	QSettings *m_settings;
 
 	QSignalMapper *m_shaderSignalMapper;
 	QString m_pathImport, m_pathExport, m_currentFile;

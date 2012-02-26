@@ -33,7 +33,8 @@ HEADERS += \
     src/basic/Polygon.h \
     src/basic/Vector.h \
     src/basic/VectorTypes.h \
-    src/widgets/QWZM.h
+    src/widgets/QWZM.h \
+    src/ui/MaterialDock.h
     
 SOURCES += \
     src/formats/WZM.cpp \
@@ -55,7 +56,8 @@ SOURCES += \
     src/widgets/QWZM.cpp \
     src/widgets/QtGLView.cpp \
     src/ui/TextureDialog.cpp \
-    src/ui/TexConfigDialog.cpp
+    src/ui/TexConfigDialog.cpp \
+    src/ui/MaterialDock.cpp
     
 FORMS += \
     src/ui/UVEditor.ui \
@@ -65,7 +67,8 @@ FORMS += \
     src/ui/ImportDialog.ui \
     src/ui/ExportDialog.ui \
     src/ui/TextureDialog.ui \
-    src/ui/TexConfigDialog.ui
+    src/ui/TexConfigDialog.ui \
+    src/ui/MaterialDock.ui
     
 OTHER_FILES += \
     TODO.txt \

@@ -19,6 +19,7 @@
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include "MaterialDock.h"
 #include "TransformDock.h"
 #include "ImportDialog.h"
 #include "ExportDialog.h"
@@ -40,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_ui(new Ui::MainWindow),
 	m_importDialog(new ImportDialog(this)),
 	m_exportDialog(NULL),
+	m_materialDock(new MaterialDock(this)),
 	m_transformDock(new TransformDock(this)),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
@@ -55,12 +57,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_pathImport = m_settings->value(WMIT_SETTINGS_IMPORTVAL, QDir::currentPath()).toString();
 	m_pathExport = m_settings->value(WMIT_SETTINGS_EXPORTVAL, QDir::currentPath()).toString();
 
+	m_materialDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	m_materialDock->hide();
+
 	m_transformDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	m_transformDock->hide();
 
 	m_UVEditor->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	m_UVEditor->hide();
 
+	addDockWidget(Qt::RightDockWidgetArea, m_materialDock, Qt::Horizontal);
 	addDockWidget(Qt::RightDockWidgetArea, m_transformDock, Qt::Horizontal);
 	addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
@@ -81,6 +87,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionSave, SIGNAL(triggered()), this, SLOT(actionSave()));
 	connect(m_ui->actionSaveAs, SIGNAL(triggered()), this, SLOT(actionSaveAs()));
 	connect(m_ui->actionClose, SIGNAL(triggered()), this, SLOT(actionClose()));
+	connect(m_ui->actionMaterial, SIGNAL(toggled(bool)), m_materialDock, SLOT(setVisible(bool)));
 	connect(m_ui->actionTransform, SIGNAL(toggled(bool)), m_transformDock, SLOT(setVisible(bool)));
 	connect(m_ui->actionUVEditor, SIGNAL(toggled(bool)), m_UVEditor, SLOT(setVisible(bool)));
 	connect(m_ui->actionSetupTextures, SIGNAL(triggered()), this, SLOT(actionSetupTextures()));
