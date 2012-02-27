@@ -198,6 +198,21 @@ bool WZM::read(std::istream& in)
 		in >> str;
 	}
 
+	// optional: specularmap
+	if (!str.compare(WZM_MODEL_DIRECTIVE_SPECULARMAP))
+	{
+		in >> m_textures[WZM_TEX_SPECULAR];
+		if (in.fail())
+		{
+			std::cerr << "WZM::read - Error reading SPECULARMAP name";
+			clear();
+			return false;
+		}
+
+		// pre read next token
+		in >> str;
+	}
+
 	// optional: material
 	if (!str.compare(WZM_MODEL_DIRECTIVE_MATERIAL))
 	{
@@ -264,6 +279,12 @@ void WZM::write(std::ostream& out) const
 	if (isTextureSet(WZM_TEX_NORMALMAP))
 	{
 		out << WZM_MODEL_DIRECTIVE_NORMALMAP << ' ' << getTextureName(WZM_TEX_NORMALMAP) << '\n';
+	}
+
+	// optional: specularmap
+	if (isTextureSet(WZM_TEX_SPECULAR))
+	{
+		out << WZM_MODEL_DIRECTIVE_SPECULARMAP << ' ' << getTextureName(WZM_TEX_SPECULAR) << '\n';
 	}
 
 	// optional: material
