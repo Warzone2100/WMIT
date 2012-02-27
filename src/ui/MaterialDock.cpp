@@ -20,11 +20,15 @@
 #include "MaterialDock.h"
 #include "ui_MaterialDock.h"
 
+#include "WZM.h"
+
 MaterialDock::MaterialDock(QWidget *parent) :
 	QDockWidget(parent),
 	m_ui(new Ui::MaterialDock)
 {
 	m_ui->setupUi(this);
+
+	setMaterialColor(WZM_MAT_AMBIENT, QColor::fromRgbF(0.5, 0.5, 0.5));
 }
 
 MaterialDock::~MaterialDock()
@@ -43,6 +47,19 @@ void MaterialDock::changeEvent(QEvent *event)
 
 		break;
 	default:
+		break;
+	}
+}
+
+void MaterialDock::setMaterialColor(const int type, const QColor color)
+{
+	QPixmap pix(5, 5);
+	pix.fill(color);
+
+	switch (static_cast<wzm_material_t>(type))
+	{
+	case WZM_MAT_AMBIENT:
+		m_ui->ambientColor->setPixmap(pix);
 		break;
 	}
 }
