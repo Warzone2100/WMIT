@@ -50,10 +50,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 {
 	m_ui->setupUi(this);
 
-	resize(QSettings().value("Window/size", size()).toSize());
-	move(QSettings().value("Window/position", pos()).toPoint());
-	restoreState(QSettings().value("Window/state", QByteArray()).toByteArray());
-
 	m_pathImport = m_settings->value(WMIT_SETTINGS_IMPORTVAL, QDir::currentPath()).toString();
 	m_pathExport = m_settings->value(WMIT_SETTINGS_EXPORTVAL, QDir::currentPath()).toString();
 
@@ -69,6 +65,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	addDockWidget(Qt::RightDockWidgetArea, m_materialDock, Qt::Horizontal);
 	addDockWidget(Qt::RightDockWidgetArea, m_transformDock, Qt::Horizontal);
 	addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
+
+	// UI is ready and now we can load previous state (will do nothing if state wasn't saved).
+	resize(QSettings().value("Window/size", size()).toSize());
+	move(QSettings().value("Window/position", pos()).toPoint());
+	restoreState(QSettings().value("Window/state", QByteArray()).toByteArray());
 
 	m_ui->actionOpen->setIcon(QIcon::fromTheme("document-open", style()->standardIcon(QStyle::SP_DirOpenIcon)));
 	m_ui->menuOpenRecent->setIcon(QIcon::fromTheme("document-open-recent"));
@@ -87,8 +88,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionSave, SIGNAL(triggered()), this, SLOT(actionSave()));
 	connect(m_ui->actionSaveAs, SIGNAL(triggered()), this, SLOT(actionSaveAs()));
 	connect(m_ui->actionClose, SIGNAL(triggered()), this, SLOT(actionClose()));
-	connect(m_ui->actionMaterial, SIGNAL(toggled(bool)), m_materialDock, SLOT(setVisible(bool)));
-	connect(m_ui->actionTransform, SIGNAL(toggled(bool)), m_transformDock, SLOT(setVisible(bool)));
 	connect(m_ui->actionUVEditor, SIGNAL(toggled(bool)), m_UVEditor, SLOT(setVisible(bool)));
 	connect(m_ui->actionSetupTextures, SIGNAL(triggered()), this, SLOT(actionSetupTextures()));
 	connect(m_ui->actionAppendModel, SIGNAL(triggered()), this, SLOT(actionAppendModel()));
@@ -96,6 +95,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionShowGrid, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setGridIsDrawn(bool)));
 	connect(m_ui->actionShowLightSource, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setDrawLightSource(bool)));
 	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
+
+	/// Material dock
+	m_materialDock->toggleViewAction()->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
+	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0) ,m_materialDock->toggleViewAction());
+
+	/// Transform dock
+	m_transformDock->toggleViewAction()->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0) ,m_transformDock->toggleViewAction());
 
 	// transformations
 	connect(m_transformDock, SIGNAL(scaleXYZChanged(double)), this, SLOT(scaleXYZChanged(double)));
@@ -109,6 +116,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
 	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_transformDock, SLOT(setMeshCount(int,QStringList)));
 
+
+	/// Reset state
 	clear();
 
 	// disable wip-parts

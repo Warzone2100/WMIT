@@ -70,8 +70,6 @@
     <property name="title">
      <string>Model</string>
     </property>
-    <addaction name="actionTransform"/>
-    <addaction name="actionMaterial"/>
     <addaction name="actionSetupTextures"/>
     <addaction name="separator"/>
     <addaction name="actionAppendModel"/>
@@ -157,17 +155,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
-   </property>
-  </action>
-  <action name="actionTransform">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Transform</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionSetupTextures">
@@ -277,17 +264,6 @@
   <action name="actionOpen">
    <property name="text">
     <string>Open...</string>
-   </property>
-  </action>
-  <action name="actionMaterial">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Material</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+M</string>
    </property>
   </action>
  </widget>
