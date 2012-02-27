@@ -38,6 +38,9 @@ public:
 protected:
 	void changeEvent(QEvent *event);
 
+public slots:
+	void setMaterialColor(const int type, const QColor color);
+
 private:
 	Ui::MaterialDock *m_ui;
 };
