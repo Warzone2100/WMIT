@@ -671,8 +671,10 @@ void QWZM::write(std::ostream& out) const
 		applyPendingChangesToModel(res);
 		res.write(out);
 	}
-
-	WZM::write(out);
+	else
+	{
+		WZM::write(out);
+	}
 }
 
 void QWZM::exportToOBJ(std::ostream& out) const
@@ -683,6 +685,8 @@ void QWZM::exportToOBJ(std::ostream& out) const
 		applyPendingChangesToModel(res);
 		res.exportToOBJ(out);
 	}
-
-	WZM::exportToOBJ(out);
+	else
+	{
+		WZM::exportToOBJ(out);
+	}
 }
