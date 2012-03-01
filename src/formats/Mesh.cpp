@@ -357,6 +357,8 @@ bool Mesh::read(std::istream& in)
 			return false;
 		}
 		m_tangentArray.push_back(tangent);
+
+		m_bitangentArray.push_back(normal.crossProduct(tangent.xyz()) * tangent.w());
 	}
 
 	in >> str;
@@ -843,16 +845,29 @@ void Mesh::mirrorFromPoint(const WZMVertex& point, int axis)
 			m_vertexArray[i].x() = -m_vertexArray[i].x() + 2 * point.x();
 			m_normalArray[i].x() = -m_normalArray[i].x();
 			m_tangentArray[i].x() = -m_tangentArray[i].x();
+			m_bitangentArray[i].x() = -m_bitangentArray[i].x();
 			break;
 		case 1:
 			m_vertexArray[i].y() = -m_vertexArray[i].y() + 2 * point.y();
 			m_normalArray[i].y() = -m_normalArray[i].y();
 			m_tangentArray[i].y() = -m_tangentArray[i].y();
+			m_bitangentArray[i].y() = -m_bitangentArray[i].y();
 			break;
 		default:
 			m_vertexArray[i].z() = -m_vertexArray[i].z() + 2 * point.z();
 			m_normalArray[i].z() = -m_normalArray[i].z();
 			m_tangentArray[i].z() = -m_tangentArray[i].z();
+			m_bitangentArray[i].z() = -m_bitangentArray[i].z();
+		}
+
+		// Recalculate handedness
+		if (m_normalArray[i].crossProduct(m_tangentArray[i].xyz()).dotProduct(m_bitangentArray[i]) < 0.0f)
+		{
+			m_tangentArray[i].w() = -1.0f;
+		}
+		else
+		{
+			m_tangentArray[i].w() = 1.0f;
 		}
 	}
 
