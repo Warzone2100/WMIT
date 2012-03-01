@@ -161,7 +161,6 @@ bool WZM::read(std::istream& in)
 	if (in.fail())
 	{
 		std::cerr << "WZM::read - Error reading texture name";
-		clear();
 		return false;
 	}
 
@@ -175,7 +174,6 @@ bool WZM::read(std::istream& in)
 		if (in.fail())
 		{
 			std::cerr << "WZM::read - Error reading TCMask name";
-			clear();
 			return false;
 		}
 
@@ -190,7 +188,6 @@ bool WZM::read(std::istream& in)
 		if (in.fail())
 		{
 			std::cerr << "WZM::read - Error reading NORMALMAP name";
-			clear();
 			return false;
 		}
 
@@ -205,7 +202,6 @@ bool WZM::read(std::istream& in)
 		if (in.fail())
 		{
 			std::cerr << "WZM::read - Error reading SPECULARMAP name";
-			clear();
 			return false;
 		}
 
@@ -220,7 +216,6 @@ bool WZM::read(std::istream& in)
 		if (in.fail())
 		{
 			std::cerr << "WZM::read - Error reading material values";
-			clear();
 			return false;
 		}
 
@@ -234,20 +229,18 @@ bool WZM::read(std::istream& in)
 	if (in.fail() || str.compare("MESHES") != 0)
 	{
 		std::cerr << "WZM::read - Expected MESHES directive but got " << str;
-		clear();
 		return false;
 	}
 
-	m_meshes.reserve(meshes);
-	for(; meshes>0; --meshes)
+	m_meshes.resize(meshes);
+	for(int i = 0; i < meshes; ++i)
 	{
-		Mesh mesh;
+		Mesh& mesh = m_meshes[i];
 		if (!mesh.read(in))
 		{
-			clear();
+			std::cerr << "WZM::read - Error reading mesh " << meshes + 1;
 			return false;
 		}
-		m_meshes.push_back(mesh);
 	}
 	return true;
 }
@@ -325,7 +318,6 @@ bool WZM::importFromOBJ(std::istream& in)
 	OBJTri tri;
 	OBJVertex vert;
 	OBJUV uv;
-	Mesh mesh;
 
 	unsigned i, pos;
 
@@ -469,10 +461,11 @@ bool WZM::importFromOBJ(std::istream& in)
 		case 'o':
 			if (!groupedFaces.empty())
 			{
+				m_meshes.push_back(Mesh());
+				Mesh& mesh = m_meshes.back();
 				mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray);
 				mesh.setTeamColours(false);
 				mesh.setName(name);
-				m_meshes.push_back(mesh);
 				groupedFaces.clear();
 			}
 			ss >> name;
@@ -487,10 +480,11 @@ bool WZM::importFromOBJ(std::istream& in)
 	}
 	if (!groupedFaces.empty())
 	{
+		m_meshes.push_back(Mesh());
+		Mesh& mesh = m_meshes.back();
 		mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray);
 		mesh.setTeamColours(false);
 		mesh.setName(name);
-		m_meshes.push_back(mesh);
 	}
 	return true;
 }
@@ -658,11 +652,13 @@ void WZM::addMesh(const Mesh& mesh)
 void WZM::rmMesh (int index)
 {
 	std::vector<Mesh>::iterator pos;
-	pos=m_meshes.begin()+index;
-	if(pos==m_meshes.end())
+
+	pos = m_meshes.begin() + index;
+	if (pos == m_meshes.end())
 	{
 		return;
 	}
+
 	m_meshes.erase(pos);
 }
 
