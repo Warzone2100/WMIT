@@ -126,7 +126,7 @@ protected:
 	std::vector<WZMUV> m_textureArray;
 	std::vector<WZMVertex> m_normalArray;
 	std::vector<WZMVertex4> m_tangentArray;
-	std::vector<WZMVertex> m_bitangentArray; // WARNING: used only for non-WZM import, dont rely on it
+	std::vector<WZMVertex> m_bitangentArray;
 	std::vector<IndexedTri> m_indexArray;
 
 	std::list<WZMConnector> m_connectors;
