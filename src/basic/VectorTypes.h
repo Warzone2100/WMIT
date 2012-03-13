@@ -119,6 +119,34 @@ struct Vertex : public Vector<T, COMPONENTS>
 	{
 		return x() * rhs.x() + y() * rhs.y() + z() * rhs.z();
 	}
+
+	Vertex normalize() const
+	{
+		T dtp = dotProduct(*this);
+		if (dtp == 0.0f)
+			return Vertex();
+		return (*this / sqrt(dtp));
+	}
+
+	Vertex mirrorFrom(const Vertex &vertex, int axis) const // x == 0, y == 1, z == 2
+	{
+		Vertex result = *this;
+
+		switch (axis)
+		{
+		case 0:
+			result.x() = -result.x() + 2 * vertex.x();
+			break;
+		case 1:
+			result.y() = -result.y() + 2 * vertex.y();
+			break;
+		default:
+			result.z() = -result.z() + 2 * vertex.z();
+		}
+
+		return result;
+	}
+
 };
 
 template <typename T, size_t COMPONENTS = 4>
@@ -131,10 +159,10 @@ struct Vertex4 : public Vector<T, COMPONENTS>
 
 	Vertex4(const T x, const T y, const T z, const T w)
 	{
-		x() = x;
-		y() = y;
-		z() = z;
-		w() = w;
+		this->x() = x;
+		this->y() = y;
+		this->z() = z;
+		this->w() = w;
 	}
 
 	Vertex4(const Vertex4& rhs): Vector<T, COMPONENTS>(rhs) {}
