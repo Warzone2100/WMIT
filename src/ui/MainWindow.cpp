@@ -66,7 +66,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	addDockWidget(Qt::RightDockWidgetArea, m_transformDock, Qt::Horizontal);
 	addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
-	// UI is ready and now we can load previous state (will do nothing if state wasn't saved).
+	// UI is ready and now we can load window previous state (will do nothing if state wasn't saved).
+	// 3DView specifics are loaded later on viewerInitialized event
 	resize(QSettings().value("Window/size", size()).toSize());
 	move(QSettings().value("Window/position", pos()).toPoint());
 	restoreState(QSettings().value("Window/state", QByteArray()).toByteArray());
@@ -280,9 +281,16 @@ void MainWindow::changeEvent(QEvent *event)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 	QSettings settings;
+
 	settings.setValue("Window/size", size());
 	settings.setValue("Window/position", pos());
 	settings.setValue("Window/state", saveState());
+
+	settings.setValue("3DView/ShowModelCenter", m_ui->actionShowModelCenter->isChecked());
+	settings.setValue("3DView/ShowNormals", m_ui->actionShowNormals->isChecked());
+	settings.setValue("3DView/ShowAxes", m_ui->actionShowAxes->isChecked());
+	settings.setValue("3DView/ShowGrid", m_ui->actionShowGrid->isChecked());
+	settings.setValue("3DView/ShowLightSource", m_ui->actionShowLightSource->isChecked());
 
 	event->accept();
 }
@@ -569,6 +577,13 @@ void MainWindow::viewerInitialized()
 		&m_model, SLOT(setDrawCenterPointFlag(bool)));
 	connect(m_ui->actionShowNormals, SIGNAL(triggered(bool)),
 		&m_model, SLOT(setDrawNormalsFlag(bool)));
+
+	/// Load previous state
+	m_ui->actionShowModelCenter->setChecked(m_settings->value("3DView/ShowModelCenter", false).toBool());
+	m_ui->actionShowNormals->setChecked(m_settings->value("3DView/ShowNormals", false).toBool());
+	m_ui->actionShowAxes->setChecked(m_settings->value("3DView/ShowAxes", true).toBool());
+	m_ui->actionShowGrid->setChecked(m_settings->value("3DView/ShowGrid", true).toBool());
+	m_ui->actionShowLightSource->setChecked(m_settings->value("3DView/ShowLightSource", true).toBool());
 }
 
 void MainWindow::shaderAction(int type)
