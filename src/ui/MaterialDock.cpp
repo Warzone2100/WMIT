@@ -61,5 +61,7 @@ void MaterialDock::setMaterialColor(const int type, const QColor color)
 	case WZM_MAT_AMBIENT:
 		m_ui->ambientColor->setPixmap(pix);
 		break;
+	default:
+		break;
 	}
 }
