@@ -38,28 +38,22 @@
 
 void WZMaterial::setDefaults()
 {
+	vals[WZM_MAT_EMISSIVE] = WZMVertex4(0.f);
+	vals[WZM_MAT_AMBIENT] = WZMVertex4(1.f);
+	vals[WZM_MAT_DIFFUSE] = WZMVertex4(1.f);
+	vals[WZM_MAT_SPECULAR] = WZMVertex4(1.f);
 	shininess = 10.f;
-
-	for (int i = WZM_MAT_EMISSIVE + 1; i < WZM_MAT__LAST; ++i)
-	{
-		wzm_material_t mattype = static_cast<wzm_material_t>(i);
-		vals[mattype] = WZMVertex4(1.f);
-	}
 }
 
 bool WZMaterial::isDefault() const
 {
-	if (shininess != 10.f)
-		return false;
-	for (int i = WZM_MAT_EMISSIVE + 1; i < WZM_MAT__LAST; ++i)
-	{
-		wzm_material_t mattype = static_cast<wzm_material_t>(i);
-		if (!vals[mattype].sameComponents(1.f))
-			return false;
-	}
-	if (!vals[WZM_MAT_EMISSIVE].sameComponents(0.f))
-		return false;
-	return true;
+	if (shininess == 10.f &&
+			vals[WZM_MAT_EMISSIVE] == WZMVertex4(0.f) &&
+			vals[WZM_MAT_AMBIENT] == WZMVertex4(1.f) &&
+			vals[WZM_MAT_DIFFUSE] == WZMVertex4(1.f) &&
+			vals[WZM_MAT_SPECULAR] == WZMVertex4(1.f))
+		return true;
+	return false;
 }
 
 std::istream& operator>> (std::istream& in, WZMaterial& mat)
