@@ -48,39 +48,36 @@ void QWZM::render()
 	GLint frontFace;
 	glGetIntegerv(GL_FRONT_FACE, &frontFace);
 
+	QGLShaderProgram* shader = 0;
+
 	glPushMatrix();
 	glPushAttrib(GL_TEXTURE_BIT);
 	glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
 
-	glScalef(1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
-
-	// before shaders
-	if (m_drawCenterPoint)
-		drawCenterPoint();
-	if (m_drawNormals)
-		drawNormals();
-
-	// actual draw code starts here
-
-	glColor3f(1.f, 1.f, 1.f);
-
-	QGLShaderProgram* shader = 0;
-
 	// prepare shader data
-	if (setupTextureUnits(getActiveShader()))
+	if (!setupTextureUnits(getActiveShader()))
 	{
-		if (!isFixedPipelineRenderer())
+		glPopMatrix();
+		glPopClientAttrib();
+		glPopAttrib();
+		return;
+	}
+
+	if (!isFixedPipelineRenderer())
+	{
+		if (bindShader(getActiveShader()))
 		{
-			if (bindShader(getActiveShader()))
+			shader = m_shaderman->getShader(getActiveShader());
+			if (shader)
 			{
-				shader = m_shaderman->getShader(getActiveShader());
-				if (shader)
-				{
-					shader->enableAttributeArray(tangentAtributeName);
-				}
+				shader->enableAttributeArray(tangentAtributeName);
 			}
 		}
 	}
+
+	glScalef(1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
+
+	// actual draw code starts here
 
 	glClientActiveTexture(GL_TEXTURE0);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -97,6 +94,8 @@ void QWZM::render()
 	{
 		glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 	}
+
+	glColor3f(1.f, 1.f, 1.f);
 
 	for (int i = 0; i < (int)m_meshes.size(); ++i)
 	{
@@ -136,12 +135,15 @@ void QWZM::render()
 		}
 	}
 
-	// release shader data
-	if (shader)
+	if (!isFixedPipelineRenderer())
 	{
-		shader->disableAttributeArray(tangentAtributeName);
+		// release shader data
+		if (shader)
+		{
+			shader->disableAttributeArray(tangentAtributeName);
+		}
+		releaseShader(getActiveShader());
 	}
-	releaseShader(getActiveShader());
 	clearTextureUnits(getActiveShader());
 
 	// set it back
@@ -149,6 +151,12 @@ void QWZM::render()
 	{
 		glFrontFace(frontFace);
 	}
+
+	// after shaders
+	if (m_drawCenterPoint)
+		drawCenterPoint();
+	if (m_drawNormals)
+		drawNormals();
 
 	glPopMatrix();
 	glPopClientAttrib();
@@ -174,11 +182,15 @@ void QWZM::drawCenterPoint()
 	y = center.y() * scale_all * scale_xyz[1];
 	z = center.z() * scale_all * scale_xyz[2];
 
-	GLboolean lighting;
+	GLboolean lighting, texture;
+
 	glGetBooleanv(GL_LIGHTING, &lighting);
 	if (lighting)
 		glDisable(GL_LIGHTING);
-	glDisable(GL_TEXTURE_2D);
+
+	texture = glIsEnabled(GL_TEXTURE_2D);
+	if (texture)
+		glDisable(GL_TEXTURE_2D);
 
 	glEnable(GL_LINE_SMOOTH);
 	glLineWidth(2);
@@ -194,22 +206,26 @@ void QWZM::drawCenterPoint()
 	glVertex3f(x, y, lineLength + z);
 	glEnd();
 
-	glEnable(GL_TEXTURE_2D);
+	if (texture)
+		glEnable(GL_TEXTURE_2D);
+
 	if (lighting)
-	{
 		glEnable(GL_LIGHTING);
-	}
+
 }
 
 void QWZM::drawNormals()
 {
-	GLboolean lighting;
-	glGetBooleanv(GL_LIGHTING, &lighting);
+	GLboolean lighting, texture;
 
+	glGetBooleanv(GL_LIGHTING, &lighting);
 	if (lighting)
 		glDisable(GL_LIGHTING);
 
-	glDisable(GL_TEXTURE_2D);
+	texture = glIsEnabled(GL_TEXTURE_2D);
+	if (texture)
+		glDisable(GL_TEXTURE_2D);
+
 	glColor3f(0.7f, 1.0f, 0.7f);
 
 	for (int i = 0; i < (int)m_meshes.size(); ++i)
@@ -228,7 +244,9 @@ void QWZM::drawNormals()
 		}
 	}
 
-	glEnable(GL_TEXTURE_2D);
+	if (texture)
+		glEnable(GL_TEXTURE_2D);
+
 	if (lighting)
 		glEnable(GL_LIGHTING);
 }
@@ -537,15 +555,17 @@ bool QWZM::bindShader(int type)
 
 void QWZM::releaseShader(int type)
 {
-	if (!m_shaderman)
-		return;
+	if (m_shaderman)
+	{
+		QGLShaderProgram* shader = m_shaderman->getShader(type);
+		if (shader)
+		{
+			shader->release();
+			return;
+		}
+	}
 
-	QGLShaderProgram* shader = m_shaderman->getShader(type);
-
-	if (shader)
-		shader->release();
-	else
-		glUseProgram(0);
+	glUseProgram(0);
 }
 
 /*********** SLOTS ************/
