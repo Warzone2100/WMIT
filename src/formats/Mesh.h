@@ -146,7 +146,4 @@ private:
 	void defaultConstructor();
 };
 
-WZMVertex normalizeVector(const WZMVertex &ver);
-
-
 #endif // MESH_HPP

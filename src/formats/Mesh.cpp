@@ -25,22 +25,12 @@
 #include <map>
 #include <set>
 
-#include <cmath>
-
 #include <sstream>
 
 #include "Generic.h"
 #include "Util.h"
 #include "Pie.h"
 #include "Vector.h"
-
-WZMVertex normalizeVector(const WZMVertex& ver)
-{
-	GLfloat sq = ver.dotProduct(ver);
-	if (sq == 0.0f)
-		return WZMVertex();
-	return ver / sqrt(sq);
-}
 
 struct compareWZMPoint_less_wEps: public std::binary_function<WZMPoint&, WZMPoint&, bool>
 {
@@ -137,8 +127,9 @@ Mesh::Mesh(const Pie3Level& p3)
 			continue;
 		}
 
-		tmpNrm = normalizeVector(WZMVertex(WZMVertex(p3.m_points[itL->getIndex(1)]) - WZMVertex(p3.m_points[itL->getIndex(0)]))
-					 .crossProduct(WZMVertex(p3.m_points[itL->getIndex(2)]) - WZMVertex(p3.m_points[itL->getIndex(0)])));;
+		tmpNrm = WZMVertex(WZMVertex(p3.m_points[itL->getIndex(1)]) - WZMVertex(p3.m_points[itL->getIndex(0)]))
+				.crossProduct(WZMVertex(p3.m_points[itL->getIndex(2)]) - WZMVertex(p3.m_points[itL->getIndex(0)]));
+		tmpNrm.normalize();
 
 		// For all 3 vertices of the triangle
 		for (int i = 0; i < 3; ++i)
@@ -796,7 +787,7 @@ void Mesh::finishImport()
 		WZMVertex n = m_normalArray[i];
 
 		// Gram-Schmidt orthogonalize
-		m_tangentArray[i] = WZMVertex4(normalizeVector(m_tangentArray[i].xyz() - n * n.dotProduct(m_tangentArray[i].xyz())));
+		m_tangentArray[i] = WZMVertex4(WZMVertex(m_tangentArray[i].xyz() - n * n.dotProduct(m_tangentArray[i].xyz())).normalize());
 
 		// Calculate handedness
 		if (n.crossProduct(m_tangentArray[i].xyz()).dotProduct(m_bitangentArray[i]) < 0.0f)
