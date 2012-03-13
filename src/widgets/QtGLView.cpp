@@ -116,12 +116,13 @@ void QtGLView::draw()
 
 void QtGLView::postDraw()
 {
-	glDisable(GL_TEXTURE_2D);
+	GLboolean lighting, texture;
 
-	GLboolean lighting;
 	glGetBooleanv(GL_LIGHTING, &lighting);
-
 	glDisable(GL_LIGHTING);
+
+	texture = glIsEnabled(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
 
 	glColor3f(lightCol0[LIGHT_DIFFUSE][0], lightCol0[LIGHT_DIFFUSE][1], lightCol0[LIGHT_DIFFUSE][2]);
 
@@ -224,12 +225,17 @@ void QtGLView::postDraw()
 		glPopMatrix();
 	}
 
-	if (!lighting)
+	if (lighting)
+	{
+		glEnable(GL_LIGHTING);
+	}
+	else
 	{
 		glDisable(GL_LIGHTING);
 	}
 
-	glEnable(GL_TEXTURE_2D);
+	if (texture)
+		glEnable(GL_TEXTURE_2D);
 }
 
 void QtGLView::dynamicManagedSetup(IGLRenderable *object, bool remove)
