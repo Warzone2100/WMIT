@@ -88,6 +88,8 @@ private slots:
 	void mirrorAxis(int axis);
 	void removeMesh(int mesh);
 
+	void materialChangedFromUI(const WZMaterial& mat);
+
 private:
 	Ui::MainWindow *m_ui;
 

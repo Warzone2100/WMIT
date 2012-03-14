@@ -19,52 +19,55 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QGroupBox" name="ambientGroupBox">
+     <widget class="QGroupBox" name="colorGroupBox">
       <property name="title">
-       <string>Ambient</string>
+       <string>Color</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QCheckBox" name="ambientAllCheckBox">
+        <widget class="QComboBox" name="colorTypeComboBox"/>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="colorAllCheckBox">
          <property name="text">
-          <string>All channels</string>
+          <string>Lock all channels</string>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QGridLayout" name="ambientLayout">
+        <layout class="QGridLayout" name="colorLayout">
          <item row="1" column="0">
-          <widget class="QLabel" name="ambientGreenLabel">
+          <widget class="QLabel" name="colorGreenLabel">
            <property name="text">
             <string>G:</string>
            </property>
            <property name="buddy">
-            <cstring>ambientGreenSlider</cstring>
+            <cstring>colorGreenSlider</cstring>
            </property>
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="ambientBlueLabel">
+          <widget class="QLabel" name="colorBlueLabel">
            <property name="text">
             <string>B:</string>
            </property>
            <property name="buddy">
-            <cstring>ambientBlueSlider</cstring>
+            <cstring>colorBlueSlider</cstring>
            </property>
           </widget>
          </item>
          <item row="0" column="0">
-          <widget class="QLabel" name="ambientRedLabel">
+          <widget class="QLabel" name="colorRedLabel">
            <property name="text">
             <string>R:</string>
            </property>
            <property name="buddy">
-            <cstring>ambientRedSlider</cstring>
+            <cstring>colorRedSlider</cstring>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QSlider" name="ambientRedSlider">
+          <widget class="QSlider" name="colorRedSlider">
            <property name="minimumSize">
             <size>
              <width>100</width>
@@ -72,10 +75,7 @@
             </size>
            </property>
            <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="value">
-            <number>50</number>
+            <number>255</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -86,7 +86,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QSlider" name="ambientGreenSlider">
+          <widget class="QSlider" name="colorGreenSlider">
            <property name="minimumSize">
             <size>
              <width>100</width>
@@ -94,10 +94,7 @@
             </size>
            </property>
            <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="value">
-            <number>50</number>
+            <number>255</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -108,7 +105,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QSlider" name="ambientBlueSlider">
+          <widget class="QSlider" name="colorBlueSlider">
            <property name="minimumSize">
             <size>
              <width>100</width>
@@ -116,10 +113,7 @@
             </size>
            </property>
            <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="value">
-            <number>50</number>
+            <number>255</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -130,264 +124,67 @@
           </widget>
          </item>
          <item row="0" column="2">
-          <widget class="QDoubleSpinBox" name="ambientRedSpinBox">
-           <property name="maximum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.500000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QDoubleSpinBox" name="ambientGreenSpinBox">
-           <property name="maximum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.500000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QDoubleSpinBox" name="ambientBlueSpinBox">
-           <property name="maximum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.500000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="ambientColor">
-           <property name="frameShape">
-            <enum>QFrame::Box</enum>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="scaledContents">
+          <widget class="QDoubleSpinBox" name="colorRedSpinBox">
+           <property name="accelerated">
             <bool>true</bool>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="ambientButton">
-           <property name="palette">
-            <palette>
-             <active>
-              <colorrole role="Button">
-               <brush brushstyle="SolidPattern">
-                <color alpha="255">
-                 <red>127</red>
-                 <green>127</green>
-                 <blue>127</blue>
-                </color>
-               </brush>
-              </colorrole>
-             </active>
-             <inactive>
-              <colorrole role="Button">
-               <brush brushstyle="SolidPattern">
-                <color alpha="255">
-                 <red>127</red>
-                 <green>127</green>
-                 <blue>127</blue>
-                </color>
-               </brush>
-              </colorrole>
-             </inactive>
-             <disabled>
-              <colorrole role="Button">
-               <brush brushstyle="SolidPattern">
-                <color alpha="255">
-                 <red>127</red>
-                 <green>127</green>
-                 <blue>127</blue>
-                </color>
-               </brush>
-              </colorrole>
-             </disabled>
-            </palette>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="diffuseGroupBox">
-      <property name="title">
-       <string>Diffuse</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QCheckBox" name="diffuseAllCheckBox">
-         <property name="text">
-          <string>All channels</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="diffuseLayout">
-         <item row="1" column="0">
-          <widget class="QLabel" name="diffuseGreenLabel">
-           <property name="text">
-            <string>G:</string>
-           </property>
-           <property name="buddy">
-            <cstring>diffuseGreenSlider</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="diffuseBlueLabel">
-           <property name="text">
-            <string>B:</string>
-           </property>
-           <property name="buddy">
-            <cstring>diffuseBlueSlider</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="diffuseRedLabel">
-           <property name="text">
-            <string>R:</string>
-           </property>
-           <property name="buddy">
-            <cstring>diffuseRedSlider</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSlider" name="diffuseRedSlider">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="value">
-            <number>50</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::TicksBelow</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSlider" name="diffuseGreenSlider">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="value">
-            <number>50</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::TicksBelow</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QSlider" name="diffuseBlueSlider">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="value">
-            <number>50</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::TicksBelow</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QDoubleSpinBox" name="diffuseRedSpinBox">
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.500000000000000</double>
            </property>
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QDoubleSpinBox" name="diffuseGreenSpinBox">
+          <widget class="QDoubleSpinBox" name="colorGreenSpinBox">
+           <property name="accelerated">
+            <bool>true</bool>
+           </property>
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.500000000000000</double>
            </property>
           </widget>
          </item>
          <item row="2" column="2">
-          <widget class="QDoubleSpinBox" name="diffuseBlueSpinBox">
+          <widget class="QDoubleSpinBox" name="colorBlueSpinBox">
+           <property name="accelerated">
+            <bool>true</bool>
+           </property>
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.500000000000000</double>
            </property>
           </widget>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="diffuseButton">
+        <widget class="QLabel" name="colorPreview">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="colorDialogButton">
          <property name="palette">
           <palette>
            <active>
@@ -426,206 +223,7 @@
           </palette>
          </property>
          <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="specularGroupBox">
-      <property name="title">
-       <string>Specular</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QCheckBox" name="specularAllCheckBox">
-         <property name="text">
-          <string>All channels</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="specularLayout">
-         <item row="1" column="0">
-          <widget class="QLabel" name="specularGreenLabel">
-           <property name="text">
-            <string>G:</string>
-           </property>
-           <property name="buddy">
-            <cstring>specularGreenSlider</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="specularBlueLabel">
-           <property name="text">
-            <string>B:</string>
-           </property>
-           <property name="buddy">
-            <cstring>specularBlueSlider</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="specularRedLabel">
-           <property name="text">
-            <string>R:</string>
-           </property>
-           <property name="buddy">
-            <cstring>specularRedSlider</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSlider" name="specularRedSlider">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="value">
-            <number>50</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::TicksBelow</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSlider" name="specularGreenSlider">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="value">
-            <number>50</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::TicksBelow</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QSlider" name="specularBlueSlider">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="value">
-            <number>50</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::TicksBelow</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QDoubleSpinBox" name="specularRedSpinBox">
-           <property name="maximum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.500000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QDoubleSpinBox" name="specularGreenSpinBox">
-           <property name="maximum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.500000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QDoubleSpinBox" name="specularBlueSpinBox">
-           <property name="maximum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.500000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="specualrButton">
-         <property name="palette">
-          <palette>
-           <active>
-            <colorrole role="Button">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>127</red>
-               <green>127</green>
-               <blue>127</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </active>
-           <inactive>
-            <colorrole role="Button">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>127</red>
-               <green>127</green>
-               <blue>127</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </inactive>
-           <disabled>
-            <colorrole role="Button">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>127</red>
-               <green>127</green>
-               <blue>127</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </disabled>
-          </palette>
-         </property>
-         <property name="text">
-          <string/>
+          <string>Color dialog</string>
          </property>
         </widget>
        </item>
@@ -651,9 +249,6 @@
            <property name="maximum">
             <number>1280</number>
            </property>
-           <property name="value">
-            <number>150</number>
-           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -667,6 +262,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="shininessDoubleSpinBox">
+           <property name="accelerated">
+            <bool>true</bool>
+           </property>
            <property name="decimals">
             <number>1</number>
            </property>
@@ -675,9 +273,6 @@
            </property>
            <property name="singleStep">
             <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>15.000000000000000</double>
            </property>
           </widget>
          </item>

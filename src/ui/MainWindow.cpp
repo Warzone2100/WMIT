@@ -101,6 +101,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_materialDock->toggleViewAction()->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
 	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0) ,m_materialDock->toggleViewAction());
 
+	connect(m_materialDock, SIGNAL(materialChanged(WZMaterial)), this, SLOT(materialChangedFromUI(WZMaterial)));
+
 	/// Transform dock
 	m_transformDock->toggleViewAction()->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
 	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0) ,m_transformDock->toggleViewAction());
@@ -169,6 +171,8 @@ bool MainWindow::openFile(const QString &filePath)
 			clear();
 			return false;
 		}
+
+		m_materialDock->setMaterial(m_model.getMaterial());
 	}
 
 	return true;
@@ -640,6 +644,12 @@ void MainWindow::removeMesh(int mesh)
 		return;
 
 	m_model.rmMesh(mesh);
+	m_ui->centralWidget->updateGL();
+}
+
+void MainWindow::materialChangedFromUI(const WZMaterial &mat)
+{
+	m_model.setMaterial(mat);
 	m_ui->centralWidget->updateGL();
 }
 
