@@ -42,6 +42,9 @@ MaterialDock::MaterialDock(QWidget *parent) :
 
 	connect(m_ui->shininessDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(changeShininess(double)));
 	connect(m_ui->shininessSlider, SIGNAL(valueChanged(int)), this, SLOT(changeShininess(int)));
+
+	// disable wip parts
+	m_ui->colorAllCheckBox->setDisabled(true);
 }
 
 MaterialDock::~MaterialDock()
