@@ -275,7 +275,7 @@ void WZM::write(std::ostream& out) const
 	}
 
 	// optional: material
-	//if (!m_material.isDefault()) //FIXME: disable till material GUI is ready
+	if (!m_material.isDefault())
 	{
 		out << WZM_MODEL_DIRECTIVE_MATERIAL << ' ' << m_material << '\n';
 	}
