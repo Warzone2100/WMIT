@@ -299,7 +299,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	event->accept();
 }
 
-bool MainWindow::loadModel(const QString& file, WZM& model)
+bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
 {
 	wmit_filetype_t type;
 
@@ -310,6 +310,8 @@ bool MainWindow::loadModel(const QString& file, WZM& model)
 
 	bool read_success = false;
 	std::ifstream f;
+	ImportDialog* importDialog = 0;
+	QSettings* settings = 0;
 
 	f.open(file.toLocal8Bit(), std::ios::in | std::ios::binary);
 
@@ -319,7 +321,22 @@ bool MainWindow::loadModel(const QString& file, WZM& model)
 		read_success = model.read(f);
 		break;
 	case WMIT_FT_OBJ:
-		read_success = model.importFromOBJ(f);
+		if (!nogui)
+		{
+			importDialog = new ImportDialog();
+			int result = importDialog->exec();
+			delete importDialog;
+			importDialog = 0;
+
+			if (result != QDialog::Accepted)
+			{
+				return false;
+			}
+		}
+
+		settings = new QSettings();
+
+		read_success = model.importFromOBJ(f, settings->value(WMIT_SETTINGS_IMPORT_WELDER, true).toBool());
 		break;
 	case WMIT_FT_PIE:
 	case WMIT_FT_PIE2:
@@ -342,6 +359,11 @@ bool MainWindow::loadModel(const QString& file, WZM& model)
 	}
 
 	f.close();
+
+	if (importDialog)
+		delete importDialog;
+	if (settings)
+		delete settings;
 
 	return read_success;
 }

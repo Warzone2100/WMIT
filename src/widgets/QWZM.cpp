@@ -657,9 +657,9 @@ void QWZM::rmMesh(int index)
 	meshCountChanged(meshes(), getMeshNames());
 }
 
-bool QWZM::importFromOBJ(std::istream& in)
+bool QWZM::importFromOBJ(std::istream& in, bool welder)
 {
-	if (WZM::importFromOBJ(in))
+	if (WZM::importFromOBJ(in, welder))
 	{
 		meshCountChanged(meshes(), getMeshNames());
 		return true;

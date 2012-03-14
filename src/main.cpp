@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 
 		WZM model;
 
-		if (!MainWindow::loadModel(inname, model))
+		if (!MainWindow::loadModel(inname, model, true))
 			return 1;
 
 		return !MainWindow::saveModel(outname, model, outtype);

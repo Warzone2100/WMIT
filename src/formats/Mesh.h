@@ -91,7 +91,8 @@ public:
 	bool importFromOBJ(const std::vector<OBJTri>&	faces,
 			   const std::vector<OBJVertex>& verts,
 			   const std::vector<OBJUV>&	uvArray,
-			   const std::vector<OBJVertex>& normals);
+			   const std::vector<OBJVertex>& normals,
+			   bool welder);
 	std::stringstream* exportToOBJ(const Mesh_exportToOBJ_InOutParams& params) const;
 
 	std::string getName() const;

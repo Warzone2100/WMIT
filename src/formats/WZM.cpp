@@ -292,7 +292,7 @@ void WZM::write(std::ostream& out) const
  * This function does the parsing,
  * we'll let class Mesh do the WZM'izing
  */
-bool WZM::importFromOBJ(std::istream& in)
+bool WZM::importFromOBJ(std::istream& in, bool welder)
 {
 	const bool invertV = true;
 	std::vector<OBJVertex> vertArray, normArray;
@@ -457,7 +457,7 @@ bool WZM::importFromOBJ(std::istream& in)
 			{
 				m_meshes.push_back(Mesh());
 				Mesh& mesh = m_meshes.back();
-				mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray);
+				mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray, welder);
 				mesh.setTeamColours(false);
 				mesh.setName(name);
 				groupedFaces.clear();
@@ -476,7 +476,7 @@ bool WZM::importFromOBJ(std::istream& in)
 	{
 		m_meshes.push_back(Mesh());
 		Mesh& mesh = m_meshes.back();
-		mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray);
+		mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray, welder);
 		mesh.setTeamColours(false);
 		mesh.setName(name);
 	}
