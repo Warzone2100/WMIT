@@ -146,9 +146,9 @@ void TransformDock::setScale(int value)
 
 void TransformDock::setScale(double value)
 {
-	if (m_ui->scaleSpinBox->value() != value)
+	if (m_ui->scaleSlider->value() != value)
 	{
-		m_ui->scaleSpinBox->setValue(value);
+		m_ui->scaleSlider->setValue(value);
 	}
 
 	switch(m_ui->scaleComboBox->currentIndex())
