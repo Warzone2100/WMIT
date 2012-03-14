@@ -68,7 +68,7 @@ public:
 	bool read(std::istream& in);
 	void write(std::ostream& out) const;
 
-	bool importFromOBJ(std::istream& in);
+	bool importFromOBJ(std::istream& in, bool welder);
 	void exportToOBJ(std::ostream& out) const;
 
 	int version() const;

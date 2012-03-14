@@ -452,7 +452,8 @@ void Mesh::write(std::ostream &out) const
 bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 			 const std::vector<OBJVertex>&  verts,
 			 const std::vector<OBJUV>&	uvArray,
-			 const std::vector<OBJVertex>&  normals)
+			 const std::vector<OBJVertex>&  normals,
+			 bool welder)
 {
 	typedef std::set<WZMPoint, compareWZMPoint_less_wEps> t_tupleSet;
 	t_tupleSet tupleSet;
@@ -484,19 +485,28 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 			tmpUv = itFaces->uvs.operator [](i) < 1 ? WZMUV() : uvArray[itFaces->uvs.operator [](i) - 1];
 #pragma message "precalculate missing OBJ normal"
 			tmpNrm = itFaces->nrm.operator [](i) < 1 ? WZMVertex() : normals[itFaces->nrm.operator [](i) - 1]; //FIXME
-			inResult = tupleSet.insert(WZMPoint(verts[itFaces->tri[i]-1], tmpUv, tmpNrm));
 
-			if (!inResult.second)
+			if (welder)
 			{
-				tmpTri[i] = mapping[std::distance(tupleSet.begin(), inResult.first)];
+				inResult = tupleSet.insert(WZMPoint(verts[itFaces->tri[i]-1], tmpUv, tmpNrm));
+
+				if (!inResult.second)
+				{
+					tmpTri[i] = mapping[std::distance(tupleSet.begin(), inResult.first)];
+				}
+				else
+				{
+					itMap = mapping.begin();
+					std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
+					mapping.insert(itMap, vertices());
+					tmpTri[i] = vertices();
+					addPoint(*inResult.first);
+				}
 			}
 			else
 			{
-				itMap = mapping.begin();
-				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
-				mapping.insert(itMap, vertices());
 				tmpTri[i] = vertices();
-				addPoint(*inResult.first);
+				addPoint(WZMPoint(verts[itFaces->tri[i]-1], tmpUv, tmpNrm));
 			}
 		}
 		addIndices(tmpTri);

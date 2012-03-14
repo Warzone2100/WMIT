@@ -18,7 +18,23 @@
     <enum>QLayout::SetDefaultConstraint</enum>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="gb_ImportSettings">
+     <property name="title">
+      <string>Import settings</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="cb_EnableWelder">
+        <property name="text">
+         <string>Enable vertex welder</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="gb_CoordinateSystem">
      <property name="title">
       <string>Coordinate system:</string>
      </property>

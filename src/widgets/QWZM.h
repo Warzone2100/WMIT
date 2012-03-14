@@ -98,7 +98,7 @@ public:
 	bool read(std::istream& in) {return WZM::read(in);}
 	void write(std::ostream& out) const;
 
-	bool importFromOBJ(std::istream& in);
+	bool importFromOBJ(std::istream& in, bool welder);
 	void exportToOBJ(std::ostream& out) const;
 
 	void setTextureName(wzm_texture_type_t type, std::string name) {WZM::setTextureName(type, name);}

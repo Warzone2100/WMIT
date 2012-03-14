@@ -20,6 +20,7 @@
 #define IMPORTDIALOG_HPP
 
 #include <QDialog>
+#include <QSettings>
 
 namespace Ui {
 	class ImportDialog;
@@ -37,7 +38,9 @@ protected:
 	void changeEvent(QEvent *e);
 
 private:
-	Ui::ImportDialog* ui;
+	Ui::ImportDialog* m_ui;
+
+	QSettings m_settings;
 };
 
 #endif // IMPORTDIALOG_HPP

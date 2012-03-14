@@ -7,6 +7,8 @@
 #define WMIT_SETTINGS_EXPORTVAL "exportFolder"
 #define WMIT_SETTINGS_TEXSEARCHDIRS "textureSearchDirs"
 
+#define WMIT_SETTINGS_IMPORT_WELDER "Import/EnableWelder"
+
 #define WMIT_WZ_TEXPAGE_REMASK "page\\-(\\d+)"
 
 #define WMIT_SHADER_PIE3_DEFPATH_VERT ":/data/shaders/pie3.vert"
