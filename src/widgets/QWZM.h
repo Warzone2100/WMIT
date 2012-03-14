@@ -95,22 +95,25 @@ public:
 
 	/// WZM interface - mesh control border
 	virtual operator Pie3Model() const;
-	inline bool read(std::istream& in) {return WZM::read(in);}
+	bool read(std::istream& in) {return WZM::read(in);}
 	void write(std::ostream& out) const;
 
 	bool importFromOBJ(std::istream& in);
 	void exportToOBJ(std::ostream& out) const;
 
-	inline void setTextureName(wzm_texture_type_t type, std::string name) {WZM::setTextureName(type, name);}
-	inline std::string getTextureName(wzm_texture_type_t type) const {return WZM::getTextureName(type);}
-	inline void clearTextureNames() {WZM::clearTextureNames();}
+	void setTextureName(wzm_texture_type_t type, std::string name) {WZM::setTextureName(type, name);}
+	std::string getTextureName(wzm_texture_type_t type) const {return WZM::getTextureName(type);}
+	void clearTextureNames() {WZM::clearTextureNames();}
 
-	inline void reverseWinding(int mesh = -1) {WZM::reverseWinding(mesh);}
+	WZMaterial getMaterial() const {return WZM::getMaterial();}
+	void setMaterial(const WZMaterial& mat) {WZM::setMaterial(mat);}
 
-	inline Mesh& getMesh(int index) {return WZM::getMesh(index);}
+	void reverseWinding(int mesh = -1) {WZM::reverseWinding(mesh);}
+
+	Mesh& getMesh(int index) {return WZM::getMesh(index);}
 	void addMesh (const Mesh& mesh);
 	void rmMesh (int index);
-	inline int meshes() const {return WZM::meshes();}
+	int meshes() const {return WZM::meshes();}
 
 private:
 	Q_DISABLE_COPY(QWZM)

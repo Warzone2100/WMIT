@@ -79,6 +79,9 @@ public:
 	bool isTextureSet(wzm_texture_type_t type) const;
 	void clearTextureNames();
 
+	WZMaterial getMaterial() const {return m_material;}
+	void setMaterial(const WZMaterial& mat) {m_material = mat;}
+
 	static std::string texTypeToString(wzm_texture_type_t type);
 
 	/// might throw out_of_range exception? not decided yet

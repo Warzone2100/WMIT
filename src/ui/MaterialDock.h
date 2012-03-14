@@ -20,6 +20,8 @@
 #ifndef MATERIALDOCK_H
 #define MATERIALDOCK_H
 
+#include "WZM.h"
+
 #include <QDockWidget>
 
 namespace Ui
@@ -38,11 +40,33 @@ public:
 protected:
 	void changeEvent(QEvent *event);
 
+signals:
+	void materialChanged(const WZMaterial& mat);
+
 public slots:
-	void setMaterialColor(const int type, const QColor color);
+	void setMaterial(const WZMaterial& mat);
+
+private slots:
+	void on_colorTypeComboBox_currentIndexChanged(int index);
+	void on_colorDialogButton_clicked();
+
+	void changeRedComponent(int value);
+	void changeRedComponent(double value);
+	void changeGreenComponent(int value);
+	void changeGreenComponent(double value);
+	void changeBlueComponent(int value);
+	void changeBlueComponent(double value);
+
+	void changeShininess(int value);
+	void changeShininess(double value);
 
 private:
 	Ui::MaterialDock *m_ui;
+	WZMaterial m_material;
+
+	void setColorOnUI(const QColor &color);
+	void setShininessOnUI(const float shininess);
+	void applyColor(const QColor &color);
 };
 
 #endif // MATERIALDOCK_H
