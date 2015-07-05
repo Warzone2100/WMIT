@@ -27,6 +27,8 @@
 
 #include <QSettings>
 #include <QSignalMapper>
+#include <QFileSystemWatcher>
+#include <QBasicTimer>
 
 #include "QWZM.h"
 #include "wmit.h"
@@ -52,7 +54,6 @@ public:
 	~MainWindow();
 
 	void clear();
-
 	bool openFile(const QString& file);
 
 	static bool loadModel(const QString& file, WZM& model, bool nogui = false);
@@ -74,8 +75,11 @@ private slots:
 	void actionSetupTextures();
 	void actionAppendModel();
 	void actionTakeScreenshot();
-	void updateRecentFilesMenu();
+    void actionSetTeamColor();
+    void actionLocateUserShaders();
+    void actionReloadUserShader();
 
+    void updateRecentFilesMenu();
 	void viewerInitialized();
 	void shaderAction(int);
 
@@ -103,11 +107,15 @@ private:
 	QSettings *m_settings;
 
 	QSignalMapper *m_shaderSignalMapper;
+    QAction *m_actionActivateUserShaders;
+    QAction *m_actionReloadUserShaders;
 	QString m_pathImport, m_pathExport, m_currentFile;
 
 	QWZM m_model;
 
 	bool fireTextureDialog(const bool reinit = false);
+    bool loadShaderAndEnableAction(QAction* shaderAct, wz_shader_type_t type,
+                                   QString pathvert, QString pathfrag, QString* errMessage = 0);
 };
 
 #endif // MAINWINDOW_HPP

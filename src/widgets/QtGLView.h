@@ -20,6 +20,7 @@
 #ifndef QTGLVIEW_HPP
 #define QTGLVIEW_HPP
 
+#include <QtCore>
 #include <QString>
 #include <QList>
 #include <QHash>
@@ -62,14 +63,12 @@ public:
 	virtual void deleteAllTextures();
 
 	/// IGLShaderManager component
-	virtual bool loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag);
+    virtual bool loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag,
+                            QString *errString);
 	virtual void unloadShader(int type);
 
 public slots:
 	void setDrawLightSource(bool draw);
-
-signals:
-	void viewerInitialized();
 
 protected:
 	void init();

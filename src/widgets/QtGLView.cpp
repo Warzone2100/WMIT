@@ -279,7 +279,7 @@ void QtGLView::textureChanged(const QString& fileName)
 	if (texIt != m_textures.constEnd())
 	{
 		texIt.value().update = true;
-		updateTimer.start(800, this);;
+        updateTimer.start(800, this);
 	}
 }
 
@@ -430,7 +430,8 @@ void QtGLView::deleteAllTextures()
 
 /// IGLShaderManager component
 
-bool QtGLView::loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag)
+bool QtGLView::loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag,
+                          QString* errString)
 {
 	if (QGLShaderProgram::hasOpenGLShaderPrograms(context()))
 	{
@@ -449,28 +450,29 @@ bool QtGLView::loadShader(int type, const QString& fileNameVert, const QString& 
 
 		if (!shader->addShaderFromSourceFile(QGLShader::Vertex, fileNameVert))
 		{
-			qWarning() << QString("QtGLView::loadShader - Error loading vertex shader:\n%1").arg(shader->log());
+            if (errString)
+                *errString = QString("QtGLView::loadShader - Error loading vertex shader:\n%1").arg(shader->log());
 			ok_flag = false;
 		}
 		else if (!shader->addShaderFromSourceFile(QGLShader::Fragment, fileNameFrag))
 		{
-			qWarning() << QString("QtGLView::loadShader - Error loading fragment shader:\n%1").arg(shader->log());
+            if (errString)
+                *errString = QString("QtGLView::loadShader - Error loading fragment shader:\n%1").arg(shader->log());
 			ok_flag = false;
 		}
 		else if (!shader->link())
 		{
-			qWarning() << QString("QtGLView::loadShader - Error linking shaders:\n%1").arg(shader->log());
+            if (errString)
+                *errString = QString("QtGLView::loadShader - Error linking shaders:\n%1").arg(shader->log());
 			ok_flag = false;
 		}
 
-		if (ok_flag)
-		{
-			m_shaders[type] = shader;
-		}
-		else
+        if (!ok_flag)
 		{
 			delete shader;
+            shader = NULL;
 		}
+        m_shaders[type] = shader;
 
 		return ok_flag;
 	}

@@ -33,6 +33,7 @@
 #define WZM_MODEL_DIRECTIVE_TCMASK "TCMASK"
 #define WZM_MODEL_DIRECTIVE_NORMALMAP "NORMALMAP"
 #define WZM_MODEL_DIRECTIVE_SPECULARMAP "SPECULARMAP"
+#define WZM_MODEL_DIRECTIVE_SHADERS "SHADERS"
 #define WZM_MODEL_DIRECTIVE_MATERIAL "MATERIAL"
 #define WZM_MODEL_DIRECTIVE_MESHES "MESHES"
 
@@ -47,9 +48,23 @@ enum wzm_material_t {WZM_MAT_EMISSIVE = 0, WZM_MAT_AMBIENT, WZM_MAT_DIFFUSE, WZM
 
 struct WZMaterial
 {
-	WZMVertex4 vals[WZM_MAT__LAST];
+    const bool m_skipemissive;
+    typedef WZMVertex val_type;
+    val_type vals[WZM_MAT__LAST];
 	GLfloat shininess;
 
+    WZMaterial(bool skipemissive = false): m_skipemissive(skipemissive)
+    {
+        setDefaults();
+    }
+
+    const WZMaterial& operator=(const WZMaterial& rhs)
+    {
+        for (int i = WZM_MAT__FIRST; i < WZM_MAT__LAST; ++i)
+            vals[i] = rhs.vals[i];
+        shininess = rhs.shininess;
+        return *this;
+    }
 	void setDefaults();
 	bool isDefault() const;
 };

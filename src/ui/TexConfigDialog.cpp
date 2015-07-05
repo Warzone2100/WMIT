@@ -82,7 +82,7 @@ void TexConfigDialog::on_pb_add_clicked()
 
 	fileDialog->setWindowTitle(tr("Select texture search directory."));
 	fileDialog->setFileMode(QFileDialog::Directory);
-	fileDialog->setFilter("*.png");
+    fileDialog->setNameFilter("*.png");
 	fileDialog->exec();
 
 	if (fileDialog->result() == QDialog::Accepted)

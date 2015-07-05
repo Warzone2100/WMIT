@@ -31,7 +31,8 @@ protected:
 public:
 	virtual ~IGLShaderManager() {}
 
-	virtual bool loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag) = 0;
+    virtual bool loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag,
+                            QString* errString) = 0;
 	virtual void unloadShader(int type) = 0;
 
 	virtual bool hasShader(int type)

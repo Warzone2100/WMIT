@@ -17,7 +17,7 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QCoreApplication>
 #include <QTextCodec>
 #include <QSettings>
@@ -31,7 +31,7 @@
 
 int main(int argc, char *argv[])
 {
-	QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
+    //QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
 
 	if (argc > 2)
 	{

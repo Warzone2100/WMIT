@@ -32,7 +32,7 @@
 */
 
 template<typename V, typename P, typename C>
-APieLevel< V, P, C>::APieLevel()
+APieLevel< V, P, C>::APieLevel(): m_material(true)
 {
 }
 
@@ -56,12 +56,24 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 		streamfail();
 	}
 
-	// POINTS %u
-	in >> str >> uint;
-	if ( in.fail() || str.compare("POINTS") != 0)
-	{
-		streamfail();
-	}
+    // POINTS %u || MATERIALS %u
+    in >> str;
+    if ( str.compare(PIE_MODEL_DIRECTIVE_MATERIALS) == 0)
+    {
+        in >> m_material;
+        if (in.fail())
+            streamfail();
+        in >> str;
+    }
+
+    if (in.fail() || str.compare("POINTS") != 0)
+    {
+        streamfail();
+    }
+    else
+    {
+        in >> uint;
+    }
 
 	m_points.reserve(uint);
 	for (; uint > 0; --uint)
@@ -128,6 +140,9 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 	typename std::vector<V>::const_iterator ptIt;
 	typename std::vector<P>::const_iterator polyIt;
 	typename std::list<C>::const_iterator cIt;
+
+    if (!m_material.isDefault())
+        out << PIE_MODEL_DIRECTIVE_MATERIALS << " " << m_material << '\n';
 
 	out << "POINTS " << points() << '\n';
 	for (ptIt = m_points.begin(); ptIt != m_points.end(); ++ptIt)
@@ -224,6 +239,7 @@ void APieModel<L>::clearAll()
 	m_texture.clear();
 	m_texture_tcmask.clear();
 	m_texture_normalmap.clear();
+    m_texture_specmap.clear();
 }
 
 template <typename L>
@@ -312,7 +328,7 @@ bool APieModel<L>::readHeaderBlock(std::istream& in)
 template <typename L>
 bool APieModel<L>::readTexturesBlock(std::istream& in)
 {
-	return readTextureDirective(in) && readNormalmapDirective(in);
+    return readTextureDirective(in) && readNormalmapDirective(in) && readSpecmapDirective(in);
 }
 
 // PIE2 specialization
@@ -374,6 +390,32 @@ bool APieModel<L>::readNormalmapDirective(std::istream& in)
 	return true;
 }
 
+// Optional directive
+template <typename L>
+bool APieModel<L>::readSpecmapDirective(std::istream& in)
+{
+    std::string str;
+    unsigned uint;
+    std::streampos entrypoint = in.tellg();
+
+    // <TYPE> 0 %s
+    in >> str >> uint >> m_texture_specmap;
+    if ( in.fail())
+    {
+        return false;
+    }
+
+    if (str.compare(PIE_MODEL_DIRECTIVE_SPECULARMAP) != 0)
+    {
+        m_texture_specmap.clear();
+        in.seekg(entrypoint);
+    }
+
+    // no constraits for name afaik
+
+    return true;
+}
+
 template <typename L>
 bool APieModel<L>::readLevelsBlock(std::istream& in)
 {
@@ -418,6 +460,11 @@ void APieModel<L>::write(std::ostream& out) const
 	{
 		out << PIE_MODEL_DIRECTIVE_NORMALMAP << " 0 " << m_texture_normalmap << '\n';
 	}
+
+    if (!m_texture_specmap.empty())
+    {
+        out << PIE_MODEL_DIRECTIVE_SPECULARMAP << " 0 " << m_texture_specmap << '\n';
+    }
 
 	out << PIE_MODEL_DIRECTIVE_LEVELS << " " << levels() << '\n';
 

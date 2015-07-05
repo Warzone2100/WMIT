@@ -38,47 +38,44 @@
 
 void WZMaterial::setDefaults()
 {
-	vals[WZM_MAT_EMISSIVE] = WZMVertex4(0.f);
-	vals[WZM_MAT_AMBIENT] = WZMVertex4(1.f);
-	vals[WZM_MAT_DIFFUSE] = WZMVertex4(1.f);
-	vals[WZM_MAT_SPECULAR] = WZMVertex4(1.f);
+    vals[WZM_MAT_EMISSIVE] = val_type(0.f);
+    vals[WZM_MAT_AMBIENT] = val_type(1.f);
+    vals[WZM_MAT_DIFFUSE] = val_type(1.f);
+    vals[WZM_MAT_SPECULAR] = val_type(1.f);
 	shininess = 10.f;
 }
 
 bool WZMaterial::isDefault() const
 {
 	if (shininess == 10.f &&
-			vals[WZM_MAT_EMISSIVE] == WZMVertex4(0.f) &&
-			vals[WZM_MAT_AMBIENT] == WZMVertex4(1.f) &&
-			vals[WZM_MAT_DIFFUSE] == WZMVertex4(1.f) &&
-			vals[WZM_MAT_SPECULAR] == WZMVertex4(1.f))
+            (m_skipemissive || vals[WZM_MAT_EMISSIVE] == val_type(0.f)) &&
+            vals[WZM_MAT_AMBIENT] == val_type(1.f) &&
+            vals[WZM_MAT_DIFFUSE] == val_type(1.f) &&
+            vals[WZM_MAT_SPECULAR] == val_type(1.f))
 		return true;
 	return false;
 }
 
 std::istream& operator>> (std::istream& in, WZMaterial& mat)
 {
-	in >> mat.vals[WZM_MAT_EMISSIVE].x() >> mat.vals[WZM_MAT_EMISSIVE].y() >> mat.vals[WZM_MAT_EMISSIVE].z()
-	   >> mat.vals[WZM_MAT_AMBIENT].x()  >> mat.vals[WZM_MAT_AMBIENT].y()  >> mat.vals[WZM_MAT_AMBIENT].z()
-	   >> mat.vals[WZM_MAT_DIFFUSE].x()  >> mat.vals[WZM_MAT_DIFFUSE].y()  >> mat.vals[WZM_MAT_DIFFUSE].z()
-	   >> mat.vals[WZM_MAT_SPECULAR].x() >> mat.vals[WZM_MAT_SPECULAR].y() >> mat.vals[WZM_MAT_SPECULAR].z();
+    if (!mat.m_skipemissive)
+        in >> mat.vals[WZM_MAT_EMISSIVE];
+    in >> mat.vals[WZM_MAT_AMBIENT] >> mat.vals[WZM_MAT_DIFFUSE] >> mat.vals[WZM_MAT_SPECULAR];
 	in >> mat.shininess;
 	return in;
 }
 
 std::ostream& operator<< (std::ostream& out, const WZMaterial& mat)
 {
-	out << mat.vals[WZM_MAT_EMISSIVE].x() << ' ' << mat.vals[WZM_MAT_EMISSIVE].y() << ' ' << mat.vals[WZM_MAT_EMISSIVE].z() << ' '
-	    << mat.vals[WZM_MAT_AMBIENT].x()  << ' ' << mat.vals[WZM_MAT_AMBIENT].y()  << ' ' << mat.vals[WZM_MAT_AMBIENT].z()  << ' '
-	    << mat.vals[WZM_MAT_DIFFUSE].x()  << ' ' << mat.vals[WZM_MAT_DIFFUSE].y()  << ' ' << mat.vals[WZM_MAT_DIFFUSE].z()  << ' '
-	    << mat.vals[WZM_MAT_SPECULAR].x() << ' ' << mat.vals[WZM_MAT_SPECULAR].y() << ' ' << mat.vals[WZM_MAT_SPECULAR].z() << ' ';
+    if (!mat.m_skipemissive)
+        out << mat.vals[WZM_MAT_EMISSIVE];
+    out << mat.vals[WZM_MAT_AMBIENT] << mat.vals[WZM_MAT_DIFFUSE] << mat.vals[WZM_MAT_SPECULAR];
 	out << mat.shininess;
 	return out;
 }
 
 WZM::WZM()
 {
-	m_material.setDefaults();
 }
 
 WZM::WZM(const Pie3Model &p3)
@@ -86,11 +83,13 @@ WZM::WZM(const Pie3Model &p3)
 	std::vector<Pie3Level>::const_iterator it;
 	std::stringstream ss;
 
-	m_material.setDefaults();
-
 	setTextureName(WZM_TEX_DIFFUSE, p3.m_texture);
 	setTextureName(WZM_TEX_NORMALMAP, p3.m_texture_normalmap);
 	setTextureName(WZM_TEX_TCMASK, p3.m_texture_tcmask);
+    setTextureName(WZM_TEX_SPECULAR, p3.m_texture_specmap);
+
+    if (p3.levels() > 0)
+        m_material = p3.m_levels.begin()->m_material;
 
 	for (it = p3.m_levels.begin(); it != p3.m_levels.end(); ++it)
 	{
@@ -113,9 +112,14 @@ WZM::operator Pie3Model() const
 	p3.m_texture = getTextureName(WZM_TEX_DIFFUSE);
 	p3.m_texture_normalmap = getTextureName(WZM_TEX_NORMALMAP);
 	p3.m_texture_tcmask = getTextureName(WZM_TEX_TCMASK);
+    p3.m_texture_specmap = getTextureName(WZM_TEX_SPECULAR);
 
 	std::transform(m_meshes.begin(), m_meshes.end(),
 				   back_inserter(p3.m_levels), Mesh::backConvert);
+
+    for (auto iter = p3.m_levels.begin(); iter != p3.m_levels.end(); iter++)
+        iter->m_material = m_material;
+
 	return p3;
 }
 
