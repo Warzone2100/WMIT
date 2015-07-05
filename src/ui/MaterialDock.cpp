@@ -73,7 +73,7 @@ void MaterialDock::setMaterial(const WZMaterial &mat)
 
 	wzm_material_t type = static_cast<wzm_material_t>(m_ui->colorTypeComboBox->itemData(m_ui->colorTypeComboBox->currentIndex()).toInt());
 
-	setColorOnUI(QColor::fromRgbF(m_material.vals[type][0], m_material.vals[type][1], m_material.vals[type][2]));
+    setColorOnUI(QColor::fromRgbF(m_material.vals[type].x(), m_material.vals[type].y(), m_material.vals[type].z()));
 	setShininessOnUI(m_material.shininess);
 }
 
@@ -124,9 +124,9 @@ void MaterialDock::applyColor(const QColor &color)
 		setColorOnUI(color);
 
 		wzm_material_t type = static_cast<wzm_material_t>(m_ui->colorTypeComboBox->itemData(m_ui->colorTypeComboBox->currentIndex()).toInt());
-		m_material.vals[type][0] = color.redF();
-		m_material.vals[type][1] = color.greenF();
-		m_material.vals[type][2] = color.blueF();
+        m_material.vals[type].x() = color.redF();
+        m_material.vals[type].y() = color.greenF();
+        m_material.vals[type].z() = color.blueF();
 
 		emit materialChanged(m_material);
 	}
@@ -135,7 +135,7 @@ void MaterialDock::applyColor(const QColor &color)
 void MaterialDock::on_colorTypeComboBox_currentIndexChanged(int index)
 {
 	wzm_material_t type = static_cast<wzm_material_t>(m_ui->colorTypeComboBox->itemData(index).toInt());
-	setColorOnUI(QColor::fromRgbF(m_material.vals[type][0], m_material.vals[type][1], m_material.vals[type][2]));
+    setColorOnUI(QColor::fromRgbF(m_material.vals[type].x(), m_material.vals[type].y(), m_material.vals[type].z()));
 }
 
 void MaterialDock::on_colorDialogButton_clicked()

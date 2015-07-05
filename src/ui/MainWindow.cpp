@@ -30,12 +30,22 @@
 
 #include <QFileInfo>
 #include <QFileDialog>
+#include <QColorDialog>
+#include <QMessageBox>
 #include <QDir>
 
 #include <QtDebug>
 #include <QVariant>
 
 #include "Pie.h"
+
+QString buildAppTitle(QString prefix = QString())
+{
+    QString name(WMIT_APPNAME " " WMIT_VER_STR);
+    if (!prefix.isEmpty())
+        name.prepend(prefix + " - ");
+    return name;
+}
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_ui(new Ui::MainWindow),
@@ -46,7 +56,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
 	m_settings(new QSettings(this)),
-	m_shaderSignalMapper(new QSignalMapper(this))
+    m_shaderSignalMapper(new QSignalMapper(this)),
+    m_actionActivateUserShaders(NULL),
+    m_actionReloadUserShaders(NULL)
 {
 	m_ui->setupUi(this);
 
@@ -96,6 +108,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionShowGrid, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setGridIsDrawn(bool)));
 	connect(m_ui->actionShowLightSource, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setDrawLightSource(bool)));
 	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
+    connect(m_ui->actionSetTeamColor, SIGNAL(triggered()), this, SLOT(actionSetTeamColor()));
 
 	/// Material dock
 	m_materialDock->toggleViewAction()->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
@@ -137,7 +150,7 @@ void MainWindow::clear()
 	m_model.clear();
 	m_currentFile.clear();
 
-	setWindowTitle(WMIT_APPNAME);
+    setWindowTitle(buildAppTitle());
 
 	m_ui->actionClose->setDisabled(true);
 	m_ui->actionSaveAs->setDisabled(true);
@@ -160,7 +173,7 @@ bool MainWindow::openFile(const QString &filePath)
 		m_model = tmpmodel;
 		m_currentFile = modelFileNfo.absoluteFilePath();
 
-		setWindowTitle(QString("%1 - WMIT").arg(modelFileNfo.baseName()));
+        setWindowTitle(buildAppTitle(modelFileNfo.baseName()));
 		m_ui->actionClose->setEnabled(true);
 		m_ui->actionSaveAs->setEnabled(true);
 		m_ui->actionSetupTextures->setEnabled(true);
@@ -215,8 +228,6 @@ bool MainWindow::saveModel(const QString &file, const WZM &model, const wmit_fil
 	case WMIT_FT_OBJ:
 		model.exportToOBJ(out);
 		break;
-	case WMIT_FT_PIE:
-	case WMIT_FT_PIE2:
 	default:
 		Pie3Model p3 = model;
 		if (type == WMIT_FT_PIE2)
@@ -248,8 +259,6 @@ bool MainWindow::saveModel(const QString &file, const QWZM &model, const wmit_fi
 	case WMIT_FT_OBJ:
 		model.exportToOBJ(out);
 		break;
-	case WMIT_FT_PIE:
-	case WMIT_FT_PIE2:
 	default:
 		Pie3Model p3 = model;
 		if (type == WMIT_FT_PIE2)
@@ -296,7 +305,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	settings.setValue("3DView/ShowGrid", m_ui->actionShowGrid->isChecked());
 	settings.setValue("3DView/ShowLightSource", m_ui->actionShowLightSource->isChecked());
 
-	event->accept();
+    event->accept();
 }
 
 bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
@@ -462,16 +471,16 @@ void MainWindow::actionSave()
 void MainWindow::actionSaveAs()
 {
 	QStringList filters;
-	filters << "PIE2 models (*.pie)" << "PIE3 models (**.pie)" << "WZM models (*.wzm)" << "OBJ files (*.obj)";
+    filters << "PIE3 models (*.pie)" << "PIE2 models (*.pie)" << "WZM models (*.wzm)" << "OBJ files (*.obj)";
 
 	QList<wmit_filetype_t> types;
-	types << WMIT_FT_PIE2 << WMIT_FT_PIE << WMIT_FT_WZM << WMIT_FT_OBJ;
+    types << WMIT_FT_PIE << WMIT_FT_PIE2 << WMIT_FT_WZM << WMIT_FT_OBJ;
 
 	QFileDialog* fDialog = new QFileDialog();
 
 	fDialog->setFileMode(QFileDialog::AnyFile);
 	fDialog->setAcceptMode(QFileDialog::AcceptSave);
-	fDialog->setFilter(filters.join(";;"));
+    fDialog->setNameFilters(filters);
 	fDialog->setWindowTitle(tr("Choose output file"));
 	fDialog->setDefaultSuffix("pie");
 	fDialog->setDirectory(m_pathExport);
@@ -527,8 +536,29 @@ void MainWindow::actionSaveAs()
 	saveModel(fDialog->selectedFiles().first(), m_model, types[filters.indexOf(fDialog->selectedNameFilter())]);
 }
 
+bool MainWindow::loadShaderAndEnableAction(QAction* shaderAct, wz_shader_type_t type,
+                                           QString pathvert, QString pathfrag, QString *errMessage)
+{
+    QFileInfo finfo(pathvert);
+    if (finfo.exists())
+    {
+        finfo.setFile(pathfrag);
+        if (finfo.exists())
+        {
+            if (m_ui->centralWidget->loadShader(type, pathvert, pathfrag, errMessage))
+            {
+
+                shaderAct->setEnabled(true);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void MainWindow::viewerInitialized()
 {
+    bool isReloadUserShaderActionEnabled = false;
 	m_ui->centralWidget->addToRenderList(&m_model);
 
 	QActionGroup* shaderGroup = new QActionGroup(this);
@@ -538,11 +568,14 @@ void MainWindow::viewerInitialized()
 		QString shadername = QWZM::shaderTypeToString(static_cast<wz_shader_type_t>(i));
 
 		QAction* shaderAct = new QAction(shadername, this);
+        if (i == WZ_SHADER_USER)
+            m_actionActivateUserShaders = shaderAct;
 
+        if (i < 9) // FIXME
+            shaderAct->setShortcut(QKeySequence(tr("Ctrl+%1").arg(i+1)));
 		shaderAct->setCheckable(true);
 		shaderAct->setEnabled(false);
 
-		//FIXME: more automated way required
 		{
 			QString pathvert, pathfrag;
 			switch (static_cast<wz_shader_type_t>(i))
@@ -550,30 +583,21 @@ void MainWindow::viewerInitialized()
 			case WZ_SHADER_NONE:
 				shaderAct->setEnabled(true);
 				break;
-			case WZ_SHADER_PIE3:
-				pathvert = WMIT_SHADER_PIE3_DEFPATH_VERT;
-				pathfrag = WMIT_SHADER_PIE3_DEFPATH_FRAG;
-				break;
-			case WZ_SHADER_PIE3_USER:
-				pathvert = WMIT_SHADER_PIE3_USERFILE_VERT;
-				pathfrag = WMIT_SHADER_PIE3_USERFILE_FRAG;
-				break;
+            case WZ_SHADER_WZ31:
+                pathvert = WMIT_SHADER_WZ31_DEFPATH_VERT;
+                pathfrag = WMIT_SHADER_WZ31_DEFPATH_FRAG;
+                break;
+            case WZ_SHADER_USER:
+                pathvert = m_settings->value("shaders/user_vert_path", "").toString();
+                pathfrag = m_settings->value("shaders/user_frag_path", "").toString();
+                if (!pathvert.isEmpty() && !pathfrag.isEmpty())
+                    isReloadUserShaderActionEnabled = true;
+                break;
 			default:
 				break;
 			}
 
-			QFileInfo finfo(pathvert);
-			if (finfo.exists())
-			{
-				finfo.setFile(pathfrag);
-				if (finfo.exists())
-				{
-					if (m_ui->centralWidget->loadShader(static_cast<wz_shader_type_t>(i), pathvert, pathfrag))
-					{
-						shaderAct->setEnabled(true);
-					}
-				}
-			}
+            loadShaderAndEnableAction(shaderAct, static_cast<wz_shader_type_t>(i), pathvert, pathfrag);
 		}
 
 		m_shaderSignalMapper->setMapping(shaderAct, i);
@@ -582,8 +606,7 @@ void MainWindow::viewerInitialized()
 		shaderAct->setActionGroup(shaderGroup);
 	}
 
-	connect(m_shaderSignalMapper, SIGNAL(mapped(int)),
-		     this, SLOT(shaderAction(int)));
+    connect(m_shaderSignalMapper, SIGNAL(mapped(int)), this, SLOT(shaderAction(int)));
 
 	QMenu* rendererMenu = new QMenu(this);
 	rendererMenu->addActions(shaderGroup->actions());
@@ -596,6 +619,19 @@ void MainWindow::viewerInitialized()
 			break;
 		}
 	}
+
+    // other user shader related stuff
+    rendererMenu->addSeparator();
+
+    QAction* userShaderSelectorAct = new QAction("Locate external shaders...", this);
+    connect(userShaderSelectorAct, SIGNAL(triggered()), this, SLOT(actionLocateUserShaders()));
+    rendererMenu->addAction(userShaderSelectorAct);
+
+    m_actionReloadUserShaders = new QAction("Reload external shaders", this);
+    m_actionReloadUserShaders->setEnabled(isReloadUserShaderActionEnabled);
+    m_actionReloadUserShaders->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
+    connect(m_actionReloadUserShaders, SIGNAL(triggered()), this, SLOT(actionReloadUserShader()));
+    rendererMenu->addAction(m_actionReloadUserShaders);
 
 	m_ui->actionRenderer->setMenu(rendererMenu);
 
@@ -616,12 +652,17 @@ void MainWindow::shaderAction(int type)
 {
 	if (static_cast<wz_shader_type_t>(type) != WZ_SHADER_NONE)
 	{
-		m_model.setActiveShader(static_cast<wz_shader_type_t>(type));
+        if (!m_model.setActiveShader(static_cast<wz_shader_type_t>(type)))
+        {
+            QMessageBox::warning(this, "Shaders error",
+               "Unable to activate requested shaders!");
+        }
 	}
 	else
 	{
 		m_model.disableShaders();
 	}
+    m_ui->centralWidget->updateGL();
 }
 
 void MainWindow::scaleXYZChanged(double val)
@@ -672,7 +713,27 @@ void MainWindow::removeMesh(int mesh)
 void MainWindow::materialChangedFromUI(const WZMaterial &mat)
 {
 	m_model.setMaterial(mat);
-	m_ui->centralWidget->updateGL();
+    m_ui->centralWidget->updateGL();
+}
+
+void MainWindow::actionReloadUserShader()
+{
+    QString errMessage;
+    bool ok_flag = loadShaderAndEnableAction(m_actionActivateUserShaders, WZ_SHADER_USER,
+                                  m_settings->value("shaders/user_vert_path").toString(),
+                                  m_settings->value("shaders/user_frag_path").toString(),
+                                  &errMessage);
+    if (!ok_flag)
+    {
+        QMessageBox::warning(this, "External shaders error",
+           "Unable to load external shaders, so please ensure that they are correct and hit reload!"\
+           "\nNOTE: Model might temporarily go into stealth mode due to this error...\n\n" +
+           errMessage);
+    }
+    else
+    {
+        shaderAction(WZ_SHADER_USER);
+    }
 }
 
 void MainWindow::actionClose()
@@ -721,7 +782,36 @@ void MainWindow::actionAppendModel()
 
 void MainWindow::actionTakeScreenshot()
 {
-	m_ui->centralWidget->saveSnapshot(false);
+    m_ui->centralWidget->saveSnapshot(false);
+}
+
+void MainWindow::actionSetTeamColor()
+{
+    QColor newColor = QColorDialog::getColor(m_model.getTCMaskColor(), this, "Select new TeamColor");
+    if (newColor.isValid())
+        m_model.setTCMaskColor(newColor);
+}
+
+void MainWindow::actionLocateUserShaders()
+{
+    QString vert_path = QFileDialog::getOpenFileName(this, "Locate vertex shader",
+                                                     m_settings->value("shaders/user_vert_path", "").toString(),
+                                                     "Vertex shaders (*.vert);;Any file (*.*)");
+    if (vert_path.isEmpty())
+        return;
+    QString frag_path = QFileDialog::getOpenFileName(this, "Locate fragment shader",
+                                                     m_settings->value("shaders/user_frag_path", "").toString(),
+                                                     "Fragment shaders (*.frag);;Any file (*.*)");
+    if (frag_path.isEmpty())
+        return;
+
+    m_settings->setValue("shaders/user_vert_path", vert_path);
+    m_settings->setValue("shaders/user_frag_path", frag_path);
+
+    // enable it in case it was off
+    m_actionReloadUserShaders->setEnabled(true);
+    // and execute
+    actionReloadUserShader();
 }
 
 void MainWindow::updateRecentFilesMenu()

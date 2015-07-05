@@ -37,7 +37,10 @@
 #define PIE_MODEL_DIRECTIVE_TYPE "TYPE"
 #define PIE_MODEL_DIRECTIVE_TEXTURE "TEXTURE"
 #define PIE_MODEL_DIRECTIVE_NORMALMAP "NORMALMAP"
+#define PIE_MODEL_DIRECTIVE_MATERIALS "MATERIALS"
 #define PIE_MODEL_DIRECTIVE_LEVELS "LEVELS"
+#define PIE_MODEL_DIRECTIVE_SPECULARMAP "SPECULARMAP"
+#define PIE_MODEL_DIRECTIVE_SHADERS "SHADERS"
 
 #define PIE_MODEL_FEATURE_TEXTURED 0x200
 #define PIE_MODEL_FEATURE_TCMASK 0x10000
@@ -68,6 +71,7 @@ protected:
 	std::vector<V> m_points;
 	std::vector<P> m_polygons;
 	std::list<C> m_connectors;
+    WZMaterial m_material; // PIE3+
 };
 
 template <typename L>
@@ -102,12 +106,18 @@ protected:
 	virtual bool readTexturesBlock(std::istream& in);
 	virtual bool readTextureDirective(std::istream& in);
 	virtual bool readNormalmapDirective(std::istream& in);
+    virtual bool readSpecmapDirective(std::istream& in);
 
 	virtual bool readLevelsBlock(std::istream& in);
 
 	std::string m_texture;
 	std::string m_texture_normalmap;
 	std::string m_texture_tcmask;
+    std::string m_texture_specmap;
+
+    std::string m_shader_vert;
+    std::string m_shader_frag;
+
 	std::vector<L> m_levels;
 
 	unsigned m_type; // FIXME used as helper for 2->3 conversion, ignored for write
@@ -219,6 +229,8 @@ private:
 
 class Pie3Level : public APieLevel<Pie3Vertex, Pie3Polygon, Pie3Connector>
 {
+    friend WZM::WZM(const Pie3Model &p3);
+    friend WZM::operator Pie3Model() const;
 public:
 	Pie3Level();
 	Pie3Level(const Pie2Level& p2);

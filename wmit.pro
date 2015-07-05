@@ -1,7 +1,9 @@
 TARGET = wmit
 TEMPLATE = app
 
-QT += opengl xml
+QT = core gui opengl xml
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 INCLUDEPATH += src src/basic src/formats src/ui src/widgets 3rdparty/GLee
 
@@ -17,7 +19,6 @@ HEADERS += \
     src/ui/ExportDialog.h \
     src/ui/ImportDialog.h \
     src/ui/MainWindow.h \
-    src/ui/TeamColoursDock.h \
     src/ui/TexConfigDialog.h \
     src/ui/TransformDock.h \
     src/ui/UVEditor.h \
@@ -43,7 +44,6 @@ SOURCES += \
     src/formats/Mesh.cpp \
     src/ui/UVEditor.cpp \
     src/ui/TransformDock.cpp \
-    src/ui/TeamColoursDock.cpp \
     src/ui/MainWindow.cpp \
     src/ui/ImportDialog.cpp \
     src/ui/ExportDialog.cpp \
@@ -62,7 +62,6 @@ SOURCES += \
 FORMS += \
     src/ui/UVEditor.ui \
     src/ui/TransformDock.ui \
-    src/ui/TeamColoursDock.ui \
     src/ui/MainWindow.ui \
     src/ui/ImportDialog.ui \
     src/ui/ExportDialog.ui \
@@ -74,9 +73,7 @@ OTHER_FILES += \
     TODO.txt \
     COPYING.txt \
     HACKING.txt \
-    COPYING.nongpl \
-    data/shaders/pie3.vert \
-    data/shaders/pie3.frag
+    COPYING.nongpl
 
 
 CONFIG(debug, debug|release) {
@@ -86,9 +83,13 @@ CONFIG(debug, debug|release) {
 }
 
 # turn off c++0x support on win32 till decent compiler is available out-of-the-box
-!win32 {
+#!win32 {
+{
     QMAKE_CXXFLAGS += -std=c++0x
     DEFINES += CPP0X_AVAILABLE
+}
+win32 {
+    DEFINES += WIN32
 }
     
 LIBS += -lm
@@ -100,8 +101,6 @@ RESOURCES += \
 # "config.pri" and override the necessary variables below (with "=").
 QGLVIEWER_INCL = /usr/include/QGLViewer
 QGLVIEWER_LIBS = -lQGLViewer
-
-
 
 UI_DIR = ui
 MOC_DIR = moc

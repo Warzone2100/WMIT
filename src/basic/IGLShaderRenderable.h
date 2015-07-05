@@ -40,9 +40,9 @@ public:
 		{
 			m_active_shader = type;
 			return true;
-		}
+        }
 
-		return false;
+        return false;
 	}
 	virtual int getActiveShader() const {return m_active_shader;}
 

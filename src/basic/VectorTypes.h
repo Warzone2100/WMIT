@@ -18,7 +18,9 @@
 */
 #ifndef VERTEXTYPES_HPP
 #define VERTEXTYPES_HPP
+
 #include "Vector.h"
+#include <iostream>
 
 template <typename T, size_t COMPONENTS = 2>
 struct UV : public Vector<T, COMPONENTS>
@@ -57,12 +59,10 @@ struct UV : public Vector<T, COMPONENTS>
 template <typename T, size_t COMPONENTS = 3>
 struct Vertex : public Vector<T, COMPONENTS>
 {
-	Vertex()
-	{
-		x() = 0;
-		y() = 0;
-		z() = 0;
-	}
+    Vertex(const T val = 0)
+    {
+        x() = y() = z() = val;
+    }
 
 	Vertex(T x, T y, T z)
 	{
@@ -148,6 +148,19 @@ struct Vertex : public Vector<T, COMPONENTS>
 	}
 
 };
+
+template <typename T>
+std::istream& operator>> (std::istream& in, Vertex<T>& ver)
+{
+    in >> ver.x() >> ver.y() >> ver.z();
+    return in;
+}
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const Vertex<T>& ver)
+{
+    out << ver.x() << ' ' << ver.y() << ' ' << ver.z() << ' ';
+    return out;
+}
 
 template <typename T, size_t COMPONENTS = 4>
 struct Vertex4 : public Vector<T, COMPONENTS>

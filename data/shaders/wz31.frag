@@ -4,40 +4,21 @@
 varying float vertexDistance;
 varying vec3 normal, lightDir, eyeVec;
 
-uniform sampler2D Texture0; //diffuse
-uniform sampler2D Texture1; //tcmask
-uniform sampler2D Texture2; //normal map
+uniform sampler2D Texture0;
+uniform sampler2D Texture1;
+uniform sampler2D Texture2;
 uniform vec4 teamcolour;
 uniform int tcmask, normalmap;
 uniform int fogEnabled;
+uniform bool ecmEffect;
+uniform float graphicsCycle;
 
 void main(void)
 {
 	vec4 mask, colour;
 	vec4 light = (gl_FrontLightModelProduct.sceneColor * gl_FrontMaterial.ambient) + (gl_LightSource[0].ambient * gl_FrontMaterial.ambient);
-	vec3 N;
-	vec3 L;
-	
-	//normal map implementation
-	if (normalmap == 1)
-	{
-		vec3 bump = texture2D(Texture2, gl_TexCoord[0].st).xyz;
-		bump = (bump * 2.0) - 1;
-		
-		// object space
-		{
-			L = normalize(lightDir);
-			bump = bump.xzy;
-			bump = gl_NormalMatrix * bump;
-		}
-		N = normalize(bump);
-	}
-	else //no normalmap
-	{
-		N = normalize(normal);
-		L = normalize(lightDir);
-	}
-
+	vec3 N = normalize(normal);
+	vec3 L = normalize(lightDir);
 	float lambertTerm = dot(N, L);
 	if (lambertTerm > 0.0)
 	{
@@ -48,8 +29,8 @@ void main(void)
 		light += gl_LightSource[0].specular * gl_FrontMaterial.specular * specular;
 	}
 
-	// Get color from texture unit 0
-	colour = texture2D(Texture0, gl_TexCoord[0].st);
+	// Get color from texture unit 0, merge with lighting
+	colour = texture2D(Texture0, gl_TexCoord[0].st) * light;
 
 	if (tcmask == 1)
 	{
@@ -57,11 +38,16 @@ void main(void)
 		mask = texture2D(Texture1, gl_TexCoord[0].st);
 	
 		// Apply color using grain merge with tcmask
-		gl_FragColor = (colour + (teamcolour - 0.5) * mask.a) * light * gl_Color;
+		gl_FragColor = (colour + (teamcolour - 0.5) * mask.a) * gl_Color;
 	}
 	else
 	{
-		gl_FragColor = colour * light * gl_Color;
+		gl_FragColor = colour * gl_Color;
+	}
+
+	if (ecmEffect)
+	{
+		gl_FragColor.a = 0.45 + 0.225 * graphicsCycle;
 	}
 
 	if (fogEnabled > 0)
