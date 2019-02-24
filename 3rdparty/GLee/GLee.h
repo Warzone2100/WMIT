@@ -62,6 +62,8 @@
 	#define __glext_h_  /* prevent glext.h from being included  */
 	#define __glxext_h_ /* prevent glxext.h from being included */
 	#define GLX_GLXEXT_PROTOTYPES
+    #define __gl_glext_h_
+    #define __glx_glxext_h_
 	#include <GL/gl.h>
 	#include <GL/glx.h>
 

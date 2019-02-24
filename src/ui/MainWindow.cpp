@@ -33,6 +33,7 @@
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QDir>
+#include <QStyle>
 
 #include <QtDebug>
 #include <QVariant>
