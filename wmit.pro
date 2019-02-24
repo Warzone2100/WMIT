@@ -93,6 +93,11 @@ win32 {
 }
     
 LIBS += -lm
+!win32 {
+    LIBS += -lGLU
+} else {
+    LIBS += -lglu32 -lglut32
+}
 
 RESOURCES += \
     resources.qrc
