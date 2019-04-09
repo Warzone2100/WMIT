@@ -96,7 +96,7 @@ LIBS += -lm
 !win32 {
     LIBS += -lGLU
 } else {
-    LIBS += -lglu32 -lglut32
+    LIBS += -lglu32 -lopengl32
 }
 
 RESOURCES += \
