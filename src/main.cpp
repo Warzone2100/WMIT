@@ -29,6 +29,11 @@
 #include "Pie.h"
 #include "wmit.h"
 
+#if defined(Q_OS_WIN)
+#include <QtPlugin>
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin);
+#endif
+
 int main(int argc, char *argv[])
 {
     //QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
