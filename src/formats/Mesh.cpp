@@ -898,6 +898,11 @@ void Mesh::reverseWinding()
 	{
 		std::swap((*it).b(), (*it).c());
 	}
+	std::vector<WZMVertex>::iterator nit;
+	for (nit = m_normalArray.begin(); nit != m_normalArray.end(); ++nit)
+	{
+		nit->scale(-1.,-1.,-1.);
+	}
 }
 
 void Mesh::recalculateBoundData()
