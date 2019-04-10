@@ -660,7 +660,9 @@ void MainWindow::viewerInitialized()
 
 	/// Load previous state
 	m_ui->actionShowModelCenter->setChecked(m_settings->value("3DView/ShowModelCenter", false).toBool());
+	m_model.setDrawCenterPointFlag(m_ui->actionShowModelCenter->isChecked());
 	m_ui->actionShowNormals->setChecked(m_settings->value("3DView/ShowNormals", false).toBool());
+	m_model.setDrawNormalsFlag(m_ui->actionShowNormals->isChecked());
 	m_ui->actionShowAxes->setChecked(m_settings->value("3DView/ShowAxes", true).toBool());
 	m_ui->actionShowGrid->setChecked(m_settings->value("3DView/ShowGrid", true).toBool());
 	m_ui->actionShowLightSource->setChecked(m_settings->value("3DView/ShowLightSource", true).toBool());
