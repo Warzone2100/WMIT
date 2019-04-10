@@ -30,6 +30,7 @@
 #include "GLee.h"
 
 #include <QGLViewer/qglviewer.h>
+#include <QGLViewer/manipulatedFrame.h>
 
 #include "GLTexture.h"
 #include "IGLTextureManager.h"
@@ -99,6 +100,7 @@ private:
 	QFileSystemWatcher textureUpdater;
 	QBasicTimer updateTimer;
 	bool drawLightSource;
+	qglviewer::ManipulatedFrame light;
 
 	void dynamicManagedSetup(IGLRenderable* object, bool remove = false);
 

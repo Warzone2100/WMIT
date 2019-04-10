@@ -36,11 +36,13 @@
 #include "IGLTexturedRenderable.h"
 #include "IGLShaderRenderable.h"
 
+using namespace qglviewer;
+
 enum LIGHTING_TYPE {
 	LIGHT_EMISSIVE, LIGHT_AMBIENT, LIGHT_DIFFUSE, LIGHT_SPECULAR, LIGHT_TYPE_MAX
 };
 
-const GLfloat lightPos0[4] = {225.0f, 600.0f, 450.0f, 0.0f};
+const Vec lightPos(2.25, 6., 4.5);
 static GLfloat lightCol0[LIGHT_TYPE_MAX][4] = {
 	{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f}, {0.8f, 0.8f, 0.8f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}
 };
@@ -101,12 +103,16 @@ void QtGLView::init()
 	camera()->setPosition(qglviewer::Vec(0.5 * 2, 2.12 * 2, -2.12 * 2));
 	camera()->setViewDirection(qglviewer::Vec(-0.5, -2.12, 2.12));
 
+	setManipulatedFrame(&light);
+
+	light.setPosition(lightPos);
+
 	emit viewerInitialized();
 }
 
 void QtGLView::draw()
 {
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+	glLightfv(GL_LIGHT0, GL_POSITION, light.position());
 
 	foreach(IGLRenderable* obj, renderList)
 	{
