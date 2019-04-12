@@ -13,7 +13,7 @@
   <property name="minimumSize">
    <size>
     <width>208</width>
-    <height>486</height>
+    <height>513</height>
    </size>
   </property>
   <property name="features">
@@ -221,6 +221,13 @@
         <widget class="QPushButton" name="reverseWindingsButton">
          <property name="text">
           <string>Reverse Winding</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="flipNormalsButton">
+         <property name="text">
+          <string>Flip Normals</string>
          </property>
         </widget>
        </item>
