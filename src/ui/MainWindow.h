@@ -89,6 +89,7 @@ private slots:
 	void scaleYChanged(double scale);
 	void scaleZChanged(double scale);
 	void reverseWindings(int mesh);
+	void flipNormals(int mesh);
 	void mirrorAxis(int axis);
 	void removeMesh(int mesh);
 

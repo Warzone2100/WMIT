@@ -127,6 +127,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_transformDock, SIGNAL(scaleYChanged(double)), this, SLOT(scaleYChanged(double)));
 	connect(m_transformDock, SIGNAL(scaleZChanged(double)), this, SLOT(scaleZChanged(double)));
 	connect(m_transformDock, SIGNAL(reverseWindings(int)), this, SLOT(reverseWindings(int)));
+	connect(m_transformDock, SIGNAL(flipNormals(int)), this, SLOT(flipNormals(int)));
 	connect(m_transformDock, SIGNAL(applyTransformations()), &m_model, SLOT(applyTransformations()));
 	connect(m_transformDock, SIGNAL(changeActiveMesh(int)), &m_model, SLOT(setActiveMesh(int)));
 	connect(m_transformDock, SIGNAL(removeMesh(int)), this, SLOT(removeMesh(int)));
@@ -713,6 +714,12 @@ void MainWindow::scaleZChanged(double val)
 void MainWindow::reverseWindings(int mesh)
 {
 	m_model.reverseWinding(mesh);
+	m_ui->centralWidget->updateGL();
+}
+
+void MainWindow::flipNormals(int mesh)
+{
+	m_model.flipNormals(mesh);
 	m_ui->centralWidget->updateGL();
 }
 

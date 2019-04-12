@@ -110,6 +110,7 @@ public:
 	void setMaterial(const WZMaterial& mat) {WZM::setMaterial(mat);}
 
 	void reverseWinding(int mesh = -1) {WZM::reverseWinding(mesh);}
+	void flipNormals(int mesh = -1) {WZM::flipNormals(mesh);}
 
 	Mesh& getMesh(int index) {return WZM::getMesh(index);}
 	void addMesh (const Mesh& mesh);
