@@ -771,7 +771,22 @@ void WZM::reverseWinding(int mesh)
 			m_meshes[(std::vector<Mesh>::size_type)mesh].reverseWinding();
 		}
 	}
+}
 
+void WZM::flipNormals(int mesh)
+{
+	// All or a single mesh
+	if (mesh < 0)
+	{
+		std::vector<Mesh>::iterator it;
+		for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+			it->flipNormals();
+	}
+	else
+	{
+		if (m_meshes.size() > (std::vector<Mesh>::size_type)mesh)
+			m_meshes[(std::vector<Mesh>::size_type)mesh].flipNormals();
+	}
 }
 
 WZMVertex WZM::calculateCenterPoint() const

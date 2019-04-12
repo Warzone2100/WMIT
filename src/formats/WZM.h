@@ -109,9 +109,9 @@ public:
 	void scale(GLfloat x, GLfloat y, GLfloat z, int mesh = -1);
 	void mirror(int axis, int mesh = -1); // x == 0, y == 1, z == 2
 	void reverseWinding(int mesh = -1);
+	void flipNormals(int mesh = -1);
 
 	WZMVertex calculateCenterPoint() const;
-
 protected:
 	void clear();
 

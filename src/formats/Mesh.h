@@ -116,9 +116,9 @@ public:
 	void mirrorUsingLocalCenter(int axis); // x == 0, y == 1, z == 2
 	void mirrorFromPoint(const WZMVertex& point, int axis); // x == 0, y == 1, z == 2
 	void reverseWinding();
+	void flipNormals();
 
 	WZMVertex getCenterPoint() const;
-
 protected:
 	std::string m_name;
 	std::vector<Frame> m_frameArray;
