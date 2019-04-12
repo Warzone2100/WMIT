@@ -863,13 +863,9 @@ void Mesh::mirrorFromPoint(const WZMVertex& point, int axis)
 
 		// Recalculate handedness
 		if (m_normalArray[i].crossProduct(m_tangentArray[i].xyz()).dotProduct(m_bitangentArray[i]) < 0.0f)
-		{
 			m_tangentArray[i].w() = -1.0f;
-		}
 		else
-		{
 			m_tangentArray[i].w() = 1.0f;
-		}
 	}
 
 	std::list<WZMConnector>::iterator itC;
@@ -898,10 +894,23 @@ void Mesh::reverseWinding()
 	{
 		std::swap((*it).b(), (*it).c());
 	}
+}
+
+void Mesh::flipNormals()
+{
 	std::vector<WZMVertex>::iterator nit;
 	for (nit = m_normalArray.begin(); nit != m_normalArray.end(); ++nit)
 	{
 		nit->scale(-1.,-1.,-1.);
+	}
+
+	for (unsigned int i = 0; i < vertices(); ++i)
+	{
+		// Recalculate handedness
+		if (m_normalArray[i].crossProduct(m_tangentArray[i].xyz()).dotProduct(m_bitangentArray[i]) < 0.0f)
+			m_tangentArray[i].w() = -1.0f;
+		else
+			m_tangentArray[i].w() = 1.0f;
 	}
 }
 

@@ -382,7 +382,8 @@ bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
 			if (read_success)
 				model = WZM(p3);
 		}
-		model.reverseWinding(-1);
+		model.reverseWinding();
+		model.flipNormals();
 	}
 
 	f.close();
