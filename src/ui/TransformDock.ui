@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>406</width>
-    <height>578</height>
+    <width>365</width>
+    <height>633</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>208</width>
-    <height>513</height>
+    <height>541</height>
    </size>
   </property>
   <property name="features">
@@ -27,7 +27,7 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -133,19 +133,6 @@
          </property>
         </widget>
        </item>
-       <item>
-        <spacer name="scaleSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
      </widget>
     </item>
@@ -189,19 +176,6 @@
          </property>
         </widget>
        </item>
-       <item>
-        <spacer name="mirrorSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
      </widget>
     </item>
@@ -238,6 +212,9 @@
      <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Expanding</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
