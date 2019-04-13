@@ -235,11 +235,9 @@ void QWZM::drawNormals()
 
 		for (int j = 0; j < (int)msh.m_vertexArray.size(); ++j)
 		{
-			nrm = msh.m_normalArray[j].normalize() * 2.;
+			nrm = msh.m_normalArray[j].normalize() * 2. / scale_all;
 			qglviewer::Vec from(msh.m_vertexArray[j].x(), msh.m_vertexArray[j].y(), msh.m_vertexArray[j].z());
-			qglviewer::Vec to(msh.m_vertexArray[j].x() + nrm.x(),
-					     msh.m_vertexArray[j].y() + nrm.y(),
-					     msh.m_vertexArray[j].z() + nrm.z());
+			qglviewer::Vec to(from + qglviewer::Vec(nrm.x(), nrm.y(), nrm.z()));
 			QGLViewer::drawArrow(from, to);
 		}
 	}
