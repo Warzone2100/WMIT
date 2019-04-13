@@ -463,10 +463,10 @@ void APieModel<L>::write(std::ostream& out) const
 		out << PIE_MODEL_DIRECTIVE_NORMALMAP << " 0 " << m_texture_normalmap << '\n';
 	}
 
-    if (!m_texture_specmap.empty())
-    {
-        out << PIE_MODEL_DIRECTIVE_SPECULARMAP << " 0 " << m_texture_specmap << '\n';
-    }
+	if (!m_texture_specmap.empty())
+	{
+		out << PIE_MODEL_DIRECTIVE_SPECULARMAP << " 0 " << m_texture_specmap << '\n';
+	}
 
 	out << PIE_MODEL_DIRECTIVE_LEVELS << " " << levels() << '\n';
 

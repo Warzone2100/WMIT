@@ -388,14 +388,14 @@ QString QWZM::shaderTypeToString(wz_shader_type_t type)
 	case WZ_SHADER_NONE:
 		str = "Fixed pipeline";
 		break;
-    case WZ_SHADER_WZ31:
-        str = "WZ 3.1 shaders";
-        break;
+	case WZ_SHADER_WZ31:
+		str = "WZ 3.1 shaders";
+		break;
 	case WZ_SHADER_USER:
-        str = "External shaders";
+		str = "External shaders";
 		break;
 	default:
-        str = "<Unknown>";
+		str = "<Unknown>";
 	}
 
 	return str;
@@ -423,7 +423,7 @@ bool QWZM::setupTextureUnits(int type)
 {
 	switch (type)
 	{
-    case WZ_SHADER_WZ31:
+	case WZ_SHADER_WZ31:
 	case WZ_SHADER_USER:
 		if (hasGLRenderTexture(WZM_TEX_DIFFUSE))
 			activateAndBindTexture(0, m_gl_textures[WZM_TEX_DIFFUSE]);
@@ -480,7 +480,7 @@ bool QWZM::initShader(int type)
 
 	switch (type)
 	{
-    case WZ_SHADER_WZ31:
+	case WZ_SHADER_WZ31:
 	case WZ_SHADER_USER:
 		int uniLoc, baseTexLoc, tcTexLoc, nmTexLoc, smTexLoc;
 
@@ -514,14 +514,12 @@ bool QWZM::bindShader(int type)
 
 	QGLShaderProgram* shader = m_shaderman->getShader(type);
 
-	if (!shader)
+	if (!shader || !shader->bind())
 		return false;
-
-	shader->bind();
 
 	switch (type)
 	{
-    case WZ_SHADER_WZ31:
+	case WZ_SHADER_WZ31:
 	case WZ_SHADER_USER:
 		int uniloc = shader->uniformLocation("tcmask");
 		if (hasGLRenderTexture(WZM_TEX_TCMASK))
