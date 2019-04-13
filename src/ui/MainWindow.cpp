@@ -108,6 +108,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionShowAxes, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setAxisIsDrawn(bool)));
 	connect(m_ui->actionShowGrid, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setGridIsDrawn(bool)));
 	connect(m_ui->actionShowLightSource, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setDrawLightSource(bool)));
+	connect(m_ui->actionLink_Light_Source_To_Camera, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setLinkLightToCamera(bool)));
 	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
     connect(m_ui->actionSetTeamColor, SIGNAL(triggered()), this, SLOT(actionSetTeamColor()));
 
@@ -133,7 +134,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_transformDock, SIGNAL(removeMesh(int)), this, SLOT(removeMesh(int)));
 	connect(m_transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
 	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_transformDock, SLOT(setMeshCount(int,QStringList)));
-
 
 	/// Reset state
 	clear();
@@ -322,6 +322,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	settings.setValue("3DView/ShowAxes", m_ui->actionShowAxes->isChecked());
 	settings.setValue("3DView/ShowGrid", m_ui->actionShowGrid->isChecked());
 	settings.setValue("3DView/ShowLightSource", m_ui->actionShowLightSource->isChecked());
+	settings.setValue("3DView/LinkLightToCamera", m_ui->actionLink_Light_Source_To_Camera->isChecked());
 
     event->accept();
 }
@@ -668,6 +669,7 @@ void MainWindow::viewerInitialized()
 	m_ui->actionShowAxes->setChecked(m_settings->value("3DView/ShowAxes", true).toBool());
 	m_ui->actionShowGrid->setChecked(m_settings->value("3DView/ShowGrid", true).toBool());
 	m_ui->actionShowLightSource->setChecked(m_settings->value("3DView/ShowLightSource", true).toBool());
+	m_ui->actionLink_Light_Source_To_Camera->setChecked(m_settings->value("3DView/LinkLightToCamera", true).toBool());
 }
 
 void MainWindow::shaderAction(int type)

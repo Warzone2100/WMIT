@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>730</width>
-     <height>26</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -88,6 +88,7 @@
     <addaction name="actionShowAxes"/>
     <addaction name="actionShowGrid"/>
     <addaction name="actionShowLightSource"/>
+    <addaction name="actionLink_Light_Source_To_Camera"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -190,6 +191,9 @@
    <property name="text">
     <string>Show Model Center</string>
    </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
   </action>
   <action name="actionShowNormals">
    <property name="checkable">
@@ -197,6 +201,9 @@
    </property>
    <property name="text">
     <string>Show Normals</string>
+   </property>
+   <property name="shortcut">
+    <string>N</string>
    </property>
   </action>
   <action name="actionTakeScreenshot">
@@ -273,6 +280,20 @@
   <action name="actionSetTeamColor">
    <property name="text">
     <string>Set TeamColor...</string>
+   </property>
+  </action>
+  <action name="actionLink_Light_Source_To_Camera">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Link Light Source To Camera</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+L</string>
    </property>
   </action>
  </widget>

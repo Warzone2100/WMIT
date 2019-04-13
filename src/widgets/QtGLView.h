@@ -70,6 +70,7 @@ public:
 
 public slots:
 	void setDrawLightSource(bool draw);
+	void setLinkLightToCamera(bool link);
 
 protected:
 	void init();
@@ -100,6 +101,7 @@ private:
 	QFileSystemWatcher textureUpdater;
 	QBasicTimer updateTimer;
 	bool drawLightSource;
+	bool linkLightToCamera;
 	qglviewer::ManipulatedFrame light;
 
 	void dynamicManagedSetup(IGLRenderable* object, bool remove = false);

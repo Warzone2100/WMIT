@@ -50,7 +50,8 @@ static GLfloat lightCol0[LIGHT_TYPE_MAX][4] = {
 
 QtGLView::QtGLView(QWidget *parent) :
 		QGLViewer(parent),
-		drawLightSource(true)
+		drawLightSource(true),
+		linkLightToCamera(true)
 {
 	setStateFileName(QString::null);
 	connect(&textureUpdater, SIGNAL(fileChanged(QString)), this, SLOT(textureChanged(QString)));
@@ -112,6 +113,8 @@ void QtGLView::init()
 
 void QtGLView::draw()
 {
+	if (linkLightToCamera)
+		light.setPosition(camera()->position());
 	glLightfv(GL_LIGHT0, GL_POSITION, light.position());
 
 	foreach(IGLRenderable* obj, renderList)
@@ -132,9 +135,9 @@ void QtGLView::postDraw()
 
 	glColor3f(lightCol0[LIGHT_DIFFUSE][0], lightCol0[LIGHT_DIFFUSE][1], lightCol0[LIGHT_DIFFUSE][2]);
 
-	if (drawLightSource)
+	if (drawLightSource && !linkLightToCamera)
 	{
-		drawLight(GL_LIGHT0);
+		drawLight(GL_LIGHT0, 2.);
 	}
 
 	/* Grid begin - Copied from QGLViewer source then modified */
@@ -505,6 +508,11 @@ void QtGLView::unloadShader(int type)
 void QtGLView::setDrawLightSource(bool draw)
 {
 	drawLightSource = draw;
+	repaint();
+}
 
+void QtGLView::setLinkLightToCamera(bool link)
+{
+	linkLightToCamera = link;
 	repaint();
 }
