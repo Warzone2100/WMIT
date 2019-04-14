@@ -24,7 +24,7 @@ class IGLRenderable
 {
 public:
 	virtual ~IGLRenderable(){}
-	virtual void render() = 0;
+	virtual void render(const float* mtxModelView, const float* mtxProj, const float* posSun) = 0;
 };
 
 #endif // IGLRENDERABLE_HPP

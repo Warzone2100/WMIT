@@ -30,6 +30,10 @@
 
 static const char tangentAtributeName[] = "tangent";
 
+static const char vertexAtributeName[] = "vertex";
+static const char vertexNormalAtributeName[] = "vertexNormal";
+static const char vertexTexCoordAtributeName[] = "vertexTexCoord";
+
 const GLint QWZM::winding = GL_CCW;
 
 QWZM::QWZM(QObject *parent):
@@ -43,12 +47,16 @@ QWZM::~QWZM()
 	clear();
 }
 
-void QWZM::render()
+static QMatrix4x4 render_mtxModelView, render_mtxProj;
+static QMatrix4x4 render_mtxMVP, render_mtxNM;
+static const float* render_posSun;
+
+void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* posSun)
 {
 	GLint frontFace;
 	glGetIntegerv(GL_FRONT_FACE, &frontFace);
 
-	QGLShaderProgram* shader = 0;
+	QGLShaderProgram* shader = nullptr;
 
 	glPushMatrix();
 	glPushAttrib(GL_TEXTURE_BIT);
@@ -63,19 +71,29 @@ void QWZM::render()
 		return;
 	}
 
+	static const float WZ_SCALE = 1/128.f;
+
 	if (!isFixedPipelineRenderer())
 	{
+		render_mtxModelView = QMatrix4x4(mtxModelView).transposed();
+		render_mtxModelView.scale(WZ_SCALE, WZ_SCALE, WZ_SCALE);
+		render_mtxProj = QMatrix4x4(mtxProj).transposed();
+		render_posSun = posSun;
+
 		if (bindShader(getActiveShader()))
 		{
 			shader = m_shaderman->getShader(getActiveShader());
 			if (shader)
 			{
 				shader->enableAttributeArray(tangentAtributeName);
+				shader->enableAttributeArray(vertexAtributeName);
+				shader->enableAttributeArray(vertexNormalAtributeName);
+				shader->enableAttributeArray(vertexTexCoordAtributeName);
 			}
 		}
 	}
 
-	glScalef(1/128.f, 1/128.f, 1/128.f); // Scale from warzone to fit in our scene. possibly a FIXME
+	glScalef(WZ_SCALE, WZ_SCALE, WZ_SCALE); // Scale from warzone to fit in our scene. possibly a FIXME
 
 	// actual draw code starts here
 
@@ -118,7 +136,10 @@ void QWZM::render()
 
 		if (shader)
 		{
-			shader->setAttributeArray(tangentAtributeName, (GLfloat*)&msh.m_tangentArray[0], 4);
+			shader->setAttributeArray(tangentAtributeName, msh.m_tangentArray[0], 4);
+			shader->setAttributeArray(vertexAtributeName, msh.m_vertexArray[0], 3);
+			shader->setAttributeArray(vertexTexCoordAtributeName, msh.m_textureArray[0], 2);
+			shader->setAttributeArray(vertexNormalAtributeName, msh.m_normalArray[0], 3);
 		}
 
 		glNormalPointer(GL_FLOAT, 0, &msh.m_normalArray[0]);
@@ -141,6 +162,9 @@ void QWZM::render()
 		if (shader)
 		{
 			shader->disableAttributeArray(tangentAtributeName);
+			shader->disableAttributeArray(vertexAtributeName);
+			shader->disableAttributeArray(vertexNormalAtributeName);
+			shader->disableAttributeArray(vertexTexCoordAtributeName);
 		}
 		releaseShader(getActiveShader());
 	}
@@ -394,6 +418,9 @@ QString QWZM::shaderTypeToString(wz_shader_type_t type)
 	case WZ_SHADER_USER:
 		str = "External shaders";
 		break;
+	case WZ_SHADER_WZ32:
+		str = "WZ 3.2 shaders";
+		break;
 	default:
 		str = "<Unknown>";
 	}
@@ -425,6 +452,7 @@ bool QWZM::setupTextureUnits(int type)
 	{
 	case WZ_SHADER_WZ31:
 	case WZ_SHADER_USER:
+	case WZ_SHADER_WZ32:
 		if (hasGLRenderTexture(WZM_TEX_DIFFUSE))
 			activateAndBindTexture(0, m_gl_textures[WZM_TEX_DIFFUSE]);
 		else
@@ -454,8 +482,9 @@ void QWZM::clearTextureUnits(int type)
 {
 	switch (type)
 	{
-    case WZ_SHADER_WZ31:
+	case WZ_SHADER_WZ31:
 	case WZ_SHADER_USER:
+	case WZ_SHADER_WZ32:
 		deactivateTexture(3);
 		deactivateTexture(2);
 		deactivateTexture(1);
@@ -466,6 +495,15 @@ void QWZM::clearTextureUnits(int type)
 	}
 }
 
+enum WZ_LIGHTING_TYPE
+{
+	LIGHT_EMISSIVE,
+	LIGHT_AMBIENT,
+	LIGHT_DIFFUSE,
+	LIGHT_SPECULAR,
+	LIGHT_MAX
+};
+
 bool QWZM::initShader(int type)
 {
 	if (!m_shaderman)
@@ -473,17 +511,15 @@ bool QWZM::initShader(int type)
 
 	QGLShaderProgram* shader = m_shaderman->getShader(type);
 
-	if (!shader)
+	if (!shader || !shader->bind())
 		return false;
 
-	shader->bind();
+	int uniLoc, baseTexLoc, tcTexLoc, nmTexLoc, smTexLoc;
 
 	switch (type)
 	{
 	case WZ_SHADER_WZ31:
 	case WZ_SHADER_USER:
-		int uniLoc, baseTexLoc, tcTexLoc, nmTexLoc, smTexLoc;
-
 		baseTexLoc = shader->uniformLocation("Texture0");
 		tcTexLoc = shader->uniformLocation("Texture1");
 		nmTexLoc = shader->uniformLocation("Texture2");
@@ -499,6 +535,48 @@ bool QWZM::initShader(int type)
 
 		uniLoc = shader->uniformLocation("ecmEffect");
 		shader->setUniformValue(uniLoc, GLint(0));
+
+		break;
+	case WZ_SHADER_WZ32:
+		baseTexLoc = shader->uniformLocation("Texture");
+		tcTexLoc = shader->uniformLocation("TextureTcmask");
+		nmTexLoc = shader->uniformLocation("TextureNormal");
+		smTexLoc = shader->uniformLocation("TextureSpecular");
+
+		shader->setUniformValue(baseTexLoc, GLint(0));
+		shader->setUniformValue(tcTexLoc, GLint(1));
+		shader->setUniformValue(nmTexLoc, GLint(2));
+		shader->setUniformValue(smTexLoc, GLint(3));
+
+		uniLoc = shader->uniformLocation("fogEnabled");
+		shader->setUniformValue(uniLoc, GLint(0));
+
+		uniLoc = shader->uniformLocation("ecmEffect");
+		shader->setUniformValue(uniLoc, GLint(0));
+
+		uniLoc = shader->uniformLocation("alphaTest");
+		shader->setUniformValue(uniLoc, GLint(0));
+
+		const GLfloat defaultLight[4][4] = {{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f},  {0.8f, 0.8f, 0.8f, 1.0f},  {1.0f, 1.0f, 1.0f, 1.0f}};
+
+		uniLoc = shader->uniformLocation("colour");
+		shader->setUniformValue(uniLoc,	1.f, 1.f, 1.f, 1.f);
+
+		uniLoc = shader->uniformLocation("sceneColor");
+		shader->setUniformValue(uniLoc,	defaultLight[LIGHT_EMISSIVE][0], defaultLight[LIGHT_EMISSIVE][1],
+				defaultLight[LIGHT_EMISSIVE][2], defaultLight[LIGHT_EMISSIVE][3]);
+
+		uniLoc = shader->uniformLocation("ambient");
+		shader->setUniformValue(uniLoc,	defaultLight[LIGHT_AMBIENT][0], defaultLight[LIGHT_AMBIENT][1],
+				defaultLight[LIGHT_AMBIENT][2], defaultLight[LIGHT_AMBIENT][3]);
+
+		uniLoc = shader->uniformLocation("diffuse");
+		shader->setUniformValue(uniLoc,	defaultLight[LIGHT_DIFFUSE][0], defaultLight[LIGHT_DIFFUSE][1],
+				defaultLight[LIGHT_DIFFUSE][2], defaultLight[LIGHT_DIFFUSE][3]);
+
+		uniLoc = shader->uniformLocation("specular");
+		shader->setUniformValue(uniLoc,	defaultLight[LIGHT_SPECULAR][0], defaultLight[LIGHT_SPECULAR][1],
+				defaultLight[LIGHT_SPECULAR][2], defaultLight[LIGHT_SPECULAR][3]);
 
 		break;
 	}
@@ -517,11 +595,13 @@ bool QWZM::bindShader(int type)
 	if (!shader || !shader->bind())
 		return false;
 
+	int uniloc;
+
 	switch (type)
 	{
 	case WZ_SHADER_WZ31:
 	case WZ_SHADER_USER:
-		int uniloc = shader->uniformLocation("tcmask");
+		uniloc = shader->uniformLocation("tcmask");
 		if (hasGLRenderTexture(WZM_TEX_TCMASK))
 		{
 			shader->setUniformValue(uniloc, GLint(1));
@@ -553,6 +633,49 @@ bool QWZM::bindShader(int type)
 		{
 			shader->setUniformValue(uniloc, GLint(0));
 		}
+		break;
+	case WZ_SHADER_WZ32:
+		uniloc = shader->uniformLocation("tcmask");
+		if (hasGLRenderTexture(WZM_TEX_TCMASK))
+		{
+			shader->setUniformValue(uniloc, GLint(1));
+			uniloc = shader->uniformLocation("teamcolour");
+			shader->setUniformValue(uniloc,
+						m_tcmaskColour.redF(), m_tcmaskColour.greenF(),
+						m_tcmaskColour.blueF(), m_tcmaskColour.alphaF());
+		}
+		else
+			shader->setUniformValue(uniloc, GLint(0));
+
+		uniloc = shader->uniformLocation("normalmap");
+		if (hasGLRenderTexture(WZM_TEX_NORMALMAP))
+			shader->setUniformValue(uniloc, GLint(1));
+		else
+			shader->setUniformValue(uniloc, GLint(0));
+
+		uniloc = shader->uniformLocation("specularmap");
+		if (hasGLRenderTexture(WZM_TEX_SPECULAR))
+			shader->setUniformValue(uniloc, GLint(1));
+		else
+			shader->setUniformValue(uniloc, GLint(0));
+
+		uniloc = shader->uniformLocation("lightPosition");
+		shader->setUniformValue(uniloc,	render_posSun[0], render_posSun[1],
+				render_posSun[2], render_posSun[3]);
+
+		uniloc = shader->uniformLocation("ModelViewMatrix");
+		shader->setUniformValue(uniloc,	render_mtxModelView);
+
+		render_mtxMVP = render_mtxProj * render_mtxModelView;
+
+		uniloc = shader->uniformLocation("ModelViewProjectionMatrix");
+		shader->setUniformValue(uniloc,	render_mtxMVP);
+
+		render_mtxNM = render_mtxModelView.inverted().transposed();
+
+		uniloc = shader->uniformLocation("NormalMatrix");
+		shader->setUniformValue(uniloc,	render_mtxNM);
+
 		break;
 	}
 
