@@ -33,7 +33,8 @@
 #include "IGLTexturedRenderable.h"
 #include "IGLShaderRenderable.h"
 
-enum wz_shader_type_t {WZ_SHADER_NONE = 0, WZ_SHADER_WZ31, WZ_SHADER_USER,
+enum wz_shader_type_t {WZ_SHADER_NONE = 0,
+		       WZ_SHADER_WZ31, WZ_SHADER_WZ32, WZ_SHADER_USER,
 		       WZ_SHADER__LAST, WZ_SHADER__FIRST = WZ_SHADER_NONE};
 
 class Pie3Model;
@@ -86,7 +87,7 @@ public:
 	void animate();
 
 	/// IGLTexturedRenderable
-	void render();
+	void render(const float *mtxModelView, const float *mtxProj, const float *posSun);
 	void setTextureManager(IGLTextureManager * manager);
 
 	/// IGLShaderRenderable

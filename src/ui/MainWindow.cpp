@@ -589,11 +589,11 @@ void MainWindow::viewerInitialized()
 		QString shadername = QWZM::shaderTypeToString(static_cast<wz_shader_type_t>(i));
 
 		QAction* shaderAct = new QAction(shadername, this);
-        if (i == WZ_SHADER_USER)
-            m_actionActivateUserShaders = shaderAct;
+		if (i == WZ_SHADER_USER)
+			m_actionActivateUserShaders = shaderAct;
 
-        if (i < 9) // FIXME
-            shaderAct->setShortcut(QKeySequence(tr("Ctrl+%1").arg(i+1)));
+		if (i < 9) // FIXME
+			shaderAct->setShortcut(QKeySequence(tr("Ctrl+%1").arg(i+1)));
 		shaderAct->setCheckable(true);
 		shaderAct->setEnabled(false);
 
@@ -604,21 +604,25 @@ void MainWindow::viewerInitialized()
 			case WZ_SHADER_NONE:
 				shaderAct->setEnabled(true);
 				break;
-            case WZ_SHADER_WZ31:
-                pathvert = WMIT_SHADER_WZ31_DEFPATH_VERT;
-                pathfrag = WMIT_SHADER_WZ31_DEFPATH_FRAG;
-                break;
-            case WZ_SHADER_USER:
-                pathvert = m_settings->value("shaders/user_vert_path", "").toString();
-                pathfrag = m_settings->value("shaders/user_frag_path", "").toString();
-                if (!pathvert.isEmpty() && !pathfrag.isEmpty())
-                    isReloadUserShaderActionEnabled = true;
-                break;
+			case WZ_SHADER_WZ31:
+				pathvert = WMIT_SHADER_WZ31_DEFPATH_VERT;
+				pathfrag = WMIT_SHADER_WZ31_DEFPATH_FRAG;
+				break;
+			case WZ_SHADER_USER:
+				pathvert = m_settings->value("shaders/user_vert_path", "").toString();
+				pathfrag = m_settings->value("shaders/user_frag_path", "").toString();
+				if (!pathvert.isEmpty() && !pathfrag.isEmpty())
+					isReloadUserShaderActionEnabled = true;
+				break;
+			case WZ_SHADER_WZ32:
+				pathvert = WMIT_SHADER_WZ32TC_DEFPATH_VERT;
+				pathfrag = WMIT_SHADER_WZ32TC_DEFPATH_FRAG;
+				break;
 			default:
 				break;
 			}
 
-            loadShaderAndEnableAction(shaderAct, static_cast<wz_shader_type_t>(i), pathvert, pathfrag);
+			loadShaderAndEnableAction(shaderAct, static_cast<wz_shader_type_t>(i), pathvert, pathfrag);
 		}
 
 		m_shaderSignalMapper->setMapping(shaderAct, i);

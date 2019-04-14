@@ -113,18 +113,25 @@ void QtGLView::init()
 
 void QtGLView::draw()
 {
+	static float mtxPrj[16], mtxMV[16];
+
+	camera()->getProjectionMatrix(mtxPrj);
+	camera()->getModelViewMatrix(mtxMV);
+
 	if (linkLightToCamera)
 		light.setPosition(camera()->position());
 	glLightfv(GL_LIGHT0, GL_POSITION, light.position());
 
 	foreach(IGLRenderable* obj, renderList)
 	{
-		obj->render();
+		obj->render(mtxMV, mtxPrj, light.position());
 	}
 }
 
 void QtGLView::postDraw()
 {
+	// replacing default implementation
+
 	GLboolean lighting, texture;
 
 	glGetBooleanv(GL_LIGHTING, &lighting);
