@@ -76,21 +76,12 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 	if (!isFixedPipelineRenderer())
 	{
 		render_mtxModelView = QMatrix4x4(mtxModelView).transposed();
+		if (m_active_mesh < 0)
+			render_mtxModelView.scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+
 		render_mtxModelView.scale(WZ_SCALE, WZ_SCALE, WZ_SCALE);
 		render_mtxProj = QMatrix4x4(mtxProj).transposed();
 		render_posSun = posSun;
-
-		if (bindShader(getActiveShader()))
-		{
-			shader = m_shaderman->getShader(getActiveShader());
-			if (shader)
-			{
-				shader->enableAttributeArray(tangentAtributeName);
-				shader->enableAttributeArray(vertexAtributeName);
-				shader->enableAttributeArray(vertexNormalAtributeName);
-				shader->enableAttributeArray(vertexTexCoordAtributeName);
-			}
-		}
 	}
 
 	glScalef(WZ_SCALE, WZ_SCALE, WZ_SCALE); // Scale from warzone to fit in our scene. possibly a FIXME
@@ -123,6 +114,23 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		{
 			glPushMatrix();
 			glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+			if (!isFixedPipelineRenderer())
+				render_mtxModelView.scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+		}
+
+		if (!isFixedPipelineRenderer())
+		{
+			if (bindShader(getActiveShader()))
+			{
+				shader = m_shaderman->getShader(getActiveShader());
+				if (shader)
+				{
+					shader->enableAttributeArray(tangentAtributeName);
+					shader->enableAttributeArray(vertexAtributeName);
+					shader->enableAttributeArray(vertexNormalAtributeName);
+					shader->enableAttributeArray(vertexTexCoordAtributeName);
+				}
+			}
 		}
 
 		glMaterialfv(GL_FRONT, GL_EMISSION, m_material.vals[WZM_MAT_EMISSIVE]);
@@ -153,21 +161,24 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		if (m_active_mesh == i)
 		{
 			glPopMatrix();
+			if (!isFixedPipelineRenderer())
+				render_mtxModelView.scale(1 / (scale_all * scale_xyz[0]), 1 / (scale_all * scale_xyz[1]), 1 / (scale_all * scale_xyz[2]));
+		}
+
+		if (!isFixedPipelineRenderer())
+		{
+			// release shader data
+			if (shader)
+			{
+				shader->disableAttributeArray(tangentAtributeName);
+				shader->disableAttributeArray(vertexAtributeName);
+				shader->disableAttributeArray(vertexNormalAtributeName);
+				shader->disableAttributeArray(vertexTexCoordAtributeName);
+			}
+			releaseShader(getActiveShader());
 		}
 	}
 
-	if (!isFixedPipelineRenderer())
-	{
-		// release shader data
-		if (shader)
-		{
-			shader->disableAttributeArray(tangentAtributeName);
-			shader->disableAttributeArray(vertexAtributeName);
-			shader->disableAttributeArray(vertexNormalAtributeName);
-			shader->disableAttributeArray(vertexTexCoordAtributeName);
-		}
-		releaseShader(getActiveShader());
-	}
 	clearTextureUnits(getActiveShader());
 
 	// set it back
