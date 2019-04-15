@@ -79,6 +79,7 @@ private slots:
     void actionSetTeamColor();
     void actionLocateUserShaders();
     void actionReloadUserShader();
+	void actionEnableUserShaders(bool checked);
 
     void updateRecentFilesMenu();
 	void viewerInitialized();
@@ -110,14 +111,15 @@ private:
 
 	QSignalMapper *m_shaderSignalMapper;
 	QActionGroup* m_shaderGroup;
-    QAction *m_actionReloadUserShaders;
+	QAction *m_actionEnableUserShaders;
+	QAction *m_actionLocateUserShaders;
+	QAction *m_actionReloadUserShaders;
 	QString m_pathImport, m_pathExport, m_currentFile;
 
 	QWZM m_model;
 
 	bool fireTextureDialog(const bool reinit = false);
-	bool loadShaderAndEnableAction(QAction* shaderAct,
-				   QString pathvert, QString pathfrag, QString* errMessage = nullptr);
+	bool reloadShader(wz_shader_type_t type, bool user_shader, QString* errMessage = nullptr);
 };
 
 #endif // MAINWINDOW_HPP
