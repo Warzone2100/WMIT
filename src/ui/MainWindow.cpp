@@ -58,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_UVEditor(new UVEditor(this)),
 	m_settings(new QSettings(this)),
 	m_shaderSignalMapper(new QSignalMapper(this)),
+	m_actionEnableUserShaders(nullptr),
+	m_actionLocateUserShaders(nullptr),
 	m_actionReloadUserShaders(nullptr)
 {
 	m_ui->setupUi(this);
@@ -556,10 +558,35 @@ void MainWindow::actionSaveAs()
 	saveModel(fDialog->selectedFiles().first(), m_model, types[filters.indexOf(fDialog->selectedNameFilter())]);
 }
 
-bool MainWindow::loadShaderAndEnableAction(QAction* shaderAct,
-                                           QString pathvert, QString pathfrag, QString *errMessage)
+bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *errMessage)
 {
-	 wz_shader_type_t type = static_cast<wz_shader_type_t>(m_shaderGroup->actions().indexOf(shaderAct));
+	if (type == WZ_SHADER_NONE)
+	{
+		return true;
+	}
+
+	QString pathvert, pathfrag;
+	if (user_shader)
+	{
+		pathvert = m_settings->value("shaders/user_vert_path").toString();
+		pathfrag = m_settings->value("shaders/user_frag_path").toString();
+	}
+	else
+	{
+		switch (type)
+		{
+		case WZ_SHADER_WZ31:
+			pathvert = WMIT_SHADER_WZ31_DEFPATH_VERT;
+			pathfrag = WMIT_SHADER_WZ31_DEFPATH_FRAG;
+			break;
+		case WZ_SHADER_WZ32:
+			pathvert = WMIT_SHADER_WZ32TC_DEFPATH_VERT;
+			pathfrag = WMIT_SHADER_WZ32TC_DEFPATH_FRAG;
+			break;
+		default:
+			break;
+		}
+	}
 
     QFileInfo finfo(pathvert);
     if (finfo.exists())
@@ -569,17 +596,31 @@ bool MainWindow::loadShaderAndEnableAction(QAction* shaderAct,
         {
             if (m_ui->centralWidget->loadShader(type, pathvert, pathfrag, errMessage))
             {
-                shaderAct->setEnabled(true);
                 return true;
             }
         }
+	else
+		*errMessage = "Unable to find fragment shader!";
     }
+    else
+	    *errMessage = "Unable to find vertex shader!";
     return false;
 }
 
 void MainWindow::viewerInitialized()
 {
 	m_ui->centralWidget->addToRenderList(&m_model);
+
+	m_actionEnableUserShaders = new QAction("Enable external shaders", this);
+	m_actionEnableUserShaders->setCheckable(true);
+	connect(m_actionEnableUserShaders, SIGNAL(triggered(bool)), this, SLOT(actionEnableUserShaders(bool)));
+
+	m_actionLocateUserShaders = new QAction("Locate external shaders...", this);
+	connect(m_actionLocateUserShaders, SIGNAL(triggered()), this, SLOT(actionLocateUserShaders()));
+
+	m_actionReloadUserShaders = new QAction("Reload external shaders", this);
+	m_actionReloadUserShaders->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
+	connect(m_actionReloadUserShaders, SIGNAL(triggered()), this, SLOT(actionReloadUserShader()));
 
 	m_shaderGroup = new QActionGroup(this);
 
@@ -595,34 +636,13 @@ void MainWindow::viewerInitialized()
 		if (i < 9) // FIXME
 			shaderAct->setShortcut(QKeySequence(tr("Ctrl+%1").arg(i+1)));
 		shaderAct->setCheckable(true);
-		shaderAct->setEnabled(false);
 
-		{
-			QString pathvert, pathfrag;
-			switch (static_cast<wz_shader_type_t>(i))
-			{
-			case WZ_SHADER_NONE:
-				shaderAct->setEnabled(true);
-				break;
-			case WZ_SHADER_WZ31:
-				pathvert = WMIT_SHADER_WZ31_DEFPATH_VERT;
-				pathfrag = WMIT_SHADER_WZ31_DEFPATH_FRAG;
-				break;
-			case WZ_SHADER_WZ32:
-				pathvert = WMIT_SHADER_WZ32TC_DEFPATH_VERT;
-				pathfrag = WMIT_SHADER_WZ32TC_DEFPATH_FRAG;
-				break;
-			default:
-				break;
-			}
-
-			loadShaderAndEnableAction(shaderAct, pathvert, pathfrag);
-		}
+		reloadShader(static_cast<wz_shader_type_t>(i), false);
 
 		connect(shaderAct, SIGNAL(triggered()), m_shaderSignalMapper, SLOT(map()));
 	}
 
-    connect(m_shaderSignalMapper, SIGNAL(mapped(int)), this, SLOT(shaderAction(int)));
+	connect(m_shaderSignalMapper, SIGNAL(mapped(int)), this, SLOT(shaderAction(int)));
 
 	QMenu* rendererMenu = new QMenu(this);
 	rendererMenu->addActions(m_shaderGroup->actions());
@@ -636,17 +656,11 @@ void MainWindow::viewerInitialized()
 		}
 	}
 
-    // other user shader related stuff
-    rendererMenu->addSeparator();
-
-    QAction* userShaderSelectorAct = new QAction("Locate external shaders...", this);
-    connect(userShaderSelectorAct, SIGNAL(triggered()), this, SLOT(actionLocateUserShaders()));
-    rendererMenu->addAction(userShaderSelectorAct);
-
-    m_actionReloadUserShaders = new QAction("Reload external shaders", this);
-    m_actionReloadUserShaders->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
-    connect(m_actionReloadUserShaders, SIGNAL(triggered()), this, SLOT(actionReloadUserShader()));
-    rendererMenu->addAction(m_actionReloadUserShaders);
+	// other user shader related stuff
+	rendererMenu->addSeparator();
+	rendererMenu->addAction(m_actionEnableUserShaders);
+	rendererMenu->addAction(m_actionLocateUserShaders);
+	rendererMenu->addAction(m_actionReloadUserShaders);
 
 	m_ui->actionRenderer->setMenu(rendererMenu);
 
@@ -664,23 +678,44 @@ void MainWindow::viewerInitialized()
 	m_ui->actionShowGrid->setChecked(m_settings->value("3DView/ShowGrid", true).toBool());
 	m_ui->actionShowLightSource->setChecked(m_settings->value("3DView/ShowLightSource", true).toBool());
 	m_ui->actionLink_Light_Source_To_Camera->setChecked(m_settings->value("3DView/LinkLightToCamera", true).toBool());
+
+	actionEnableUserShaders(m_actionEnableUserShaders->isChecked());
 }
 
 void MainWindow::shaderAction(int type)
 {
+	QString errMessage;
+	bool useUserShader = false;
+	wz_shader_type_t stype = static_cast<wz_shader_type_t>(type);
+
+	if (m_actionEnableUserShaders->isChecked())
+	{
+		useUserShader = reloadShader(stype, true, &errMessage);
+		if (!useUserShader)
+		{
+			QMessageBox::warning(this, "External shaders error",
+				"Unable to load external shaders, so please ensure that they are correct and hit reload!"\
+				"\nNOTE: Model might temporarily go into stealth mode due to this error...\n\n" +
+				errMessage);
+		}
+	};
+
+	if (!useUserShader)
+		reloadShader(stype, false);
+
 	if (static_cast<wz_shader_type_t>(type) != WZ_SHADER_NONE)
 	{
-        if (!m_model.setActiveShader(static_cast<wz_shader_type_t>(type)))
-        {
-            QMessageBox::warning(this, "Shaders error",
-               "Unable to activate requested shaders!");
-        }
+		if (!m_model.setActiveShader(static_cast<wz_shader_type_t>(type)))
+		{
+		    QMessageBox::warning(this, "Shaders error",
+		       "Unable to activate requested shaders!");
+		}
 	}
 	else
 	{
 		m_model.disableShaders();
 	}
-    m_ui->centralWidget->updateGL();
+	m_ui->centralWidget->updateGL();
 }
 
 void MainWindow::scaleXYZChanged(double val)
@@ -742,22 +777,8 @@ void MainWindow::materialChangedFromUI(const WZMaterial &mat)
 
 void MainWindow::actionReloadUserShader()
 {
-    QString errMessage;
-    bool ok_flag = loadShaderAndEnableAction(m_shaderGroup->checkedAction(),
-                                  m_settings->value("shaders/user_vert_path").toString(),
-                                  m_settings->value("shaders/user_frag_path").toString(),
-                                  &errMessage);
-    if (!ok_flag)
-    {
-        QMessageBox::warning(this, "External shaders error",
-           "Unable to load external shaders, so please ensure that they are correct and hit reload!"\
-           "\nNOTE: Model might temporarily go into stealth mode due to this error...\n\n" +
-           errMessage);
-    }
-    else
-    {
-	shaderAction(static_cast<wz_shader_type_t>(m_shaderGroup->actions().indexOf(m_shaderGroup->checkedAction())));
-    }
+	wz_shader_type_t type = static_cast<wz_shader_type_t>(m_shaderGroup->actions().indexOf(m_shaderGroup->checkedAction()));
+	shaderAction(type);
 }
 
 void MainWindow::actionClose()
@@ -816,6 +837,16 @@ void MainWindow::actionSetTeamColor()
         m_model.setTCMaskColor(newColor);
 }
 
+void MainWindow::actionEnableUserShaders(bool checked)
+{
+	m_actionLocateUserShaders->setEnabled(checked);
+	m_actionReloadUserShaders->setEnabled(checked);
+
+	// if goes off, then reload shader
+	if (!checked)
+		actionReloadUserShader();
+}
+
 void MainWindow::actionLocateUserShaders()
 {
     QString vert_path = QFileDialog::getOpenFileName(this, "Locate vertex shader",
@@ -832,8 +863,6 @@ void MainWindow::actionLocateUserShaders()
     m_settings->setValue("shaders/user_vert_path", vert_path);
     m_settings->setValue("shaders/user_frag_path", frag_path);
 
-    // enable it in case it was off
-    m_actionReloadUserShaders->setEnabled(true);
     // and execute
     actionReloadUserShader();
 }
