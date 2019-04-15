@@ -428,9 +428,6 @@ QString QWZM::shaderTypeToString(wz_shader_type_t type)
 	case WZ_SHADER_WZ31:
 		str = "WZ 3.1 shaders";
 		break;
-	case WZ_SHADER_USER:
-		str = "External shaders";
-		break;
 	case WZ_SHADER_WZ32:
 		str = "WZ 3.2 shaders";
 		break;
@@ -464,7 +461,6 @@ bool QWZM::setupTextureUnits(int type)
 	switch (type)
 	{
 	case WZ_SHADER_WZ31:
-	case WZ_SHADER_USER:
 	case WZ_SHADER_WZ32:
 		if (hasGLRenderTexture(WZM_TEX_DIFFUSE))
 			activateAndBindTexture(0, m_gl_textures[WZM_TEX_DIFFUSE]);
@@ -496,7 +492,6 @@ void QWZM::clearTextureUnits(int type)
 	switch (type)
 	{
 	case WZ_SHADER_WZ31:
-	case WZ_SHADER_USER:
 	case WZ_SHADER_WZ32:
 		deactivateTexture(3);
 		deactivateTexture(2);
@@ -532,7 +527,6 @@ bool QWZM::initShader(int type)
 	switch (type)
 	{
 	case WZ_SHADER_WZ31:
-	case WZ_SHADER_USER:
 		baseTexLoc = shader->uniformLocation("Texture0");
 		tcTexLoc = shader->uniformLocation("Texture1");
 		nmTexLoc = shader->uniformLocation("Texture2");
@@ -613,7 +607,6 @@ bool QWZM::bindShader(int type)
 	switch (type)
 	{
 	case WZ_SHADER_WZ31:
-	case WZ_SHADER_USER:
 		uniloc = shader->uniformLocation("tcmask");
 		if (hasGLRenderTexture(WZM_TEX_TCMASK))
 		{
