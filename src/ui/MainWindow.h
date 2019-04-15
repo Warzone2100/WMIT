@@ -27,6 +27,7 @@
 
 #include <QSettings>
 #include <QSignalMapper>
+#include <QActionGroup>
 #include <QFileSystemWatcher>
 #include <QBasicTimer>
 
@@ -108,15 +109,15 @@ private:
 	QSettings *m_settings;
 
 	QSignalMapper *m_shaderSignalMapper;
-    QAction *m_actionActivateUserShaders;
+	QActionGroup* m_shaderGroup;
     QAction *m_actionReloadUserShaders;
 	QString m_pathImport, m_pathExport, m_currentFile;
 
 	QWZM m_model;
 
 	bool fireTextureDialog(const bool reinit = false);
-    bool loadShaderAndEnableAction(QAction* shaderAct, wz_shader_type_t type,
-                                   QString pathvert, QString pathfrag, QString* errMessage = 0);
+	bool loadShaderAndEnableAction(QAction* shaderAct,
+				   QString pathvert, QString pathfrag, QString* errMessage = nullptr);
 };
 
 #endif // MAINWINDOW_HPP

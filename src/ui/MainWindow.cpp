@@ -57,9 +57,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
 	m_settings(new QSettings(this)),
-    m_shaderSignalMapper(new QSignalMapper(this)),
-    m_actionActivateUserShaders(NULL),
-    m_actionReloadUserShaders(NULL)
+	m_shaderSignalMapper(new QSignalMapper(this)),
+	m_actionReloadUserShaders(nullptr)
 {
 	m_ui->setupUi(this);
 
@@ -557,9 +556,11 @@ void MainWindow::actionSaveAs()
 	saveModel(fDialog->selectedFiles().first(), m_model, types[filters.indexOf(fDialog->selectedNameFilter())]);
 }
 
-bool MainWindow::loadShaderAndEnableAction(QAction* shaderAct, wz_shader_type_t type,
+bool MainWindow::loadShaderAndEnableAction(QAction* shaderAct,
                                            QString pathvert, QString pathfrag, QString *errMessage)
 {
+	 wz_shader_type_t type = static_cast<wz_shader_type_t>(m_shaderGroup->actions().indexOf(shaderAct));
+
     QFileInfo finfo(pathvert);
     if (finfo.exists())
     {
@@ -568,7 +569,6 @@ bool MainWindow::loadShaderAndEnableAction(QAction* shaderAct, wz_shader_type_t 
         {
             if (m_ui->centralWidget->loadShader(type, pathvert, pathfrag, errMessage))
             {
-
                 shaderAct->setEnabled(true);
                 return true;
             }
@@ -582,15 +582,16 @@ void MainWindow::viewerInitialized()
     bool isReloadUserShaderActionEnabled = false;
 	m_ui->centralWidget->addToRenderList(&m_model);
 
-	QActionGroup* shaderGroup = new QActionGroup(this);
+	m_shaderGroup = new QActionGroup(this);
 
 	for (int i = WZ_SHADER__FIRST; i < WZ_SHADER__LAST; ++i)
 	{
 		QString shadername = QWZM::shaderTypeToString(static_cast<wz_shader_type_t>(i));
 
 		QAction* shaderAct = new QAction(shadername, this);
-		if (i == WZ_SHADER_USER)
-			m_actionActivateUserShaders = shaderAct;
+
+		m_shaderSignalMapper->setMapping(shaderAct, i);
+		shaderAct->setActionGroup(m_shaderGroup);
 
 		if (i < 9) // FIXME
 			shaderAct->setShortcut(QKeySequence(tr("Ctrl+%1").arg(i+1)));
@@ -622,25 +623,22 @@ void MainWindow::viewerInitialized()
 				break;
 			}
 
-			loadShaderAndEnableAction(shaderAct, static_cast<wz_shader_type_t>(i), pathvert, pathfrag);
+			loadShaderAndEnableAction(shaderAct, pathvert, pathfrag);
 		}
 
-		m_shaderSignalMapper->setMapping(shaderAct, i);
 		connect(shaderAct, SIGNAL(triggered()), m_shaderSignalMapper, SLOT(map()));
-
-		shaderAct->setActionGroup(shaderGroup);
 	}
 
     connect(m_shaderSignalMapper, SIGNAL(mapped(int)), this, SLOT(shaderAction(int)));
 
 	QMenu* rendererMenu = new QMenu(this);
-	rendererMenu->addActions(shaderGroup->actions());
+	rendererMenu->addActions(m_shaderGroup->actions());
 
-	for (int i = shaderGroup->actions().size() - 1; i >= 0; --i)
+	for (int i = m_shaderGroup->actions().size() - 1; i >= 0; --i)
 	{
-		if (shaderGroup->actions().at(i)->isEnabled())
+		if (m_shaderGroup->actions().at(i)->isEnabled())
 		{
-			shaderGroup->actions().at(i)->activate(QAction::Trigger);
+			m_shaderGroup->actions().at(i)->activate(QAction::Trigger);
 			break;
 		}
 	}
@@ -753,7 +751,7 @@ void MainWindow::materialChangedFromUI(const WZMaterial &mat)
 void MainWindow::actionReloadUserShader()
 {
     QString errMessage;
-    bool ok_flag = loadShaderAndEnableAction(m_actionActivateUserShaders, WZ_SHADER_USER,
+    bool ok_flag = loadShaderAndEnableAction(m_shaderGroup->checkedAction(),
                                   m_settings->value("shaders/user_vert_path").toString(),
                                   m_settings->value("shaders/user_frag_path").toString(),
                                   &errMessage);
@@ -766,7 +764,7 @@ void MainWindow::actionReloadUserShader()
     }
     else
     {
-        shaderAction(WZ_SHADER_USER);
+	shaderAction(static_cast<wz_shader_type_t>(m_shaderGroup->actions().indexOf(m_shaderGroup->checkedAction())));
     }
 }
 
