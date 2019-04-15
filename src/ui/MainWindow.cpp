@@ -579,7 +579,6 @@ bool MainWindow::loadShaderAndEnableAction(QAction* shaderAct,
 
 void MainWindow::viewerInitialized()
 {
-    bool isReloadUserShaderActionEnabled = false;
 	m_ui->centralWidget->addToRenderList(&m_model);
 
 	m_shaderGroup = new QActionGroup(this);
@@ -608,12 +607,6 @@ void MainWindow::viewerInitialized()
 			case WZ_SHADER_WZ31:
 				pathvert = WMIT_SHADER_WZ31_DEFPATH_VERT;
 				pathfrag = WMIT_SHADER_WZ31_DEFPATH_FRAG;
-				break;
-			case WZ_SHADER_USER:
-				pathvert = m_settings->value("shaders/user_vert_path", "").toString();
-				pathfrag = m_settings->value("shaders/user_frag_path", "").toString();
-				if (!pathvert.isEmpty() && !pathfrag.isEmpty())
-					isReloadUserShaderActionEnabled = true;
 				break;
 			case WZ_SHADER_WZ32:
 				pathvert = WMIT_SHADER_WZ32TC_DEFPATH_VERT;
@@ -651,7 +644,6 @@ void MainWindow::viewerInitialized()
     rendererMenu->addAction(userShaderSelectorAct);
 
     m_actionReloadUserShaders = new QAction("Reload external shaders", this);
-    m_actionReloadUserShaders->setEnabled(isReloadUserShaderActionEnabled);
     m_actionReloadUserShaders->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
     connect(m_actionReloadUserShaders, SIGNAL(triggered()), this, SLOT(actionReloadUserShader()));
     rendererMenu->addAction(m_actionReloadUserShaders);
