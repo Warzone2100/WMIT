@@ -49,12 +49,14 @@ QWZM::~QWZM()
 
 static QMatrix4x4 render_mtxModelView, render_mtxProj;
 static QMatrix4x4 render_mtxMVP, render_mtxNM;
-static const float* render_posSun;
+static QVector4D render_posSun;
 
 void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* posSun)
 {
 	GLint frontFace;
 	glGetIntegerv(GL_FRONT_FACE, &frontFace);
+
+	int activeShader = getActiveShader();
 
 	QGLShaderProgram* shader = nullptr;
 
@@ -63,7 +65,7 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 	glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
 
 	// prepare shader data
-	if (!setupTextureUnits(getActiveShader()))
+	if (!setupTextureUnits(activeShader))
 	{
 		glPopMatrix();
 		glPopClientAttrib();
@@ -78,10 +80,10 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		render_mtxModelView = QMatrix4x4(mtxModelView).transposed();
 		if (m_active_mesh < 0)
 			render_mtxModelView.scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
-
 		render_mtxModelView.scale(WZ_SCALE, WZ_SCALE, WZ_SCALE);
+
 		render_mtxProj = QMatrix4x4(mtxProj).transposed();
-		render_posSun = posSun;
+		render_posSun = QVector4D(posSun[0], posSun[1], posSun[2], posSun[3]);
 	}
 
 	glScalef(WZ_SCALE, WZ_SCALE, WZ_SCALE); // Scale from warzone to fit in our scene. possibly a FIXME
@@ -120,9 +122,9 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 
 		if (!isFixedPipelineRenderer())
 		{
-			if (bindShader(getActiveShader()))
+			if (bindShader(activeShader))
 			{
-				shader = m_shaderman->getShader(getActiveShader());
+				shader = m_shaderman->getShader(activeShader);
 				if (shader)
 				{
 					shader->enableAttributeArray(tangentAtributeName);
@@ -175,11 +177,11 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 				shader->disableAttributeArray(vertexNormalAtributeName);
 				shader->disableAttributeArray(vertexTexCoordAtributeName);
 			}
-			releaseShader(getActiveShader());
+			releaseShader(activeShader);
 		}
 	}
 
-	clearTextureUnits(getActiveShader());
+	clearTextureUnits(activeShader);
 
 	// set it back
 	if (frontFace != winding)
@@ -671,8 +673,7 @@ bool QWZM::bindShader(int type)
 			shader->setUniformValue(uniloc, GLint(0));
 
 		uniloc = shader->uniformLocation("lightPosition");
-		shader->setUniformValue(uniloc,	render_posSun[0], render_posSun[1],
-				render_posSun[2], render_posSun[3]);
+		shader->setUniformValue(uniloc,	render_posSun);
 
 		uniloc = shader->uniformLocation("ModelViewMatrix");
 		shader->setUniformValue(uniloc,	render_mtxModelView);
