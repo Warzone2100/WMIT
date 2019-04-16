@@ -317,6 +317,10 @@ Pie3Model::Pie3Model(const Pie2Model& p2)
 	m_texture_tcmask = p2.m_texture_tcmask;
 	std::transform(p2.m_levels.begin(), p2.m_levels.end(),
 				   back_inserter(m_levels), Pie3Level::upConvert);
+
+	// HACK to accomodate "flexible" wz PIE loader
+	m_events = p2.m_events;
+
 	m_type = p2.m_type;
 }
 
