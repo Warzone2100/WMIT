@@ -62,6 +62,8 @@ public:
 	static bool saveModel(const QString& file, const WZM& model, const wmit_filetype_t &type);
 	static bool saveModel(const QString& file, const QWZM& model, const wmit_filetype_t &type);
 
+	void PrependFileToRecentList(const QString &filename);
+
 protected:
 	void changeEvent(QEvent *event);
 	void closeEvent(QCloseEvent *event);
