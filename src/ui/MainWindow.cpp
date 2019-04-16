@@ -324,6 +324,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	settings.setValue("3DView/ShowGrid", m_ui->actionShowGrid->isChecked());
 	settings.setValue("3DView/ShowLightSource", m_ui->actionShowLightSource->isChecked());
 	settings.setValue("3DView/LinkLightToCamera", m_ui->actionLink_Light_Source_To_Camera->isChecked());
+	settings.setValue("3DView/EnableUserShaders", m_actionEnableUserShaders->isChecked());
 
     event->accept();
 }
@@ -339,8 +340,8 @@ bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
 
 	bool read_success = false;
 	std::ifstream f;
-	ImportDialog* importDialog = 0;
-	QSettings* settings = 0;
+	ImportDialog* importDialog = nullptr;
+	QSettings* settings = nullptr;
 
 	f.open(file.toLocal8Bit(), std::ios::in | std::ios::binary);
 
@@ -355,7 +356,7 @@ bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
 			importDialog = new ImportDialog();
 			int result = importDialog->exec();
 			delete importDialog;
-			importDialog = 0;
+			importDialog = nullptr;
 
 			if (result != QDialog::Accepted)
 			{
@@ -369,7 +370,6 @@ bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
 		break;
 	case WMIT_FT_PIE:
 	case WMIT_FT_PIE2:
-	default:
 		int pieversion = pieVersion(f);
 		if (pieversion <= 2)
 		{
@@ -678,6 +678,7 @@ void MainWindow::viewerInitialized()
 	m_ui->actionShowGrid->setChecked(m_settings->value("3DView/ShowGrid", true).toBool());
 	m_ui->actionShowLightSource->setChecked(m_settings->value("3DView/ShowLightSource", true).toBool());
 	m_ui->actionLink_Light_Source_To_Camera->setChecked(m_settings->value("3DView/LinkLightToCamera", true).toBool());
+	m_actionEnableUserShaders->setChecked(m_settings->value("3DView/EnableUserShaders", false).toBool());
 
 	actionEnableUserShaders(m_actionEnableUserShaders->isChecked());
 }
