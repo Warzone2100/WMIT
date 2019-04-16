@@ -86,10 +86,10 @@ WZM::WZM(const Pie3Model &p3)
 	setTextureName(WZM_TEX_DIFFUSE, p3.m_texture);
 	setTextureName(WZM_TEX_NORMALMAP, p3.m_texture_normalmap);
 	setTextureName(WZM_TEX_TCMASK, p3.m_texture_tcmask);
-    setTextureName(WZM_TEX_SPECULAR, p3.m_texture_specmap);
+	setTextureName(WZM_TEX_SPECULAR, p3.m_texture_specmap);
 
-    if (p3.levels() > 0)
-        m_material = p3.m_levels.begin()->m_material;
+	if (p3.levels() > 0)
+		m_material = p3.m_levels.begin()->m_material;
 
 	for (it = p3.m_levels.begin(); it != p3.m_levels.end(); ++it)
 	{
@@ -112,13 +112,13 @@ WZM::operator Pie3Model() const
 	p3.m_texture = getTextureName(WZM_TEX_DIFFUSE);
 	p3.m_texture_normalmap = getTextureName(WZM_TEX_NORMALMAP);
 	p3.m_texture_tcmask = getTextureName(WZM_TEX_TCMASK);
-    p3.m_texture_specmap = getTextureName(WZM_TEX_SPECULAR);
+	p3.m_texture_specmap = getTextureName(WZM_TEX_SPECULAR);
 
 	std::transform(m_meshes.begin(), m_meshes.end(),
 				   back_inserter(p3.m_levels), Mesh::backConvert);
 
-    for (auto iter = p3.m_levels.begin(); iter != p3.m_levels.end(); iter++)
-        iter->m_material = m_material;
+	for (auto iter = p3.m_levels.begin(); iter != p3.m_levels.end(); iter++)
+		iter->m_material = m_material;
 
 	return p3;
 }
@@ -230,8 +230,8 @@ bool WZM::read(std::istream& in)
 		return false;
 	}
 
-	m_meshes.resize(meshes);
-	for(int i = 0; i < meshes; ++i)
+	m_meshes.resize(static_cast<size_t>(meshes));
+	for(size_t i = 0; i < static_cast<size_t>(meshes); ++i)
 	{
 		Mesh& mesh = m_meshes[i];
 		if (!mesh.read(in))
@@ -699,16 +699,16 @@ void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)
 	}
 	else
 	{
-		if (m_meshes.size() > (std::vector<Mesh>::size_type)mesh)
+		if (m_meshes.size() > static_cast<size_t>(mesh))
 		{
-			m_meshes[(std::vector<Mesh>::size_type)mesh].scale(x, y, z);
+			m_meshes[static_cast<size_t>(mesh)].scale(x, y, z);
 		}
 	}
 }
 
 void WZM::mirror(int axis, int mesh)
 {
-	if (axis < 0 || axis > 5 || mesh >= (int)m_meshes.size())
+	if (axis < 0 || axis > 5 || mesh >= static_cast<int>(m_meshes.size()))
 		return;
 
 	// All or a single mesh
