@@ -453,13 +453,7 @@ void MainWindow::actionOpen()
 		m_pathImport = fileDialog->directory().absolutePath();
 		m_settings->setValue(WMIT_SETTINGS_IMPORTVAL, m_pathImport);
 
-		QFileInfo fileInfo(filePath);
-		QStringList recentFiles = QSettings().value("recentFiles").toStringList();
-		recentFiles.removeAll(fileInfo.absoluteFilePath());
-		recentFiles.prepend(fileInfo.absoluteFilePath());
-		recentFiles = recentFiles.mid(0, 10);
-
-		QSettings().setValue("recentFiles", recentFiles);
+		PrependFileToRecentList(filePath);
 	}
 
 	delete fileDialog;
@@ -474,9 +468,11 @@ void MainWindow::actionOpen()
 
 void MainWindow::actionOpenRecent(QAction *action)
 {
-	if (!action->data().toString().isEmpty())
+	QString filename = action->data().toString();
+	if (!filename.isEmpty())
 	{
-		openFile(action->data().toString());
+		PrependFileToRecentList(filename);
+		openFile(filename);
 	}
 }
 
@@ -488,6 +484,18 @@ void MainWindow::actionClearRecentFiles()
 void MainWindow::actionSave()
 {
 //todo
+}
+
+void MainWindow::PrependFileToRecentList(const QString& filename)
+{
+	QFileInfo fileInfo(filename);
+
+	QStringList recentFiles = QSettings().value("recentFiles").toStringList();
+	recentFiles.removeAll(fileInfo.absoluteFilePath());
+	recentFiles.prepend(fileInfo.absoluteFilePath());
+	recentFiles = recentFiles.mid(0, 10);
+
+	QSettings().setValue("recentFiles", recentFiles);
 }
 
 void MainWindow::actionSaveAs()
@@ -522,13 +530,7 @@ void MainWindow::actionSaveAs()
 		return;
 	}
 	
-	QFileInfo fileInfo(fDialog->selectedFiles().first());
-	QStringList recentFiles = QSettings().value("recentFiles").toStringList();
-	recentFiles.removeAll(fileInfo.absoluteFilePath());
-	recentFiles.prepend(fileInfo.absoluteFilePath());
-	recentFiles = recentFiles.mid(0, 10);
-
-	QSettings().setValue("recentFiles", recentFiles);
+	PrependFileToRecentList(fDialog->selectedFiles().first());
 
 /* Disabled till ready
 	if (type == PIE)
@@ -872,21 +874,19 @@ void MainWindow::updateRecentFilesMenu()
 {
 	QStringList recentFiles = QSettings().value("recentFiles").toStringList();
 
+	int fileCnt = recentFiles.count();
 	for (int i = 0; i < 10; ++i)
 	{
-		if (i < recentFiles.count())
+		m_ui->menuOpenRecent->actions().at(i)->setVisible(i < fileCnt);
+		if (i < fileCnt)
 		{
 			QFileInfo fileInfo(recentFiles.at(i));
 
-			m_ui->menuOpenRecent->actions().at(i)->setText(QString("%1. %2 (%3)").arg(i + 1).arg(fileInfo.fileName()).arg(recentFiles.at(i)));
+			QString text = QString("%1. %2 (%3)").arg(i + 1).arg(fileInfo.fileName()).arg(recentFiles.at(i));
+			m_ui->menuOpenRecent->actions().at(i)->setText(text);
 			m_ui->menuOpenRecent->actions().at(i)->setData(recentFiles.at(i));
-			m_ui->menuOpenRecent->actions().at(i)->setVisible(true);
-		}
-		else
-		{
-			m_ui->menuOpenRecent->actions().at(i)->setVisible(false);
 		}
 	}
 
-	m_ui->menuOpenRecent->setEnabled(recentFiles.count());
+	m_ui->menuOpenRecent->setEnabled(fileCnt);
 }
