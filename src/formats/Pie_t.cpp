@@ -210,6 +210,9 @@ void APieLevel< V, P, C>::clearAll()
 	m_points.clear();
 	m_polygons.clear();
 	m_connectors.clear();
+	m_material.setDefaults();
+	m_shader_frag.clear();
+	m_shader_vert.clear();
 }
 
 template<typename V, typename P, typename C>
@@ -255,7 +258,8 @@ void APieModel<L>::clearAll()
 	m_texture.clear();
 	m_texture_tcmask.clear();
 	m_texture_normalmap.clear();
-    m_texture_specmap.clear();
+	m_texture_specmap.clear();
+	m_events.clear();
 }
 
 template <typename L>
@@ -432,20 +436,67 @@ bool APieModel<L>::readSpecmapDirective(std::istream& in)
     return true;
 }
 
+// Optional directive
 template <typename L>
-bool APieModel<L>::readLevelsBlock(std::istream& in)
+bool APieModel<L>::readEventsDirective(std::istream& in)
 {
-	std::string str;
-	unsigned uint;
+	std::string str, model;
+	int type;
+	std::streampos entrypoint = in.tellg();
 
-	// LEVELS %u
-	in >> str >> uint;
-	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_LEVELS) != 0)
+	// EVENT type filename.pie
+	in >> str >> type >> model;
+	if ( in.fail())
 	{
 		return false;
 	}
 
-	for (; uint > 0; --uint)
+	if (str.compare(PIE_MODEL_DIRECTIVE_EVENT) != 0)
+	{
+		in.seekg(entrypoint);
+		// not really a fail, but will work for a "while"
+		return false;
+	}
+
+	m_events.emplace(type, model);
+	return true;
+}
+
+template <typename L>
+bool APieModel<L>::readLevelsBlock(std::istream& in)
+{
+	// Optional sequence of event directives
+	while (readEventsDirective(in)) {}
+
+	int levels = readLevelsDirective(in);
+
+	if (levels < 0)
+		return false;
+
+	return readLevels(levels, in);
+}
+
+/*
+ * WZ loader basically ignores PIE version and reads any directive,
+ * but real PIE2 would work like that:
+ *
+// PIE2 specialization
+template <>
+inline bool APieModel<Pie2Level>::readLevelsBlock(std::istream& in)
+{
+	int levels = readLevelsDirective(in);
+
+	if (levels < 0)
+		return false;
+
+	return readLevels(levels, in);
+}
+*/
+
+template <typename L>
+bool APieModel<L>::readLevels(int levels, std::istream& in)
+{
+	for (; levels > 0; --levels)
 	{
 		L lvl;
 		if (!lvl.read(in))
@@ -455,6 +506,22 @@ bool APieModel<L>::readLevelsBlock(std::istream& in)
 		m_levels.push_back(lvl);
 	}
 	return true;
+}
+
+template <typename L>
+int APieModel<L>::readLevelsDirective(std::istream& in)
+{
+	std::string str;
+	unsigned uint;
+
+	// LEVELS %u
+	in >> str >> uint;
+	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_LEVELS) != 0)
+	{
+		return -1;
+	}
+
+	return static_cast<int>(uint);
 }
 
 //FIXME add PIE2 specialization (no NM!)

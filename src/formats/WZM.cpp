@@ -91,6 +91,8 @@ WZM::WZM(const Pie3Model &p3)
 	if (p3.levels() > 0)
 		m_material = p3.m_levels.begin()->m_material;
 
+	m_events = p3.m_events;
+
 	for (it = p3.m_levels.begin(); it != p3.m_levels.end(); ++it)
 	{
 		m_meshes.push_back(*it);
@@ -113,6 +115,8 @@ WZM::operator Pie3Model() const
 	p3.m_texture_normalmap = getTextureName(WZM_TEX_NORMALMAP);
 	p3.m_texture_tcmask = getTextureName(WZM_TEX_TCMASK);
 	p3.m_texture_specmap = getTextureName(WZM_TEX_SPECULAR);
+
+	p3.m_events = m_events;
 
 	std::transform(m_meshes.begin(), m_meshes.end(),
 				   back_inserter(p3.m_levels), Mesh::backConvert);
@@ -684,6 +688,7 @@ void WZM::clear()
 	m_meshes.clear();
 	m_textures.clear();
 	m_material.setDefaults();
+	m_events.clear();
 }
 
 void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)
