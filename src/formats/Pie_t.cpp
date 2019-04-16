@@ -55,24 +55,33 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 		streamfail();
 	}
 
-    // POINTS %u || MATERIALS %u
-    in >> str;
-    if ( str.compare(PIE_MODEL_DIRECTIVE_MATERIALS) == 0)
-    {
-        in >> m_material;
-        if (in.fail())
-            streamfail();
-        in >> str;
-    }
+	// POINTS %u || MATERIALS %u
+	in >> str;
+	if ( str.compare(PIE_MODEL_DIRECTIVE_MATERIALS) == 0)
+	{
+		in >> m_material;
+		if (in.fail())
+			streamfail();
+		in >> str;
+	}
 
-    if (in.fail() || str.compare("POINTS") != 0)
-    {
-        streamfail();
-    }
-    else
-    {
-        in >> uint;
-    }
+	// Optional: shaders
+	if (str.compare(PIE_MODEL_DIRECTIVE_SHADERS) == 0)
+	{
+		in >> str >> m_shader_vert >> m_shader_frag;
+		if (in.fail())
+			streamfail();
+		in >> str;
+	}
+
+	if (in.fail() || str.compare("POINTS") != 0)
+	{
+		streamfail();
+	}
+	else
+	{
+		in >> uint;
+	}
 
 	m_points.reserve(uint);
 	for (; uint > 0; --uint)
@@ -143,6 +152,12 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 
 	if (!m_material.isDefault())
 		out << PIE_MODEL_DIRECTIVE_MATERIALS << " " << m_material << '\n';
+
+	if (!m_shader_vert.empty())
+	{
+		out << PIE_MODEL_DIRECTIVE_SHADERS << " " << 2 << " " << m_shader_vert
+		    << " " << m_shader_frag << '\n';
+	}
 
 	out << "POINTS " << points() << '\n';
 	for (ptIt = m_points.begin(); ptIt != m_points.end(); ++ptIt)

@@ -31,16 +31,21 @@
 /**
   * Templates used to remove tedious code
   * duplication.
+  *
+  * See this doc for more details:
+  * https://github.com/Warzone2100/warzone2100/blob/master/doc/PIE.md
   */
 
 #define PIE_MODEL_SIGNATURE "PIE"
 #define PIE_MODEL_DIRECTIVE_TYPE "TYPE"
 #define PIE_MODEL_DIRECTIVE_TEXTURE "TEXTURE"
 #define PIE_MODEL_DIRECTIVE_NORMALMAP "NORMALMAP"
-#define PIE_MODEL_DIRECTIVE_MATERIALS "MATERIALS"
+#define PIE_MODEL_DIRECTIVE_MATERIALS "MATERIALS" // WZ 3.2 only
 #define PIE_MODEL_DIRECTIVE_LEVELS "LEVELS"
 #define PIE_MODEL_DIRECTIVE_SPECULARMAP "SPECULARMAP"
 #define PIE_MODEL_DIRECTIVE_SHADERS "SHADERS"
+#define PIE_MODEL_DIRECTIVE_EVENT "EVENT" // WZ 3.3
+#define PIE_MODEL_DIRECTIVE_ANIMOBJECT "ANIMOBJECT" // WZ 3.3
 
 #define PIE_MODEL_FEATURE_TEXTURED 0x200
 #define PIE_MODEL_FEATURE_TCMASK 0x10000
@@ -71,7 +76,9 @@ protected:
 	std::vector<V> m_points;
 	std::vector<P> m_polygons;
 	std::list<C> m_connectors;
-    WZMaterial m_material; // PIE3+
+	WZMaterial m_material; // PIE3+
+	std::string m_shader_vert;
+	std::string m_shader_frag;
 };
 
 template <typename L>
@@ -113,10 +120,7 @@ protected:
 	std::string m_texture;
 	std::string m_texture_normalmap;
 	std::string m_texture_tcmask;
-    std::string m_texture_specmap;
-
-    std::string m_shader_vert;
-    std::string m_shader_frag;
+	std::string m_texture_specmap;
 
 	std::vector<L> m_levels;
 
