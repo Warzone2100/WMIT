@@ -142,8 +142,8 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 	typename std::vector<P>::const_iterator polyIt;
 	typename std::list<C>::const_iterator cIt;
 
-    if (!m_material.isDefault())
-        out << PIE_MODEL_DIRECTIVE_MATERIALS << " " << m_material << '\n';
+	if (!m_material.isDefault())
+		out << PIE_MODEL_DIRECTIVE_MATERIALS << " " << m_material << '\n';
 
 	out << "POINTS " << points() << '\n';
 	for (ptIt = m_points.begin(); ptIt != m_points.end(); ++ptIt)
