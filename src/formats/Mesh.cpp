@@ -162,6 +162,10 @@ Mesh::Mesh(const Pie3Level& p3)
                                   itC->pos.operator[](2)));
 	}
 
+	// shaders
+	m_shader_frag = p3.m_shader_frag;
+	m_shader_vert = p3.m_shader_vert;
+
 	finishImport();
 	recalculateBoundData();
 }
@@ -234,6 +238,10 @@ Mesh::operator Pie3Level() const
 		conn.pos.operator[](2) = itC->getPos().operator[](2);
 		p3.m_connectors.push_back(conn);
 	}
+
+	// shaders
+	p3.m_shader_frag = m_shader_frag;
+	p3.m_shader_vert = m_shader_vert;
 
 	return p3;
 }

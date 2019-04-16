@@ -131,6 +131,8 @@ protected:
 	std::vector<IndexedTri> m_indexArray;
 
 	std::list<WZMConnector> m_connectors;
+	std::string m_shader_vert;
+	std::string m_shader_frag;
 
 	bool m_teamColours;
 	WZMVertex m_mesh_weightcenter, m_mesh_aabb_min, m_mesh_aabb_max, m_mesh_tspcenter;
