@@ -34,7 +34,8 @@
 #include "IGLShaderRenderable.h"
 
 enum wz_shader_type_t {WZ_SHADER_NONE = 0,
-		       WZ_SHADER_WZ31, WZ_SHADER_WZ32,
+		       WZ_SHADER_WZ32, // WIP. Do not move to last/default yet
+		       WZ_SHADER_WZ31,
 		       WZ_SHADER__LAST, WZ_SHADER__FIRST = WZ_SHADER_NONE};
 
 class Pie3Model;
