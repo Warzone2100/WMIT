@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include <list>
 #include <QtOpenGL/qgl.h>
 #include "VectorTypes.h"
@@ -111,16 +112,20 @@ protected:
 	virtual bool readHeaderBlock(std::istream& in);
 
 	virtual bool readTexturesBlock(std::istream& in);
-	virtual bool readTextureDirective(std::istream& in);
-	virtual bool readNormalmapDirective(std::istream& in);
-    virtual bool readSpecmapDirective(std::istream& in);
+	bool readTextureDirective(std::istream& in);
+	bool readNormalmapDirective(std::istream& in);
+	bool readSpecmapDirective(std::istream& in);
 
 	virtual bool readLevelsBlock(std::istream& in);
+	bool readEventsDirective(std::istream& in);
+	int readLevelsDirective(std::istream& in);
+	bool readLevels(int levels, std::istream& in);
 
 	std::string m_texture;
 	std::string m_texture_normalmap;
 	std::string m_texture_tcmask;
 	std::string m_texture_specmap;
+	std::map<int, std::string> m_events; // Animation events associated with this model
 
 	std::vector<L> m_levels;
 
