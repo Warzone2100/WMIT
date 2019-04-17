@@ -276,6 +276,9 @@ Pie3Level::Pie3Level(const Pie2Level& p2)
 
 	std::transform(p2.m_connectors.begin(), p2.m_connectors.end(),
 				   back_inserter(m_connectors), Pie3Connector::upConvert);
+
+	// HACK to accomodate "flexible" wz PIE loader
+	m_animobj = p2.m_animobj;
 }
 
 Pie3Level::~Pie3Level()

@@ -66,9 +66,7 @@ private:
 
 struct Frame
 {
-	GLfloat time;
-	GLfloat xTrans, yTrans, zTrans;
-	GLfloat xRot, yRot, zRot;
+	WZMVertex trans, rot, scale;
 };
 
 class Pie3Level;
@@ -121,6 +119,7 @@ public:
 	WZMVertex getCenterPoint() const;
 protected:
 	std::string m_name;
+	int m_frame_time, m_frame_cycles;
 	std::vector<Frame> m_frameArray;
 
 	std::vector<WZMVertex> m_vertexArray;

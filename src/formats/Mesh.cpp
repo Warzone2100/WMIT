@@ -166,6 +166,18 @@ Mesh::Mesh(const Pie3Level& p3)
 	m_shader_frag = p3.m_shader_frag;
 	m_shader_vert = p3.m_shader_vert;
 
+	// Anim object
+	m_frame_time = p3.m_animobj.time;
+	m_frame_cycles = p3.m_animobj.cycles;
+	Frame curFrame;
+	for (const auto& p3Frame: p3.m_animobj.frames)
+	{
+		curFrame.trans = WZMVertex(p3Frame.pos.x(), p3Frame.pos.y(), p3Frame.pos.z());
+		curFrame.rot = WZMVertex(p3Frame.rot.x(), p3Frame.rot.y(), p3Frame.rot.z());
+		curFrame.scale = WZMVertex(p3Frame.scale.x(), p3Frame.scale.y(), p3Frame.scale.z());
+		m_frameArray.push_back(curFrame);
+	}
+
 	finishImport();
 	recalculateBoundData();
 }
@@ -242,6 +254,25 @@ Mesh::operator Pie3Level() const
 	// shaders
 	p3.m_shader_frag = m_shader_frag;
 	p3.m_shader_vert = m_shader_vert;
+
+	// Anim object
+	p3.m_animobj.time = m_frame_time;
+	p3.m_animobj.cycles = m_frame_cycles;
+	p3.m_animobj.numframes = static_cast<int>(m_frameArray.size());
+	ApieAnimFrame p3Frame;
+	int cur_num = 0;
+	for (const auto& curFrame: m_frameArray)
+	{
+		p3Frame.num = cur_num++;
+		p3Frame.pos = Vertex<int>(static_cast<int>(curFrame.trans.x()),
+					  static_cast<int>(curFrame.trans.y()),
+					  static_cast<int>(curFrame.trans.z()));
+		p3Frame.rot = Vertex<int>(static_cast<int>(curFrame.rot.x()),
+					  static_cast<int>(curFrame.rot.y()),
+					  static_cast<int>(curFrame.rot.z()));
+		p3Frame.scale = Vertex<float>(curFrame.scale.x(), curFrame.scale.y(), curFrame.scale.z());
+		p3.m_animobj.frames.push_back(p3Frame);
+	}
 
 	return p3;
 }
@@ -715,6 +746,7 @@ void Mesh::defaultConstructor()
 void Mesh::clear()
 {
 	m_name.clear();
+	m_frame_time = m_frame_cycles = 0.f;
 	m_frameArray.clear();
 
 	m_vertexArray.clear();
