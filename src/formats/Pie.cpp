@@ -353,3 +353,38 @@ unsigned Pie3Model::textureWidth() const
 {
 	return 0;
 }
+
+bool ApieAnimFrame::read(std::istream &in)
+{
+	in >> num;
+	if ( in.fail())
+		return false;
+
+	in >> pos >> rot >> scale;
+	return !in.fail();
+}
+
+bool ApieAnimObject::read(std::istream &in)
+{
+	clear();
+
+	// time cycles frames
+	in >> time >> cycles >> numframes;
+
+	if ( in.fail())
+	{
+		return false;
+	}
+
+	ApieAnimFrame curFrame;
+	for (int i = 0; i < numframes; ++i)
+	{
+		if (!curFrame.read(in))
+		{
+			clear();
+			return false;
+		}
+		frames.push_back(curFrame);
+	}
+	return true;
+}
