@@ -35,14 +35,35 @@ APieLevel< V, P, C>::APieLevel(): m_material(true)
 {
 }
 
+// Optional directive
+template<typename V, typename P, typename C>
+bool APieLevel< V, P, C>::readAnimObjectDirective(std::istream& in)
+{
+	std::string str;
+	std::streampos entrypoint = in.tellg();
+
+	in >> str;
+	if (in.eof())
+		return true;
+	if (in.fail())
+		return false;
+
+	if (str.compare(PIE_MODEL_DIRECTIVE_ANIMOBJECT) != 0)
+	{
+		in.seekg(entrypoint);
+		return true;
+	}
+
+	return m_animobj.read(in);
+}
+
 // TODO: Write error messages to std::cerr
 template<typename V, typename P, typename C>
 bool APieLevel< V, P, C>::read(std::istream& in)
 {
 	std::string str;
 	unsigned uint;
-
-	std::streampos cnctrStrt;
+	std::streampos mark;
 
 	clearAll();
 
@@ -115,29 +136,34 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 		m_polygons.push_back(poly);
 	}
 
+	mark = in.tellg();
+
 	// Optional: CONNECTORS %u
-	cnctrStrt = in.tellg();
 	in >> str >> uint;
-	if ( in.fail() || str.compare("CONNECTORS") != 0)
+	if ( !in.fail() && str.compare("CONNECTORS") == 0)
+	{
+		for (; uint > 0; --uint)
+		{
+			C cnctr;
+			if (!cnctr.read(in))
+			{
+				/* Connectors are optional, but if they're bad
+				 * we return failure.
+				 */
+				streamfail();
+			}
+			m_connectors.push_back(cnctr);
+		}
+	}
+	else
 	{
 		// no connectors or eof
 		in.clear();
-		in.seekg(cnctrStrt);
-		return true;
+		in.seekg(mark);
 	}
 
-	for (; uint > 0; --uint)
-	{
-		C cnctr;
-		if (!cnctr.read(in))
-		{
-			/* Connectors are optional, but if they're bad
-			 * we return failure.
-			 */
-			streamfail();
-		}
-		m_connectors.push_back(cnctr);
-	}
+	if (!in.eof() && !readAnimObjectDirective(in))
+		streamfail();
 
 	return true;
 #undef streamfail
@@ -213,6 +239,7 @@ void APieLevel< V, P, C>::clearAll()
 	m_material.setDefaults();
 	m_shader_frag.clear();
 	m_shader_vert.clear();
+	m_animobj.clear();
 }
 
 template<typename V, typename P, typename C>
@@ -440,14 +467,14 @@ bool APieModel<L>::readSpecmapDirective(std::istream& in)
 template <typename L>
 bool APieModel<L>::readEventsDirective(std::istream& in)
 {
-	std::string str, model;
-	int type;
+	std::string str;
 	std::streampos entrypoint = in.tellg();
 
 	// EVENT type filename.pie
-	in >> str >> type >> model;
-	if ( in.fail())
+	in >> str;
+	if (in.fail())
 	{
+		in.seekg(entrypoint);
 		return false;
 	}
 
@@ -458,7 +485,13 @@ bool APieModel<L>::readEventsDirective(std::istream& in)
 		return false;
 	}
 
-	m_events.emplace(type, model);
+	int type;
+
+	in >> type >> str;
+	if (in.fail())
+		return false;
+
+	m_events.emplace(type, str);
 	return true;
 }
 
@@ -473,7 +506,10 @@ bool APieModel<L>::readLevelsBlock(std::istream& in)
 	if (levels < 0)
 		return false;
 
-	return readLevels(levels, in);
+	if (!readLevels(levels, in))
+		return false;
+
+	return true;
 }
 
 /*

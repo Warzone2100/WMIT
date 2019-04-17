@@ -54,6 +54,28 @@
 #define PIE_MODEL_TEXPAGE_PREFIX "page-"
 #define PIE_MODEL_TCMASK_SUFFIX "_tcmask"
 
+class ApieAnimFrame
+{
+public:
+	int num;
+	Vertex<int> pos, rot;
+	Vertex<float> scale;
+
+	bool read(std::istream& in);
+};
+
+class ApieAnimObject
+{
+public:
+	int time, cycles, numframes;
+	std::vector<ApieAnimFrame> frames;
+
+	bool isValid() const {return !frames.empty();}
+	void clear() {frames.clear();}
+	bool read(std::istream& in);
+	//void write(std::ostream& out) const;
+};
+
 template<typename V, typename P, typename C>
 class APieLevel
 {
@@ -71,8 +93,10 @@ public:
 	int connectors() const;
 
 	bool isValid() const;
+
 protected:
 	void clearAll();
+	bool readAnimObjectDirective(std::istream &in);
 
 	std::vector<V> m_points;
 	std::vector<P> m_polygons;
@@ -80,6 +104,7 @@ protected:
 	WZMaterial m_material; // PIE3+
 	std::string m_shader_vert;
 	std::string m_shader_frag;
+	ApieAnimObject m_animobj;
 };
 
 template <typename L>
@@ -120,6 +145,7 @@ protected:
 	bool readEventsDirective(std::istream& in);
 	int readLevelsDirective(std::istream& in);
 	bool readLevels(int levels, std::istream& in);
+	bool readAnimObjectDirective(std::istream &in);
 
 	std::string m_texture;
 	std::string m_texture_normalmap;
