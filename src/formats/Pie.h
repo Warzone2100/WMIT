@@ -62,6 +62,7 @@ public:
 	Vertex<float> scale;
 
 	bool read(std::istream& in);
+	void write(std::ostream& out) const;
 };
 
 class ApieAnimObject
@@ -73,7 +74,7 @@ public:
 	bool isValid() const {return !frames.empty();}
 	void clear() {frames.clear();}
 	bool read(std::istream& in);
-	//void write(std::ostream& out) const;
+	void write(std::ostream& out) const;
 };
 
 template<typename V, typename P, typename C>
