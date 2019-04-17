@@ -210,6 +210,12 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 			cIt->write(out);
 		}
 	}
+
+	if (m_animobj.isValid())
+	{
+		out << PIE_MODEL_DIRECTIVE_ANIMOBJECT;
+		m_animobj.write(out);
+	}
 }
 
 template<typename V, typename P, typename C>

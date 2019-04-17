@@ -367,6 +367,11 @@ bool ApieAnimFrame::read(std::istream &in)
 	return !in.fail();
 }
 
+void ApieAnimFrame::write(std::ostream &out) const
+{
+	out << num  << ' ' << pos  << ' ' << rot  << ' ' << scale;
+}
+
 bool ApieAnimObject::read(std::istream &in)
 {
 	clear();
@@ -390,4 +395,15 @@ bool ApieAnimObject::read(std::istream &in)
 		frames.push_back(curFrame);
 	}
 	return true;
+}
+
+void ApieAnimObject::write(std::ostream &out) const
+{
+	out << ' ' << time << ' ' << cycles << ' ' << numframes;
+	for (size_t i = 0; i < static_cast<size_t>(numframes); ++i)
+	{
+		out << "\n\t";
+		frames[i].write(out);
+	}
+	out << '\n';
 }
