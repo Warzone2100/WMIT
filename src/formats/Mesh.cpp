@@ -24,6 +24,7 @@
 #include <iterator>
 #include <map>
 #include <set>
+#include <tuple>
 
 #include <sstream>
 
@@ -32,9 +33,13 @@
 #include "Pie.h"
 #include "Vector.h"
 
+typedef std::tuple<WZMVertex, WZMUV, WZMVertex> WZMPoint;
+
 // Scale animation numbers from int to float
 #define INT_SCALE       1000
 static const float FROM_INT_SCALE = 0.001f;
+
+static const WZMVertex WZ_AXES_FIX(-1.f, 1.f, 1.f);
 
 struct compareWZMPoint_less_wEps: public std::binary_function<WZMPoint&, WZMPoint&, bool>
 {
@@ -49,23 +54,23 @@ public:
 
 	bool operator() (const WZMPoint& lhs, const WZMPoint& rhs) const
 	{
-		if (vertLess(std::tr1::get<0>(lhs), std::tr1::get<0>(rhs)))
+		if (vertLess(std::get<0>(lhs), std::get<0>(rhs)))
 		{
 			return true;
 		}
 		else
 		{
-			if (vertEq(std::tr1::get<0>(lhs), std::tr1::get<0>(rhs)))
+			if (vertEq(std::get<0>(lhs), std::get<0>(rhs)))
 			{
-				if (uvLess(std::tr1::get<1>(lhs), std::tr1::get<1>(rhs)))
+				if (uvLess(std::get<1>(lhs), std::get<1>(rhs)))
 				{
 					return true;
 				}
 				else
 				{
-					if (uvEq(std::tr1::get<1>(lhs), std::tr1::get<1>(rhs)))
+					if (uvEq(std::get<1>(lhs), std::get<1>(rhs)))
 					{
-						return vertLess(std::tr1::get<2>(lhs), std::tr1::get<2>(rhs));
+						return vertLess(std::get<2>(lhs), std::get<2>(rhs));
 					}
 				}
 			}
@@ -131,8 +136,9 @@ Mesh::Mesh(const Pie3Level& p3)
 			continue;
 		}
 
-		tmpNrm = WZMVertex(WZMVertex(p3.m_points[itL->getIndex(1)]) - WZMVertex(p3.m_points[itL->getIndex(0)]))
-				.crossProduct(WZMVertex(p3.m_points[itL->getIndex(2)]) - WZMVertex(p3.m_points[itL->getIndex(0)]));
+		// Calculate inverted normal here and reverse winding below
+		tmpNrm = WZMVertex(WZMVertex(p3.m_points[itL->getIndex(2)]) * WZ_AXES_FIX - WZMVertex(p3.m_points[itL->getIndex(0)]) * WZ_AXES_FIX)
+				.crossProduct(WZMVertex(p3.m_points[itL->getIndex(1)]) * WZ_AXES_FIX - WZMVertex(p3.m_points[itL->getIndex(0)]) * WZ_AXES_FIX);
 		tmpNrm.normalize();
 
 		// For all 3 vertices of the triangle
@@ -142,17 +148,21 @@ Mesh::Mesh(const Pie3Level& p3)
 
 			if (!inResult.second)
 			{
-				iTri.operator[](i) = mapping[std::distance(tupleSet.begin(), inResult.first)];
+				iTri[i] = mapping[std::distance(tupleSet.begin(), inResult.first)];
 			}
 			else
 			{
 				itMap = mapping.begin();
 				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
 				mapping.insert(itMap, vertices());
-				iTri.operator[](i) = vertices();
-				addPoint(*inResult.first);
+				iTri[i] = vertices();
+
+				const WZMPoint& curPoint(*inResult.first);
+				addPoint(std::get<0>(curPoint).scale(WZ_AXES_FIX), std::get<1>(curPoint), std::get<2>(curPoint));
 			}
 		}
+		// Reverse winding
+		std::swap(iTri.b(), iTri.c());
 		addIndices(iTri);
 	}
 
@@ -184,6 +194,7 @@ Mesh::Mesh(const Pie3Level& p3)
 		m_frameArray.push_back(curFrame);
 	}
 
+
 	finishImport();
 	recalculateBoundData();
 }
@@ -212,17 +223,21 @@ Mesh::operator Pie3Level() const
 	 * so we remove those when converting
 	 */
 
+	IndexedTri tri;
+	Pie3Polygon p3Poly;
+	Pie3UV	p3UV;
+
+	p3Poly.m_flags = 0x200;
+
 	for (itTri = m_indexArray.begin(); itTri != m_indexArray.end(); ++itTri)
 	{
-		Pie3Polygon p3Poly;
-		Pie3UV	p3UV;
-
-		p3Poly.m_flags = 0x200;
-
+		tri = *itTri;
+		// Rewerse winding
+		std::swap(tri.b(), tri.c());
 		for (i = 0; i < 3; ++i)
 		{
 			typedef Pie3Vertex::equal_wEps equals;
-			mybinder1st<equals> compare(m_vertexArray[(*itTri)[i]]);
+			mybinder1st<equals> compare(m_vertexArray[tri[i]]);
 
 			itPV = std::find_if(p3.m_points.begin(), p3.m_points.end(), compare);
 
@@ -230,7 +245,7 @@ Mesh::operator Pie3Level() const
 			{
 				// add it now
 				p3Poly.m_indices[i] = p3.m_points.size();
-				p3.m_points.push_back(m_vertexArray[(*itTri)[i]]);
+				p3.m_points.push_back(m_vertexArray[tri[i]].scale(WZ_AXES_FIX));
 			}
 			else
 			{
@@ -238,8 +253,8 @@ Mesh::operator Pie3Level() const
 			}
 
 			// TODO: deal with UV animation
-			p3UV.u() = m_textureArray[(*itTri)[i]].u();
-			p3UV.v() = m_textureArray[(*itTri)[i]].v();
+			p3UV.u() = m_textureArray[tri[i]].u();
+			p3UV.v() = m_textureArray[tri[i]].v();
 			p3Poly.m_texCoords[i] = p3UV;
 		}
 		p3.m_polygons.push_back(p3Poly);
@@ -251,9 +266,9 @@ Mesh::operator Pie3Level() const
 	for (itC = m_connectors.begin(); itC != m_connectors.end(); ++itC)
 	{
 		Pie3Connector conn;
-		conn.pos.operator[](0) = itC->getPos().operator[](0);
-		conn.pos.operator[](1) = itC->getPos().operator[](1);
-		conn.pos.operator[](2) = itC->getPos().operator[](2);
+		conn.pos[0] = itC->getPos()[0];
+		conn.pos[1] = itC->getPos()[1];
+		conn.pos[2] = itC->getPos()[2];
 		p3.m_connectors.push_back(conn);
 	}
 
@@ -545,13 +560,15 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 					std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
 					mapping.insert(itMap, vertices());
 					tmpTri[i] = vertices();
-					addPoint(*inResult.first);
+
+					const WZMPoint& curPoint(*inResult.first);
+					addPoint(std::get<0>(curPoint), std::get<1>(curPoint), std::get<2>(curPoint));
 				}
 			}
 			else
 			{
 				tmpTri[i] = vertices();
-				addPoint(WZMPoint(verts[itFaces->tri[i]-1], tmpUv, tmpNrm));
+				addPoint(verts[itFaces->tri[i]-1], tmpUv, tmpNrm);
 			}
 		}
 		addIndices(tmpTri);
@@ -780,11 +797,11 @@ inline void Mesh::reserveIndices(const unsigned size)
 	m_indexArray.reserve(size);
 }
 
-void Mesh::addPoint(const WZMPoint &point)
+void Mesh::addPoint(const WZMVertex& vertex, const WZMUV& uv, const WZMVertex &normal)
 {
-	m_vertexArray.push_back(std::tr1::get<0>(point));
-	m_textureArray.push_back(std::tr1::get<1>(point));
-	m_normalArray.push_back(std::tr1::get<2>(point));
+	m_vertexArray.push_back(vertex);
+	m_textureArray.push_back(uv);
+	m_normalArray.push_back(normal);
 	m_tangentArray.resize(m_tangentArray.size() + 1);
 	m_bitangentArray.resize(m_bitangentArray.size() + 1);
 }
