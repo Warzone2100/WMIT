@@ -16,7 +16,7 @@
 	You should have received a copy of the GNU General Public License
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifdef POLYGON_T_CPP
+#pragma once
 
 #include <algorithm>
 
@@ -148,5 +148,3 @@ unsigned short PiePolygon<U, S, MAX>::triangles() const
 {
 	return std::max(0,vertices() - 2);
 }
-
-#endif //POLYGON_T_CPP

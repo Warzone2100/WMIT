@@ -108,6 +108,28 @@ struct Vertex : public Vector<T, COMPONENTS>
 		this->operator [](2) *= zfac;
 	}
 
+	inline void invert() {
+		this->scale(-1.f, -1.f, -1.f);
+	}
+
+	Vertex& operator *=(const Vertex& rhs) {
+		Vector<T, COMPONENTS>::operator*=(rhs);
+		return *this;
+	}
+
+	Vertex operator * (const Vertex& rhs) {
+		Vertex result(*this);
+		result *= rhs;
+		return result;
+	}
+
+	inline Vertex scale(const Vertex& rhs) const
+	{
+		Vertex result(*this);
+		result *= rhs;
+		return result;
+	}
+
 	Vertex crossProduct(const Vertex& rhs) const
 	{
 		return Vertex(y() * rhs.z() - z() * rhs.y(),

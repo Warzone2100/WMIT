@@ -24,7 +24,6 @@
 #include <string>
 #include <vector>
 #include <list>
-#include <tr1/tuple>
 
 #include <QtOpenGL/qgl.h>
 
@@ -46,7 +45,6 @@
 typedef Vertex<GLfloat> WZMVertex;
 typedef Vertex4<GLfloat> WZMVertex4;
 typedef UV<GLclampf> WZMUV;
-typedef std::tr1::tuple<WZMVertex, WZMUV, WZMVertex> WZMPoint;
 
 class Mesh;
 
@@ -140,7 +138,7 @@ protected:
 	void reservePoints(const unsigned size);
 	void reserveIndices(const unsigned size);
 	void addIndices(const IndexedTri& trio);
-	void addPoint(const WZMPoint& point);
+	void addPoint(const WZMVertex &vertex, const WZMUV &uv, const WZMVertex &normal);
 	void finishImport();
 
 	void recalculateBoundData();

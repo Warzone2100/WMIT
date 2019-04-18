@@ -151,6 +151,16 @@ struct Vector
 		return tmpV;
 	}
 
+	Vector& operator *= (const Vector& rhs)
+	{
+		unsigned i;
+		for (i = 0; i < COMPONENTS; ++i)
+		{
+			component[i] *= rhs.component[i];
+		}
+		return *this;
+	}
+
 	Vector operator * (const T& s) const
 	{
 		unsigned i;

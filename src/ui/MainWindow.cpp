@@ -234,13 +234,6 @@ bool MainWindow::saveModel(const QString &file, const WZM &model, const wmit_fil
 	default:
 		Pie3Model p3 = model;
 
-		// Fixup winding
-		{
-			WZM tmpModel(p3);
-			tmpModel.reverseWinding(-1);
-			p3 = tmpModel;
-		}
-
 		if (type == WMIT_FT_PIE2)
 		{
 			Pie2Model p2 = p3;
@@ -272,13 +265,6 @@ bool MainWindow::saveModel(const QString &file, const QWZM &model, const wmit_fi
 		break;
 	default:
 		Pie3Model p3 = model;
-
-		// Fixup winding
-		{
-			WZM tmpModel(p3);
-			tmpModel.reverseWinding(-1);
-			p3 = tmpModel;
-		}
 
 		if (type == WMIT_FT_PIE2)
 		{
@@ -385,8 +371,6 @@ bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
 			if (read_success)
 				model = WZM(p3);
 		}
-		model.reverseWinding();
-		model.flipNormals();
 	}
 
 	f.close();
