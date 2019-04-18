@@ -20,6 +20,8 @@
 #ifndef QWZM_HPP
 #define QWZM_HPP
 
+#include <time.h>
+
 #include <QtCore>
 #include <QString>
 #include <QStringList>
@@ -138,6 +140,7 @@ private:
 
 	int m_active_mesh;
 	bool m_pending_changes;
+	clock_t m_timeAnimationStarted;
 
 	QColor m_tcmaskColour;
 

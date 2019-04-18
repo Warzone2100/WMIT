@@ -17,6 +17,8 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <time.h>
+
 #include "QWZM.h"
 #include "Pie.h"
 
@@ -37,7 +39,11 @@ static const char vertexTexCoordAtributeName[] = "vertexTexCoord";
 const GLint QWZM::winding = GL_CCW;
 
 QWZM::QWZM(QObject *parent):
-	QObject(parent), m_tcmaskColour(0, 0x60, 0, 0xFF), m_drawNormals(false), m_drawCenterPoint(false)
+	QObject(parent),
+	m_timeAnimationStarted(clock()),
+	m_tcmaskColour(0, 0x60, 0, 0xFF),
+	m_drawNormals(false),
+	m_drawCenterPoint(false)
 {
 	defaultConstructor();
 }
@@ -106,18 +112,50 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 	}
 
+	const clock_t elapsed = clock() - m_timeAnimationStarted;
+	const float elapsed_msecs = (static_cast<float>(elapsed) / CLOCKS_PER_SEC) * 1000.f;
+
 	glColor3f(1.f, 1.f, 1.f);
+
+	QMatrix4x4 origMshMV = render_mtxModelView;
 
 	for (int i = 0; i < (int)m_meshes.size(); ++i)
 	{
 		const Mesh& msh = m_meshes.at(i);
 
+		glPushMatrix();
+
 		if (m_active_mesh == i)
 		{
-			glPushMatrix();
 			glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 			if (!isFixedPipelineRenderer())
 				render_mtxModelView.scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
+		}
+
+		if (!msh.m_frameArray.empty())
+		{
+			const size_t frame_idx = static_cast<size_t>(elapsed_msecs /
+						      static_cast<float>(msh.m_frame_time)) % msh.m_frameArray.size();
+			const Frame& curAnimFrame = msh.m_frameArray[frame_idx];
+
+			// disabled frame if negative, for implementing key frame animation
+			if (curAnimFrame.scale.x() >= 0)
+			{
+				glTranslatef(curAnimFrame.trans.x(), curAnimFrame.trans.y(), curAnimFrame.trans.z());
+				glRotatef(curAnimFrame.rot.x(), 1.f, 0.f, 0.f);
+				glRotatef(curAnimFrame.rot.z(), 0.f, 0.f, 1.f);
+				glRotatef(curAnimFrame.rot.y(), 0.f, 1.f, 0.f);
+				glScalef(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
+
+				if (!isFixedPipelineRenderer())
+				{
+					render_mtxModelView.translate(curAnimFrame.trans.x(), curAnimFrame.trans.y(), curAnimFrame.trans.z());
+					render_mtxModelView.rotate(curAnimFrame.rot.x(), 1.f, 0.f, 0.f);
+					render_mtxModelView.rotate(curAnimFrame.rot.z(), 0.f, 0.f, 1.f);
+					render_mtxModelView.rotate(curAnimFrame.rot.y(), 0.f, 1.f, 0.f);
+					render_mtxModelView.scale(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
+				}
+			}
 		}
 
 		if (!isFixedPipelineRenderer())
@@ -160,15 +198,12 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		CPP0X_FEATURED(static_assert(sizeof(IndexedTri) == sizeof(GLushort)*3, "IndexedTri has become fat."));
 		glDrawElements(GL_TRIANGLES, msh.m_indexArray.size() * 3, GL_UNSIGNED_SHORT, &msh.m_indexArray[0]);
 
-		if (m_active_mesh == i)
-		{
-			glPopMatrix();
-			if (!isFixedPipelineRenderer())
-				render_mtxModelView.scale(1 / (scale_all * scale_xyz[0]), 1 / (scale_all * scale_xyz[1]), 1 / (scale_all * scale_xyz[2]));
-		}
+
+		glPopMatrix();
 
 		if (!isFixedPipelineRenderer())
 		{
+			render_mtxModelView = origMshMV;
 			// release shader data
 			if (shader)
 			{

@@ -32,6 +32,10 @@
 #include "Pie.h"
 #include "Vector.h"
 
+// Scale animation numbers from int to float
+#define INT_SCALE       1000
+static const float FROM_INT_SCALE = 0.001f;
+
 struct compareWZMPoint_less_wEps: public std::binary_function<WZMPoint&, WZMPoint&, bool>
 {
 	const WZMVertex::less_wEps vertLess;
@@ -172,9 +176,11 @@ Mesh::Mesh(const Pie3Level& p3)
 	Frame curFrame;
 	for (const auto& p3Frame: p3.m_animobj.frames)
 	{
-		curFrame.trans = WZMVertex(p3Frame.pos.x(), p3Frame.pos.y(), p3Frame.pos.z());
-		curFrame.rot = WZMVertex(p3Frame.rot.x(), p3Frame.rot.y(), p3Frame.rot.z());
-		curFrame.scale = WZMVertex(p3Frame.scale.x(), p3Frame.scale.y(), p3Frame.scale.z());
+		curFrame.trans = WZMVertex(-p3Frame.pos.x(), p3Frame.pos.z(), -p3Frame.pos.y());
+		curFrame.trans.scale(FROM_INT_SCALE, FROM_INT_SCALE, FROM_INT_SCALE);
+		curFrame.rot = WZMVertex(p3Frame.rot.x(), -p3Frame.rot.z(), p3Frame.rot.y());
+		curFrame.rot.scale(FROM_INT_SCALE, FROM_INT_SCALE, FROM_INT_SCALE);
+		curFrame.scale = WZMVertex(p3Frame.scale.x(), p3Frame.scale.z(), p3Frame.scale.y());
 		m_frameArray.push_back(curFrame);
 	}
 
@@ -264,13 +270,13 @@ Mesh::operator Pie3Level() const
 	for (const auto& curFrame: m_frameArray)
 	{
 		p3Frame.num = cur_num++;
-		p3Frame.pos = Vertex<int>(static_cast<int>(curFrame.trans.x()),
-					  static_cast<int>(curFrame.trans.y()),
-					  static_cast<int>(curFrame.trans.z()));
-		p3Frame.rot = Vertex<int>(static_cast<int>(curFrame.rot.x()),
-					  static_cast<int>(curFrame.rot.y()),
-					  static_cast<int>(curFrame.rot.z()));
-		p3Frame.scale = Vertex<float>(curFrame.scale.x(), curFrame.scale.y(), curFrame.scale.z());
+		p3Frame.pos = Vertex<int>(static_cast<int>(-curFrame.trans.x() * INT_SCALE),
+					  static_cast<int>(curFrame.trans.z() * INT_SCALE),
+					  static_cast<int>(-curFrame.trans.y() * INT_SCALE));
+		p3Frame.rot = Vertex<int>(static_cast<int>(curFrame.rot.x() * INT_SCALE),
+					  static_cast<int>(-curFrame.rot.z() * INT_SCALE),
+					  static_cast<int>(curFrame.rot.y() * INT_SCALE));
+		p3Frame.scale = Vertex<float>(curFrame.scale.x(), curFrame.scale.z(), curFrame.scale.y());
 		p3.m_animobj.frames.push_back(p3Frame);
 	}
 
