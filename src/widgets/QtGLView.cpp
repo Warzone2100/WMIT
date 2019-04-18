@@ -108,6 +108,9 @@ void QtGLView::init()
 
 	light.setPosition(lightPos);
 
+	setAnimationPeriod(1000 / 60);
+	startAnimation();
+
 	emit viewerInitialized();
 }
 
