@@ -892,6 +892,9 @@ void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
 	m_mesh_aabb_min.scale(x, y, z);
 	m_mesh_aabb_max.scale(x, y, z);
 
+	// Update animation
+	for (auto& curFrame: m_frameArray)
+		curFrame.trans.scale(x, y, z);
 }
 
 void Mesh::mirrorUsingLocalCenter(int axis)
