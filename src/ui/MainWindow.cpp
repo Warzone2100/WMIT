@@ -51,7 +51,7 @@ QString buildAppTitle(QString prefix = QString())
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_ui(new Ui::MainWindow),
 	m_importDialog(new ImportDialog(this)),
-	m_exportDialog(NULL),
+	m_exportDialog(nullptr),
 	m_materialDock(new MaterialDock(this)),
 	m_transformDock(new TransformDock(this)),
 	m_textureDialog(new TextureDialog(this)),
@@ -110,8 +110,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionShowGrid, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setGridIsDrawn(bool)));
 	connect(m_ui->actionShowLightSource, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setDrawLightSource(bool)));
 	connect(m_ui->actionLink_Light_Source_To_Camera, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setLinkLightToCamera(bool)));
+	connect(m_ui->actionAnimate, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setAnimateState(bool)));
 	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
-    connect(m_ui->actionSetTeamColor, SIGNAL(triggered()), this, SLOT(actionSetTeamColor()));
+	connect(m_ui->actionSetTeamColor, SIGNAL(triggered()), this, SLOT(actionSetTeamColor()));
 
 	/// Material dock
 	m_materialDock->toggleViewAction()->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
@@ -317,8 +318,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	settings.setValue("3DView/ShowLightSource", m_ui->actionShowLightSource->isChecked());
 	settings.setValue("3DView/LinkLightToCamera", m_ui->actionLink_Light_Source_To_Camera->isChecked());
 	settings.setValue("3DView/EnableUserShaders", m_actionEnableUserShaders->isChecked());
+	settings.setValue("3DView/Animate", m_ui->actionAnimate->isChecked());
 
-    event->accept();
+	event->accept();
 }
 
 bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
@@ -447,7 +449,7 @@ void MainWindow::actionOpen()
 	}
 
 	delete fileDialog;
-	fileDialog = 0;
+	fileDialog = nullptr;
 
 	if (!filePath.isEmpty())
 	{
@@ -602,6 +604,7 @@ bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *
 void MainWindow::viewerInitialized()
 {
 	m_ui->centralWidget->addToRenderList(&m_model);
+	m_ui->centralWidget->addToAnimateList(&m_model);
 
 	m_actionEnableUserShaders = new QAction("Enable external shaders", this);
 	m_actionEnableUserShaders->setCheckable(true);
@@ -671,6 +674,7 @@ void MainWindow::viewerInitialized()
 	m_ui->actionShowLightSource->setChecked(m_settings->value("3DView/ShowLightSource", true).toBool());
 	m_ui->actionLink_Light_Source_To_Camera->setChecked(m_settings->value("3DView/LinkLightToCamera", true).toBool());
 	m_actionEnableUserShaders->setChecked(m_settings->value("3DView/EnableUserShaders", false).toBool());
+	m_ui->actionAnimate->setChecked(m_settings->value("3DView/Animate", true).toBool());
 
 	actionEnableUserShaders(m_actionEnableUserShaders->isChecked());
 }
@@ -802,7 +806,7 @@ void MainWindow::actionAppendModel()
 		filePath = fileDialog->selectedFiles().first();
 	}
 	delete fileDialog;
-	fileDialog = 0;
+	fileDialog = nullptr;
 
 	if (!filePath.isEmpty())
 	{

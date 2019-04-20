@@ -35,6 +35,7 @@
 
 #include "IGLTexturedRenderable.h"
 #include "IGLShaderRenderable.h"
+#include "IAnimatable.h"
 
 using namespace qglviewer;
 
@@ -75,6 +76,14 @@ QtGLView::~QtGLView()
 	}
 }
 
+void QtGLView::animate()
+{
+	foreach(IAnimatable* obj, animateList)
+	{
+		obj->animate();
+	}
+}
+
 void QtGLView::init()
 {
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightCol0[LIGHT_EMISSIVE]);
@@ -109,7 +118,6 @@ void QtGLView::init()
 	light.setPosition(lightPos);
 
 	setAnimationPeriod(1000 / 60);
-	startAnimation();
 
 	emit viewerInitialized();
 }
@@ -280,14 +288,24 @@ void QtGLView::removeFromRenderList(IGLRenderable* object)
 {
 	int index = renderList.indexOf(object, 0);
 	if (index != -1)
-	{
 		renderList.removeAt(index);
-	}
 }
 
 void QtGLView::clearRenderList()
 {
 	renderList.clear();
+}
+
+void QtGLView::addToAnimateList(IAnimatable *object)
+{
+	animateList.append(object);
+}
+
+void QtGLView::removeFromAnimateList(IAnimatable *object)
+{
+	int index = animateList.indexOf(object, 0);
+	if (index != -1)
+		animateList.removeAt(index);
 }
 
 /// check textures for change
@@ -524,5 +542,20 @@ void QtGLView::setDrawLightSource(bool draw)
 void QtGLView::setLinkLightToCamera(bool link)
 {
 	linkLightToCamera = link;
+	repaint();
+}
+
+void QtGLView::setAnimateState(bool enabled)
+{
+	if (animationIsStarted())
+	{
+		if (!enabled)
+			stopAnimation();
+	}
+	else
+	{
+		if (enabled)
+			startAnimation();
+	}
 	repaint();
 }

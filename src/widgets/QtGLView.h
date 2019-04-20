@@ -37,6 +37,7 @@
 #include "IGLShaderManager.h"
 
 class IGLRenderable;
+class IAnimatable;
 class ITexturedRenderable;
 class ITCMaskRenderable;
 class QGLShaderProgram;
@@ -45,15 +46,20 @@ class QtGLView : public QGLViewer, public IGLTextureManager, public IGLShaderMan
 {
 	Q_OBJECT
 public:
-	explicit QtGLView(QWidget *parent = 0);
+	explicit QtGLView(QWidget *parent = nullptr);
 	~QtGLView();
 
+	void animate();
 	void draw();
 	void postDraw();
 
 	void addToRenderList(IGLRenderable* object);
 	void removeFromRenderList(IGLRenderable* object);
 	void clearRenderList();
+
+	void addToAnimateList(IAnimatable* object);
+	void removeFromAnimateList(IAnimatable* object);
+	void clearAnimateList() {animateList.clear();}
 
 	/// GLTextureManager components
 	virtual GLTexture createTexture(const QString& fileName);
@@ -71,6 +77,7 @@ public:
 public slots:
 	void setDrawLightSource(bool draw);
 	void setLinkLightToCamera(bool link);
+	void setAnimateState(bool enabled);
 
 protected:
 	void init();
@@ -89,6 +96,7 @@ protected:
 
 private:
 	QList<IGLRenderable*> renderList;
+	QList<IAnimatable*> animateList;
 
 	/// GLTextureManager components
 	QHash<QString, ManagedGLTexture> m_textures;

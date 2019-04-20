@@ -81,6 +81,7 @@
      <string>View</string>
     </property>
     <addaction name="actionRenderer"/>
+    <addaction name="actionAnimate"/>
     <addaction name="actionSetTeamColor"/>
     <addaction name="separator"/>
     <addaction name="actionShowModelCenter"/>
@@ -294,6 +295,22 @@
    </property>
    <property name="shortcut">
     <string>Shift+L</string>
+   </property>
+  </action>
+  <action name="actionRun_Animation">
+   <property name="text">
+    <string>Run Animation</string>
+   </property>
+  </action>
+  <action name="actionAnimate">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Run Animation</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
  </widget>
