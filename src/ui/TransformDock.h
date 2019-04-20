@@ -33,13 +33,14 @@ class TransformDock : public QDockWidget
 	Q_OBJECT
 
 public:
-	TransformDock(QWidget *parent = 0);
+	TransformDock(QWidget *parent = nullptr);
 	~TransformDock();
 
 	void reset(bool reset_prev_values = false);
 
 public slots:
 	void setMeshCount(int value, QStringList names);
+	void setMirrorState(bool enabled);
 
 protected:
 	void changeEvent(QEvent *event);

@@ -153,12 +153,20 @@ void MainWindow::clear()
 	m_model.clear();
 	m_currentFile.clear();
 
-    setWindowTitle(buildAppTitle());
+	setWindowTitle(buildAppTitle());
 
-	m_ui->actionClose->setDisabled(true);
-	m_ui->actionSaveAs->setDisabled(true);
-	m_ui->actionSetupTextures->setDisabled(true);
-	m_ui->actionAppendModel->setDisabled(true);
+	doAfterModelWasLoaded(false);
+}
+
+void MainWindow::doAfterModelWasLoaded(const bool success)
+{
+	m_ui->actionClose->setEnabled(success);
+	m_ui->actionSaveAs->setEnabled(success);
+	m_ui->actionSetupTextures->setEnabled(success);
+	m_ui->actionAppendModel->setEnabled(success);
+
+	// Disallow mirroring as it will mess-up animation
+	m_transformDock->setMirrorState(success && !m_model.hasAnimObject());
 }
 
 bool MainWindow::openFile(const QString &filePath)
@@ -176,11 +184,7 @@ bool MainWindow::openFile(const QString &filePath)
 		m_model = tmpmodel;
 		m_currentFile = modelFileNfo.absoluteFilePath();
 
-        setWindowTitle(buildAppTitle(modelFileNfo.baseName()));
-		m_ui->actionClose->setEnabled(true);
-		m_ui->actionSaveAs->setEnabled(true);
-		m_ui->actionSetupTextures->setEnabled(true);
-		m_ui->actionAppendModel->setEnabled(true);
+		setWindowTitle(buildAppTitle(modelFileNfo.baseName()));
 
 		if (!fireTextureDialog(true))
 		{
@@ -189,6 +193,8 @@ bool MainWindow::openFile(const QString &filePath)
 		}
 
 		m_materialDock->setMaterial(m_model.getMaterial());
+
+		doAfterModelWasLoaded();
 	}
 
 	return true;
@@ -808,6 +814,8 @@ void MainWindow::actionAppendModel()
 			{
 				m_model.addMesh(newmodel.getMesh(i));
 			}
+
+			doAfterModelWasLoaded();
 		}
 	}
 }

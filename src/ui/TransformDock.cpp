@@ -108,6 +108,11 @@ void TransformDock::setMeshCount(int value, QStringList names)
 	selectMesh(selected); // force this because of possible mesh stack pop
 }
 
+void TransformDock::setMirrorState(bool enabled)
+{
+	m_ui->gbMirror->setEnabled(enabled);
+}
+
 void TransformDock::acceptTransformations()
 {
 	// save and apply
