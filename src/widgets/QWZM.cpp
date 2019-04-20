@@ -169,6 +169,11 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 					shader->enableAttributeArray(vertexAtributeName);
 					shader->enableAttributeArray(vertexNormalAtributeName);
 					shader->enableAttributeArray(vertexTexCoordAtributeName);
+
+					shader->setAttributeArray(tangentAtributeName, msh.m_tangentArray[0], 4);
+					shader->setAttributeArray(vertexAtributeName, msh.m_vertexArray[0], 3);
+					shader->setAttributeArray(vertexTexCoordAtributeName, msh.m_textureArray[0], 2);
+					shader->setAttributeArray(vertexNormalAtributeName, msh.m_normalArray[0], 3);
 				}
 			}
 		}
@@ -182,14 +187,6 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
 		glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArray[0]);
 
-		if (shader)
-		{
-			shader->setAttributeArray(tangentAtributeName, msh.m_tangentArray[0], 4);
-			shader->setAttributeArray(vertexAtributeName, msh.m_vertexArray[0], 3);
-			shader->setAttributeArray(vertexTexCoordAtributeName, msh.m_textureArray[0], 2);
-			shader->setAttributeArray(vertexNormalAtributeName, msh.m_normalArray[0], 3);
-		}
-
 		glNormalPointer(GL_FLOAT, 0, &msh.m_normalArray[0]);
 
 		CPP0X_FEATURED(static_assert(sizeof(WZMVertex) == sizeof(GLfloat)*3, "WZMVertex has become fat."));
@@ -197,7 +194,6 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 
 		CPP0X_FEATURED(static_assert(sizeof(IndexedTri) == sizeof(GLushort)*3, "IndexedTri has become fat."));
 		glDrawElements(GL_TRIANGLES, msh.m_indexArray.size() * 3, GL_UNSIGNED_SHORT, &msh.m_indexArray[0]);
-
 
 		glPopMatrix();
 
