@@ -683,6 +683,26 @@ bool WZM::isValid() const
 	return true;
 }
 
+bool WZM::hasAnimObject(int mesh) const
+{
+	// All or a single mesh
+	if (mesh < 0)
+	{
+		std::vector<Mesh>::const_iterator it;
+		for (it = m_meshes.begin(); it != m_meshes.end(); ++it)
+		{
+			if (it->frames() > 0)
+				return true;
+		}
+	}
+	else
+	{
+		if (m_meshes.size() > static_cast<size_t>(mesh))
+			return m_meshes[static_cast<size_t>(mesh)].frames() > 0;
+	}
+	return false;
+}
+
 void WZM::clear()
 {
 	m_meshes.clear();

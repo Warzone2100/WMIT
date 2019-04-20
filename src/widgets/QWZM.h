@@ -47,7 +47,7 @@ class QWZM: public QObject, protected WZM, public IAnimatable,
 {
 	Q_OBJECT
 public:
-	explicit QWZM(QObject *parent = 0);
+	explicit QWZM(QObject *parent = nullptr);
 	virtual ~QWZM();
 
 	void operator=(const WZM& wzm);
@@ -120,6 +120,8 @@ public:
 	void addMesh (const Mesh& mesh);
 	void rmMesh (int index);
 	int meshes() const {return WZM::meshes();}
+
+	bool hasAnimObject(int mesh = -1) const {return WZM::hasAnimObject(mesh);}
 
 private:
 	Q_DISABLE_COPY(QWZM)
