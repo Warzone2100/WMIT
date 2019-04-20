@@ -107,8 +107,8 @@ Mesh::Mesh(const Pie3Level& p3)
 	t_tupleSet tupleSet;
 	std::pair<t_tupleSet::iterator, bool> inResult;
 
-	std::vector<unsigned> mapping;
-	std::vector<unsigned>::iterator itMap;
+	std::vector<int> mapping;
+	std::vector<int>::iterator itMap;
 
 	IndexedTri iTri;
 	WZMVertex tmpNrm;
@@ -142,20 +142,22 @@ Mesh::Mesh(const Pie3Level& p3)
 		tmpNrm.normalize();
 
 		// For all 3 vertices of the triangle
-		for (int i = 0; i < 3; ++i)
+		for (u_short i = 0; i < 3; ++i)
 		{
 			inResult = tupleSet.insert(WZMPoint(p3.m_points[itL->getIndex(i)], itL->getUV(i, 0), tmpNrm));
 
+			t_tupleSet::difference_type dist = std::distance(tupleSet.begin(), inResult.first);
+
 			if (!inResult.second)
 			{
-				iTri[i] = mapping[std::distance(tupleSet.begin(), inResult.first)];
+				iTri[i] = static_cast<GLushort>(mapping[static_cast<size_t>(dist)]);
 			}
 			else
 			{
 				itMap = mapping.begin();
-				std::advance(itMap, std::distance(tupleSet.begin(), inResult.first));
-				mapping.insert(itMap, vertices());
-				iTri[i] = vertices();
+				std::advance(itMap, dist);
+				mapping.insert(itMap, static_cast<int>(vertices()));
+				iTri[i] = static_cast<GLushort>(vertices());
 
 				const WZMPoint& curPoint(*inResult.first);
 				addPoint(std::get<0>(curPoint).scale(WZ_AXES_FIX), std::get<1>(curPoint), std::get<2>(curPoint));
