@@ -951,6 +951,14 @@ void Mesh::mirrorFromPoint(const WZMVertex& point, int axis)
 	}
 
 	recalculateBoundData();
+
+	// Update animation
+	/*
+	for (auto& curFrame: m_frameArray)
+	{
+
+	}
+	*/
 }
 
 void Mesh::reverseWinding()
