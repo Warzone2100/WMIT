@@ -712,22 +712,22 @@ void Mesh::rmConnector (int index)
 	m_connectors.erase(pos);
 }
 
-inline int Mesh::connectors() const
+inline size_t Mesh::connectors() const
 {
 	return m_connectors.size();
 }
 
-inline unsigned Mesh::vertices() const
+inline size_t Mesh::vertices() const
 {
 	return m_vertexArray.size();
 }
 
-inline unsigned Mesh::frames() const
+size_t Mesh::frames() const
 {
 	return m_frameArray.size();
 }
 
-inline unsigned Mesh::indices() const
+inline size_t Mesh::indices() const
 {
 	return m_indexArray.size();
 }

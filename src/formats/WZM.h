@@ -105,6 +105,7 @@ public:
 	void rmMesh (int index);
 
 	bool isValid() const;
+	bool hasAnimObject (int mesh = -1) const;
 
 	void scale(GLfloat x, GLfloat y, GLfloat z, int mesh = -1);
 	void mirror(int axis, int mesh = -1); // x == 0, y == 1, z == 2

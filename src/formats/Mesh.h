@@ -100,11 +100,11 @@ public:
 	const WZMConnector& getConnector(int index) const;
 	void addConnector (const WZMConnector& conn);
 	void rmConnector (int index);
-	int connectors() const;
+	size_t connectors() const;
 
-	unsigned vertices() const;
-	unsigned indices() const;
-	unsigned frames() const;
+	size_t vertices() const;
+	size_t indices() const;
+	size_t frames() const;
 
 	bool isValid() const;
 
