@@ -148,6 +148,8 @@ private:
 
 	bool m_drawNormals;
 	bool m_drawCenterPoint;
+
+	float m_animation_elapsed_msecs;
 };
 
 #endif // QWZM_HPP

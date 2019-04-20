@@ -43,7 +43,8 @@ QWZM::QWZM(QObject *parent):
 	m_timeAnimationStarted(clock()),
 	m_tcmaskColour(0, 0x60, 0, 0xFF),
 	m_drawNormals(false),
-	m_drawCenterPoint(false)
+	m_drawCenterPoint(false),
+	m_animation_elapsed_msecs(-1.f)
 {
 	defaultConstructor();
 }
@@ -112,9 +113,6 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 	}
 
-	const clock_t elapsed = clock() - m_timeAnimationStarted;
-	const float elapsed_msecs = (static_cast<float>(elapsed) / CLOCKS_PER_SEC) * 1000.f;
-
 	glColor3f(1.f, 1.f, 1.f);
 
 	QMatrix4x4 origMshMV = render_mtxModelView;
@@ -132,11 +130,11 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 				render_mtxModelView.scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 		}
 
-		if (!msh.m_frameArray.empty())
+		if ((m_animation_elapsed_msecs >= 0) && !msh.m_frameArray.empty())
 		{
-			const size_t frame_idx = static_cast<size_t>(elapsed_msecs /
-						      static_cast<float>(msh.m_frame_time)) % msh.m_frameArray.size();
-			const Frame& curAnimFrame = msh.m_frameArray[frame_idx];
+			const size_t animframe_to_draw = static_cast<size_t>(m_animation_elapsed_msecs /
+								  static_cast<float>(msh.m_frame_time)) % msh.m_frameArray.size();
+			const Frame& curAnimFrame = msh.m_frameArray[animframe_to_draw];
 
 			// disabled frame if negative, for implementing key frame animation
 			if (curAnimFrame.scale.x() >= 0)
@@ -319,7 +317,8 @@ void QWZM::drawNormals()
 
 void QWZM::animate()
 {
-
+	const clock_t elapsed = clock() - m_timeAnimationStarted;
+	m_animation_elapsed_msecs = (static_cast<float>(elapsed) / CLOCKS_PER_SEC) * 1000.f;
 }
 
 void QWZM::clear()
