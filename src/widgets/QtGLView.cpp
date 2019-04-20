@@ -387,7 +387,7 @@ GLTexture QtGLView::createTexture(const QString& fileName)
 					if (texIt->users <= 0)
 					{
 						_deleteTexture(texIt);
-
+						texIt = m_textures.begin();
 					}
 					else
 					{
@@ -396,7 +396,7 @@ GLTexture QtGLView::createTexture(const QString& fileName)
 				}
 			}
 
-			return texture;
+			return std::move(texture);
 		}
 		else
 		{

@@ -31,7 +31,7 @@ protected:
 	IGLTextureManager *m_texMan;
 
 public:
-	IGLTexturedRenderable(): m_texMan(NULL) {}
+	IGLTexturedRenderable(): m_texMan(nullptr) {}
 	IGLTexturedRenderable(IGLTextureManager *manager): m_texMan(manager) {}
 	virtual ~IGLTexturedRenderable() {}
 
@@ -39,7 +39,7 @@ public:
 
 	virtual QString idToFilePath(GLuint id)
 	{
-		if (m_texMan != NULL)
+		if (m_texMan != nullptr)
 		{
 			return m_texMan->idToFilePath(id);
 		}
@@ -51,12 +51,12 @@ public:
 
 	virtual IGLTextureManager* getTextureManager() {return m_texMan;}
 
-	virtual bool hasTextureManager() const {return m_texMan != NULL;}
+	virtual bool hasTextureManager() const {return m_texMan != nullptr;}
 
 protected:
 	virtual GLTexture createTexture(const QString& fileName) const
 	{
-		if (m_texMan != NULL)
+		if (m_texMan != nullptr)
 		{
 			return m_texMan->createTexture(fileName);
 		}
@@ -68,7 +68,7 @@ protected:
 
 	virtual void deleteTexture(GLuint id) const
 	{
-		if (m_texMan != NULL)
+		if (m_texMan != nullptr)
 		{
 			m_texMan->deleteTexture(id);
 		}
