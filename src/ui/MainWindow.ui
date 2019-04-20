@@ -310,7 +310,7 @@
     <string>Run Animation</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+A</string>
+    <string>Shift+A</string>
    </property>
   </action>
  </widget>
