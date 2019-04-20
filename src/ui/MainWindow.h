@@ -51,7 +51,7 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	MainWindow(QWidget *parent = 0);
+	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 
 	void clear();
@@ -67,7 +67,6 @@ public:
 protected:
 	void changeEvent(QEvent *event);
 	void closeEvent(QCloseEvent *event);
-
 private slots:
 	void actionOpen();
 	void actionOpenRecent(QAction *action);
@@ -122,6 +121,7 @@ private:
 
 	bool fireTextureDialog(const bool reinit = false);
 	bool reloadShader(wz_shader_type_t type, bool user_shader, QString* errMessage = nullptr);
+	void doAfterModelWasLoaded(const bool success = true);
 };
 
 #endif // MAINWINDOW_HPP
