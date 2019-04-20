@@ -49,7 +49,7 @@ struct compareWZMPoint_less_wEps: public std::binary_function<WZMPoint&, WZMPoin
 	const WZMUV::equal_wEps uvEq;
 
 public:
-	compareWZMPoint_less_wEps(float vertEps = 0.0001, float uvEps = 0.0001):
+	compareWZMPoint_less_wEps(float vertEps = 0.0001f, float uvEps = 0.0001f):
 		vertLess(vertEps), uvLess(uvEps), vertEq(vertEps), uvEq(uvEps) {}
 
 	bool operator() (const WZMPoint& lhs, const WZMPoint& rhs) const
@@ -112,6 +112,7 @@ Mesh::Mesh(const Pie3Level& p3)
 
 	IndexedTri iTri;
 	WZMVertex tmpNrm;
+	WZMVertex v[3];
 
 	defaultConstructor();
 
@@ -137,14 +138,15 @@ Mesh::Mesh(const Pie3Level& p3)
 		}
 
 		// Calculate inverted normal here and reverse winding below
-		tmpNrm = WZMVertex(WZMVertex(p3.m_points[itL->getIndex(2)]) * WZ_AXES_FIX - WZMVertex(p3.m_points[itL->getIndex(0)]) * WZ_AXES_FIX)
-				.crossProduct(WZMVertex(p3.m_points[itL->getIndex(1)]) * WZ_AXES_FIX - WZMVertex(p3.m_points[itL->getIndex(0)]) * WZ_AXES_FIX);
-		tmpNrm.normalize();
+		v[0] = WZMVertex(p3.m_points[itL->getIndex(0)]) * WZ_AXES_FIX;
+		v[1] = WZMVertex(p3.m_points[itL->getIndex(1)]) * WZ_AXES_FIX;
+		v[2] = WZMVertex(p3.m_points[itL->getIndex(2)]) * WZ_AXES_FIX;
+		tmpNrm = WZMVertex(v[2] - v[0]).crossProduct(v[1] - v[0]).normalize();
 
 		// For all 3 vertices of the triangle
 		for (u_short i = 0; i < 3; ++i)
 		{
-			inResult = tupleSet.insert(WZMPoint(p3.m_points[itL->getIndex(i)], itL->getUV(i, 0), tmpNrm));
+			inResult = tupleSet.insert(WZMPoint(v[i], itL->getUV(i, 0), tmpNrm));
 
 			t_tupleSet::difference_type dist = std::distance(tupleSet.begin(), inResult.first);
 
@@ -160,7 +162,7 @@ Mesh::Mesh(const Pie3Level& p3)
 				iTri[i] = static_cast<GLushort>(vertices());
 
 				const WZMPoint& curPoint(*inResult.first);
-				addPoint(std::get<0>(curPoint).scale(WZ_AXES_FIX), std::get<1>(curPoint), std::get<2>(curPoint));
+				addPoint(std::get<0>(curPoint), std::get<1>(curPoint), std::get<2>(curPoint));
 			}
 		}
 		// Reverse winding
