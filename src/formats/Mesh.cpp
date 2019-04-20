@@ -241,7 +241,8 @@ Mesh::operator Pie3Level() const
 		for (i = 0; i < 3; ++i)
 		{
 			typedef Pie3Vertex::equal_wEps equals;
-			mybinder1st<equals> compare(m_vertexArray[tri[i]]);
+			WZMVertex fixedVert(m_vertexArray[tri[i]] * WZ_AXES_FIX);
+			mybinder1st<equals> compare(fixedVert);
 
 			itPV = std::find_if(p3.m_points.begin(), p3.m_points.end(), compare);
 
@@ -249,7 +250,7 @@ Mesh::operator Pie3Level() const
 			{
 				// add it now
 				p3Poly.m_indices[i] = p3.m_points.size();
-				p3.m_points.push_back(m_vertexArray[tri[i]].scale(WZ_AXES_FIX));
+				p3.m_points.push_back(fixedVert);
 			}
 			else
 			{
