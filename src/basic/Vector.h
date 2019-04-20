@@ -56,14 +56,7 @@ struct Vector
 	{
 		equal_wEps(T eps = std::numeric_limits<T>::epsilon())
 		{
-			if (eps < std::numeric_limits<T>::epsilon())
-			{
-				m_eps = std::numeric_limits<T>::epsilon();
-			}
-			else
-			{
-				m_eps = eps;
-			}
+			setEps(eps);
 		}
 		bool operator() (Vector lhs, Vector rhs)const
 		{
@@ -77,9 +70,16 @@ struct Vector
 			}
 			return true;
 		}
-		void setEps(double eps = std::numeric_limits<T>::epsilon())
+		inline void setEps(T eps = std::numeric_limits<T>::epsilon())
 		{
-			m_eps = eps;
+			if (eps <= std::numeric_limits<T>::epsilon())
+			{
+				m_eps = std::numeric_limits<T>::epsilon();
+			}
+			else
+			{
+				m_eps = eps;
+			}
 		}
 	private:
 		T m_eps;
@@ -183,7 +183,7 @@ struct Vector
 		return tmpV;
 	}
 
-	bool operator < (const Vector& rhs)
+	bool operator < (const Vector& rhs) const
 	{
 		unsigned i;
 		for (i = 0; i < COMPONENTS-1; ++i)

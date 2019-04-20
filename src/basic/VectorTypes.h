@@ -117,7 +117,7 @@ struct Vertex : public Vector<T, COMPONENTS>
 		return *this;
 	}
 
-	Vertex operator * (const Vertex& rhs) {
+	Vertex operator * (const Vertex& rhs) const {
 		Vertex result(*this);
 		result *= rhs;
 		return result;
@@ -125,9 +125,7 @@ struct Vertex : public Vector<T, COMPONENTS>
 
 	inline Vertex scale(const Vertex& rhs) const
 	{
-		Vertex result(*this);
-		result *= rhs;
-		return result;
+		return operator*(rhs);
 	}
 
 	Vertex crossProduct(const Vertex& rhs) const
