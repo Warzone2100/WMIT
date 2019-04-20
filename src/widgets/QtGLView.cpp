@@ -523,13 +523,13 @@ void QtGLView::unloadShader(int type)
 	{
 		QGLShaderProgram* shader = getShader(type);
 
-		if (shader != NULL)
+		if (shader != nullptr)
 		{
 			shader->release();
 			shader->removeAllShaders();
 
 			delete shader;
-			shader = NULL;
+			shader = nullptr;
 		}
 	}
 }
@@ -550,12 +550,14 @@ void QtGLView::setAnimateState(bool enabled)
 	if (animationIsStarted())
 	{
 		if (!enabled)
+		{
 			stopAnimation();
+			repaint();
+		}
 	}
 	else
 	{
 		if (enabled)
 			startAnimation();
 	}
-	repaint();
 }
