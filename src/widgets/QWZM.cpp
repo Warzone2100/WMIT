@@ -219,10 +219,13 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 	}
 
 	// after shaders
-	if (m_drawCenterPoint)
-		drawCenterPoint();
-	if (m_drawNormals)
-		drawNormals();
+	if (!hasAnimObject())
+	{
+		if (m_drawCenterPoint)
+			drawCenterPoint();
+		if (m_drawNormals)
+			drawNormals();
+	}
 
 	glPopMatrix();
 	glPopClientAttrib();
@@ -294,12 +297,11 @@ void QWZM::drawNormals()
 
 	glColor3f(0.7f, 1.0f, 0.7f);
 
-	for (int i = 0; i < (int)m_meshes.size(); ++i)
+	WZMVertex nrm;
+	for (size_t i = 0; i < m_meshes.size(); ++i)
 	{
 		const Mesh& msh = m_meshes.at(i);
-		WZMVertex nrm;
-
-		for (int j = 0; j < (int)msh.m_vertexArray.size(); ++j)
+		for (size_t j = 0; j < msh.m_vertexArray.size(); ++j)
 		{
 			nrm = msh.m_normalArray[j].normalize() * 2. / scale_all;
 			qglviewer::Vec from(msh.m_vertexArray[j].x(), msh.m_vertexArray[j].y(), msh.m_vertexArray[j].z());

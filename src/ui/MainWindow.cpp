@@ -161,13 +161,18 @@ void MainWindow::clear()
 
 void MainWindow::doAfterModelWasLoaded(const bool success)
 {
+	const bool hasAnim = m_model.hasAnimObject();
+
 	m_ui->actionClose->setEnabled(success);
 	m_ui->actionSaveAs->setEnabled(success);
 	m_ui->actionSetupTextures->setEnabled(success);
 	m_ui->actionAppendModel->setEnabled(success);
 
 	// Disallow mirroring as it will mess-up animation
-	m_transformDock->setMirrorState(success && !m_model.hasAnimObject());
+	m_transformDock->setMirrorState(success && !hasAnim);
+
+	m_ui->actionShowModelCenter->setEnabled(!hasAnim);
+	m_ui->actionShowNormals->setEnabled(!hasAnim);
 }
 
 bool MainWindow::openFile(const QString &filePath)
