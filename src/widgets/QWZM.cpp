@@ -44,7 +44,8 @@ QWZM::QWZM(QObject *parent):
 	m_tcmaskColour(0, 0x60, 0, 0xFF),
 	m_drawNormals(false),
 	m_drawCenterPoint(false),
-	m_animation_elapsed_msecs(-1.f)
+	m_animation_elapsed_msecs(-1.f),
+	m_drawConnectors(false)
 {
 	defaultConstructor();
 }
@@ -225,6 +226,8 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 			drawCenterPoint();
 		if (m_drawNormals)
 			drawNormals();
+		if (m_drawConnectors)
+			drawConnectors();
 	}
 
 	glPopMatrix();
@@ -232,19 +235,8 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 	glPopAttrib();
 }
 
-void QWZM::drawCenterPoint()
+void QWZM::drawAPoint(const WZMVertex& center, const WZMVertex& color)
 {
-	WZMVertex center;
-
-	if (m_active_mesh < 0 || !m_meshes.size())
-	{
-		center = calculateCenterPoint();
-	}
-	else
-	{
-		center = m_meshes.at(m_active_mesh).getCenterPoint();
-	}
-
 	const float lineLength = 40.0;
 	GLfloat x, y, z;
 	x = center.x() * scale_all * scale_xyz[0];
@@ -264,7 +256,7 @@ void QWZM::drawCenterPoint()
 	glEnable(GL_LINE_SMOOTH);
 	glLineWidth(2);
 
-	glColor3f(1.f, 1.f, 1.f);
+	glColor3f(color.x(), color.y(), color.z());
 
 	glBegin(GL_LINES);
 	glVertex3f(-lineLength + x, y, z);
@@ -280,7 +272,23 @@ void QWZM::drawCenterPoint()
 
 	if (lighting)
 		glEnable(GL_LIGHTING);
+}
 
+void QWZM::drawCenterPoint()
+{
+	WZMVertex center;
+
+	if (m_active_mesh < 0 || !m_meshes.size())
+	{
+		center = calculateCenterPoint();
+	}
+	else
+	{
+		center = m_meshes.at(m_active_mesh).getCenterPoint();
+	}
+
+	const static WZMVertex whiteCol = WZMVertex(1.f, 1.f, 1.f);
+	drawAPoint(center, whiteCol);
 }
 
 void QWZM::drawNormals()
@@ -315,6 +323,23 @@ void QWZM::drawNormals()
 
 	if (lighting)
 		glEnable(GL_LIGHTING);
+}
+
+void QWZM::drawConnectors()
+{
+	const static WZMVertex yellowCol = WZMVertex(1.f, 1.f, 0.f);
+
+	for (size_t i = 0; i < m_meshes.size(); ++i)
+	{
+		const Mesh& msh = m_meshes.at(i);
+		for (size_t j = 0; j < msh.connectors(); ++j)
+		{
+			for (auto itC = msh.m_connectors.begin(); itC != msh.m_connectors.end(); ++itC)
+			{
+				drawAPoint(itC->getPos(), yellowCol);
+			}
+		}
+	}
 }
 
 void QWZM::animate()
@@ -800,6 +825,11 @@ void QWZM::setDrawNormalsFlag(bool draw)
 void QWZM::setDrawCenterPointFlag(bool draw)
 {
 	m_drawCenterPoint = draw;
+}
+
+void QWZM::setDrawConnectors(bool draw)
+{
+	m_drawConnectors = draw;
 }
 
 /************** Mesh control wrappers *****************/

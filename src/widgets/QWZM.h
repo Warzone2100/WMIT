@@ -84,6 +84,7 @@ public slots:
 
 	void setDrawNormalsFlag(bool draw);
 	void setDrawCenterPointFlag(bool draw);
+	void setDrawConnectors(bool draw);
 
 public:
 	/// IAnimatable
@@ -126,8 +127,10 @@ public:
 private:
 	Q_DISABLE_COPY(QWZM)
 	void defaultConstructor();
+	void drawAPoint(const WZMVertex &center, const WZMVertex &color);
 	void drawCenterPoint();
 	void drawNormals();
+	void drawConnectors();
 
 	bool setupTextureUnits(int type);
 	void clearTextureUnits(int type);
@@ -150,6 +153,7 @@ private:
 	bool m_drawCenterPoint;
 
 	float m_animation_elapsed_msecs;
+	bool m_drawConnectors;
 };
 
 #endif // QWZM_HPP
