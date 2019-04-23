@@ -36,7 +36,7 @@ static const char vertexAtributeName[] = "vertex";
 static const char vertexNormalAtributeName[] = "vertexNormal";
 static const char vertexTexCoordAtributeName[] = "vertexTexCoord";
 
-const GLint QWZM::winding = GL_CCW;
+const GLint QWZM::winding = GL_CW;
 
 QWZM::QWZM(QObject *parent):
 	QObject(parent),
@@ -87,13 +87,13 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		render_mtxModelView = QMatrix4x4(mtxModelView).transposed();
 		if (m_active_mesh < 0)
 			render_mtxModelView.scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
-		render_mtxModelView.scale(WZ_SCALE, WZ_SCALE, WZ_SCALE);
+		render_mtxModelView.scale(-WZ_SCALE, WZ_SCALE, WZ_SCALE);
 
 		render_mtxProj = QMatrix4x4(mtxProj).transposed();
 		render_posSun = QVector4D(posSun[0], posSun[1], posSun[2], posSun[3]);
 	}
 
-	glScalef(WZ_SCALE, WZ_SCALE, WZ_SCALE); // Scale from warzone to fit in our scene. possibly a FIXME
+	glScalef(-WZ_SCALE, WZ_SCALE, WZ_SCALE); // Scale from warzone to fit in our scene. possibly a FIXME
 
 	// actual draw code starts here
 
@@ -139,19 +139,19 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 			// disabled frame if negative, for implementing key frame animation
 			if (curAnimFrame.scale.x() >= 0)
 			{
+				glScalef(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
 				glTranslatef(curAnimFrame.trans.x(), curAnimFrame.trans.y(), curAnimFrame.trans.z());
 				glRotatef(curAnimFrame.rot.x(), 1.f, 0.f, 0.f);
-				glRotatef(curAnimFrame.rot.z(), 0.f, 0.f, 1.f);
 				glRotatef(curAnimFrame.rot.y(), 0.f, 1.f, 0.f);
-				glScalef(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
+				glRotatef(curAnimFrame.rot.z(), 0.f, 0.f, 1.f);
 
 				if (!isFixedPipelineRenderer())
 				{
+					render_mtxModelView.scale(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
 					render_mtxModelView.translate(curAnimFrame.trans.x(), curAnimFrame.trans.y(), curAnimFrame.trans.z());
 					render_mtxModelView.rotate(curAnimFrame.rot.x(), 1.f, 0.f, 0.f);
-					render_mtxModelView.rotate(curAnimFrame.rot.z(), 0.f, 0.f, 1.f);
 					render_mtxModelView.rotate(curAnimFrame.rot.y(), 0.f, 1.f, 0.f);
-					render_mtxModelView.scale(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
+					render_mtxModelView.rotate(curAnimFrame.rot.z(), 0.f, 0.f, 1.f);;
 				}
 			}
 		}

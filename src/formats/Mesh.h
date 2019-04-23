@@ -26,7 +26,6 @@
 #include <list>
 
 #include <QtOpenGL/qgl.h>
-
 #include "VectorTypes.h"
 #include "Polygon.h"
 
