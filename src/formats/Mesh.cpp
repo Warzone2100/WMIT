@@ -39,8 +39,6 @@ typedef std::tuple<WZMVertex, WZMUV, WZMVertex> WZMPoint;
 #define INT_SCALE       1000
 static const float FROM_INT_SCALE = 0.001f;
 
-static const WZMVertex WZ_AXES_FIX(-1.f, 1.f, 1.f);
-
 struct compareWZMPoint_less_wEps: public std::binary_function<WZMPoint&, WZMPoint&, bool>
 {
 	const WZMVertex::less_wEps vertLess;
@@ -138,10 +136,10 @@ Mesh::Mesh(const Pie3Level& p3)
 		}
 
 		// Calculate inverted normal here and reverse winding below
-		v[0] = WZMVertex(p3.m_points[itL->getIndex(0)]) * WZ_AXES_FIX;
-		v[1] = WZMVertex(p3.m_points[itL->getIndex(1)]) * WZ_AXES_FIX;
-		v[2] = WZMVertex(p3.m_points[itL->getIndex(2)]) * WZ_AXES_FIX;
-		tmpNrm = WZMVertex(v[2] - v[0]).crossProduct(v[1] - v[0]).normalize();
+		v[0] = WZMVertex(p3.m_points[itL->getIndex(0)]);
+		v[1] = WZMVertex(p3.m_points[itL->getIndex(1)]);
+		v[2] = WZMVertex(p3.m_points[itL->getIndex(2)]);
+		tmpNrm = WZMVertex(v[1] - v[0]).crossProduct(v[2] - v[0]).normalize();
 
 		// For all 3 vertices of the triangle
 		for (u_short i = 0; i < 3; ++i)
@@ -165,8 +163,6 @@ Mesh::Mesh(const Pie3Level& p3)
 				addPoint(std::get<0>(curPoint), std::get<1>(curPoint), std::get<2>(curPoint));
 			}
 		}
-		// Reverse winding
-		std::swap(iTri.b(), iTri.c());
 		addIndices(iTri);
 	}
 
@@ -190,14 +186,13 @@ Mesh::Mesh(const Pie3Level& p3)
 	Frame curFrame;
 	for (const auto& p3Frame: p3.m_animobj.frames)
 	{
-		curFrame.trans = WZMVertex(-p3Frame.pos.x(), p3Frame.pos.z(), -p3Frame.pos.y());
+		curFrame.trans = WZMVertex(p3Frame.pos.x(), p3Frame.pos.z(), p3Frame.pos.y());
 		curFrame.trans.scale(FROM_INT_SCALE, FROM_INT_SCALE, FROM_INT_SCALE);
-		curFrame.rot = WZMVertex(p3Frame.rot.x(), -p3Frame.rot.z(), p3Frame.rot.y());
+		curFrame.rot = WZMVertex(-p3Frame.rot.x(), -p3Frame.rot.z(), -p3Frame.rot.y());
 		curFrame.rot.scale(FROM_INT_SCALE, FROM_INT_SCALE, FROM_INT_SCALE);
 		curFrame.scale = WZMVertex(p3Frame.scale.x(), p3Frame.scale.z(), p3Frame.scale.y());
 		m_frameArray.push_back(curFrame);
 	}
-
 
 	finishImport();
 	recalculateBoundData();
@@ -236,12 +231,10 @@ Mesh::operator Pie3Level() const
 	for (itTri = m_indexArray.begin(); itTri != m_indexArray.end(); ++itTri)
 	{
 		tri = *itTri;
-		// Rewerse winding
-		std::swap(tri.b(), tri.c());
 		for (i = 0; i < 3; ++i)
 		{
 			typedef Pie3Vertex::equal_wEps equals;
-			WZMVertex fixedVert(m_vertexArray[tri[i]] * WZ_AXES_FIX);
+			WZMVertex fixedVert(m_vertexArray[tri[i]]);
 			mybinder1st<equals> compare(fixedVert);
 
 			itPV = std::find_if(p3.m_points.begin(), p3.m_points.end(), compare);
@@ -290,12 +283,12 @@ Mesh::operator Pie3Level() const
 	for (const auto& curFrame: m_frameArray)
 	{
 		p3Frame.num = cur_num++;
-		p3Frame.pos = Vertex<int>(static_cast<int>(-curFrame.trans.x() * INT_SCALE),
+		p3Frame.pos = Vertex<int>(static_cast<int>(curFrame.trans.x() * INT_SCALE),
 					  static_cast<int>(curFrame.trans.z() * INT_SCALE),
-					  static_cast<int>(-curFrame.trans.y() * INT_SCALE));
-		p3Frame.rot = Vertex<int>(static_cast<int>(curFrame.rot.x() * INT_SCALE),
+					  static_cast<int>(curFrame.trans.y() * INT_SCALE));
+		p3Frame.rot = Vertex<int>(static_cast<int>(-curFrame.rot.x() * INT_SCALE),
 					  static_cast<int>(-curFrame.rot.z() * INT_SCALE),
-					  static_cast<int>(curFrame.rot.y() * INT_SCALE));
+					  static_cast<int>(-curFrame.rot.y() * INT_SCALE));
 		p3Frame.scale = Vertex<float>(curFrame.scale.x(), curFrame.scale.z(), curFrame.scale.y());
 		p3.m_animobj.frames.push_back(p3Frame);
 	}
