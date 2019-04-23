@@ -171,9 +171,7 @@ Mesh::Mesh(const Pie3Level& p3)
 	// For each pie3 connector
 	for (itC = p3.m_connectors.begin(); itC != p3.m_connectors.end(); ++itC)
 	{
-		addConnector(WZMConnector(itC->pos.operator[](0),
-                                  itC->pos.operator[](1),
-                                  itC->pos.operator[](2)));
+		addConnector(WZMConnector(itC->pos[0], itC->pos[1], itC->pos[2]));
 	}
 
 	// shaders
@@ -710,12 +708,12 @@ void Mesh::rmConnector (int index)
 	m_connectors.erase(pos);
 }
 
-inline size_t Mesh::connectors() const
+size_t Mesh::connectors() const
 {
 	return m_connectors.size();
 }
 
-inline size_t Mesh::vertices() const
+size_t Mesh::vertices() const
 {
 	return m_vertexArray.size();
 }
@@ -725,7 +723,7 @@ size_t Mesh::frames() const
 	return m_frameArray.size();
 }
 
-inline size_t Mesh::indices() const
+size_t Mesh::indices() const
 {
 	return m_indexArray.size();
 }
