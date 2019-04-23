@@ -235,13 +235,13 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 	glPopAttrib();
 }
 
-void QWZM::drawAPoint(const WZMVertex& center, const WZMVertex& color)
+void QWZM::drawAPoint(const WZMVertex& center, const WZMVertex& scale, const WZMVertex& color)
 {
 	const float lineLength = 40.0;
 	GLfloat x, y, z;
-	x = center.x() * scale_all * scale_xyz[0];
-	y = center.y() * scale_all * scale_xyz[1];
-	z = center.z() * scale_all * scale_xyz[2];
+	x = center.x() * scale[0];
+	y = center.y() * scale[1];
+	z = center.z() * scale[2];
 
 	GLboolean lighting, texture;
 
@@ -276,19 +276,21 @@ void QWZM::drawAPoint(const WZMVertex& center, const WZMVertex& color)
 
 void QWZM::drawCenterPoint()
 {
-	WZMVertex center;
+	WZMVertex center, scale;
 
 	if (m_active_mesh < 0 || !m_meshes.size())
 	{
 		center = calculateCenterPoint();
+		scale = WZMVertex(1.f, 1.f, 1.f);
 	}
 	else
 	{
 		center = m_meshes.at(m_active_mesh).getCenterPoint();
+		scale = WZMVertex(scale_xyz[0], scale_xyz[1], scale_xyz[2]) * scale_all;
 	}
 
 	const static WZMVertex whiteCol = WZMVertex(1.f, 1.f, 1.f);
-	drawAPoint(center, whiteCol);
+	drawAPoint(center, scale, whiteCol);
 }
 
 void QWZM::drawNormals()
@@ -328,15 +330,22 @@ void QWZM::drawNormals()
 void QWZM::drawConnectors()
 {
 	const static WZMVertex yellowCol = WZMVertex(1.f, 1.f, 0.f);
+	WZMVertex scale;
 
 	for (size_t i = 0; i < m_meshes.size(); ++i)
 	{
 		const Mesh& msh = m_meshes.at(i);
+
+		if (m_active_mesh == i)
+			scale = WZMVertex(scale_xyz[0], scale_xyz[1], scale_xyz[2]) * scale_all;
+		else
+			scale = WZMVertex(1.f, 1.f, 1.f);
+
 		for (size_t j = 0; j < msh.connectors(); ++j)
 		{
 			for (auto itC = msh.m_connectors.begin(); itC != msh.m_connectors.end(); ++itC)
 			{
-				drawAPoint(itC->getPos(), yellowCol);
+				drawAPoint(itC->getPos(), scale, yellowCol);
 			}
 		}
 	}
