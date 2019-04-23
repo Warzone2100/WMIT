@@ -86,6 +86,8 @@
     <addaction name="separator"/>
     <addaction name="actionShowModelCenter"/>
     <addaction name="actionShowNormals"/>
+    <addaction name="actionShow_Connectors"/>
+    <addaction name="separator"/>
     <addaction name="actionShowAxes"/>
     <addaction name="actionShowGrid"/>
     <addaction name="actionShowLightSource"/>
@@ -311,6 +313,17 @@
    </property>
    <property name="shortcut">
     <string>Shift+A</string>
+   </property>
+  </action>
+  <action name="actionShow_Connectors">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Connectors</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+C</string>
    </property>
   </action>
  </widget>

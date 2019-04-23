@@ -324,6 +324,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	settings.setValue("3DView/LinkLightToCamera", m_ui->actionLink_Light_Source_To_Camera->isChecked());
 	settings.setValue("3DView/EnableUserShaders", m_actionEnableUserShaders->isChecked());
 	settings.setValue("3DView/Animate", m_ui->actionAnimate->isChecked());
+	settings.setValue("3DView/ShowConnectors", m_ui->actionShow_Connectors->isChecked());
 
 	event->accept();
 }
@@ -668,12 +669,17 @@ void MainWindow::viewerInitialized()
 		&m_model, SLOT(setDrawCenterPointFlag(bool)));
 	connect(m_ui->actionShowNormals, SIGNAL(triggered(bool)),
 		&m_model, SLOT(setDrawNormalsFlag(bool)));
+	connect(m_ui->actionShow_Connectors, SIGNAL(triggered(bool)),
+		&m_model, SLOT(setDrawConnectors(bool)));
 
 	/// Load previous state
 	m_ui->actionShowModelCenter->setChecked(m_settings->value("3DView/ShowModelCenter", false).toBool());
 	m_model.setDrawCenterPointFlag(m_ui->actionShowModelCenter->isChecked());
 	m_ui->actionShowNormals->setChecked(m_settings->value("3DView/ShowNormals", false).toBool());
 	m_model.setDrawNormalsFlag(m_ui->actionShowNormals->isChecked());
+	m_ui->actionShow_Connectors->setChecked(m_settings->value("3DView/ShowConnectors", false).toBool());
+	m_model.setDrawConnectors(m_ui->actionShow_Connectors->isChecked());
+
 	m_ui->actionShowAxes->setChecked(m_settings->value("3DView/ShowAxes", true).toBool());
 	m_ui->actionShowGrid->setChecked(m_settings->value("3DView/ShowGrid", true).toBool());
 	m_ui->actionShowLightSource->setChecked(m_settings->value("3DView/ShowLightSource", true).toBool());
