@@ -149,6 +149,7 @@ bool WzmConnectorsModel::insertRows(int position, int rows, const QModelIndex &i
 	Q_UNUSED(index);
 	beginInsertRows(QModelIndex(), position, position + rows - 1);
 
+	// FIXME: we can only append
 	for (int row = 0; row < rows; ++row)
 		m_mesh.addConnector(WZMConnector());
 
