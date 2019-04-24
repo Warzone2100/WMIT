@@ -20,9 +20,17 @@ public:
 
 	void setModel(WZM* model);
 
+public slots:
+	void setMeshCount(int value, QStringList names);
+
+private slots:
+	void selectMesh(int index);
+
 private:
 	WZM* m_model;
-	Ui::MeshDock *ui;
+	int m_selected_mesh;
+	Ui::MeshDock *m_ui;
+	void resetConnectorViewModel();
 };
 
 #include <QAbstractTableModel>

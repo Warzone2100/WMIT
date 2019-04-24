@@ -147,6 +147,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_meshDock->toggleViewAction()->setShortcut(QKeySequence(Qt::Key_M));
 	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0), m_meshDock->toggleViewAction());
 
+	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_meshDock, SLOT(setMeshCount(int,QStringList)));
+
 	/// Reset state
 	clear();
 
@@ -183,8 +185,6 @@ void MainWindow::doAfterModelWasLoaded(const bool success)
 
 	m_ui->actionShowModelCenter->setEnabled(!hasAnim);
 	m_ui->actionShowNormals->setEnabled(!hasAnim);
-
-	m_meshDock->setModel(&m_model);
 }
 
 bool MainWindow::openFile(const QString &filePath)
@@ -623,6 +623,7 @@ void MainWindow::viewerInitialized()
 {
 	m_ui->centralWidget->addToRenderList(&m_model);
 	m_ui->centralWidget->addToAnimateList(&m_model);
+	m_meshDock->setModel(&m_model);
 
 	m_actionEnableUserShaders = new QAction("Enable external shaders", this);
 	m_actionEnableUserShaders->setCheckable(true);
