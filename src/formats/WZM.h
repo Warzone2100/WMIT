@@ -76,7 +76,7 @@ class WZM
 public:
 	WZM();
 	WZM(const Pie3Model& p3);
-	virtual ~WZM(){}
+	virtual ~WZM() {clear();}
 
 	virtual operator Pie3Model() const;
 
@@ -114,7 +114,7 @@ public:
 
 	virtual WZMVertex calculateCenterPoint() const;
 protected:
-	void clear();
+	virtual void clear();
 
 	std::vector<Mesh> m_meshes;
 	std::map<wzm_texture_type_t, std::string> m_textures;

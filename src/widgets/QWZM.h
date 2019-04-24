@@ -70,7 +70,7 @@ public:
 	void setTCMaskColor(const QColor& tcmaskColour);
 	QColor getTCMaskColor();
 signals:
-	void meshCountChanged(int, QStringList);
+	void meshCountChanged(int cnt = 0, QStringList lst = QStringList());
 
 public slots:
 	void setScaleXYZ(GLfloat xyz);
