@@ -52,7 +52,6 @@ QWZM::QWZM(QObject *parent):
 
 QWZM::~QWZM()
 {
-	clear();
 }
 
 static QMatrix4x4 render_mtxModelView, render_mtxProj;
@@ -359,13 +358,13 @@ void QWZM::animate()
 
 void QWZM::clear()
 {
+	meshCountChanged();
+
 	WZM::clear();
 
 	clearGLRenderTextures();
 
 	defaultConstructor();
-
-	meshCountChanged(meshes(), getMeshNames());
 }
 
 void QWZM::loadGLRenderTexture(wzm_texture_type_t type, QString fileName)
@@ -858,6 +857,7 @@ void QWZM::addMesh(const Mesh& mesh)
 
 void QWZM::rmMesh(int index)
 {
+	meshCountChanged();
 	WZM::rmMesh(index);
 	meshCountChanged(meshes(), getMeshNames());
 }
