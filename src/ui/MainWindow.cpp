@@ -21,6 +21,7 @@
 #include "ui_MainWindow.h"
 #include "MaterialDock.h"
 #include "TransformDock.h"
+#include "meshdock.h"
 #include "ImportDialog.h"
 #include "ExportDialog.h"
 #include "TextureDialog.h"
@@ -54,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_exportDialog(nullptr),
 	m_materialDock(new MaterialDock(this)),
 	m_transformDock(new TransformDock(this)),
+	m_meshDock(new MeshDock(this)),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
 	m_settings(new QSettings(this)),
@@ -73,11 +75,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_transformDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	m_transformDock->hide();
 
+	m_meshDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	m_meshDock->hide();
+
 	m_UVEditor->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	m_UVEditor->hide();
 
 	addDockWidget(Qt::RightDockWidgetArea, m_materialDock, Qt::Horizontal);
 	addDockWidget(Qt::RightDockWidgetArea, m_transformDock, Qt::Horizontal);
+	addDockWidget(Qt::RightDockWidgetArea, m_meshDock, Qt::Horizontal);
 	addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
 	// UI is ready and now we can load window previous state (will do nothing if state wasn't saved).
@@ -136,6 +142,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_transformDock, SIGNAL(removeMesh(int)), this, SLOT(removeMesh(int)));
 	connect(m_transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
 	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_transformDock, SLOT(setMeshCount(int,QStringList)));
+
+	/// Mesh dock
+	m_meshDock->toggleViewAction()->setShortcut(QKeySequence(Qt::Key_M));
+	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0), m_meshDock->toggleViewAction());
 
 	/// Reset state
 	clear();

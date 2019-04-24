@@ -92,6 +92,11 @@ const WZMVertex& WZMConnector::getPos() const
 	return m_pos;
 }
 
+WZMVertex &WZMConnector::getPos()
+{
+	return m_pos;
+}
+
 Mesh::Mesh()
 {
 	defaultConstructor();
@@ -687,6 +692,13 @@ void Mesh::setTeamColours(bool tc)
 const WZMConnector& Mesh::getConnector(int index) const
 {
 	std::list<WZMConnector>::const_iterator pos;
+	std::advance(pos, index);
+	return *pos;
+}
+
+WZMConnector &Mesh::getConnector(int index)
+{
+	std::list<WZMConnector>::iterator pos;
 	std::advance(pos, index);
 	return *pos;
 }

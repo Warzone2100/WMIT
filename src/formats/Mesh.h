@@ -56,6 +56,7 @@ public:
 	virtual ~WZMConnector(){}
 
 	const WZMVertex& getPos() const;
+	WZMVertex& getPos();
 private:
 	WZMVertex m_pos;
 	///TODO: Types for wzm connectors
@@ -97,6 +98,7 @@ public:
 	void setTeamColours(bool tc);
 
 	const WZMConnector& getConnector(int index) const;
+	WZMConnector& getConnector(int index);
 	void addConnector (const WZMConnector& conn);
 	void rmConnector (int index);
 	size_t connectors() const;
