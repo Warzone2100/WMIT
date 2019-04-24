@@ -185,6 +185,7 @@ void MainWindow::doAfterModelWasLoaded(const bool success)
 
 	m_ui->actionShowModelCenter->setEnabled(!hasAnim);
 	m_ui->actionShowNormals->setEnabled(!hasAnim);
+	m_ui->actionShow_Connectors->setEnabled(!hasAnim);
 }
 
 bool MainWindow::openFile(const QString &filePath)
