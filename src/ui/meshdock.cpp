@@ -4,7 +4,7 @@
 MeshDock::MeshDock(QWidget *parent) :
 	QDockWidget(parent),
 	m_model(nullptr),
-	m_selected_mesh(0),
+	m_selected_mesh(-1),
 	m_ui(new Ui::MeshDock)
 {
 	m_ui->setupUi(this);
@@ -21,12 +21,12 @@ MeshDock::~MeshDock()
 
 void MeshDock::resetConnectorViewModel()
 {
-	if (!m_model || (m_model->meshes() == 0))
+	if ((m_selected_mesh < 0) || !m_model || (m_model->meshes() == 0))
 	{
 		m_ui->meshConnectors->setModel(nullptr);
 		return;
 	}
-	auto connModel = new WzmConnectorsModel(m_model->getMesh(m_selected_mesh));
+	auto connModel = new WzmConnectorsModel(m_model->getMesh(m_selected_mesh), m_ui->meshConnectors);
 	m_ui->meshConnectors->setModel(connModel);
 }
 
@@ -40,6 +40,11 @@ void MeshDock::setMeshCount(int value, QStringList names)
 {
 	int selected = m_ui->meshComboBox->currentIndex();
 
+	if (selected >= value)
+	{
+		selected = -1;
+	}
+
 	m_ui->meshComboBox->blockSignals(true);
 	m_ui->meshComboBox->clear();
 
@@ -48,12 +53,13 @@ void MeshDock::setMeshCount(int value, QStringList names)
 		m_ui->meshComboBox->addItem(QString::number(i) + " [" + names.value(i - 1) + "]");
 	}
 
-	if (selected >= value || selected < 0)
+	if ((selected < 0) && (value > 0))
 	{
 		selected = 0;
 	}
 
-	m_ui->meshComboBox->setCurrentIndex(selected);
+	if (selected >= 0)
+		m_ui->meshComboBox->setCurrentIndex(selected);
 	m_ui->meshComboBox->blockSignals(false);
 
 	selectMesh(selected); // force this because of possible mesh stack pop
@@ -79,7 +85,7 @@ int WzmConnectorsModel::rowCount(const QModelIndex &parent) const
 int WzmConnectorsModel::columnCount(const QModelIndex &parent) const
 {
 	Q_UNUSED(parent);
-	return 3;
+	return 4;
 }
 
 QVariant WzmConnectorsModel::data(const QModelIndex &index, int role) const
@@ -94,10 +100,12 @@ QVariant WzmConnectorsModel::data(const QModelIndex &index, int role) const
 		const auto &connector = m_mesh.getConnector(index.row());
 
 		if (index.column() == 0)
-			return connector.getPos().x();
+			return index.row();
 		else if (index.column() == 1)
-			return connector.getPos().y();
+			return connector.getPos().x();
 		else if (index.column() == 2)
+			return connector.getPos().y();
+		else if (index.column() == 3)
 			return connector.getPos().z();
 	}
 	return QVariant();
@@ -112,15 +120,18 @@ QVariant WzmConnectorsModel::headerData(int section, Qt::Orientation orientation
 	{
 		switch (section) {
 		case 0:
-			return tr("X");
+			return tr("#");
 		case 1:
-			return tr("Y");
+			return tr("X");
 		case 2:
+			return tr("Y");
+		case 3:
 			return tr("Z");
 		default:
 			return QVariant();
 		}
 	}
+
 	return QVariant();
 }
 
@@ -150,16 +161,17 @@ bool WzmConnectorsModel::removeRows(int position, int rows, const QModelIndex &i
 
 bool WzmConnectorsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if (index.isValid() && role == Qt::EditRole) {
+	if (index.isValid() && role == Qt::EditRole)
+	{
 		int row = index.row();
 
-		auto connector = m_mesh.getConnector(row);
+		auto& connector = m_mesh.getConnector(row);
 
-		if (index.column() == 0)
+		if (index.column() == 1)
 			connector.getPos().x() = value.toFloat();
-		else if (index.column() == 1)
-			connector.getPos().y() = value.toFloat();
 		else if (index.column() == 2)
+			connector.getPos().y() = value.toFloat();
+		else if (index.column() == 3)
 			connector.getPos().z() = value.toFloat();
 		else
 			return false;
@@ -177,5 +189,5 @@ Qt::ItemFlags WzmConnectorsModel::flags(const QModelIndex &index) const
 	if (!index.isValid())
 		return Qt::ItemIsEnabled;
 
-	return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
+	return QAbstractTableModel::flags(index) | (index.column() > 0 ? Qt::ItemIsEditable : Qt::NoItemFlags);
 }

@@ -176,7 +176,7 @@ Mesh::Mesh(const Pie3Level& p3)
 	// For each pie3 connector
 	for (itC = p3.m_connectors.begin(); itC != p3.m_connectors.end(); ++itC)
 	{
-		addConnector(WZMConnector(itC->pos[0], itC->pos[1], itC->pos[2]));
+		addConnector(WZMConnector(itC->pos[0], itC->pos[2], itC->pos[1]));
 	}
 
 	// shaders
@@ -268,8 +268,8 @@ Mesh::operator Pie3Level() const
 	{
 		Pie3Connector conn;
 		conn.pos[0] = itC->getPos()[0];
-		conn.pos[1] = itC->getPos()[1];
-		conn.pos[2] = itC->getPos()[2];
+		conn.pos[1] = itC->getPos()[2];
+		conn.pos[2] = itC->getPos()[1];
 		p3.m_connectors.push_back(conn);
 	}
 
