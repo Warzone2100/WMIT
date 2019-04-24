@@ -226,7 +226,11 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		if (m_drawNormals)
 			drawNormals();
 		if (m_drawConnectors)
+		{
+			// Undo regular wz vertex fix
+			glScalef(-1.f, 1.f, 1.f);
 			drawConnectors();
+		}
 	}
 
 	glPopMatrix();

@@ -266,14 +266,14 @@ bool APieLevel<V, P, C>::isValid() const
 template <typename V>
 bool PieConnector<V>::read(std::istream& in)
 {
-	in >> pos.x() >> pos.z() >> pos.y();
+	in >> pos.x() >> pos.y() >> pos.z();
 	return in.good() || in.eof();
 }
 
 template <typename V>
 void PieConnector<V>::write(std::ostream& out) const
 {
-	out << pos.x() << ' ' << pos.z() << ' ' << pos.y() << '\n';
+	out << pos.x() << ' ' << pos.y() << ' ' << pos.z() << '\n';
 }
 
 template <typename L>
