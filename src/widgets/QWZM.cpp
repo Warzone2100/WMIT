@@ -238,9 +238,8 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 	glPopAttrib();
 }
 
-void QWZM::drawAPoint(const WZMVertex& center, const WZMVertex& scale, const WZMVertex& color)
+void QWZM::drawAPoint(const WZMVertex& center, const WZMVertex& scale, const WZMVertex& color, const float lineLength)
 {
-	const float lineLength = 40.0;
 	GLfloat x, y, z;
 	x = center.x() * scale[0];
 	y = center.y() * scale[1];
@@ -293,7 +292,7 @@ void QWZM::drawCenterPoint()
 	}
 
 	const static WZMVertex whiteCol = WZMVertex(1.f, 1.f, 1.f);
-	drawAPoint(center, scale, whiteCol);
+	drawAPoint(center, scale, whiteCol, 40.f);
 }
 
 void QWZM::drawNormals()
@@ -348,7 +347,7 @@ void QWZM::drawConnectors()
 			size_t con_idx = 0;
 			for (auto itC = msh.m_connectors.begin(); itC != msh.m_connectors.end(); ++itC)
 			{
-				drawAPoint(itC->getPos(), scale, CONNECTOR_COLORS[con_idx % MAX_CONNECTOR_COLORS]);
+				drawAPoint(itC->getPos(), scale, CONNECTOR_COLORS[con_idx % MAX_CONNECTOR_COLORS], 20.f);
 				++con_idx;
 			}
 		}
