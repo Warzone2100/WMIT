@@ -42,7 +42,7 @@ enum wz_shader_type_t {WZ_SHADER_NONE = 0,
 
 class Pie3Model;
 
-class QWZM: public QObject, protected WZM, public IAnimatable,
+class QWZM: public QObject, public WZM, public IAnimatable,
 		public IGLTexturedRenderable, public IGLShaderRenderable
 {
 	Q_OBJECT
@@ -67,8 +67,8 @@ public:
 	void clearGLRenderTextures();
 
 	// TCMask part
-    void setTCMaskColor(const QColor& tcmaskColour);
-    QColor getTCMaskColor();
+	void setTCMaskColor(const QColor& tcmaskColour);
+	QColor getTCMaskColor();
 signals:
 	void meshCountChanged(int, QStringList);
 
@@ -99,30 +99,15 @@ public:
 	bool bindShader(int type);
 	void releaseShader(int type);
 
-	/// WZM interface - mesh control border
+	/// WZM
 	virtual operator Pie3Model() const;
-	bool read(std::istream& in) {return WZM::read(in);}
 	void write(std::ostream& out) const;
 
 	bool importFromOBJ(std::istream& in, bool welder);
 	void exportToOBJ(std::ostream& out) const;
 
-	void setTextureName(wzm_texture_type_t type, std::string name) {WZM::setTextureName(type, name);}
-	std::string getTextureName(wzm_texture_type_t type) const {return WZM::getTextureName(type);}
-	void clearTextureNames() {WZM::clearTextureNames();}
-
-	WZMaterial getMaterial() const {return WZM::getMaterial();}
-	void setMaterial(const WZMaterial& mat) {WZM::setMaterial(mat);}
-
-	void reverseWinding(int mesh = -1) {WZM::reverseWinding(mesh);}
-	void flipNormals(int mesh = -1) {WZM::flipNormals(mesh);}
-
-	Mesh& getMesh(int index) {return WZM::getMesh(index);}
 	void addMesh (const Mesh& mesh);
 	void rmMesh (int index);
-	int meshes() const {return WZM::meshes();}
-
-	bool hasAnimObject(int mesh = -1) const {return WZM::hasAnimObject(mesh);}
 
 private:
 	Q_DISABLE_COPY(QWZM)

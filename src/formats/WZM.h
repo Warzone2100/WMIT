@@ -80,39 +80,39 @@ public:
 
 	virtual operator Pie3Model() const;
 
-	bool read(std::istream& in);
-	void write(std::ostream& out) const;
+	virtual bool read(std::istream& in);
+	virtual void write(std::ostream& out) const;
 
-	bool importFromOBJ(std::istream& in, bool welder);
-	void exportToOBJ(std::ostream& out) const;
+	virtual bool importFromOBJ(std::istream& in, bool welder);
+	virtual void exportToOBJ(std::ostream& out) const;
 
-	int version() const;
-	int meshes() const;
+	virtual int version() const;
+	virtual int meshes() const;
 
-	void setTextureName(wzm_texture_type_t type, std::string name);
-	std::string getTextureName(wzm_texture_type_t type) const;
-	bool isTextureSet(wzm_texture_type_t type) const;
-	void clearTextureNames();
+	virtual void setTextureName(wzm_texture_type_t type, std::string name);
+	virtual std::string getTextureName(wzm_texture_type_t type) const;
+	virtual bool isTextureSet(wzm_texture_type_t type) const;
+	virtual void clearTextureNames();
 
-	WZMaterial getMaterial() const {return m_material;}
-	void setMaterial(const WZMaterial& mat) {m_material = mat;}
+	virtual WZMaterial getMaterial() const {return m_material;}
+	virtual void setMaterial(const WZMaterial& mat) {m_material = mat;}
 
 	static std::string texTypeToString(wzm_texture_type_t type);
 
 	/// might throw out_of_range exception? not decided yet
-	Mesh& getMesh(int index);
-	void addMesh (const Mesh& mesh);
-	void rmMesh (int index);
+	virtual Mesh& getMesh(int index);
+	virtual void addMesh (const Mesh& mesh);
+	virtual void rmMesh (int index);
 
-	bool isValid() const;
-	bool hasAnimObject (int mesh = -1) const;
+	virtual bool isValid() const;
+	virtual bool hasAnimObject (int mesh = -1) const;
 
-	void scale(GLfloat x, GLfloat y, GLfloat z, int mesh = -1);
-	void mirror(int axis, int mesh = -1); // x == 0, y == 1, z == 2
-	void reverseWinding(int mesh = -1);
-	void flipNormals(int mesh = -1);
+	virtual void scale(GLfloat x, GLfloat y, GLfloat z, int mesh = -1);
+	virtual void mirror(int axis, int mesh = -1); // x == 0, y == 1, z == 2
+	virtual void reverseWinding(int mesh = -1);
+	virtual void flipNormals(int mesh = -1);
 
-	WZMVertex calculateCenterPoint() const;
+	virtual WZMVertex calculateCenterPoint() const;
 protected:
 	void clear();
 

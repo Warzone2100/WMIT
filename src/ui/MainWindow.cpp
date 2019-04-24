@@ -183,6 +183,8 @@ void MainWindow::doAfterModelWasLoaded(const bool success)
 
 	m_ui->actionShowModelCenter->setEnabled(!hasAnim);
 	m_ui->actionShowNormals->setEnabled(!hasAnim);
+
+	m_meshDock->setModel(&m_model);
 }
 
 bool MainWindow::openFile(const QString &filePath)
