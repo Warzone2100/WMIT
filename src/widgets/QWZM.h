@@ -112,7 +112,7 @@ public:
 private:
 	Q_DISABLE_COPY(QWZM)
 	void defaultConstructor();
-	void drawAPoint(const WZMVertex &center, const WZMVertex &scale, const WZMVertex &color);
+	void drawAPoint(const WZMVertex &center, const WZMVertex &scale, const WZMVertex &color, const float lineLength);
 	void drawCenterPoint();
 	void drawNormals();
 	void drawConnectors();
