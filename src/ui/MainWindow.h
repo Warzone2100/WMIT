@@ -36,6 +36,7 @@
 
 class MaterialDock;
 class TransformDock;
+class MeshDock;
 class ImportDialog;
 class ExportDialog;
 class TextureDialog;
@@ -105,6 +106,7 @@ private:
 	ExportDialog *m_exportDialog;
 	MaterialDock *m_materialDock;
 	TransformDock *m_transformDock;
+	MeshDock *m_meshDock;
 
 	TextureDialog *m_textureDialog;
 	UVEditor *m_UVEditor;

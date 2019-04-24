@@ -35,7 +35,8 @@ HEADERS += \
     src/basic/Vector.h \
     src/basic/VectorTypes.h \
     src/widgets/QWZM.h \
-    src/ui/MaterialDock.h
+    src/ui/MaterialDock.h \
+    src/ui/meshdock.h
     
 SOURCES += \
     src/formats/WZM.cpp \
@@ -57,7 +58,8 @@ SOURCES += \
     src/widgets/QtGLView.cpp \
     src/ui/TextureDialog.cpp \
     src/ui/TexConfigDialog.cpp \
-    src/ui/MaterialDock.cpp
+    src/ui/MaterialDock.cpp \
+    src/ui/meshdock.cpp
     
 FORMS += \
     src/ui/UVEditor.ui \
@@ -67,7 +69,8 @@ FORMS += \
     src/ui/ExportDialog.ui \
     src/ui/TextureDialog.ui \
     src/ui/TexConfigDialog.ui \
-    src/ui/MaterialDock.ui
+    src/ui/MaterialDock.ui \
+    src/ui/meshdock.ui
     
 OTHER_FILES += \
     TODO.txt \
