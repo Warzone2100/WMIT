@@ -4,26 +4,65 @@
 MeshDock::MeshDock(QWidget *parent) :
 	QDockWidget(parent),
 	m_model(nullptr),
-	ui(new Ui::MeshDock)
+	m_selected_mesh(0),
+	m_ui(new Ui::MeshDock)
 {
-	ui->setupUi(this);
+	m_ui->setupUi(this);
+
+	setMeshCount(0, QStringList());
+
+	connect(m_ui->meshComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectMesh(int)));
 }
 
 MeshDock::~MeshDock()
 {
-	delete ui;
+	delete m_ui;
+}
+
+void MeshDock::resetConnectorViewModel()
+{
+	if (!m_model || (m_model->meshes() == 0))
+	{
+		m_ui->meshConnectors->setModel(nullptr);
+		return;
+	}
+	auto connModel = new WzmConnectorsModel(m_model->getMesh(m_selected_mesh));
+	m_ui->meshConnectors->setModel(connModel);
 }
 
 void MeshDock::setModel(WZM *model)
 {
 	m_model = model;
-	if (m_model->meshes() == 0)
+	resetConnectorViewModel();
+}
+
+void MeshDock::setMeshCount(int value, QStringList names)
+{
+	int selected = m_ui->meshComboBox->currentIndex();
+
+	m_ui->meshComboBox->blockSignals(true);
+	m_ui->meshComboBox->clear();
+
+	for (int i = 1; i <= value; ++i)
 	{
-		ui->meshConnectors->setModel(nullptr);
-		return;
+		m_ui->meshComboBox->addItem(QString::number(i) + " [" + names.value(i - 1) + "]");
 	}
-	auto connModel = new WzmConnectorsModel(m_model->getMesh(0));
-	ui->meshConnectors->setModel(connModel);
+
+	if (selected >= value || selected < 0)
+	{
+		selected = 0;
+	}
+
+	m_ui->meshComboBox->setCurrentIndex(selected);
+	m_ui->meshComboBox->blockSignals(false);
+
+	selectMesh(selected); // force this because of possible mesh stack pop
+}
+
+void MeshDock::selectMesh(int index)
+{
+	m_selected_mesh = index;
+	resetConnectorViewModel();
 }
 
 WzmConnectorsModel::WzmConnectorsModel(Mesh &mesh, QObject *parent):
