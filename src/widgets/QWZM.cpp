@@ -332,7 +332,6 @@ void QWZM::drawNormals()
 
 void QWZM::drawConnectors()
 {
-	const static WZMVertex yellowCol = WZMVertex(1.f, 1.f, 0.f);
 	WZMVertex scale;
 
 	for (size_t i = 0; i < m_meshes.size(); ++i)
@@ -346,9 +345,11 @@ void QWZM::drawConnectors()
 
 		for (size_t j = 0; j < msh.connectors(); ++j)
 		{
+			size_t con_idx = 0;
 			for (auto itC = msh.m_connectors.begin(); itC != msh.m_connectors.end(); ++itC)
 			{
-				drawAPoint(itC->getPos(), scale, yellowCol);
+				drawAPoint(itC->getPos(), scale, CONNECTOR_COLORS[con_idx % MAX_CONNECTOR_COLORS]);
+				++con_idx;
 			}
 		}
 	}

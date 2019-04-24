@@ -108,6 +108,15 @@ QVariant WzmConnectorsModel::data(const QModelIndex &index, int role) const
 		else if (index.column() == 3)
 			return connector.getPos().z();
 	}
+	else if (role == Qt::BackgroundRole)
+	{
+		if (index.column() == 0)
+		{
+			auto color = CONNECTOR_COLORS[static_cast<size_t>(index.row()) % MAX_CONNECTOR_COLORS].scale(255.f);
+			return QBrush(QColor(color.x(), color.y(), color.z()));
+		}
+	}
+
 	return QVariant();
 }
 

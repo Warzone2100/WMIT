@@ -71,6 +71,20 @@ struct WZMaterial
 std::istream& operator>> (std::istream& in, WZMaterial& mat);
 std::ostream& operator<< (std::ostream& out, const WZMaterial& mat);
 
+const static size_t MAX_CONNECTOR_COLORS = 10;
+const static WZMVertex CONNECTOR_COLORS[MAX_CONNECTOR_COLORS] = {
+	WZMVertex(1.f, 1.f, 0.f),
+	WZMVertex(1.f, 0.9f, 0.2f),
+	WZMVertex(1.f, 0.8f, 0.3f),
+	WZMVertex(1.f, 0.7f, 0.4f),
+	WZMVertex(1.f, 0.6f, 0.5f),
+	WZMVertex(1.f, 0.5f, 0.6f),
+	WZMVertex(1.f, 0.4f, 0.7f),
+	WZMVertex(1.f, 0.3f, 0.8f),
+	WZMVertex(1.f, 0.2f, 0.9f),
+	WZMVertex(1.f, 0.1f, 1.f),
+};
+
 class WZM
 {
 public:
