@@ -691,14 +691,14 @@ void Mesh::setTeamColours(bool tc)
 
 const WZMConnector& Mesh::getConnector(int index) const
 {
-	std::list<WZMConnector>::const_iterator pos;
+	std::list<WZMConnector>::const_iterator pos = m_connectors.begin();
 	std::advance(pos, index);
 	return *pos;
 }
 
 WZMConnector &Mesh::getConnector(int index)
 {
-	std::list<WZMConnector>::iterator pos;
+	std::list<WZMConnector>::iterator pos = m_connectors.begin();
 	std::advance(pos, index);
 	return *pos;
 }
