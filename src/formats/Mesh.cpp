@@ -525,11 +525,11 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 	std::vector<unsigned> mapping;
 	std::vector<unsigned>::iterator itMap;
 
-	unsigned i;
+	unsigned int i;
 
 	IndexedTri tmpTri;
 	WZMUV tmpUv;
-	WZMVertex tmpNrm;
+	WZMVertex tmpNrm, v[3];
 
 	clear();
 
@@ -543,9 +543,17 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 			/* in the uv's and nrm's, -1 is "not specified," but the OBJ indices
 			 * are 0 based, hence < 1
 			 */
-			tmpUv = itFaces->uvs.operator [](i) < 1 ? WZMUV() : uvArray[itFaces->uvs.operator [](i) - 1];
-#pragma message "precalculate missing OBJ normal"
-			tmpNrm = itFaces->nrm.operator [](i) < 1 ? WZMVertex() : normals[itFaces->nrm.operator [](i) - 1]; //FIXME
+			tmpUv = itFaces->uvs[i] < 1 ? WZMUV() : uvArray[static_cast<size_t>(itFaces->uvs[i] - 1)];
+
+			if (itFaces->nrm[i] < 1)
+			{
+				v[0] = WZMVertex(verts[itFaces->tri[0]-1]);
+				v[1] = WZMVertex(verts[itFaces->tri[1]-1]);
+				v[2] = WZMVertex(verts[itFaces->tri[2]-1]);
+				tmpNrm = WZMVertex(v[1] - v[0]).crossProduct(v[2] - v[0]).normalize();
+			}
+			else
+				tmpNrm = normals[static_cast<size_t>(itFaces->nrm[i] - 1)];
 
 			if (welder)
 			{
