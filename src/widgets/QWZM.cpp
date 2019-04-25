@@ -212,6 +212,13 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 
 		if (m_drawNormals)
 			drawNormals(i);
+		if (m_drawConnectors)
+		{
+			// Undo regular wz vertex fix
+			glScalef(-1.f, 1.f, 1.f);
+			drawConnectors(i);
+			glScalef(-1.f, 1.f, 1.f);
+		}
 
 		glPopMatrix();
 	}
@@ -227,12 +234,6 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 	{
 		if (m_drawCenterPoint)
 			drawCenterPoint();
-		if (m_drawConnectors)
-		{
-			// Undo regular wz vertex fix
-			glScalef(-1.f, 1.f, 1.f);
-			drawConnectors();
-		}
 	}
 
 	glPopMatrix();
@@ -328,27 +329,19 @@ void QWZM::drawNormals(size_t mesh_idx)
 		glEnable(GL_LIGHTING);
 }
 
-void QWZM::drawConnectors()
+void QWZM::drawConnectors(size_t mesh_idx)
 {
-	WZMVertex scale;
+	static const WZMVertex scale(1.f, 1.f, 1.f);
 
-	for (size_t i = 0; i < m_meshes.size(); ++i)
+	const Mesh& msh = m_meshes.at(mesh_idx);
+
+	for (size_t j = 0; j < msh.connectors(); ++j)
 	{
-		const Mesh& msh = m_meshes.at(i);
-
-		if (m_active_mesh == i)
-			scale = WZMVertex(scale_xyz[0], scale_xyz[1], scale_xyz[2]) * scale_all;
-		else
-			scale = WZMVertex(1.f, 1.f, 1.f);
-
-		for (size_t j = 0; j < msh.connectors(); ++j)
+		size_t con_idx = 0;
+		for (auto itC = msh.m_connectors.begin(); itC != msh.m_connectors.end(); ++itC)
 		{
-			size_t con_idx = 0;
-			for (auto itC = msh.m_connectors.begin(); itC != msh.m_connectors.end(); ++itC)
-			{
-				drawAPoint(itC->getPos(), scale, CONNECTOR_COLORS[con_idx % MAX_CONNECTOR_COLORS], 20.f);
-				++con_idx;
-			}
+			drawAPoint(itC->getPos(), scale, CONNECTOR_COLORS[con_idx % MAX_CONNECTOR_COLORS], 20.f);
+			++con_idx;
 		}
 	}
 }
