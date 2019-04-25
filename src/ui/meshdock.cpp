@@ -102,7 +102,7 @@ QVariant WzmConnectorsModel::data(const QModelIndex &index, int role) const
 		if (index.column() == 0)
 			return index.row();
 		else if (index.column() == 1)
-			return connector.getPos().x();
+			return -connector.getPos().x();
 		else if (index.column() == 2)
 			return connector.getPos().y();
 		else if (index.column() == 3)
@@ -178,7 +178,7 @@ bool WzmConnectorsModel::setData(const QModelIndex &index, const QVariant &value
 		auto& connector = m_mesh.getConnector(row);
 
 		if (index.column() == 1)
-			connector.getPos().x() = value.toFloat();
+			connector.getPos().x() = -value.toFloat();
 		else if (index.column() == 2)
 			connector.getPos().y() = value.toFloat();
 		else if (index.column() == 3)
