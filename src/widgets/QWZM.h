@@ -115,7 +115,7 @@ private:
 	void drawAPoint(const WZMVertex &center, const WZMVertex &scale, const WZMVertex &color, const float lineLength);
 	void drawCenterPoint();
 	void drawNormals(size_t mesh_idx);
-	void drawConnectors();
+	void drawConnectors(size_t mesh_idx);
 
 	bool setupTextureUnits(int type);
 	void clearTextureUnits(int type);
