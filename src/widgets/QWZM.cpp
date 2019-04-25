@@ -60,25 +60,21 @@ static QVector4D render_posSun;
 
 void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* posSun)
 {
-	GLint frontFace;
-	glGetIntegerv(GL_FRONT_FACE, &frontFace);
-
 	int activeShader = getActiveShader();
 
 	QGLShaderProgram* shader = nullptr;
 
-	glPushMatrix();
 	glPushAttrib(GL_TEXTURE_BIT);
-	glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
 
 	// prepare shader data
 	if (!setupTextureUnits(activeShader))
 	{
-		glPopMatrix();
-		glPopClientAttrib();
 		glPopAttrib();
 		return;
 	}
+
+	glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+	glPushMatrix();
 
 	static const float WZ_SCALE = 1/128.f;
 
@@ -102,6 +98,8 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 
+	GLint frontFace;
+	glGetIntegerv(GL_FRONT_FACE, &frontFace);
 	// check for desired
 	if (frontFace != winding)
 	{
@@ -113,17 +111,17 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 	}
 
-	glColor3f(1.f, 1.f, 1.f);
-
 	QMatrix4x4 origMshMV = render_mtxModelView;
 
-	for (int i = 0; i < (int)m_meshes.size(); ++i)
+	for (size_t i = 0; i < m_meshes.size(); ++i)
 	{
 		const Mesh& msh = m_meshes.at(i);
 
+		glColor3f(1.f, 1.f, 1.f);
+
 		glPushMatrix();
 
-		if (m_active_mesh == i)
+		if (m_active_mesh == static_cast<int>(i))
 		{
 			glScalef(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 			if (!isFixedPipelineRenderer())
@@ -155,6 +153,9 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 				}
 			}
 		}
+
+		// prepare shader data
+		setupTextureUnits(activeShader);
 
 		if (!isFixedPipelineRenderer())
 		{
@@ -193,8 +194,6 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		CPP0X_FEATURED(static_assert(sizeof(IndexedTri) == sizeof(GLushort)*3, "IndexedTri has become fat."));
 		glDrawElements(GL_TRIANGLES, msh.m_indexArray.size() * 3, GL_UNSIGNED_SHORT, &msh.m_indexArray[0]);
 
-		glPopMatrix();
-
 		if (!isFixedPipelineRenderer())
 		{
 			render_mtxModelView = origMshMV;
@@ -208,9 +207,14 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 			}
 			releaseShader(activeShader);
 		}
-	}
 
-	clearTextureUnits(activeShader);
+		clearTextureUnits(activeShader);
+
+		if (m_drawNormals)
+			drawNormals(i);
+
+		glPopMatrix();
+	}
 
 	// set it back
 	if (frontFace != winding)
@@ -223,8 +227,6 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 	{
 		if (m_drawCenterPoint)
 			drawCenterPoint();
-		if (m_drawNormals)
-			drawNormals();
 		if (m_drawConnectors)
 		{
 			// Undo regular wz vertex fix
@@ -295,7 +297,7 @@ void QWZM::drawCenterPoint()
 	drawAPoint(center, scale, whiteCol, 40.f);
 }
 
-void QWZM::drawNormals()
+void QWZM::drawNormals(size_t mesh_idx)
 {
 	GLboolean lighting, texture;
 
@@ -310,9 +312,7 @@ void QWZM::drawNormals()
 	glColor3f(0.7f, 1.0f, 0.7f);
 
 	WZMVertex nrm;
-	for (size_t i = 0; i < m_meshes.size(); ++i)
-	{
-		const Mesh& msh = m_meshes.at(i);
+		const Mesh& msh = m_meshes.at(mesh_idx);
 		for (size_t j = 0; j < msh.m_vertexArray.size(); ++j)
 		{
 			nrm = msh.m_normalArray[j].normalize() * 2. / scale_all;
@@ -320,7 +320,6 @@ void QWZM::drawNormals()
 			qglviewer::Vec to(from + qglviewer::Vec(nrm.x(), nrm.y(), nrm.z()));
 			QGLViewer::drawArrow(from, to);
 		}
-	}
 
 	if (texture)
 		glEnable(GL_TEXTURE_2D);

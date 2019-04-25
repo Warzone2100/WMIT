@@ -184,7 +184,6 @@ void MainWindow::doAfterModelWasLoaded(const bool success)
 	m_transformDock->setMirrorState(success && !hasAnim);
 
 	m_ui->actionShowModelCenter->setEnabled(!hasAnim);
-	m_ui->actionShowNormals->setEnabled(!hasAnim);
 	m_ui->actionShow_Connectors->setEnabled(!hasAnim);
 }
 
