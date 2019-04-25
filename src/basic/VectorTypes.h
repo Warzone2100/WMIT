@@ -199,12 +199,12 @@ struct Vertex4 : public Vector<T, COMPONENTS>
 	}
 
 	Vertex4(const Vertex4& rhs): Vector<T, COMPONENTS>(rhs) {}
-	Vertex4(const Vertex<T>& rhs): Vector<T, COMPONENTS>()
+	Vertex4(const Vertex<T>& rhs, const T wval = 0): Vector<T, COMPONENTS>()
 	{
 		x() = rhs.x();
 		y() = rhs.y();
 		z() = rhs.z();
-		w() = 0;
+		w() = wval;
 	}
 
 	Vertex4& operator = (const Vertex4& rhs)

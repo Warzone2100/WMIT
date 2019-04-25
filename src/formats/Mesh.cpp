@@ -898,6 +898,19 @@ void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
 		vertIt->scale(x, y, z);
 	}
 
+	if ((x < 0.f) || (y < 0.f) || (z < 0.f))
+	{
+		WZMVertex nrmScaler(x < 0.f ? -1.f: 1.f, y < 0.f ? -1.f: 1.f, z < 0.f ? -1.f: 1.f);
+		WZMVertex4 tgtScaler(nrmScaler, 1.f);
+
+		for (unsigned int i = 0; i < vertices(); ++i)
+		{
+			m_normalArray[i].operator*=(nrmScaler);
+			m_tangentArray[i].operator*=(tgtScaler);
+			m_bitangentArray[i].operator*=(nrmScaler);
+		}
+	}
+
 	std::list<WZMConnector>::iterator itC;
 	for (itC = m_connectors.begin(); itC != m_connectors.end(); ++itC)
 	{
