@@ -147,6 +147,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_meshDock->toggleViewAction()->setShortcut(QKeySequence(Qt::Key_M));
 	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0), m_meshDock->toggleViewAction());
 
+	connect(m_meshDock, SIGNAL(connectorsWereUpdated()), this, SLOT(updateModelRender()));
 	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_meshDock, SLOT(setMeshCount(int,QStringList)));
 
 	/// Reset state
@@ -735,49 +736,49 @@ void MainWindow::shaderAction(int type)
 	{
 		m_model.disableShaders();
 	}
-	m_ui->centralWidget->updateGL();
+	updateModelRender();
 }
 
 void MainWindow::scaleXYZChanged(double val)
 {
 	m_model.setScaleXYZ(val);
-	m_ui->centralWidget->updateGL();
+	updateModelRender();
 }
 
 void MainWindow::scaleXChanged(double val)
 {
 	m_model.setScaleX(val);
-	m_ui->centralWidget->updateGL();
+	updateModelRender();
 }
 
 void MainWindow::scaleYChanged(double val)
 {
 	m_model.setScaleY(val);
-	m_ui->centralWidget->updateGL();
+	updateModelRender();
 }
 
 void MainWindow::scaleZChanged(double val)
 {
 	m_model.setScaleZ(val);
-	m_ui->centralWidget->updateGL();
+	updateModelRender();
 }
 
 void MainWindow::reverseWindings(int mesh)
 {
 	m_model.reverseWinding(mesh);
-	m_ui->centralWidget->updateGL();
+	updateModelRender();
 }
 
 void MainWindow::flipNormals(int mesh)
 {
 	m_model.flipNormals(mesh);
-	m_ui->centralWidget->updateGL();
+	updateModelRender();
 }
 
 void MainWindow::mirrorAxis(int axis)
 {
 	m_model.slotMirrorAxis(axis);
-	m_ui->centralWidget->updateGL();
+	updateModelRender();
 }
 
 void MainWindow::removeMesh(int mesh)
@@ -786,13 +787,13 @@ void MainWindow::removeMesh(int mesh)
 		return;
 
 	m_model.rmMesh(mesh);
-	m_ui->centralWidget->updateGL();
+	updateModelRender();
 }
 
 void MainWindow::materialChangedFromUI(const WZMaterial &mat)
 {
 	m_model.setMaterial(mat);
-    m_ui->centralWidget->updateGL();
+	updateModelRender();
 }
 
 void MainWindow::actionReloadUserShader()
@@ -908,4 +909,9 @@ void MainWindow::updateRecentFilesMenu()
 	}
 
 	m_ui->menuOpenRecent->setEnabled(fileCnt);
+}
+
+void MainWindow::updateModelRender()
+{
+	m_ui->centralWidget->updateGL();
 }

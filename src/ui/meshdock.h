@@ -23,6 +23,9 @@ public:
 public slots:
 	void setMeshCount(int value, QStringList names);
 
+signals:
+	void connectorsWereUpdated();
+
 private slots:
 	void selectMesh(int index);
 	void rmSelConnector();
@@ -52,6 +55,9 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 	bool insertRows(int position, int rows, const QModelIndex &index) override;
 	bool removeRows(int position, int rows, const QModelIndex &index) override;
+
+signals:
+	void connectorsWereUpdated();
 private:
 	Mesh& m_mesh;
 };

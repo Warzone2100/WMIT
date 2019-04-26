@@ -30,6 +30,7 @@ void MeshDock::resetConnectorViewModel()
 		return;
 	}
 	auto connModel = new WzmConnectorsModel(m_model->getMesh(m_selected_mesh), m_ui->meshConnectors);
+	connect(connModel, SIGNAL(connectorsWereUpdated()), this, SIGNAL(connectorsWereUpdated()));
 	m_ui->meshConnectors->setModel(connModel);
 	m_ui->gbConnectors->setEnabled(true);
 }
@@ -172,6 +173,7 @@ bool WzmConnectorsModel::insertRows(int position, int rows, const QModelIndex &i
 	// FIXME: we can only append
 	for (int row = 0; row < rows; ++row)
 		m_mesh.addConnector(WZMConnector());
+	emit connectorsWereUpdated();
 
 	endInsertRows();
 	return true;
@@ -184,6 +186,7 @@ bool WzmConnectorsModel::removeRows(int position, int rows, const QModelIndex &i
 
 	for (int row = 0; row < rows; ++row)
 		m_mesh.rmConnector(position);
+	emit connectorsWereUpdated();
 
 	endRemoveRows();
 	return true;
@@ -206,6 +209,7 @@ bool WzmConnectorsModel::setData(const QModelIndex &index, const QVariant &value
 		else
 			return false;
 
+		emit connectorsWereUpdated();
 		emit dataChanged(index, index, {role});
 
 		return true;
