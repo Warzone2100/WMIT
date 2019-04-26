@@ -25,6 +25,8 @@ public slots:
 
 private slots:
 	void selectMesh(int index);
+	void rmSelConnector();
+	void addConnector();
 
 private:
 	WZM* m_model;
