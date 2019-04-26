@@ -12,6 +12,8 @@ MeshDock::MeshDock(QWidget *parent) :
 	setMeshCount(0, QStringList());
 
 	connect(m_ui->meshComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectMesh(int)));
+	connect(m_ui->btnAddConnector, SIGNAL(clicked(bool)), this, SLOT(addConnector()));
+	connect(m_ui->btnDeleteConnector, SIGNAL(clicked(bool)), this, SLOT(rmSelConnector()));
 }
 
 MeshDock::~MeshDock()
@@ -24,10 +26,12 @@ void MeshDock::resetConnectorViewModel()
 	if ((m_selected_mesh < 0) || !m_model || (m_model->meshes() == 0))
 	{
 		m_ui->meshConnectors->setModel(nullptr);
+		m_ui->gbConnectors->setEnabled(false);
 		return;
 	}
 	auto connModel = new WzmConnectorsModel(m_model->getMesh(m_selected_mesh), m_ui->meshConnectors);
 	m_ui->meshConnectors->setModel(connModel);
+	m_ui->gbConnectors->setEnabled(true);
 }
 
 void MeshDock::setModel(WZM *model)
@@ -69,6 +73,22 @@ void MeshDock::selectMesh(int index)
 {
 	m_selected_mesh = index;
 	resetConnectorViewModel();
+}
+
+void MeshDock::rmSelConnector()
+{
+	if (!m_ui->meshConnectors->selectionModel()->hasSelection())
+		return;
+	// We use single selection, so there should be no duplicated rows
+	for (auto& curRow: m_ui->meshConnectors->selectionModel()->selectedIndexes())
+	{
+		m_ui->meshConnectors->model()->removeRow(curRow.row());
+	}
+}
+
+void MeshDock::addConnector()
+{
+	m_ui->meshConnectors->model()->insertRow(m_ui->meshConnectors->model()->rowCount());
 }
 
 WzmConnectorsModel::WzmConnectorsModel(Mesh &mesh, QObject *parent):
