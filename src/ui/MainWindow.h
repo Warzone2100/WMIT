@@ -78,12 +78,13 @@ private slots:
 	void actionSetupTextures();
 	void actionAppendModel();
 	void actionTakeScreenshot();
-    void actionSetTeamColor();
-    void actionLocateUserShaders();
-    void actionReloadUserShader();
+	void actionSetTeamColor();
+	void actionLocateUserShaders();
+	void actionReloadUserShader();
 	void actionEnableUserShaders(bool checked);
 
-    void updateRecentFilesMenu();
+	void updateRecentFilesMenu();
+	void updateModelRender();
 	void viewerInitialized();
 	void shaderAction(int);
 
