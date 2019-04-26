@@ -466,6 +466,8 @@ bool WZM::importFromOBJ(std::istream& in, bool welder)
 				m_meshes.push_back(Mesh());
 				Mesh& mesh = m_meshes.back();
 				mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray, welder);
+				mesh.mirrorUsingLocalCenter(0);
+				mesh.reverseWinding();
 				mesh.setTeamColours(false);
 				mesh.setName(name);
 				groupedFaces.clear();
@@ -485,6 +487,8 @@ bool WZM::importFromOBJ(std::istream& in, bool welder)
 		m_meshes.push_back(Mesh());
 		Mesh& mesh = m_meshes.back();
 		mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray, welder);
+		mesh.mirrorUsingLocalCenter(0);
+		mesh.reverseWinding();
 		mesh.setTeamColours(false);
 		mesh.setName(name);
 	}
@@ -537,7 +541,11 @@ void WZM::exportToOBJ(std::ostream &out) const
 
 	for (itM = m_meshes.begin(); itM != m_meshes.end(); ++itM)
 	{
-		objectBuffers.push_back(itM->exportToOBJ(params));
+		Mesh expMesh(*itM);
+		expMesh.mirrorUsingLocalCenter(0);
+		expMesh.reverseWinding();
+
+		objectBuffers.push_back(expMesh.exportToOBJ(params));
 	}
 
 	out << "# " << vertices.size() << " vertices\n";
