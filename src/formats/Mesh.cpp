@@ -257,6 +257,7 @@ Mesh::operator Pie3Level() const
 			p3UV.u() = m_textureArray[tri[i]].u();
 			p3UV.v() = m_textureArray[tri[i]].v();
 			p3Poly.m_texCoords[i] = p3UV;
+			p3.m_normals.push_back(m_normalArray[tri[i]]);
 		}
 		p3.m_polygons.push_back(p3Poly);
 	}

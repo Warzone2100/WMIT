@@ -90,6 +90,7 @@ public:
 	virtual void write(std::ostream& out) const;
 
 	int points() const;
+	int normals() const;
 	int polygons() const;
 	int connectors() const;
 
@@ -100,6 +101,7 @@ protected:
 	bool readAnimObjectDirective(std::istream &in);
 
 	std::vector<V> m_points;
+	std::vector<V> m_normals;
 	std::vector<P> m_polygons;
 	std::list<C> m_connectors;
 	WZMaterial m_material; // PIE3+

@@ -109,12 +109,39 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 	{
 		V point;
 		in >> point.x() >> point.y() >> point.z();
-		m_points.push_back(point);
+		m_points.emplace_back(point);
 	}
 
 	if (in.fail())
 	{
 		streamfail();
+	}
+
+	// Optional: NORMALS %u
+	mark = in.tellg();
+	in >> str >> uint;
+	if ( !in.fail() && str.compare("NORMALS") == 0)
+	{
+		uint *= 3;
+		for (; uint > 0; --uint)
+		{
+			V normal;
+			in >> normal.x() >> normal.y() >> normal.z();
+			if (in.fail())
+			{
+				/* Normals are optional, but if they're bad
+				 * we return failure.
+				 */
+				streamfail();
+			}
+			m_normals.emplace_back(normal);
+		}
+	}
+	else
+	{
+		// no normals or eof
+		in.clear();
+		in.seekg(mark);
 	}
 
 	// POLYGONS %u
@@ -132,7 +159,7 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 		{
 			streamfail();
 		}
-		m_polygons.push_back(poly);
+		m_polygons.emplace_back(poly);
 	}
 
 	mark = in.tellg();
@@ -151,7 +178,7 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 				 */
 				streamfail();
 			}
-			m_connectors.push_back(cnctr);
+			m_connectors.emplace_back(cnctr);
 		}
 	}
 	else
@@ -190,6 +217,24 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 		out << '\t' << ptIt->x() << ' ' << ptIt->y() << ' ' << ptIt->z() << '\n';
 	}
 
+	if (normals() != 0)
+	{
+		size_t nCnt = 0;
+
+		out << "NORMALS " << static_cast<int>(normals() / 3);
+		out << std::fixed;
+		for (auto nIt = m_normals.begin(); nIt != m_normals.end(); ++nIt)
+		{
+			if (nCnt++ % 3 == 0)
+				out << "\n\t";
+			out << nIt->x() << ' ' << nIt->y() << ' ' << nIt->z();
+			if (nCnt % 3 != 0)
+				out << ' ';
+		}
+		out.unsetf(std::ios::floatfield);
+		out << '\n';
+	}
+
 	out << "POLYGONS " << polygons() << '\n';
 	for (polyIt = m_polygons.begin(); polyIt != m_polygons.end(); ++polyIt)
 	{
@@ -221,6 +266,12 @@ int APieLevel< V, P, C>::points() const
 }
 
 template<typename V, typename P, typename C>
+int APieLevel< V, P, C>::normals() const
+{
+	return m_normals.size();
+}
+
+template<typename V, typename P, typename C>
 int APieLevel< V, P, C>::polygons() const
 {
 	return m_polygons.size();
@@ -236,6 +287,7 @@ template<typename V, typename P, typename C>
 void APieLevel< V, P, C>::clearAll()
 {
 	m_points.clear();
+	m_normals.clear();
 	m_polygons.clear();
 	m_connectors.clear();
 	m_material.setDefaults();
