@@ -117,6 +117,8 @@ Mesh::Mesh(const Pie3Level& p3)
 	WZMVertex tmpNrm;
 	WZMVertex v[3];
 
+	auto nrmIt = p3.m_normals.begin();
+
 	defaultConstructor();
 
 	/*
@@ -140,15 +142,23 @@ Mesh::Mesh(const Pie3Level& p3)
 			continue;
 		}
 
-		// Calculate inverted normal here and reverse winding below
 		v[0] = WZMVertex(p3.m_points[itL->getIndex(0)]);
 		v[1] = WZMVertex(p3.m_points[itL->getIndex(1)]);
 		v[2] = WZMVertex(p3.m_points[itL->getIndex(2)]);
-		tmpNrm = WZMVertex(v[1] - v[0]).crossProduct(v[2] - v[0]).normalize();
+
+		// Calculate inverted normal here and reverse winding below
+		if (p3.normals() == 0)
+			tmpNrm = WZMVertex(v[1] - v[0]).crossProduct(v[2] - v[0]).normalize();
 
 		// For all 3 vertices of the triangle
 		for (u_short i = 0; i < 3; ++i)
 		{
+			if (p3.normals() != 0)
+			{
+				tmpNrm = *nrmIt++;
+				tmpNrm.invert();
+			}
+
 			inResult = tupleSet.insert(WZMPoint(v[i], itL->getUV(i, 0), tmpNrm));
 
 			t_tupleSet::difference_type dist = std::distance(tupleSet.begin(), inResult.first);
@@ -257,7 +267,10 @@ Mesh::operator Pie3Level() const
 			p3UV.u() = m_textureArray[tri[i]].u();
 			p3UV.v() = m_textureArray[tri[i]].v();
 			p3Poly.m_texCoords[i] = p3UV;
-			p3.m_normals.push_back(m_normalArray[tri[i]]);
+
+			WZMVertex invNormal(m_normalArray[tri[i]]);
+			invNormal.invert();
+			p3.m_normals.emplace_back(invNormal);
 		}
 		p3.m_polygons.push_back(p3Poly);
 	}
