@@ -80,6 +80,7 @@ public:
 template<typename V, typename P, typename C>
 class APieLevel
 {
+	typedef Vertex<GLfloat> PieNormal;
 	friend Mesh::operator Pie3Level() const;
 	friend Mesh::Mesh(const Pie3Level& p3);
 public:
@@ -101,7 +102,7 @@ protected:
 	bool readAnimObjectDirective(std::istream &in);
 
 	std::vector<V> m_points;
-	std::vector<V> m_normals;
+	std::vector<PieNormal> m_normals;
 	std::vector<P> m_polygons;
 	std::list<C> m_connectors;
 	WZMaterial m_material; // PIE3+

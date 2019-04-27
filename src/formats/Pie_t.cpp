@@ -125,7 +125,7 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 		uint *= 3;
 		for (; uint > 0; --uint)
 		{
-			V normal;
+			PieNormal normal;
 			in >> normal.x() >> normal.y() >> normal.z();
 			if (in.fail())
 			{
