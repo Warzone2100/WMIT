@@ -32,6 +32,7 @@
 #include <QBasicTimer>
 
 #include "QWZM.h"
+#include "Pie.h"
 #include "wmit.h"
 
 class MaterialDock;
@@ -60,8 +61,8 @@ public:
 
 	static bool loadModel(const QString& file, WZM& model, bool nogui = false);
 	static bool guessModelTypeFromFilename(const QString &fname, wmit_filetype_t &type);
-	static bool saveModel(const QString& file, const WZM& model, const wmit_filetype_t &type);
-	static bool saveModel(const QString& file, const QWZM& model, const wmit_filetype_t &type);
+	static bool saveModel(const QString& file, const WZM& model, const wmit_filetype_t &type,
+			      const PieCaps *piecaps = nullptr);
 
 	void PrependFileToRecentList(const QString &filename);
 
@@ -103,8 +104,6 @@ private slots:
 private:
 	Ui::MainWindow *m_ui;
 
-	ImportDialog *m_importDialog;
-	ExportDialog *m_exportDialog;
 	MaterialDock *m_materialDock;
 	TransformDock *m_transformDock;
 	MeshDock *m_meshDock;

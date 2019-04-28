@@ -45,10 +45,12 @@
 #define PIE_MODEL_DIRECTIVE_NORMALMAP "NORMALMAP"
 #define PIE_MODEL_DIRECTIVE_MATERIALS "MATERIALS" // WZ 3.2 only
 #define PIE_MODEL_DIRECTIVE_LEVELS "LEVELS"
+#define PIE_MODEL_DIRECTIVE_CONNECTORS "CONNECTORS"
 #define PIE_MODEL_DIRECTIVE_SPECULARMAP "SPECULARMAP"
 #define PIE_MODEL_DIRECTIVE_SHADERS "SHADERS"
 #define PIE_MODEL_DIRECTIVE_EVENT "EVENT" // WZ 3.3
 #define PIE_MODEL_DIRECTIVE_ANIMOBJECT "ANIMOBJECT" // WZ 3.3
+#define PIE_MODEL_DIRECTIVE_NORMALS "NORMALS" // WZ after 3.3 (TBD)
 
 #define PIE_MODEL_FEATURE_TEXTURED 0x200
 #define PIE_MODEL_FEATURE_TCMASK 0x10000
@@ -81,6 +83,11 @@ public:
 		return c.test(val);
 	}
 
+	void set(T pos, bool val)
+	{
+		c.set(get_value(pos), val);
+	}
+
 	EnumClassBitset& reset(T pos)
 	{
 		c.reset(get_value(pos));
@@ -92,6 +99,8 @@ public:
 		c.flip(get_value(pos));
 		return *this;
 	}
+
+	size_t size() const {c.size();}
 };
 
 enum class PIE_OPT_DIRECTIVES
@@ -108,6 +117,8 @@ enum class PIE_OPT_DIRECTIVES
 	pod_MAXVAL
 };
 
+const char* getPieDirectiveDescription(PIE_OPT_DIRECTIVES dir);
+
 template<>
 struct EnumTraits<PIE_OPT_DIRECTIVES>
 {
@@ -117,10 +128,8 @@ struct EnumTraits<PIE_OPT_DIRECTIVES>
 typedef EnumClassBitset<PIE_OPT_DIRECTIVES> PieCaps;
 
 // Note that string bits are reversed!
-const static std::string PIE2_CAPS_STRING = "11010111";
-const static PieCaps PIE2_CAPS(PIE2_CAPS_STRING);
-const static std::string PIE3_CAPS_STRING = "11010111";
-const static PieCaps PIE3_CAPS(PIE3_CAPS_STRING);
+const static PieCaps PIE2_CAPS("11010111");
+const static PieCaps PIE3_CAPS("11010111");
 
 class ApieAnimFrame
 {
@@ -189,8 +198,7 @@ public:
 	virtual unsigned version() const =0;
 
 	virtual bool read(std::istream& in);
-	void write(std::ostream& out) const;
-	virtual void write(std::ostream& out, const PieCaps& caps) const;
+	virtual void write(std::ostream& out, const PieCaps* piecaps = nullptr) const;
 
 	unsigned levels() const;
 	virtual unsigned getType() const;

@@ -21,6 +21,7 @@
 #define EXPORTDIALOG_HPP
 
 #include <QDialog>
+#include <Pie.h>
 
 namespace Ui {
     class ExportDialog;
@@ -29,22 +30,42 @@ namespace Ui {
 class ExportDialog : public QDialog {
     Q_OBJECT
 public:
-    ExportDialog(QWidget *parent = 0);
+    ExportDialog(QWidget *parent = nullptr);
     ~ExportDialog();
 
-	int optimisationSelected() const;
 protected:
     void changeEvent(QEvent *e);
 
-private:
+protected:
     Ui::ExportDialog *ui;
+};
+
+#include <QAbstractTableModel>
+#include <QString>
+
+
+class PieContentModel : public QAbstractTableModel
+{
+	Q_OBJECT
+public:
+	PieContentModel(const PieCaps& caps, QObject *parent = nullptr);
+
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+	Qt::ItemFlags flags(const QModelIndex &index) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+
+private:
+	PieCaps m_caps;
 };
 
 class PieExportDialog : public ExportDialog
 {
 	Q_OBJECT
 public:
-	PieExportDialog(QWidget* parent = NULL);
+	PieExportDialog(QWidget* parent = nullptr);
 private:
 };
 
