@@ -612,17 +612,13 @@ int APieModel<L>::readLevelsDirective(std::istream& in)
 	return static_cast<int>(uint);
 }
 
-template<typename L>
-void APieModel<L>::write(std::ostream &out) const
-{
-	write(out, m_def_caps);
-}
-
 template <typename L>
-void APieModel<L>::write(std::ostream& out, const PieCaps &caps) const
+void APieModel<L>::write(std::ostream& out, const PieCaps *piecaps) const
 {
 	typename std::vector<L>::const_iterator it;
 	unsigned i = 1;
+
+	const PieCaps& caps(piecaps ? *piecaps : m_def_caps);
 
 	out << PIE_MODEL_SIGNATURE << " " << version() << '\n';
 

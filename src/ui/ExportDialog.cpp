@@ -44,12 +44,94 @@ void ExportDialog::changeEvent(QEvent *e)
     }
 }
 
-int ExportDialog::optimisationSelected() const
-{
-	return ui->comboBox->currentIndex();
-}
-
 PieExportDialog::PieExportDialog(QWidget* parent)
 	: ExportDialog(parent)
 {
+	auto model = new PieContentModel(PIE3_CAPS);
+	ui->tvExportCaps->setModel(model);
+}
+
+PieContentModel::PieContentModel(const PieCaps &caps, QObject *parent): QAbstractTableModel(parent),
+	m_caps(caps)
+{
+
+}
+
+int PieContentModel::rowCount(const QModelIndex &parent) const
+{
+	Q_UNUSED(parent);
+	return m_caps.size();
+}
+
+int PieContentModel::columnCount(const QModelIndex &parent) const
+{
+	Q_UNUSED(parent);
+	return 3;
+}
+
+QVariant PieContentModel::data(const QModelIndex &index, int role) const
+{
+	if (!index.isValid() || (index.row() < 0))
+		return QVariant();
+
+	if (role == Qt::DisplayRole)
+	{
+		int row = index.row();
+
+		if (index.column() == 0)
+			return getPieDirectiveDescription(static_cast<PIE_OPT_DIRECTIVES>(row));
+		else if (index.column() == 1)
+			return m_caps.test(static_cast<PIE_OPT_DIRECTIVES>(row));
+	}
+
+	return QVariant();
+}
+
+bool PieContentModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+	if (index.isValid() && role == Qt::EditRole)
+	{
+		int row = index.row();
+
+		if (index.column() == 1)
+			m_caps.set(static_cast<PIE_OPT_DIRECTIVES>(row), value.toBool());
+		else
+			return false;
+
+		emit dataChanged(index, index, {role});
+
+		return true;
+	}
+
+	return false;
+}
+
+Qt::ItemFlags PieContentModel::flags(const QModelIndex &index) const
+{
+	if (!index.isValid())
+		return Qt::ItemIsEnabled;
+
+	return QAbstractTableModel::flags(index) | (index.column() == 1 ? Qt::ItemIsEditable : Qt::NoItemFlags);
+}
+
+QVariant PieContentModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (role != Qt::DisplayRole)
+		return QVariant();
+
+	if (orientation == Qt::Horizontal)
+	{
+		switch (section) {
+		case 0:
+			return tr("Directive");
+		case 1:
+			return tr("State");
+		case 2:
+			return tr("Description");
+		default:
+			return QVariant();
+		}
+	}
+
+	return QVariant();
 }

@@ -51,8 +51,6 @@ QString buildAppTitle(QString prefix = QString())
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_ui(new Ui::MainWindow),
-	m_importDialog(new ImportDialog(this)),
-	m_exportDialog(nullptr),
 	m_materialDock(new MaterialDock(this)),
 	m_transformDock(new TransformDock(this)),
 	m_meshDock(new MeshDock(this)),
@@ -242,7 +240,7 @@ bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_
 	return true;
 }
 
-bool MainWindow::saveModel(const QString &file, const WZM &model, const wmit_filetype_t &type)
+bool MainWindow::saveModel(const QString &file, const WZM &model, const wmit_filetype_t &type, const PieCaps* piecaps)
 {
 	std::ofstream out;
 	out.open(file.toLocal8Bit().constData());
@@ -261,43 +259,11 @@ bool MainWindow::saveModel(const QString &file, const WZM &model, const wmit_fil
 		if (type == WMIT_FT_PIE2)
 		{
 			Pie2Model p2 = p3;
-			p2.write(out);
+			p2.write(out, piecaps);
 		}
 		else
 		{
-			p3.write(out);
-		}
-	}
-
-	out.close();
-
-	return true;
-}
-
-bool MainWindow::saveModel(const QString &file, const QWZM &model, const wmit_filetype_t &type)
-{
-	std::ofstream out;
-	out.open(file.toLocal8Bit().constData());
-
-	switch (type)
-	{
-	case WMIT_FT_WZM:
-		model.write(out);
-		break;
-	case WMIT_FT_OBJ:
-		model.exportToOBJ(out);
-		break;
-	default:
-		Pie3Model p3 = model;
-
-		if (type == WMIT_FT_PIE2)
-		{
-			Pie2Model p2 = p3;
-			p2.write(out);
-		}
-		else
-		{
-			p3.write(out);
+			p3.write(out, piecaps);
 		}
 	}
 
@@ -531,6 +497,8 @@ void MainWindow::actionSaveAs()
 		return;
 	}
 
+	wmit_filetype_t seltype = types[filters.indexOf(fDialog->selectedNameFilter())];
+
 	// refresh export working dir
 	m_pathExport = fDialog->directory().absolutePath();
 	m_settings->setValue(WMIT_SETTINGS_EXPORTVAL, m_pathExport);
@@ -542,32 +510,19 @@ void MainWindow::actionSaveAs()
 	
 	PrependFileToRecentList(fDialog->selectedFiles().first());
 
-/* Disabled till ready
-	if (type == PIE)
+	QPointer<ExportDialog> dlg;
+	if (seltype == WMIT_FT_PIE || seltype == WMIT_FT_PIE2)
 	{
-		m_exportDialog = new PieExportDialog(this);
-		m_exportDialog->exec();
-	}
-	else
-	{
-		m_exportDialog = new ExportDialog(this);
-		m_exportDialog->exec();
+		dlg = new PieExportDialog(this);
+		dlg->exec();
 	}
 
-	if (m_exportDialog->result() != QDialog::Accepted)
+	if (dlg && dlg->result() != QDialog::Accepted)
 	{
 		return;
 	}
 
-	if (m_exportDialog->optimisationSelected() == 0)
-	{
-//		model.optimizeForsyth();
-	}
-	delete m_exportDialog;
-	m_exportDialog = NULL;
-*/
-
-	saveModel(fDialog->selectedFiles().first(), m_model, types[filters.indexOf(fDialog->selectedNameFilter())]);
+	saveModel(fDialog->selectedFiles().first(), m_model, seltype);
 }
 
 bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *errMessage)
