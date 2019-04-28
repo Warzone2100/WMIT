@@ -46,7 +46,7 @@ int pieVersion(std::istream& in)
   Pie version 2
   *********************************************/
 
-Pie2Model::Pie2Model()
+Pie2Model::Pie2Model(): APieModel(PIE2_CAPS)
 {
 }
 
@@ -310,11 +310,11 @@ Pie3Level::operator Pie2Level() const
 	return p2;
 }
 
-Pie3Model::Pie3Model()
+Pie3Model::Pie3Model(): APieModel(PIE3_CAPS)
 {
 }
 
-Pie3Model::Pie3Model(const Pie2Model& p2)
+Pie3Model::Pie3Model(const Pie2Model& p2): APieModel(PIE3_CAPS)
 {
 	m_texture = p2.m_texture;
 	m_texture_tcmask = p2.m_texture_tcmask;
