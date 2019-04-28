@@ -54,7 +54,7 @@ QWZM::~QWZM()
 {
 }
 
-static QMatrix4x4 render_mtxModelView, render_mtxProj;
+static QMatrix4x4 render_mtxModelView, render_mtxModelView_preAnim, render_mtxProj;
 static QMatrix4x4 render_mtxMVP, render_mtxNM;
 static QVector4D render_posSun;
 
@@ -85,6 +85,7 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		if (m_active_mesh < 0)
 			render_mtxModelView.scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 		render_mtxModelView.scale(wz_scale.toVector3D());
+		render_mtxModelView_preAnim = render_mtxModelView;
 
 		render_mtxProj = QMatrix4x4(mtxProj).transposed();
 		render_posSun = QVector4D(posSun[0], posSun[1], posSun[2], posSun[3]) * wz_scale;
@@ -138,6 +139,8 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 			// disabled frame if negative, for implementing key frame animation
 			if (curAnimFrame.scale.x() >= 0)
 			{
+				render_mtxModelView_preAnim = render_mtxModelView;
+
 				glScalef(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
 				glTranslatef(curAnimFrame.trans.x(), curAnimFrame.trans.y(), curAnimFrame.trans.z());
 				glRotatef(curAnimFrame.rot.x(), 1.f, 0.f, 0.f);
@@ -198,6 +201,8 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		if (!isFixedPipelineRenderer())
 		{
 			render_mtxModelView = origMshMV;
+			render_mtxModelView_preAnim = render_mtxModelView;
+
 			// release shader data
 			if (shader)
 			{
@@ -736,7 +741,8 @@ bool QWZM::bindShader(int type)
 		shader->setUniformValue(uniloc,	render_mtxNM);
 
 		uniloc = shader->uniformLocation("lightPosition");
-		shader->setUniformValue(uniloc,	render_posSun * render_mtxNM);
+		shader->setUniformValue(uniloc,	render_posSun *
+					render_mtxModelView_preAnim.inverted().transposed());
 
 		break;
 	}
