@@ -196,16 +196,16 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 }
 
 template<typename V, typename P, typename C>
-void APieLevel< V, P, C>::write(std::ostream &out) const
+void APieLevel< V, P, C>::write(std::ostream &out, const PieCaps &caps) const
 {
 	typename std::vector<V>::const_iterator ptIt;
 	typename std::vector<P>::const_iterator polyIt;
 	typename std::list<C>::const_iterator cIt;
 
-	if (!m_material.isDefault())
+	if (caps.test(PIE_OPT_DIRECTIVES::podMATERIALS) && !m_material.isDefault())
 		out << PIE_MODEL_DIRECTIVE_MATERIALS << " " << m_material << '\n';
 
-	if (!m_shader_vert.empty())
+	if (caps.test(PIE_OPT_DIRECTIVES::podSHADERS) && !m_shader_vert.empty())
 	{
 		out << PIE_MODEL_DIRECTIVE_SHADERS << " " << 2 << " " << m_shader_vert
 		    << " " << m_shader_frag << '\n';
@@ -217,7 +217,7 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 		out << '\t' << ptIt->x() << ' ' << ptIt->y() << ' ' << ptIt->z() << '\n';
 	}
 
-	if (normals() != 0)
+	if (caps.test(PIE_OPT_DIRECTIVES::podNORMALS) && (normals() != 0))
 	{
 		size_t nCnt = 0;
 
@@ -242,7 +242,7 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 		polyIt->write(out);
 	}
 
-	if (connectors() != 0)
+	if (caps.test(PIE_OPT_DIRECTIVES::podCONNECTORS) && (connectors() != 0))
 	{
 		out << "CONNECTORS " << connectors() << '\n';
 		for (cIt = m_connectors.begin(); cIt != m_connectors.end(); ++cIt)
@@ -252,7 +252,7 @@ void APieLevel< V, P, C>::write(std::ostream &out) const
 		}
 	}
 
-	if (m_animobj.isValid())
+	if (caps.test(PIE_OPT_DIRECTIVES::podANIMOBJECT) && (m_animobj.isValid()))
 	{
 		out << PIE_MODEL_DIRECTIVE_ANIMOBJECT;
 		m_animobj.write(out);
@@ -342,7 +342,7 @@ void APieModel<L>::clearAll()
 }
 
 template <typename L>
-APieModel<L>::APieModel()
+APieModel<L>::APieModel(const PieCaps& def_caps): m_def_caps(def_caps)
 {
 }
 
@@ -612,8 +612,14 @@ int APieModel<L>::readLevelsDirective(std::istream& in)
 	return static_cast<int>(uint);
 }
 
+template<typename L>
+void APieModel<L>::write(std::ostream &out) const
+{
+	write(out, m_def_caps);
+}
+
 template <typename L>
-void APieModel<L>::write(std::ostream& out) const
+void APieModel<L>::write(std::ostream& out, const PieCaps &caps) const
 {
 	typename std::vector<L>::const_iterator it;
 	unsigned i = 1;
@@ -626,17 +632,17 @@ void APieModel<L>::write(std::ostream& out) const
 			<< textureWidth() << ' '
 			<< textureHeight() << '\n';
 
-	if (!m_texture_normalmap.empty())
+	if (caps.test(PIE_OPT_DIRECTIVES::podNORMALMAP) && !m_texture_normalmap.empty())
 	{
 		out << PIE_MODEL_DIRECTIVE_NORMALMAP << " 0 " << m_texture_normalmap << '\n';
 	}
 
-	if (!m_texture_specmap.empty())
+	if (caps.test(PIE_OPT_DIRECTIVES::podSPECULARMAP) && !m_texture_specmap.empty())
 	{
 		out << PIE_MODEL_DIRECTIVE_SPECULARMAP << " 0 " << m_texture_specmap << '\n';
 	}
 
-	if (!m_events.empty())
+	if (caps.test(PIE_OPT_DIRECTIVES::podEVENT) && !m_events.empty())
 	{
 		for (const auto& evt : m_events)
 		{
@@ -649,7 +655,7 @@ void APieModel<L>::write(std::ostream& out) const
 	for (it = m_levels.begin(); it != m_levels.end(); ++it, ++i)
 	{
 		out << "LEVEL " << i << '\n';
-		it->write(out);
+		it->write(out, caps);
 	}
 }
 

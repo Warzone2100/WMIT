@@ -21,6 +21,8 @@
 
 #include <iostream>
 #include <vector>
+#include <bitset>
+#include <type_traits>
 #include <map>
 #include <list>
 #include <QtOpenGL/qgl.h>
@@ -54,6 +56,72 @@
 #define PIE_MODEL_TEXPAGE_PREFIX "page-"
 #define PIE_MODEL_TCMASK_SUFFIX "_tcmask"
 
+// Saw on https://stackoverflow.com/questions/17350214/using-enum-class-with-stdbitset
+
+template<typename T>
+struct EnumTraits;
+
+template<typename T>
+class EnumClassBitset
+{
+private:
+	std::bitset<static_cast<typename std::underlying_type<T>::type>(EnumTraits<T>::max)> c;
+
+	typename std::underlying_type<T>::type get_value(T v) const
+	{
+		return static_cast<typename std::underlying_type<T>::type>(v);
+	}
+
+public:
+	EnumClassBitset(const std::string& bit_string): c(bit_string) {}
+
+	bool test(T pos) const
+	{
+		const typename std::underlying_type<T>::type val(get_value(pos));
+		return c.test(val);
+	}
+
+	EnumClassBitset& reset(T pos)
+	{
+		c.reset(get_value(pos));
+		return *this;
+	}
+
+	EnumClassBitset& flip(T pos)
+	{
+		c.flip(get_value(pos));
+		return *this;
+	}
+};
+
+enum class PIE_OPT_DIRECTIVES
+{
+	podNORMALMAP,
+	podSPECULARMAP,
+	podEVENT,
+	podMATERIALS,
+	podSHADERS,
+
+	podNORMALS,
+	podCONNECTORS,
+	podANIMOBJECT,
+	pod_MAXVAL
+};
+
+template<>
+struct EnumTraits<PIE_OPT_DIRECTIVES>
+{
+	static const PIE_OPT_DIRECTIVES max = PIE_OPT_DIRECTIVES::pod_MAXVAL;
+};
+
+typedef EnumClassBitset<PIE_OPT_DIRECTIVES> PieCaps;
+
+// Note that string bits are reversed!
+const static std::string PIE2_CAPS_STRING = "11010111";
+const static PieCaps PIE2_CAPS(PIE2_CAPS_STRING);
+const static std::string PIE3_CAPS_STRING = "11010111";
+const static PieCaps PIE3_CAPS(PIE3_CAPS_STRING);
+
 class ApieAnimFrame
 {
 public:
@@ -85,10 +153,10 @@ class APieLevel
 	friend Mesh::Mesh(const Pie3Level& p3);
 public:
 	APieLevel();
-	virtual ~APieLevel(){}
+	virtual ~APieLevel() {}
 
 	virtual bool read(std::istream& in);
-	virtual void write(std::ostream& out) const;
+	virtual void write(std::ostream& out, const PieCaps& caps) const;
 
 	int points() const;
 	int normals() const;
@@ -115,21 +183,20 @@ template <typename L>
 class APieModel
 {
 public:
-	APieModel();
+	APieModel(const PieCaps& def_caps);
 	virtual ~APieModel();
 
 	virtual unsigned version() const =0;
 
 	virtual bool read(std::istream& in);
-	virtual void write(std::ostream& out) const;
+	void write(std::ostream& out) const;
+	virtual void write(std::ostream& out, const PieCaps& caps) const;
 
 	unsigned levels() const;
 	virtual unsigned getType() const;
 
 	bool isValid() const;
 
-	//virtual bool addFeature(unsigned feature);
-	//virtual bool removeFeature(unsigned feature);
 	virtual bool isFeatureSet(unsigned feature) const;
 protected:
 
@@ -160,6 +227,7 @@ protected:
 	std::vector<L> m_levels;
 
 	unsigned m_type; // FIXME used as helper for 2->3 conversion, ignored for write
+	const PieCaps m_def_caps;
 };
 
 template <typename V>
