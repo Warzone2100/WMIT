@@ -100,7 +100,7 @@ public:
 		return *this;
 	}
 
-	size_t size() const {c.size();}
+	size_t size() const {return c.size();}
 };
 
 enum class PIE_OPT_DIRECTIVES
