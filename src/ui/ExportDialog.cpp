@@ -47,7 +47,7 @@ void ExportDialog::changeEvent(QEvent *e)
 PieExportDialog::PieExportDialog(QWidget* parent)
 	: ExportDialog(parent)
 {
-	auto model = new PieContentModel(PIE3_CAPS);
+	auto model = new PieContentModel(PIE3_CAPS, ui->tvExportCaps);
 	ui->tvExportCaps->setModel(model);
 }
 
