@@ -741,8 +741,7 @@ bool QWZM::bindShader(int type)
 		shader->setUniformValue(uniloc,	render_mtxNM);
 
 		uniloc = shader->uniformLocation("lightPosition");
-		shader->setUniformValue(uniloc,	render_posSun *
-					render_mtxModelView_preAnim.inverted().transposed());
+		shader->setUniformValue(uniloc,	render_posSun *	render_mtxModelView_preAnim.inverted());
 
 		break;
 	}
