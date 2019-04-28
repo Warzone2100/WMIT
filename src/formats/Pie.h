@@ -117,6 +117,7 @@ enum class PIE_OPT_DIRECTIVES
 	pod_MAXVAL
 };
 
+const char* getPieDirectiveName(PIE_OPT_DIRECTIVES dir);
 const char* getPieDirectiveDescription(PIE_OPT_DIRECTIVES dir);
 
 template<>

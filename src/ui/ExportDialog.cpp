@@ -79,9 +79,11 @@ QVariant PieContentModel::data(const QModelIndex &index, int role) const
 		int row = index.row();
 
 		if (index.column() == 0)
-			return getPieDirectiveDescription(static_cast<PIE_OPT_DIRECTIVES>(row));
+			return getPieDirectiveName(static_cast<PIE_OPT_DIRECTIVES>(row));
 		else if (index.column() == 1)
 			return m_caps.test(static_cast<PIE_OPT_DIRECTIVES>(row));
+		else if (index.column() == 2)
+			return getPieDirectiveDescription(static_cast<PIE_OPT_DIRECTIVES>(row));
 	}
 
 	return QVariant();
