@@ -80,13 +80,14 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 
 	if (!isFixedPipelineRenderer())
 	{
+		const static QVector4D wz_scale(-WZ_SCALE, WZ_SCALE, WZ_SCALE, 1.f);
 		render_mtxModelView = QMatrix4x4(mtxModelView).transposed();
 		if (m_active_mesh < 0)
 			render_mtxModelView.scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
-		render_mtxModelView.scale(-WZ_SCALE, WZ_SCALE, WZ_SCALE);
+		render_mtxModelView.scale(wz_scale.toVector3D());
 
 		render_mtxProj = QMatrix4x4(mtxProj).transposed();
-		render_posSun = QVector4D(posSun[0], posSun[1], posSun[2], posSun[3]);
+		render_posSun = QVector4D(posSun[0], posSun[1], posSun[2], posSun[3]) * wz_scale;
 	}
 
 	glScalef(-WZ_SCALE, WZ_SCALE, WZ_SCALE); // Scale from warzone to fit in our scene. possibly a FIXME
@@ -721,9 +722,6 @@ bool QWZM::bindShader(int type)
 		else
 			shader->setUniformValue(uniloc, GLint(0));
 
-		uniloc = shader->uniformLocation("lightPosition");
-		shader->setUniformValue(uniloc,	render_posSun);
-
 		uniloc = shader->uniformLocation("ModelViewMatrix");
 		shader->setUniformValue(uniloc,	render_mtxModelView);
 
@@ -736,6 +734,9 @@ bool QWZM::bindShader(int type)
 
 		uniloc = shader->uniformLocation("NormalMatrix");
 		shader->setUniformValue(uniloc,	render_mtxNM);
+
+		uniloc = shader->uniformLocation("lightPosition");
+		shader->setUniformValue(uniloc,	render_posSun * render_mtxNM);
 
 		break;
 	}
