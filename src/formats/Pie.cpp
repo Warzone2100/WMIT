@@ -408,7 +408,7 @@ void ApieAnimObject::write(std::ostream &out) const
 	out << '\n';
 }
 
-const char *getPieDirectiveDescription(PIE_OPT_DIRECTIVES dir)
+const char *getPieDirectiveName(PIE_OPT_DIRECTIVES dir)
 {
 	switch (dir) {
 	case PIE_OPT_DIRECTIVES::podNORMALMAP: return PIE_MODEL_DIRECTIVE_NORMALMAP;
@@ -419,6 +419,22 @@ const char *getPieDirectiveDescription(PIE_OPT_DIRECTIVES dir)
 	case PIE_OPT_DIRECTIVES::podNORMALS: return PIE_MODEL_DIRECTIVE_NORMALS;
 	case PIE_OPT_DIRECTIVES::podCONNECTORS: return PIE_MODEL_DIRECTIVE_CONNECTORS;
 	case PIE_OPT_DIRECTIVES::podANIMOBJECT: return PIE_MODEL_DIRECTIVE_ANIMOBJECT;
+	default:
+		return "";
+	}
+}
+
+const char *getPieDirectiveDescription(PIE_OPT_DIRECTIVES dir)
+{
+	switch (dir) {
+	case PIE_OPT_DIRECTIVES::podNORMALMAP: return "Sets the normal map texture page for the model.";
+	case PIE_OPT_DIRECTIVES::podSPECULARMAP: return "Sets the specular map texture page for the model.";
+	case PIE_OPT_DIRECTIVES::podEVENT: return "An animation event associated with this model. If the event type is triggered, the model is replaced with the specified model for the duration of the event.";
+	case PIE_OPT_DIRECTIVES::podMATERIALS: return "Specifies the material properties of a mesh.";
+	case PIE_OPT_DIRECTIVES::podSHADERS: return "Create a specific shader program for this mesh.";
+	case PIE_OPT_DIRECTIVES::podNORMALS: return "This allows presence of per-vertex normals in a mesh.";
+	case PIE_OPT_DIRECTIVES::podCONNECTORS: return "Connectors are used to place and orient other components against each other.";
+	case PIE_OPT_DIRECTIVES::podANIMOBJECT: return "If the mesh is animated, this directive will tell the game how to animate it.";
 	default:
 		return "";
 	}
