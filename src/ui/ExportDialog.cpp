@@ -80,10 +80,15 @@ QVariant PieContentModel::data(const QModelIndex &index, int role) const
 
 		if (index.column() == 0)
 			return getPieDirectiveName(static_cast<PIE_OPT_DIRECTIVES>(row));
-		else if (index.column() == 1)
-			return m_caps.test(static_cast<PIE_OPT_DIRECTIVES>(row));
 		else if (index.column() == 2)
 			return getPieDirectiveDescription(static_cast<PIE_OPT_DIRECTIVES>(row));
+	}
+	else if (role == Qt::CheckStateRole)
+	{
+		int row = index.row();
+
+		if (index.column() == 1)
+			return m_caps.test(static_cast<PIE_OPT_DIRECTIVES>(row)) ? Qt::Checked : Qt::Unchecked;
 	}
 
 	return QVariant();
@@ -91,18 +96,21 @@ QVariant PieContentModel::data(const QModelIndex &index, int role) const
 
 bool PieContentModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if (index.isValid() && role == Qt::EditRole)
+	if (index.isValid())
 	{
-		int row = index.row();
+		if (role == Qt::CheckStateRole)
+		{
+			int row = index.row();
 
-		if (index.column() == 1)
-			m_caps.set(static_cast<PIE_OPT_DIRECTIVES>(row), value.toBool());
-		else
-			return false;
+			if (index.column() == 1)
+				m_caps.set(static_cast<PIE_OPT_DIRECTIVES>(row), value.toBool());
+			else
+				return false;
 
-		emit dataChanged(index, index, {role});
+			emit dataChanged(index, index, {role});
 
-		return true;
+			return true;
+		}
 	}
 
 	return false;
@@ -113,7 +121,7 @@ Qt::ItemFlags PieContentModel::flags(const QModelIndex &index) const
 	if (!index.isValid())
 		return Qt::ItemIsEnabled;
 
-	return QAbstractTableModel::flags(index) | (index.column() == 1 ? Qt::ItemIsEditable : Qt::NoItemFlags);
+	return QAbstractTableModel::flags(index) | (index.column() == 1 ? Qt::ItemIsUserCheckable : Qt::NoItemFlags);
 }
 
 QVariant PieContentModel::headerData(int section, Qt::Orientation orientation, int role) const
