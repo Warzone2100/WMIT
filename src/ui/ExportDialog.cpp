@@ -44,14 +44,14 @@ void ExportDialog::changeEvent(QEvent *e)
     }
 }
 
-PieExportDialog::PieExportDialog(QWidget* parent)
-	: ExportDialog(parent)
+PieExportDialog::PieExportDialog(const PieCaps &caps, QWidget* parent)
+	: ExportDialog(parent), m_caps(caps)
 {
-	auto model = new PieContentModel(PIE3_CAPS, ui->tvExportCaps);
+	auto model = new PieContentModel(m_caps, ui->tvExportCaps);
 	ui->tvExportCaps->setModel(model);
 }
 
-PieContentModel::PieContentModel(const PieCaps &caps, QObject *parent): QAbstractTableModel(parent),
+PieContentModel::PieContentModel(PieCaps &caps, QObject *parent): QAbstractTableModel(parent),
 	m_caps(caps)
 {
 

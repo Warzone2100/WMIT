@@ -75,6 +75,7 @@ private:
 	}
 
 public:
+	EnumClassBitset() = default;
 	EnumClassBitset(const std::string& bit_string): c(bit_string) {}
 
 	bool test(T pos) const

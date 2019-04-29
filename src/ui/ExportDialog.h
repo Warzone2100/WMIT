@@ -48,7 +48,7 @@ class PieContentModel : public QAbstractTableModel
 {
 	Q_OBJECT
 public:
-	PieContentModel(const PieCaps& caps, QObject *parent = nullptr);
+	PieContentModel(PieCaps& caps, QObject *parent = nullptr);
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -58,15 +58,18 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
 private:
-	PieCaps m_caps;
+	PieCaps& m_caps;
 };
 
 class PieExportDialog : public ExportDialog
 {
 	Q_OBJECT
 public:
-	PieExportDialog(QWidget* parent = nullptr);
+	PieExportDialog(const PieCaps& caps, QWidget* parent = nullptr);
+
+	const PieCaps& getCaps() const {return m_caps;}
 private:
+	PieCaps m_caps;
 };
 
 #endif // EXPORTDIALOG_HPP
