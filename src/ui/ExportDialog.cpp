@@ -49,6 +49,8 @@ PieExportDialog::PieExportDialog(const PieCaps &caps, QWidget* parent)
 {
 	auto model = new PieContentModel(m_caps, ui->tvExportCaps);
 	ui->tvExportCaps->setModel(model);
+	ui->tvExportCaps->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui->tvExportCaps->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
 }
 
 PieContentModel::PieContentModel(PieCaps &caps, QObject *parent): QAbstractTableModel(parent),
@@ -135,7 +137,7 @@ QVariant PieContentModel::headerData(int section, Qt::Orientation orientation, i
 		case 0:
 			return tr("Directive");
 		case 1:
-			return tr("State");
+			return tr("Allowed");
 		case 2:
 			return tr("Description");
 		default:
