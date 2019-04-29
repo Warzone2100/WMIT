@@ -48,6 +48,12 @@ namespace Ui
 	class MainWindow;
 }
 
+struct ModelInfo
+{
+	PieCaps m_pieCaps;
+	wmit_filetype_t m_type;
+};
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -59,10 +65,9 @@ public:
 	void clear();
 	bool openFile(const QString& file);
 
-	static bool loadModel(const QString& file, WZM& model, bool nogui = false);
+	static bool loadModel(const QString& file, WZM& model, ModelInfo &info, bool nogui = false);
 	static bool guessModelTypeFromFilename(const QString &fname, wmit_filetype_t &type);
-	static bool saveModel(const QString& file, const WZM& model, const wmit_filetype_t &type,
-			      const PieCaps *piecaps = nullptr);
+	static bool saveModel(const QString& file, const WZM& model, const ModelInfo &info);
 
 	void PrependFileToRecentList(const QString &filename);
 
@@ -120,6 +125,7 @@ private:
 	QString m_pathImport, m_pathExport, m_currentFile;
 
 	QWZM m_model;
+	ModelInfo m_modelinfo;
 
 	bool fireTextureDialog(const bool reinit = false);
 	bool reloadShader(wz_shader_type_t type, bool user_shader, QString* errMessage = nullptr);

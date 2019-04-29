@@ -44,17 +44,13 @@ int main(int argc, char *argv[])
 		QString inname = argv[1];
 		QString outname = argv[2];
 
-		wmit_filetype_t outtype;
-
-		if (!MainWindow::guessModelTypeFromFilename(outname, outtype))
-			return 1;
-
+		ModelInfo info;
 		WZM model;
 
-		if (!MainWindow::loadModel(inname, model, true))
+		if (!MainWindow::loadModel(inname, model, info, true))
 			return 1;
 
-		return !MainWindow::saveModel(outname, model, outtype);
+		return !MainWindow::saveModel(outname, model, info);
 	}
 	else
 	{

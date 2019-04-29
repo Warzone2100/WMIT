@@ -192,11 +192,14 @@ bool MainWindow::openFile(const QString &filePath)
 		return false;
 	}
 
+	ModelInfo tmpinfo(m_modelinfo);
 	WZM tmpmodel;
 
-	if (loadModel(filePath, tmpmodel))
+	if (loadModel(filePath, tmpmodel, tmpinfo))
 	{
 		QFileInfo modelFileNfo(filePath);
+
+		m_modelinfo = tmpinfo;
 		m_model = tmpmodel;
 		m_currentFile = modelFileNfo.absoluteFilePath();
 
@@ -240,12 +243,12 @@ bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_
 	return true;
 }
 
-bool MainWindow::saveModel(const QString &file, const WZM &model, const wmit_filetype_t &type, const PieCaps* piecaps)
+bool MainWindow::saveModel(const QString &file, const WZM &model, const ModelInfo &info)
 {
 	std::ofstream out;
 	out.open(file.toLocal8Bit().constData());
 
-	switch (type)
+	switch (info.m_type)
 	{
 	case WMIT_FT_WZM:
 		model.write(out);
@@ -256,14 +259,14 @@ bool MainWindow::saveModel(const QString &file, const WZM &model, const wmit_fil
 	default:
 		Pie3Model p3 = model;
 
-		if (type == WMIT_FT_PIE2)
+		if (info.m_type == WMIT_FT_PIE2)
 		{
 			Pie2Model p2 = p3;
-			p2.write(out, piecaps);
+			p2.write(out, &info.m_pieCaps);
 		}
 		else
 		{
-			p3.write(out, piecaps);
+			p3.write(out, &info.m_pieCaps);
 		}
 	}
 
@@ -307,7 +310,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	event->accept();
 }
 
-bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
+bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, bool nogui)
 {
 	wmit_filetype_t type;
 
@@ -315,6 +318,8 @@ bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
 	{
 		return false;
 	}
+
+	info.m_type = type;
 
 	bool read_success = false;
 	std::ifstream f;
@@ -351,6 +356,8 @@ bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
 		int pieversion = pieVersion(f);
 		if (pieversion <= 2)
 		{
+			info.m_pieCaps = PIE2_CAPS;
+
 			Pie2Model p2;
 			read_success = p2.read(f);
 			if (read_success)
@@ -358,6 +365,8 @@ bool MainWindow::loadModel(const QString& file, WZM& model, bool nogui)
 		}
 		else // 3 or higher
 		{
+			info.m_pieCaps = PIE3_CAPS;
+
 			Pie3Model p3;
 			read_success = p3.read(f);
 			if (read_success)
@@ -497,7 +506,7 @@ void MainWindow::actionSaveAs()
 		return;
 	}
 
-	wmit_filetype_t seltype = types[filters.indexOf(fDialog->selectedNameFilter())];
+	m_modelinfo.m_type = types[filters.indexOf(fDialog->selectedNameFilter())];
 
 	// refresh export working dir
 	m_pathExport = fDialog->directory().absolutePath();
@@ -511,18 +520,21 @@ void MainWindow::actionSaveAs()
 	PrependFileToRecentList(fDialog->selectedFiles().first());
 
 	QPointer<ExportDialog> dlg;
-	if (seltype == WMIT_FT_PIE || seltype == WMIT_FT_PIE2)
+	if (m_modelinfo.m_type == WMIT_FT_PIE || m_modelinfo.m_type == WMIT_FT_PIE2)
 	{
-		dlg = new PieExportDialog(this);
-		dlg->exec();
+		dlg = new PieExportDialog(m_modelinfo.m_pieCaps, this);
+		if (dlg->exec() == QDialog::Accepted)
+		{
+			m_modelinfo.m_pieCaps = static_cast<PieExportDialog*>(dlg.data())->getCaps();
+		}
 	}
 
 	if (dlg && dlg->result() != QDialog::Accepted)
 	{
 		return;
-	}
+	}	
 
-	saveModel(fDialog->selectedFiles().first(), m_model, seltype);
+	saveModel(fDialog->selectedFiles().first(), m_model, m_modelinfo);
 }
 
 bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *errMessage)
@@ -789,9 +801,10 @@ void MainWindow::actionAppendModel()
 
 	if (!filePath.isEmpty())
 	{
+		ModelInfo newinfo;
 		WZM newmodel;
 
-		if (loadModel(filePath, newmodel))
+		if (loadModel(filePath, newmodel, newinfo))
 		{
 			for (int i = 0; i < newmodel.meshes(); ++i)
 			{
