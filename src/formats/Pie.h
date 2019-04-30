@@ -172,7 +172,7 @@ public:
 	APieLevel();
 	virtual ~APieLevel() {}
 
-	virtual bool read(std::istream& in);
+	virtual bool read(std::istream& in, PieCaps& caps);
 	virtual void write(std::ostream& out, const PieCaps& caps) const;
 
 	int points() const;
@@ -184,7 +184,7 @@ public:
 
 protected:
 	void clearAll();
-	bool readAnimObjectDirective(std::istream &in);
+	bool readAnimObjectDirective(std::istream &in, PieCaps& caps);
 
 	std::vector<V> m_points;
 	std::vector<PieNormal> m_normals;
@@ -212,6 +212,8 @@ public:
 	virtual unsigned getType() const;
 
 	bool isValid() const;
+
+	const PieCaps& getCaps() const {return m_caps;}
 
 	virtual bool isFeatureSet(unsigned feature) const;
 protected:

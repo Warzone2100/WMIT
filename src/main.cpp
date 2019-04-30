@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
 		if (!MainWindow::loadModel(inname, model, info, true))
 			return 1;
 
+		info.defaultPieCapsIfNeeded();
 		return !MainWindow::saveModel(outname, model, info);
 	}
 	else

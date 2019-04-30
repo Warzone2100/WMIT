@@ -37,7 +37,7 @@ APieLevel< V, P, C>::APieLevel(): m_material(true)
 
 // Optional directive
 template<typename V, typename P, typename C>
-bool APieLevel< V, P, C>::readAnimObjectDirective(std::istream& in)
+bool APieLevel< V, P, C>::readAnimObjectDirective(std::istream& in, PieCaps& caps)
 {
 	std::string str;
 	std::streampos entrypoint = in.tellg();
@@ -48,18 +48,20 @@ bool APieLevel< V, P, C>::readAnimObjectDirective(std::istream& in)
 	if (in.fail())
 		return false;
 
+	// Not a failure if some other directive, just rewind
 	if (str.compare(PIE_MODEL_DIRECTIVE_ANIMOBJECT) != 0)
 	{
 		in.seekg(entrypoint);
 		return true;
 	}
 
+	caps.set(PIE_OPT_DIRECTIVES::podANIMOBJECT);
 	return m_animobj.read(in);
 }
 
 // TODO: Write error messages to std::cerr
 template<typename V, typename P, typename C>
-bool APieLevel< V, P, C>::read(std::istream& in)
+bool APieLevel< V, P, C>::read(std::istream& in, PieCaps& caps)
 {
 	std::string str;
 	unsigned uint;
@@ -83,6 +85,7 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 		in >> m_material;
 		if (in.fail())
 			streamfail();
+		caps.set(PIE_OPT_DIRECTIVES::podMATERIALS);
 		in >> str;
 	}
 
@@ -92,6 +95,7 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 		in >> str >> m_shader_vert >> m_shader_frag;
 		if (in.fail())
 			streamfail();
+		caps.set(PIE_OPT_DIRECTIVES::podSHADERS);
 		in >> str;
 	}
 
@@ -123,6 +127,8 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 	if ( !in.fail() && str.compare("NORMALS") == 0)
 	{
 		uint *= 3;
+		if (uint > 0)
+			caps.set(PIE_OPT_DIRECTIVES::podNORMALS);
 		for (; uint > 0; --uint)
 		{
 			PieNormal normal;
@@ -168,6 +174,8 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 	in >> str >> uint;
 	if ( !in.fail() && str.compare("CONNECTORS") == 0)
 	{
+		if (uint > 0)
+			caps.set(PIE_OPT_DIRECTIVES::podCONNECTORS);
 		for (; uint > 0; --uint)
 		{
 			C cnctr;
@@ -188,7 +196,7 @@ bool APieLevel< V, P, C>::read(std::istream& in)
 		in.seekg(mark);
 	}
 
-	if (!in.eof() && !readAnimObjectDirective(in))
+	if (!in.eof() && !readAnimObjectDirective(in, caps))
 		streamfail();
 
 	return true;
@@ -476,6 +484,7 @@ bool APieModel<L>::readNormalmapDirective(std::istream& in)
 	{
 		m_texture_normalmap.clear();
 		in.seekg(entrypoint);
+		return true;
 	}
 
 	// no constraits for normalmap name afaik
@@ -489,28 +498,29 @@ bool APieModel<L>::readNormalmapDirective(std::istream& in)
 template <typename L>
 bool APieModel<L>::readSpecmapDirective(std::istream& in)
 {
-    std::string str;
-    unsigned uint;
-    std::streampos entrypoint = in.tellg();
+	std::string str;
+	unsigned uint;
+	std::streampos entrypoint = in.tellg();
 
-    // <TYPE> 0 %s
-    in >> str >> uint >> m_texture_specmap;
-    if ( in.fail())
-    {
-        return false;
-    }
+	// <TYPE> 0 %s
+	in >> str >> uint >> m_texture_specmap;
+	if ( in.fail())
+	{
+		return false;
+	}
 
-    if (str.compare(PIE_MODEL_DIRECTIVE_SPECULARMAP) != 0)
-    {
-        m_texture_specmap.clear();
-        in.seekg(entrypoint);
-    }
+	if (str.compare(PIE_MODEL_DIRECTIVE_SPECULARMAP) != 0)
+	{
+		m_texture_specmap.clear();
+		in.seekg(entrypoint);
+		return true;
+	}
 
-    // no constraits for name afaik
+	// no constraits for name afaik
 
-    m_caps.set(PIE_OPT_DIRECTIVES::podSPECULARMAP);
+	m_caps.set(PIE_OPT_DIRECTIVES::podSPECULARMAP);
 
-    return true;
+	return true;
 }
 
 // Optional directive
@@ -569,7 +579,7 @@ bool APieModel<L>::readLevels(int levels, std::istream& in)
 	for (; levels > 0; --levels)
 	{
 		L lvl;
-		if (!lvl.read(in))
+		if (!lvl.read(in, m_caps))
 		{
 			return false;
 		}
