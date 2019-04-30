@@ -150,9 +150,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
 	/// Reset state
 	clear();
-
-	// disable wip-parts
-	m_ui->actionSave->setDisabled(true);
 }
 
 MainWindow::~MainWindow()
@@ -175,6 +172,7 @@ void MainWindow::doAfterModelWasLoaded(const bool success)
 	const bool hasAnim = m_model.hasAnimObject();
 
 	m_ui->actionClose->setEnabled(success);
+	m_ui->actionSave->setEnabled(success);
 	m_ui->actionSaveAs->setEnabled(success);
 	m_ui->actionSetupTextures->setEnabled(success);
 	m_ui->actionAppendModel->setEnabled(success);
@@ -471,7 +469,15 @@ void MainWindow::actionClearRecentFiles()
 
 void MainWindow::actionSave()
 {
-//todo
+	m_modelinfo.prepareForSaveToSelf();
+
+	if (m_modelinfo.m_currentFile.isEmpty())
+	{
+		actionSaveAs();
+		return;
+	}
+
+	saveModel(m_model, m_modelinfo);
 }
 
 void MainWindow::PrependFileToRecentList(const QString& filename)
