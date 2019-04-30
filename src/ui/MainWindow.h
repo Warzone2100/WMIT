@@ -50,8 +50,23 @@ namespace Ui
 
 struct ModelInfo
 {
+	ModelInfo() {clear();}
+
 	PieCaps m_pieCaps;
-	wmit_filetype_t m_type;
+	wmit_filetype_t m_save_type;
+	wmit_filetype_t m_read_type;
+
+	void clear()
+	{
+		m_save_type = m_read_type = WMIT_FT_WZM;
+		m_pieCaps.reset();
+	}
+
+	void defaultPieCapsIfNeeded()
+	{
+		if (m_read_type != WMIT_FT_PIE && m_read_type != WMIT_FT_PIE2)
+			m_pieCaps = m_save_type == WMIT_FT_PIE? PIE3_CAPS : PIE2_CAPS;
+	}
 };
 
 class MainWindow : public QMainWindow

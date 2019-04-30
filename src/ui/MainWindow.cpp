@@ -164,6 +164,7 @@ void MainWindow::clear()
 {
 	m_model.clear();
 	m_currentFile.clear();
+	m_modelinfo.clear();
 
 	setWindowTitle(buildAppTitle());
 
@@ -248,7 +249,7 @@ bool MainWindow::saveModel(const QString &file, const WZM &model, const ModelInf
 	std::ofstream out;
 	out.open(file.toLocal8Bit().constData());
 
-	switch (info.m_type)
+	switch (info.m_save_type)
 	{
 	case WMIT_FT_WZM:
 		model.write(out);
@@ -259,7 +260,7 @@ bool MainWindow::saveModel(const QString &file, const WZM &model, const ModelInf
 	default:
 		Pie3Model p3 = model;
 
-		if (info.m_type == WMIT_FT_PIE2)
+		if (info.m_save_type == WMIT_FT_PIE2)
 		{
 			Pie2Model p2 = p3;
 			p2.write(out, &info.m_pieCaps);
@@ -319,7 +320,7 @@ bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, boo
 		return false;
 	}
 
-	info.m_type = type;
+	info.m_read_type = type;
 
 	bool read_success = false;
 	std::ifstream f;
@@ -356,21 +357,24 @@ bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, boo
 		int pieversion = pieVersion(f);
 		if (pieversion <= 2)
 		{
-			info.m_pieCaps = PIE2_CAPS;
-
 			Pie2Model p2;
 			read_success = p2.read(f);
 			if (read_success)
-				model = WZM(Pie3Model(p2));
+			{
+				Pie3Model p3(p2);
+				info.m_pieCaps = p3.getCaps();
+				model = WZM(p3);
+			}
 		}
 		else // 3 or higher
 		{
-			info.m_pieCaps = PIE3_CAPS;
-
 			Pie3Model p3;
 			read_success = p3.read(f);
 			if (read_success)
+			{
+				info.m_pieCaps = p3.getCaps();
 				model = WZM(p3);
+			}
 		}
 	}
 
@@ -506,7 +510,7 @@ void MainWindow::actionSaveAs()
 		return;
 	}
 
-	m_modelinfo.m_type = types[filters.indexOf(fDialog->selectedNameFilter())];
+	m_modelinfo.m_save_type = types[filters.indexOf(fDialog->selectedNameFilter())];
 
 	// refresh export working dir
 	m_pathExport = fDialog->directory().absolutePath();
@@ -520,8 +524,9 @@ void MainWindow::actionSaveAs()
 	PrependFileToRecentList(fDialog->selectedFiles().first());
 
 	QPointer<ExportDialog> dlg;
-	if (m_modelinfo.m_type == WMIT_FT_PIE || m_modelinfo.m_type == WMIT_FT_PIE2)
+	if (m_modelinfo.m_save_type == WMIT_FT_PIE || m_modelinfo.m_save_type == WMIT_FT_PIE2)
 	{
+		m_modelinfo.defaultPieCapsIfNeeded();
 		dlg = new PieExportDialog(m_modelinfo.m_pieCaps, this);
 		if (dlg->exec() == QDialog::Accepted)
 		{
