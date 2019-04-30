@@ -104,6 +104,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionOpen, SIGNAL(triggered()), this, SLOT(actionOpen()));
 	connect(m_ui->menuOpenRecent, SIGNAL(triggered(QAction*)), this, SLOT(actionOpenRecent(QAction*)));
 	connect(m_ui->actionClearRecentFiles, SIGNAL(triggered()), this, SLOT(actionClearRecentFiles()));
+	connect(m_ui->actionClear_Missing_Files, SIGNAL(triggered()), this, SLOT(actionClearMissingFiles()));
 	connect(m_ui->actionSave, SIGNAL(triggered()), this, SLOT(actionSave()));
 	connect(m_ui->actionSaveAs, SIGNAL(triggered()), this, SLOT(actionSaveAs()));
 	connect(m_ui->actionClose, SIGNAL(triggered()), this, SLOT(actionClose()));
@@ -465,6 +466,22 @@ void MainWindow::actionOpenRecent(QAction *action)
 void MainWindow::actionClearRecentFiles()
 {
 	QSettings().remove("recentFiles");
+}
+
+void MainWindow::actionClearMissingFiles()
+{
+	QStringList recentFiles = QSettings().value("recentFiles").toStringList();
+
+	recentFiles.removeDuplicates();
+
+	for (auto& curFile: recentFiles)
+	{
+		QFileInfo fileInfo(curFile);
+		if (!fileInfo.exists())
+			recentFiles.removeAll(curFile);
+	}
+
+	QSettings().setValue("recentFiles", recentFiles);
 }
 
 void MainWindow::actionSave()

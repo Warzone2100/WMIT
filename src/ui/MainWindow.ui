@@ -38,7 +38,7 @@
     </property>
     <widget class="QMenu" name="menuOpenRecent">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="title">
       <string>Open Recent</string>
@@ -55,6 +55,7 @@
      <addaction name="actionOpenRecentFile_9"/>
      <addaction name="separator"/>
      <addaction name="actionClearRecentFiles"/>
+     <addaction name="actionClear_Missing_Files"/>
     </widget>
     <addaction name="actionOpen"/>
     <addaction name="menuOpenRecent"/>
@@ -271,6 +272,9 @@
   <action name="actionOpenRecentFile_8"/>
   <action name="actionOpenRecentFile_9"/>
   <action name="actionOpenRecentFile_0">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -324,6 +328,11 @@
    </property>
    <property name="shortcut">
     <string>Shift+C</string>
+   </property>
+  </action>
+  <action name="actionClear_Missing_Files">
+   <property name="text">
+    <string>Clear Missing Files</string>
    </property>
   </action>
  </widget>

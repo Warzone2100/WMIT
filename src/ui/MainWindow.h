@@ -106,6 +106,7 @@ private slots:
 	void actionOpen();
 	void actionOpenRecent(QAction *action);
 	void actionClearRecentFiles();
+	void actionClearMissingFiles();
 	void actionSave();
 	void actionSaveAs();
 	void actionClose();
