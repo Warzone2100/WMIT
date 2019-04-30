@@ -71,6 +71,15 @@ struct ModelInfo
 		if (m_read_type != WMIT_FT_PIE && m_read_type != WMIT_FT_PIE2)
 			m_pieCaps = m_save_type == WMIT_FT_PIE? PIE3_CAPS : PIE2_CAPS;
 	}
+
+	void prepareForSaveToSelf()
+	{
+		// Use orignal type and filename if we never went through a save before
+		if (!m_saveAsFile.isEmpty())
+			return;
+		m_save_type = m_read_type;
+		m_saveAsFile = m_currentFile;
+	}
 };
 
 class MainWindow : public QMainWindow
