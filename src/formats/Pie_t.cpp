@@ -332,7 +332,8 @@ template <typename L>
 void APieModel<L>::clearAll()
 {
 	m_levels.clear();
-	m_type = 0;
+	m_read_type = 0;
+	m_caps.reset();
 
 	m_texture.clear();
 	m_texture_tcmask.clear();
@@ -373,7 +374,7 @@ unsigned APieModel<L>::getType() const
 template <typename L>
 inline bool APieModel<L>::isFeatureSet(unsigned feature) const
 {
-	return (m_type & feature);
+	return (m_read_type & feature);
 }
 
 #define streamfail() do {\
@@ -415,7 +416,7 @@ bool APieModel<L>::readHeaderBlock(std::istream& in)
 	}
 
 	// TYPE %x
-	in >> str >> std::hex >> m_type >> std::dec;
+	in >> str >> std::hex >> m_read_type >> std::dec;
 	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_TYPE) != 0)
 	{
 		return false;
@@ -428,13 +429,6 @@ template <typename L>
 bool APieModel<L>::readTexturesBlock(std::istream& in)
 {
     return readTextureDirective(in) && readNormalmapDirective(in) && readSpecmapDirective(in);
-}
-
-// PIE2 specialization
-template <>
-inline bool APieModel<Pie2Level>::readTexturesBlock(std::istream& in)
-{
-	return readTextureDirective(in);
 }
 
 template <typename L>
@@ -486,6 +480,8 @@ bool APieModel<L>::readNormalmapDirective(std::istream& in)
 
 	// no constraits for normalmap name afaik
 
+	m_caps.set(PIE_OPT_DIRECTIVES::podNORMALMAP);
+
 	return true;
 }
 
@@ -511,6 +507,8 @@ bool APieModel<L>::readSpecmapDirective(std::istream& in)
     }
 
     // no constraits for name afaik
+
+    m_caps.set(PIE_OPT_DIRECTIVES::podSPECULARMAP);
 
     return true;
 }
@@ -544,6 +542,7 @@ bool APieModel<L>::readEventsDirective(std::istream& in)
 		return false;
 
 	m_events.emplace(type, str);
+	m_caps.set(PIE_OPT_DIRECTIVES::podEVENT);
 	return true;
 }
 
@@ -563,23 +562,6 @@ bool APieModel<L>::readLevelsBlock(std::istream& in)
 
 	return true;
 }
-
-/*
- * WZ loader basically ignores PIE version and reads any directive,
- * but real PIE2 would work like that:
- *
-// PIE2 specialization
-template <>
-inline bool APieModel<Pie2Level>::readLevelsBlock(std::istream& in)
-{
-	int levels = readLevelsDirective(in);
-
-	if (levels < 0)
-		return false;
-
-	return readLevels(levels, in);
-}
-*/
 
 template <typename L>
 bool APieModel<L>::readLevels(int levels, std::istream& in)
