@@ -163,7 +163,6 @@ MainWindow::~MainWindow()
 void MainWindow::clear()
 {
 	m_model.clear();
-	m_currentFile.clear();
 	m_modelinfo.clear();
 
 	setWindowTitle(buildAppTitle());
@@ -201,8 +200,8 @@ bool MainWindow::openFile(const QString &filePath)
 		QFileInfo modelFileNfo(filePath);
 
 		m_modelinfo = tmpinfo;
+		m_modelinfo.m_currentFile = modelFileNfo.absoluteFilePath();
 		m_model = tmpmodel;
-		m_currentFile = modelFileNfo.absoluteFilePath();
 
 		setWindowTitle(buildAppTitle(modelFileNfo.baseName()));
 
@@ -244,10 +243,10 @@ bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_
 	return true;
 }
 
-bool MainWindow::saveModel(const QString &file, const WZM &model, const ModelInfo &info)
+bool MainWindow::saveModel(const WZM &model, const ModelInfo &info)
 {
 	std::ofstream out;
-	out.open(file.toLocal8Bit().constData());
+	out.open(info.m_saveAsFile.toLocal8Bit().constData());
 
 	switch (info.m_save_type)
 	{
@@ -396,7 +395,7 @@ bool MainWindow::fireTextureDialog(const bool reinit)
 	{
 		m_model.getTexturesMap(texmap);
 		m_textureDialog->setTexturesMap(texmap);
-		m_textureDialog->createTextureIcons(m_pathImport, m_currentFile);
+		m_textureDialog->createTextureIcons(m_pathImport, m_modelinfo.m_currentFile);
 	}
 
 	if (m_textureDialog->exec() == QDialog::Accepted)
@@ -489,19 +488,20 @@ void MainWindow::PrependFileToRecentList(const QString& filename)
 
 void MainWindow::actionSaveAs()
 {
+	ModelInfo tmpModelinfo(m_modelinfo);
+
 	QStringList filters;
-    filters << "PIE3 models (*.pie)" << "PIE2 models (*.pie)" << "WZM models (*.wzm)" << "OBJ files (*.obj)";
+	filters << "PIE3 models (*.pie)" << "PIE2 models (*.pie)" << "WZM models (*.wzm)" << "OBJ files (*.obj)";
 
 	QList<wmit_filetype_t> types;
-    types << WMIT_FT_PIE << WMIT_FT_PIE2 << WMIT_FT_WZM << WMIT_FT_OBJ;
+	types << WMIT_FT_PIE << WMIT_FT_PIE2 << WMIT_FT_WZM << WMIT_FT_OBJ;
 
 	QFileDialog* fDialog = new QFileDialog();
 
 	fDialog->setFileMode(QFileDialog::AnyFile);
 	fDialog->setAcceptMode(QFileDialog::AcceptSave);
-    fDialog->setNameFilters(filters);
+	fDialog->setNameFilters(filters);
 	fDialog->setWindowTitle(tr("Choose output file"));
-	fDialog->setDefaultSuffix("pie");
 	fDialog->setDirectory(m_pathExport);
 	fDialog->exec();
 
@@ -510,36 +510,55 @@ void MainWindow::actionSaveAs()
 		return;
 	}
 
-	m_modelinfo.m_save_type = types[filters.indexOf(fDialog->selectedNameFilter())];
+	if (!filters.contains(fDialog->selectedNameFilter()))
+	{
+		return;
+	}
+
+	tmpModelinfo.m_save_type = types[filters.indexOf(fDialog->selectedNameFilter())];
 
 	// refresh export working dir
 	m_pathExport = fDialog->directory().absolutePath();
 	m_settings->setValue(WMIT_SETTINGS_EXPORTVAL, m_pathExport);
 
-	if (!filters.contains(fDialog->selectedNameFilter()))
-	{
-		return;
-	}
-	
-	PrependFileToRecentList(fDialog->selectedFiles().first());
+	QFileInfo finfo(fDialog->selectedFiles().first());
+	tmpModelinfo.m_saveAsFile = finfo.filePath();
 
 	QPointer<ExportDialog> dlg;
-	if (m_modelinfo.m_save_type == WMIT_FT_PIE || m_modelinfo.m_save_type == WMIT_FT_PIE2)
+
+	switch (tmpModelinfo.m_save_type)
 	{
-		m_modelinfo.defaultPieCapsIfNeeded();
-		dlg = new PieExportDialog(m_modelinfo.m_pieCaps, this);
+	case WMIT_FT_PIE:
+	case WMIT_FT_PIE2:
+		tmpModelinfo.defaultPieCapsIfNeeded();
+		dlg = new PieExportDialog(tmpModelinfo.m_pieCaps, this);
 		if (dlg->exec() == QDialog::Accepted)
 		{
-			m_modelinfo.m_pieCaps = static_cast<PieExportDialog*>(dlg.data())->getCaps();
+			tmpModelinfo.m_pieCaps = static_cast<PieExportDialog*>(dlg.data())->getCaps();
 		}
+
+		if (finfo.suffix().toLower() != "pie")
+			tmpModelinfo.m_saveAsFile += ".pie";
+		break;
+	case WMIT_FT_OBJ:
+		if (finfo.suffix().toLower() != "obj")
+			tmpModelinfo.m_saveAsFile += ".obj";
+		break;
+	case WMIT_FT_WZM:
+		if (finfo.suffix().toLower() != "wzm")
+			tmpModelinfo.m_saveAsFile += ".wzm";
+		break;
 	}
 
 	if (dlg && dlg->result() != QDialog::Accepted)
 	{
 		return;
-	}	
+	}
 
-	saveModel(fDialog->selectedFiles().first(), m_model, m_modelinfo);
+	m_modelinfo = tmpModelinfo;
+	PrependFileToRecentList(m_modelinfo.m_saveAsFile);
+
+	saveModel(m_model, m_modelinfo);
 }
 
 bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *errMessage)

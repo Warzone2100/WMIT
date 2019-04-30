@@ -55,11 +55,15 @@ struct ModelInfo
 	PieCaps m_pieCaps;
 	wmit_filetype_t m_save_type;
 	wmit_filetype_t m_read_type;
+	QString m_currentFile;
+	QString m_saveAsFile;
 
 	void clear()
 	{
 		m_save_type = m_read_type = WMIT_FT_WZM;
 		m_pieCaps.reset();
+		m_currentFile.clear();
+		m_saveAsFile.clear();
 	}
 
 	void defaultPieCapsIfNeeded()
@@ -82,7 +86,7 @@ public:
 
 	static bool loadModel(const QString& file, WZM& model, ModelInfo &info, bool nogui = false);
 	static bool guessModelTypeFromFilename(const QString &fname, wmit_filetype_t &type);
-	static bool saveModel(const QString& file, const WZM& model, const ModelInfo &info);
+	static bool saveModel(const WZM& model, const ModelInfo &info);
 
 	void PrependFileToRecentList(const QString &filename);
 
@@ -137,7 +141,7 @@ private:
 	QAction *m_actionEnableUserShaders;
 	QAction *m_actionLocateUserShaders;
 	QAction *m_actionReloadUserShaders;
-	QString m_pathImport, m_pathExport, m_currentFile;
+	QString m_pathImport, m_pathExport;
 
 	QWZM m_model;
 	ModelInfo m_modelinfo;

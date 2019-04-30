@@ -42,16 +42,17 @@ int main(int argc, char *argv[])
 	{
 		// command line conversion mode
 		QString inname = argv[1];
-		QString outname = argv[2];
 
 		ModelInfo info;
 		WZM model;
+
+		info.m_saveAsFile = argv[2];
 
 		if (!MainWindow::loadModel(inname, model, info, true))
 			return 1;
 
 		info.defaultPieCapsIfNeeded();
-		return !MainWindow::saveModel(outname, model, info);
+		return !MainWindow::saveModel(model, info);
 	}
 	else
 	{
