@@ -324,7 +324,8 @@ Pie3Model::Pie3Model(const Pie2Model& p2): APieModel(PIE3_CAPS)
 	// HACK to accomodate "flexible" wz PIE loader
 	m_events = p2.m_events;
 
-	m_type = p2.m_type;
+	m_read_type = p2.m_read_type;
+	m_caps = p2.m_caps;
 }
 
 Pie3Model::~Pie3Model()
@@ -343,7 +344,8 @@ Pie3Model::operator Pie2Model() const
 	p2.m_texture_tcmask = m_texture_tcmask;
 	std::transform(m_levels.begin(), m_levels.end(),
 				   back_inserter(p2.m_levels), Pie3Level::backConvert);
-	p2.m_type = m_type;
+	p2.m_read_type = m_read_type;
+	p2.m_caps = m_caps;
 	return p2;
 }
 

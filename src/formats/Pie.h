@@ -84,9 +84,15 @@ public:
 		return c.test(val);
 	}
 
-	void set(T pos, bool val)
+	void set(T pos, bool val = true)
 	{
 		c.set(get_value(pos), val);
+	}
+
+	EnumClassBitset& reset()
+	{
+		c.reset();
+		return *this;
 	}
 
 	EnumClassBitset& reset(T pos)
@@ -236,8 +242,9 @@ protected:
 
 	std::vector<L> m_levels;
 
-	unsigned m_type; // FIXME used as helper for 2->3 conversion, ignored for write
+	unsigned int m_read_type;
 	const PieCaps m_def_caps;
+	PieCaps m_caps;
 };
 
 template <typename V>
