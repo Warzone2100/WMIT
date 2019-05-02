@@ -20,6 +20,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iterator>
+#include <fstream>
 
 #include "Pie.h"
 
@@ -41,6 +42,29 @@ int pieVersion(std::istream& in)
 	}
 	return -1;
 }
+
+bool tryToReadDirective(std::istream &in, const char* directive, const bool isOptional, std::function<bool(std::istream&)> dirLoaderFunc)
+{
+	std::string str;
+	std::streampos entrypoint = in.tellg();
+
+	in >> str;
+	if (in.eof())
+		return isOptional;
+	if (in.fail())
+		return false;
+
+	if (str.compare(directive) != 0)
+	{
+		// Not a failure if some other directive found and this is optional, just rewind
+		if (isOptional)
+			in.seekg(entrypoint);
+		return isOptional;
+	}
+
+	return dirLoaderFunc(in);
+}
+
 
 /**********************************************
   Pie version 2
@@ -408,6 +432,25 @@ void ApieAnimObject::write(std::ostream &out) const
 		frames[i].write(out);
 	}
 	out << '\n';
+}
+
+bool ApieAnimObject::readStandaloneAniFile(const char *file)
+{
+	std::ifstream fin;
+
+	clear();
+
+	fin.open(file, std::ios::in | std::ios::binary);
+
+	if (!fin.is_open())
+		return false;
+
+	return tryToReadDirective(fin, PIE_MODEL_DIRECTIVE_ANIMOBJECT, false,
+		[this](std::istream& inn)
+		{
+			return read(inn);
+		}
+	);
 }
 
 const char *getPieDirectiveName(PIE_OPT_DIRECTIVES dir)

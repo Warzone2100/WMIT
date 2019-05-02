@@ -68,6 +68,7 @@ struct Frame
 };
 
 class Pie3Level;
+class ApieAnimObject;
 struct Mesh_exportToOBJ_InOutParams;
 
 class Mesh
@@ -114,6 +115,8 @@ public:
 	void mirrorFromPoint(const WZMVertex& point, int axis); // x == 0, y == 1, z == 2
 	void reverseWinding();
 	void flipNormals();
+
+	void importPieAnimation(const ApieAnimObject& animobj);
 
 	WZMVertex getCenterPoint() const;
 protected:

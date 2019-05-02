@@ -194,18 +194,7 @@ Mesh::Mesh(const Pie3Level& p3)
 	m_shader_vert = p3.m_shader_vert;
 
 	// Anim object
-	m_frame_time = p3.m_animobj.time;
-	m_frame_cycles = p3.m_animobj.cycles;
-	Frame curFrame;
-	for (const auto& p3Frame: p3.m_animobj.frames)
-	{
-		curFrame.trans = WZMVertex(p3Frame.pos.x(), p3Frame.pos.z(), p3Frame.pos.y());
-		curFrame.trans.scale(FROM_INT_SCALE, FROM_INT_SCALE, FROM_INT_SCALE);
-		curFrame.rot = WZMVertex(-p3Frame.rot.x(), -p3Frame.rot.z(), -p3Frame.rot.y());
-		curFrame.rot.scale(FROM_INT_SCALE, FROM_INT_SCALE, FROM_INT_SCALE);
-		curFrame.scale = WZMVertex(p3Frame.scale.x(), p3Frame.scale.z(), p3Frame.scale.y());
-		m_frameArray.push_back(curFrame);
-	}
+	importPieAnimation(p3.m_animobj);
 
 	finishImport();
 	recalculateBoundData();
@@ -1028,6 +1017,27 @@ void Mesh::flipNormals()
 			m_tangentArray[i].w() = -1.0f;
 		else
 			m_tangentArray[i].w() = 1.0f;
+	}
+}
+
+void Mesh::importPieAnimation(const ApieAnimObject &animobj)
+{
+	// replace current animation
+	m_frameArray.clear();
+	m_frameArray.reserve(animobj.frames.size());
+
+	m_frame_time = animobj.time;
+	m_frame_cycles = animobj.cycles;
+
+	Frame curFrame;
+	for (const auto& pieFrame: animobj.frames)
+	{
+		curFrame.trans = WZMVertex(pieFrame.pos.x(), pieFrame.pos.z(), pieFrame.pos.y());
+		curFrame.trans.scale(FROM_INT_SCALE, FROM_INT_SCALE, FROM_INT_SCALE);
+		curFrame.rot = WZMVertex(-pieFrame.rot.x(), -pieFrame.rot.z(), -pieFrame.rot.y());
+		curFrame.rot.scale(FROM_INT_SCALE, FROM_INT_SCALE, FROM_INT_SCALE);
+		curFrame.scale = WZMVertex(pieFrame.scale.x(), pieFrame.scale.z(), pieFrame.scale.y());
+		m_frameArray.push_back(curFrame);
 	}
 }
 
