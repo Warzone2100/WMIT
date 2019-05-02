@@ -466,7 +466,7 @@ bool WZM::importFromOBJ(std::istream& in, bool welder)
 				m_meshes.push_back(Mesh());
 				Mesh& mesh = m_meshes.back();
 				mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray, welder);
-				mesh.mirrorUsingLocalCenter(0);
+				mesh.mirrorFromPoint(WZMVertex(), 0);
 				mesh.reverseWinding();
 				mesh.setTeamColours(false);
 				mesh.setName(name);
@@ -487,7 +487,7 @@ bool WZM::importFromOBJ(std::istream& in, bool welder)
 		m_meshes.push_back(Mesh());
 		Mesh& mesh = m_meshes.back();
 		mesh.importFromOBJ(groupedFaces, vertArray, uvArray, normArray, welder);
-		mesh.mirrorUsingLocalCenter(0);
+		mesh.mirrorFromPoint(WZMVertex(), 0);
 		mesh.reverseWinding();
 		mesh.setTeamColours(false);
 		mesh.setName(name);
