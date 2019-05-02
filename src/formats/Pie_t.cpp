@@ -39,24 +39,13 @@ APieLevel< V, P, C>::APieLevel(): m_material(true)
 template<typename V, typename P, typename C>
 bool APieLevel< V, P, C>::readAnimObjectDirective(std::istream& in, PieCaps& caps)
 {
-	std::string str;
-	std::streampos entrypoint = in.tellg();
-
-	in >> str;
-	if (in.eof())
-		return true;
-	if (in.fail())
-		return false;
-
-	// Not a failure if some other directive, just rewind
-	if (str.compare(PIE_MODEL_DIRECTIVE_ANIMOBJECT) != 0)
-	{
-		in.seekg(entrypoint);
-		return true;
-	}
-
-	caps.set(PIE_OPT_DIRECTIVES::podANIMOBJECT);
-	return m_animobj.read(in);
+	return tryToReadDirective(in, PIE_MODEL_DIRECTIVE_ANIMOBJECT, true,
+		[this, &caps](std::istream& inn)
+		{
+			caps.set(PIE_OPT_DIRECTIVES::podANIMOBJECT);
+			return m_animobj.read(inn);
+		}
+	);
 }
 
 // TODO: Write error messages to std::cerr

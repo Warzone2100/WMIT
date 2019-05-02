@@ -31,6 +31,7 @@
 
 #include <QFileInfo>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QDir>
@@ -889,7 +890,34 @@ void MainWindow::actionEnableUserShaders(bool checked)
 
 void MainWindow::actionImport_Animation()
 {
+	if (m_model.meshes() == 0)
+	    return;
 
+	QString anim_path = QFileDialog::getOpenFileName(this, "Locate animation file",
+							 m_settings->value("shaders/user_vert_path", "").toString(),
+							 "PIE animation (*.ani);;Any file (*.*)");
+	if (anim_path.isEmpty())
+	    return;
+
+	int meshIdx = -1;
+	{
+		QStringList items;
+		for (int cnt = 1; cnt <= m_model.meshes(); ++cnt)
+			items << QString("%1").arg(cnt);
+
+		QString item = QInputDialog::getItem(this, tr("Select mesh for animation import"), "", items, 0, false);
+		if (!item.isEmpty())
+			meshIdx = items.indexOf(item);
+	}
+
+	if (meshIdx < 0)
+		return;
+
+	auto mesh = m_model.getMesh(meshIdx);
+
+	ApieAnimObject pieAnim;
+	if (pieAnim.readStandaloneAniFile(anim_path.toLocal8Bit()))
+		mesh.importPieAnimation(pieAnim);
 }
 
 void MainWindow::actionLocateUserShaders()

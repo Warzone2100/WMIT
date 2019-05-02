@@ -127,6 +127,9 @@ enum class PIE_OPT_DIRECTIVES
 const char* getPieDirectiveName(PIE_OPT_DIRECTIVES dir);
 const char* getPieDirectiveDescription(PIE_OPT_DIRECTIVES dir);
 
+bool tryToReadDirective(std::istream &in, const char* directive, const bool isOptional,
+			std::function<bool(std::istream&)> dirLoaderFunc);
+
 template<>
 struct EnumTraits<PIE_OPT_DIRECTIVES>
 {
@@ -158,8 +161,11 @@ public:
 
 	bool isValid() const {return !frames.empty();}
 	void clear() {frames.clear();}
+
 	bool read(std::istream& in);
 	void write(std::ostream& out) const;
+
+	bool readStandaloneAniFile(const char* file);
 };
 
 template<typename V, typename P, typename C>
