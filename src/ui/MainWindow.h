@@ -117,6 +117,7 @@ private slots:
 	void actionLocateUserShaders();
 	void actionReloadUserShader();
 	void actionEnableUserShaders(bool checked);
+	void actionImport_Animation();
 
 	void updateRecentFilesMenu();
 	void updateModelRender();
