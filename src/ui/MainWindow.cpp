@@ -111,6 +111,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionUVEditor, SIGNAL(toggled(bool)), m_UVEditor, SLOT(setVisible(bool)));
 	connect(m_ui->actionSetupTextures, SIGNAL(triggered()), this, SLOT(actionSetupTextures()));
 	connect(m_ui->actionAppendModel, SIGNAL(triggered()), this, SLOT(actionAppendModel()));
+	connect(m_ui->actionImport_Animation, SIGNAL(triggered()), this, SLOT(actionImport_Animation()));
 	connect(m_ui->actionShowAxes, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setAxisIsDrawn(bool)));
 	connect(m_ui->actionShowGrid, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setGridIsDrawn(bool)));
 	connect(m_ui->actionShowLightSource, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setDrawLightSource(bool)));
@@ -177,6 +178,7 @@ void MainWindow::doAfterModelWasLoaded(const bool success)
 	m_ui->actionSaveAs->setEnabled(success);
 	m_ui->actionSetupTextures->setEnabled(success);
 	m_ui->actionAppendModel->setEnabled(success);
+	m_ui->actionImport_Animation->setEnabled(success);
 
 	// Disallow mirroring as it will mess-up animation
 	m_transformDock->setMirrorState(success && !hasAnim);
@@ -883,6 +885,11 @@ void MainWindow::actionEnableUserShaders(bool checked)
 	// if goes off, then reload shader
 	if (!checked)
 		actionReloadUserShader();
+}
+
+void MainWindow::actionImport_Animation()
+{
+
 }
 
 void MainWindow::actionLocateUserShaders()
