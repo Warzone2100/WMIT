@@ -893,17 +893,14 @@ void MainWindow::actionImport_Animation()
 	if (m_model.meshes() == 0)
 	    return;
 
-	QString anim_path = QFileDialog::getOpenFileName(this, "Locate animation file",
-							 m_settings->value("shaders/user_vert_path", "").toString(),
+	QString anim_path = QFileDialog::getOpenFileName(this, "Locate animation file", m_pathImport,
 							 "PIE animation (*.ani);;Any file (*.*)");
 	if (anim_path.isEmpty())
 	    return;
 
 	int meshIdx = -1;
 	{
-		QStringList items;
-		for (int cnt = 1; cnt <= m_model.meshes(); ++cnt)
-			items << QString("%1").arg(cnt);
+		QStringList items = m_model.getMeshNames();
 
 		QString item = QInputDialog::getItem(this, tr("Select mesh for animation import"), "", items, 0, false);
 		if (!item.isEmpty())
@@ -913,11 +910,15 @@ void MainWindow::actionImport_Animation()
 	if (meshIdx < 0)
 		return;
 
-	auto mesh = m_model.getMesh(meshIdx);
+	auto &mesh = m_model.getMesh(meshIdx);
 
 	ApieAnimObject pieAnim;
 	if (pieAnim.readStandaloneAniFile(anim_path.toLocal8Bit()))
+	{
 		mesh.importPieAnimation(pieAnim);
+		// Might disable some anim-unfriendly actions
+		doAfterModelWasLoaded(true);
+	}
 }
 
 void MainWindow::actionLocateUserShaders()
