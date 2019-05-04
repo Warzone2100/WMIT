@@ -639,15 +639,20 @@ bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *
 
 void MainWindow::viewerInitialized()
 {
+	// Only do init once
+	disconnect(m_ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(viewerInitialized()));
+
 	m_ui->centralWidget->addToRenderList(&m_model);
 	m_ui->centralWidget->addToAnimateList(&m_model);
 	m_meshDock->setModel(&m_model);
 
 	m_actionEnableUserShaders = new QAction("Enable external shaders", this);
 	m_actionEnableUserShaders->setCheckable(true);
+	m_actionEnableUserShaders->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
 	connect(m_actionEnableUserShaders, SIGNAL(triggered(bool)), this, SLOT(actionEnableUserShaders(bool)));
 
 	m_actionLocateUserShaders = new QAction("Locate external shaders...", this);
+	m_actionLocateUserShaders->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_E));
 	connect(m_actionLocateUserShaders, SIGNAL(triggered()), this, SLOT(actionLocateUserShaders()));
 
 	m_actionReloadUserShaders = new QAction("Reload external shaders", this);
@@ -906,7 +911,7 @@ void MainWindow::actionEnableUserShaders(bool checked)
 	m_actionReloadUserShaders->setEnabled(checked);
 
 	// if goes off, then reload shader
-	if (!checked)
+	//if (!checked)
 		actionReloadUserShader();
 }
 
