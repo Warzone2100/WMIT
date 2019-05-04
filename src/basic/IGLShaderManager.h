@@ -20,32 +20,43 @@
 #pragma once
 
 #include <QString>
+#include <QPointer>
 #include <QHash>
 #include <QHashIterator>
 #include <QGLShaderProgram>
 
+struct ShaderInfo
+{
+	QPointer<QGLShaderProgram> program;
+	bool is_external;
+};
+
 class IGLShaderManager
 {
 protected:
-	QHash<int, QGLShaderProgram*> m_shaders;
+	QHash<int, ShaderInfo> m_shaders;
 public:
 	virtual ~IGLShaderManager() {}
 
-    virtual bool loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag,
-                            QString* errString) = 0;
+	virtual bool loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag,
+				QString* errString) = 0;
 	virtual void unloadShader(int type) = 0;
 
-	virtual bool hasShader(int type)
+	virtual bool hasShader(int type) const
 	{
-		return m_shaders.contains(type) && (m_shaders.value(type) != NULL);
+		return m_shaders.contains(type) && !m_shaders.value(type).program.isNull();
 	}
+
+	virtual bool isShaderExternal(int type) const
+	{
+		return m_shaders.contains(type) && m_shaders.value(type).is_external;
+	}
+
 	virtual QGLShaderProgram* getShader(int type)
 	{
 		if (m_shaders.contains(type))
-		{
-			return m_shaders[type];
-		}
+			return m_shaders[type].program.data();
 
-		return NULL;
+		return nullptr;
 	}
 };

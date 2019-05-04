@@ -28,7 +28,7 @@ protected:
 	IGLShaderManager* m_shaderman;
 	int m_active_shader;
 public:
-	IGLShaderRenderable(): m_shaderman(NULL), m_active_shader(0) {}
+	IGLShaderRenderable(): m_shaderman(nullptr), m_active_shader(0) {}
 	IGLShaderRenderable(IGLShaderManager *shaderman): m_shaderman(shaderman), m_active_shader(0) {}
 	virtual ~IGLShaderRenderable() {}
 
@@ -36,15 +36,20 @@ public:
 	virtual bool setActiveShader(const int type)
 	{
 		releaseShader(m_active_shader);
-		if (m_shaderman != NULL && m_shaderman->hasShader(type) && initShader(type))
+		if (m_shaderman != nullptr && m_shaderman->hasShader(type) && initShader(type))
 		{
 			m_active_shader = type;
 			return true;
-        }
+		}
 
-        return false;
+		return false;
 	}
 	virtual int getActiveShader() const {return m_active_shader;}
+
+	virtual bool isShaderExternal(int type) const
+	{
+		return m_shaderman && m_shaderman->hasShader(type) && m_shaderman->isShaderExternal(type);
+	}
 
 protected:
 	virtual bool initShader(const int type) = 0;
