@@ -652,7 +652,7 @@ void MainWindow::viewerInitialized()
 	connect(m_actionEnableUserShaders, SIGNAL(triggered(bool)), this, SLOT(actionEnableUserShaders(bool)));
 
 	m_actionLocateUserShaders = new QAction("Locate external shaders...", this);
-	m_actionLocateUserShaders->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_E));
+	m_actionLocateUserShaders->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
 	connect(m_actionLocateUserShaders, SIGNAL(triggered()), this, SLOT(actionLocateUserShaders()));
 
 	m_actionReloadUserShaders = new QAction("Reload external shaders", this);
