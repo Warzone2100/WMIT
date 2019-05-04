@@ -270,12 +270,12 @@ void QtGLView::dynamicManagedSetup(IGLRenderable *object, bool remove)
 	// We have a TextureMan
 	IGLTexturedRenderable* obj_tr = dynamic_cast<IGLTexturedRenderable*>(object);
 	if (obj_tr)
-		obj_tr->setTextureManager(remove ? NULL : this);
+		obj_tr->setTextureManager(remove ? nullptr : this);
 
 	// and a ShaderMan
 	IGLShaderRenderable* obj_sr = dynamic_cast<IGLShaderRenderable*>(object);
 	if (obj_sr)
-		obj_sr->setShaderManager(remove ? NULL : this);
+		obj_sr->setShaderManager(remove ? nullptr : this);
 }
 
 void QtGLView::addToRenderList(IGLRenderable* object)
@@ -475,7 +475,7 @@ bool QtGLView::loadShader(int type, const QString& fileNameVert, const QString& 
 		QGLShaderProgram* shader = getShader(type);
 		bool ok_flag = true;
 
-		if (shader != NULL)
+		if (shader != nullptr)
 		{
 			shader->release();
 			shader->removeAllShaders();
@@ -487,29 +487,29 @@ bool QtGLView::loadShader(int type, const QString& fileNameVert, const QString& 
 
 		if (!shader->addShaderFromSourceFile(QGLShader::Vertex, fileNameVert))
 		{
-            if (errString)
-                *errString = QString("QtGLView::loadShader - Error loading vertex shader:\n%1").arg(shader->log());
+			if (errString)
+				*errString = QString("QtGLView::loadShader - Error loading vertex shader:\n%1").arg(shader->log());
 			ok_flag = false;
 		}
 		else if (!shader->addShaderFromSourceFile(QGLShader::Fragment, fileNameFrag))
 		{
-            if (errString)
-                *errString = QString("QtGLView::loadShader - Error loading fragment shader:\n%1").arg(shader->log());
+			if (errString)
+				*errString = QString("QtGLView::loadShader - Error loading fragment shader:\n%1").arg(shader->log());
 			ok_flag = false;
 		}
 		else if (!shader->link())
 		{
-            if (errString)
-                *errString = QString("QtGLView::loadShader - Error linking shaders:\n%1").arg(shader->log());
+			if (errString)
+				*errString = QString("QtGLView::loadShader - Error linking shaders:\n%1").arg(shader->log());
 			ok_flag = false;
 		}
 
-        if (!ok_flag)
-		{
-			delete shader;
-            shader = NULL;
-		}
-        m_shaders[type] = shader;
+		if (!ok_flag)
+			shader = nullptr;
+
+		auto& sinfo = m_shaders[type];
+		sinfo.program = shader;
+		sinfo.is_external = ok_flag && !fileNameFrag.startsWith(":");
 
 		return ok_flag;
 	}
