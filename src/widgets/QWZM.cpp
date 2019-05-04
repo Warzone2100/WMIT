@@ -506,7 +506,7 @@ QString QWZM::shaderTypeToString(wz_shader_type_t type)
 		str = "WZ 3.1 shaders";
 		break;
 	case WZ_SHADER_WZ32:
-		str = "WZ 3.2 shaders (WIP)";
+		str = "WZ 3.2 shaders";
 		break;
 	default:
 		str = "<Unknown>";
