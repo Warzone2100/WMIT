@@ -308,6 +308,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	settings.setValue("3DView/EnableUserShaders", m_actionEnableUserShaders->isChecked());
 	settings.setValue("3DView/Animate", m_ui->actionAnimate->isChecked());
 	settings.setValue("3DView/ShowConnectors", m_ui->actionShow_Connectors->isChecked());
+	settings.setValue("3DView/ShaderTag", wz_shader_type_tag[getShaderType()]);
 
 	event->accept();
 }
@@ -678,15 +679,6 @@ void MainWindow::viewerInitialized()
 	QMenu* rendererMenu = new QMenu(this);
 	rendererMenu->addActions(m_shaderGroup->actions());
 
-	for (int i = m_shaderGroup->actions().size() - 1; i >= 0; --i)
-	{
-		if (m_shaderGroup->actions().at(i)->isEnabled())
-		{
-			m_shaderGroup->actions().at(i)->activate(QAction::Trigger);
-			break;
-		}
-	}
-
 	// other user shader related stuff
 	rendererMenu->addSeparator();
 	rendererMenu->addAction(m_actionEnableUserShaders);
@@ -718,6 +710,36 @@ void MainWindow::viewerInitialized()
 	m_ui->actionAnimate->setChecked(m_settings->value("3DView/Animate", true).toBool());
 
 	actionEnableUserShaders(m_actionEnableUserShaders->isChecked());
+
+	// Default to 3.1
+	int shaderTag = m_settings->value("3DView/ShaderTag", wz_shader_type_tag[WZ_SHADER_WZ31]).toInt();
+	int shaderActIdx = -1;
+	for (int i = WZ_SHADER__FIRST; i < WZ_SHADER__LAST; ++i)
+	{
+		if (shaderTag == wz_shader_type_tag[i])
+			shaderActIdx = i;
+	}
+	// Select any previous selection
+	if (shaderActIdx >= 0)
+	{
+		if (m_shaderGroup->actions().at(shaderActIdx)->isEnabled())
+			m_shaderGroup->actions().at(shaderActIdx)->activate(QAction::Trigger);
+		else
+			shaderActIdx = -1;
+	}
+
+	// Otherwise use old approach
+	if (shaderActIdx < 0)
+	{
+		for (int i = m_shaderGroup->actions().size() - 1; i >= 0; --i)
+		{
+			if (m_shaderGroup->actions().at(i)->isEnabled())
+			{
+				m_shaderGroup->actions().at(i)->activate(QAction::Trigger);
+				break;
+			}
+		}
+	}
 }
 
 void MainWindow::shaderAction(int type)
@@ -815,7 +837,7 @@ void MainWindow::materialChangedFromUI(const WZMaterial &mat)
 
 void MainWindow::actionReloadUserShader()
 {
-	wz_shader_type_t type = static_cast<wz_shader_type_t>(m_shaderGroup->actions().indexOf(m_shaderGroup->checkedAction()));
+	wz_shader_type_t type = getShaderType();
 	shaderAction(type);
 }
 

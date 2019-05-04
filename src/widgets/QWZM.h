@@ -35,17 +35,16 @@
 #include "IGLTexturedRenderable.h"
 #include "IGLShaderRenderable.h"
 
-enum wz_shader_type_t {WZ_SHADER_NONE = 0,
-		       WZ_SHADER_WZ32, // WIP. Do not move to last/default yet
+enum wz_shader_type_t {WZ_SHADER_NONE,
 		       WZ_SHADER_WZ31,
+		       WZ_SHADER_WZ32,
 		       WZ_SHADER__LAST, WZ_SHADER__FIRST = WZ_SHADER_NONE};
-static const char* wz_shader_type_tag[WZ_SHADER__LAST] = {
-	"NONE",
-	"WZ32",
-	"WZ31"
-};
 
-const char* getShaderTag(wz_shader_type_t shader);
+static const int wz_shader_type_tag[WZ_SHADER__LAST] = {
+	0,
+	31,
+	32
+};
 
 class Pie3Model;
 
