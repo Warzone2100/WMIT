@@ -69,11 +69,13 @@ QtGLView::~QtGLView()
 		dynamicManagedSetup(obj, true);
 	}
 
+/* This is crashing on F29 and unclear if we need this on destroy
 	foreach (ManagedGLTexture texture, m_textures)
 	{
 		const GLuint id = texture.id();
 		QGLWidget::deleteTexture(id);
 	}
+*/
 }
 
 void QtGLView::animate()
