@@ -927,8 +927,3 @@ void QWZM::exportToOBJ(std::ostream& out) const
 		WZM::exportToOBJ(out);
 	}
 }
-
-const char *getShaderTag(wz_shader_type_t shader)
-{
-	 return wz_shader_type_tag[shader];
-}
