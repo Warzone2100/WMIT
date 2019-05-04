@@ -162,10 +162,16 @@
    <property name="text">
     <string>Setup Textures...</string>
    </property>
+   <property name="shortcut">
+    <string>T</string>
+   </property>
   </action>
   <action name="actionAppendModel">
    <property name="text">
     <string>Append Model...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
   <action name="actionAboutApplication">
@@ -284,6 +290,9 @@
    <property name="text">
     <string>Open...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionSetTeamColor">
    <property name="text">
@@ -339,6 +348,9 @@
   <action name="actionImport_Animation">
    <property name="text">
     <string>Import Animation...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
  </widget>
