@@ -542,7 +542,7 @@ void WZM::exportToOBJ(std::ostream &out) const
 	for (itM = m_meshes.begin(); itM != m_meshes.end(); ++itM)
 	{
 		Mesh expMesh(*itM);
-		expMesh.mirrorUsingLocalCenter(0);
+		expMesh.mirrorFromPoint(WZMVertex(), 0);
 		expMesh.reverseWinding();
 
 		objectBuffers.push_back(expMesh.exportToOBJ(params));
