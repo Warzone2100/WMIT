@@ -743,6 +743,38 @@ bool QWZM::bindShader(int type)
 
 		uniloc = shader->uniformLocation("lightPosition");
 		shader->setUniformValue(uniloc,	render_posSun *	render_mtxModelView_preAnim.inverted());
+/*
+		uniloc = shader->uniformLocation("sceneColor");
+		shader->setUniformValue(uniloc,
+				m_material.vals[WZM_MAT_EMISSIVE][0],
+				m_material.vals[WZM_MAT_EMISSIVE][1],
+				m_material.vals[WZM_MAT_EMISSIVE][2],
+				m_material.vals[WZM_MAT_EMISSIVE][3]);
+
+		uniloc = shader->uniformLocation("ambient");
+		shader->setUniformValue(uniloc,
+				m_material.vals[WZM_MAT_AMBIENT][0],
+				m_material.vals[WZM_MAT_AMBIENT][1],
+				m_material.vals[WZM_MAT_AMBIENT][2],
+				m_material.vals[WZM_MAT_AMBIENT][3]);
+
+		uniloc = shader->uniformLocation("diffuse");
+		shader->setUniformValue(uniloc,
+				m_material.vals[WZM_MAT_DIFFUSE][0],
+				m_material.vals[WZM_MAT_DIFFUSE][1],
+				m_material.vals[WZM_MAT_DIFFUSE][2],
+				m_material.vals[WZM_MAT_DIFFUSE][3]);
+
+		uniloc = shader->uniformLocation("specular");
+		shader->setUniformValue(uniloc,
+				m_material.vals[WZM_MAT_SPECULAR][0],
+				m_material.vals[WZM_MAT_SPECULAR][1],
+				m_material.vals[WZM_MAT_SPECULAR][2],
+				m_material.vals[WZM_MAT_SPECULAR][3]);
+*/
+		uniloc = shader->uniformLocation("shininess");
+		if (uniloc >= 0)
+			shader->setUniformValue(uniloc,	m_material.shininess);
 
 		break;
 	}
