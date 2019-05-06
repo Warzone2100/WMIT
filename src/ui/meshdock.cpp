@@ -117,7 +117,7 @@ QVariant WzmConnectorsModel::data(const QModelIndex &index, int role) const
 	if (index.row() >= static_cast<int>(m_mesh.connectors()) || index.row() < 0)
 		return QVariant();
 
-	if (role == Qt::DisplayRole) {
+	if (role == Qt::DisplayRole || role == Qt::EditRole) {
 		const auto &connector = m_mesh.getConnector(index.row());
 
 		if (index.column() == 0)
@@ -194,7 +194,7 @@ bool WzmConnectorsModel::removeRows(int position, int rows, const QModelIndex &i
 
 bool WzmConnectorsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if (index.isValid() && role == Qt::EditRole)
+	if (index.isValid() && role == Qt::EditRole && value.isValid())
 	{
 		int row = index.row();
 
