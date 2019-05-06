@@ -42,12 +42,25 @@
 
 #include "Pie.h"
 
-QString buildAppTitle(QString prefix = QString())
+QString MainWindow::buildAppTitle()
 {
-    QString name(WMIT_APPNAME " " WMIT_VER_STR);
-    if (!prefix.isEmpty())
-        name.prepend(prefix + " - ");
-    return name;
+	QString name(WMIT_APPNAME " " WMIT_VER_STR);
+
+	if (m_modelinfo.m_currentFile.isEmpty())
+		return name;
+
+	if (!m_pathvert.isEmpty() && !m_pathvert.startsWith(":"))
+	{
+		QFileInfo vertNfo(m_pathvert);
+		QFileInfo fragNfo(m_pathfrag);
+		name.prepend(vertNfo.fileName() + "/" + fragNfo.fileName() + " - ");
+	}
+
+	QFileInfo fileNfo(m_modelinfo.m_currentFile);
+	if (!fileNfo.baseName().isEmpty())
+		name.prepend(fileNfo.baseName() + " - ");
+
+	return name;
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
@@ -205,7 +218,7 @@ bool MainWindow::openFile(const QString &filePath)
 		m_modelinfo.m_currentFile = modelFileNfo.absoluteFilePath();
 		m_model = tmpmodel;
 
-		setWindowTitle(buildAppTitle(modelFileNfo.baseName()));
+		setWindowTitle(buildAppTitle());
 
 		if (!fireTextureDialog(true))
 		{
@@ -590,6 +603,9 @@ void MainWindow::actionSaveAs()
 
 bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *errMessage)
 {
+	m_pathvert.clear();
+	m_pathfrag.clear();
+
 	if (type == WZ_SHADER_NONE)
 	{
 		return true;
@@ -618,23 +634,25 @@ bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *
 		}
 	}
 
-    QFileInfo finfo(pathvert);
-    if (finfo.exists())
-    {
-        finfo.setFile(pathfrag);
-        if (finfo.exists())
-        {
-            if (m_ui->centralWidget->loadShader(type, pathvert, pathfrag, errMessage))
-            {
-                return true;
-            }
-        }
+	QFileInfo finfo(pathvert);
+	if (finfo.exists())
+	{
+		finfo.setFile(pathfrag);
+		if (finfo.exists())
+		{
+			if (m_ui->centralWidget->loadShader(type, pathvert, pathfrag, errMessage))
+			{
+				m_pathvert = pathvert;
+				m_pathfrag = pathfrag;
+				return true;
+			}
+		}
+		else
+			*errMessage = "Unable to find fragment shader!";
+	}
 	else
-		*errMessage = "Unable to find fragment shader!";
-    }
-    else
-	    *errMessage = "Unable to find vertex shader!";
-    return false;
+		*errMessage = "Unable to find vertex shader!";
+	return false;
 }
 
 void MainWindow::viewerInitialized()
@@ -781,6 +799,8 @@ void MainWindow::shaderAction(int type)
 		m_model.disableShaders();
 	}
 	updateModelRender();
+
+	setWindowTitle(buildAppTitle());
 }
 
 void MainWindow::scaleXYZChanged(double val)
