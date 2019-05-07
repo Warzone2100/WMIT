@@ -125,6 +125,7 @@ public:
 	virtual void mirror(int axis, int mesh = -1); // x == 0, y == 1, z == 2
 	virtual void reverseWinding(int mesh = -1);
 	virtual void flipNormals(int mesh = -1);
+	virtual void center(int mesh, int axis);
 
 	virtual WZMVertex calculateCenterPoint() const;
 protected:

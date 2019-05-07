@@ -41,6 +41,7 @@ TransformDock::TransformDock(QWidget *parent) :
 	connect(m_ui->mirrorXButton, SIGNAL(clicked()), this, SLOT(mirrorX()));
 	connect(m_ui->mirrorYButton, SIGNAL(clicked()), this, SLOT(mirrorY()));
 	connect(m_ui->mirrorZButton, SIGNAL(clicked()), this, SLOT(mirrorZ()));
+	connect(m_ui->centerMeshButton, SIGNAL(clicked()), this, SLOT(centerMesh()));
 }
 
 TransformDock::~TransformDock()
@@ -248,4 +249,9 @@ void TransformDock::mirrorY()
 void TransformDock::mirrorZ()
 {
 	emit mirrorAxis(m_ui->globalMirrorCheckBox->isChecked() ? 5 : 2);
+}
+
+void TransformDock::centerMesh()
+{
+	emit centerMesh(m_selected_mesh, m_ui->scaleComboBox->currentIndex() - 1);
 }

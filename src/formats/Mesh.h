@@ -115,6 +115,8 @@ public:
 	void mirrorFromPoint(const WZMVertex& point, int axis); // x == 0, y == 1, z == 2
 	void reverseWinding();
 	void flipNormals();
+	void move(const WZMVertex& moveby);
+	void center(int axis); // -1 == all, x == 0, y == 1, z == 2
 
 	void importPieAnimation(const ApieAnimObject& animobj);
 

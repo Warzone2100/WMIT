@@ -155,6 +155,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_transformDock, SIGNAL(changeActiveMesh(int)), &m_model, SLOT(setActiveMesh(int)));
 	connect(m_transformDock, SIGNAL(removeMesh(int)), this, SLOT(removeMesh(int)));
 	connect(m_transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
+	connect(m_transformDock, SIGNAL(centerMesh(int,int)), this, SLOT(centerMesh(int,int)));
 	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_transformDock, SLOT(setMeshCount(int,QStringList)));
 
 	/// Mesh dock
@@ -851,6 +852,12 @@ void MainWindow::removeMesh(int mesh)
 		return;
 
 	m_model.rmMesh(mesh);
+	updateModelRender();
+}
+
+void MainWindow::centerMesh(int mesh, int axis)
+{
+	m_model.center(mesh, axis);
 	updateModelRender();
 }
 
