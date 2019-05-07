@@ -1026,10 +1026,17 @@ void Mesh::move(const WZMVertex &moveby)
 	{
 		m_vertexArray[i] += moveby;
 	}
+	m_mesh_weightcenter += moveby;
+	m_mesh_aabb_min += moveby;
+	m_mesh_aabb_max += moveby;
+	m_mesh_tspcenter += moveby;
 }
 
 void Mesh::center(int axis)
 {
+	if (m_mesh_weightcenter == WZMVertex())
+		return;
+
 	WZMVertex moveby = WZMVertex() - getCenterPoint();
 
 	switch (axis)
