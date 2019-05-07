@@ -68,6 +68,7 @@ private slots:
 	void mirrorX();
 	void mirrorY();
 	void mirrorZ();
+	void centerMesh();
 
 signals:
 	void scaleXYZChanged(double);
@@ -77,6 +78,7 @@ signals:
 	void reverseWindings(int mesh);
 	void flipNormals(int mesh);
 	void mirrorAxis(int);
+	void centerMesh(int mesh, int axis);
 
 	void applyTransformations();
 	void changeActiveMesh(int index);

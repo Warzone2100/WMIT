@@ -1020,6 +1020,34 @@ void Mesh::flipNormals()
 	}
 }
 
+void Mesh::move(const WZMVertex &moveby)
+{
+	for (size_t i = 0; i < vertices(); ++i)
+	{
+		m_vertexArray[i] += moveby;
+	}
+}
+
+void Mesh::center(int axis)
+{
+	WZMVertex moveby = WZMVertex() - getCenterPoint();
+
+	switch (axis)
+	{
+	case 0:
+		moveby.y() = moveby.z() = 0.f;
+		break;
+	case 1:
+		moveby.x() = moveby.z() = 0.f;
+		break;
+	case 2:
+		moveby.x() = moveby.y() = 0.f;
+		break;
+	}
+
+	move(moveby);
+}
+
 void Mesh::importPieAnimation(const ApieAnimObject &animobj)
 {
 	// replace current animation

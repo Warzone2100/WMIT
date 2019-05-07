@@ -817,8 +817,38 @@ void WZM::flipNormals(int mesh)
 	}
 	else
 	{
-		if (m_meshes.size() > (std::vector<Mesh>::size_type)mesh)
-			m_meshes[(std::vector<Mesh>::size_type)mesh].flipNormals();
+		if (m_meshes.size() > static_cast<size_t>(mesh))
+			m_meshes[static_cast<size_t>(mesh)].flipNormals();
+	}
+}
+
+void WZM::center(int mesh, int axis)
+{
+	// All or a single mesh
+	if (mesh < 0)
+	{
+		WZMVertex moveby = WZMVertex() - calculateCenterPoint();
+
+		switch (axis)
+		{
+		case 0:
+			moveby.y() = moveby.z() = 0.f;
+			break;
+		case 1:
+			moveby.x() = moveby.z() = 0.f;
+			break;
+		case 2:
+			moveby.x() = moveby.y() = 0.f;
+			break;
+		}
+
+		for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
+			it->move(moveby);
+	}
+	else
+	{
+		if (m_meshes.size() > static_cast<size_t>(mesh))
+			m_meshes[static_cast<size_t>(mesh)].center(axis);
 	}
 }
 

@@ -133,6 +133,7 @@ private slots:
 	void flipNormals(int mesh);
 	void mirrorAxis(int axis);
 	void removeMesh(int mesh);
+	void centerMesh(int mesh, int axis);
 
 	void materialChangedFromUI(const WZMaterial& mat);
 
