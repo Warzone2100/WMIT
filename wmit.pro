@@ -85,12 +85,8 @@ CONFIG(debug, debug|release) {
     DEFINES *= NDEBUG
 }
 
-# turn off c++0x support on win32 till decent compiler is available out-of-the-box
-#!win32 {
-{
-    QMAKE_CXXFLAGS += -std=c++0x
-    DEFINES += CPP0X_AVAILABLE
-}
+QMAKE_CXXFLAGS += -std=c++11
+
 win32 {
     DEFINES += WIN32
 }
@@ -107,8 +103,10 @@ RESOURCES += \
 
 # If your system uses different paths for QGLViewer, create a file named
 # "config.pri" and override the necessary variables below (with "=").
-QGLVIEWER_INCL = /usr/include/QGLViewer
-QGLVIEWER_LIBS = -lQGLViewer
+QGLVIEWER_INCL = 3rdparty/libQGLViewer
+QGLVIEWER_LIBS = -L3rdparty/libQGLViewer
+lessThan(QT_MAJOR_VERSION, 5): QGLVIEWER_LIBS += -lQGLViewer
+greaterThan(QT_MAJOR_VERSION, 4): QGLVIEWER_LIBS += -lQGLViewer-qt5
 
 UI_DIR = ui
 MOC_DIR = moc
