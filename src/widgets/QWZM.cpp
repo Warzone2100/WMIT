@@ -24,12 +24,6 @@
 
 #include "QtGLView.h"
 
-#ifdef CPP0X_AVAILABLE
-#  define CPP0X_FEATURED(x) x
-#else
-#  define CPP0X_FEATURED(x) do {} while (0)
-#endif
-
 static const char tangentAtributeName[] = "tangent";
 
 static const char vertexAtributeName[] = "vertex";
@@ -188,16 +182,16 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		glMaterialfv(GL_FRONT, GL_SPECULAR, m_material.vals[WZM_MAT_SPECULAR]);
 		glMaterialf(GL_FRONT, GL_SHININESS, m_material.shininess);
 
-		CPP0X_FEATURED(static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat."));
+		static_assert(sizeof(WZMUV) == sizeof(GLfloat)*2, "WZMUV has become fat.");
 		glTexCoordPointer(2, GL_FLOAT, 0, &msh.m_textureArray[0]);
 
 		glNormalPointer(GL_FLOAT, 0, &msh.m_normalArray[0]);
 
-		CPP0X_FEATURED(static_assert(sizeof(WZMVertex) == sizeof(GLfloat)*3, "WZMVertex has become fat."));
+		static_assert(sizeof(WZMVertex) == sizeof(GLfloat)*3, "WZMVertex has become fat.");
 		glVertexPointer(3, GL_FLOAT, 0, &msh.m_vertexArray[0]);
 
-		CPP0X_FEATURED(static_assert(sizeof(IndexedTri) == sizeof(GLushort)*3, "IndexedTri has become fat."));
-		glDrawElements(GL_TRIANGLES, msh.m_indexArray.size() * 3, GL_UNSIGNED_SHORT, &msh.m_indexArray[0]);
+		static_assert(sizeof(IndexedTri) == sizeof(GLushort)*3, "IndexedTri has become fat.");
+		glDrawElements(GL_TRIANGLES, static_cast<int>(msh.m_indexArray.size()) * 3, GL_UNSIGNED_SHORT, &msh.m_indexArray[0]);
 
 		if (!isFixedPipelineRenderer())
 		{
