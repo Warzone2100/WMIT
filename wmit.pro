@@ -5,6 +5,8 @@ QT = core gui opengl xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+CONFIG += c++11
+
 INCLUDEPATH += src src/basic src/formats src/ui src/widgets 3rdparty/GLee
 
 HEADERS += \
@@ -85,8 +87,6 @@ CONFIG(debug, debug|release) {
     DEFINES *= NDEBUG
 }
 
-QMAKE_CXXFLAGS += -std=c++11
-
 win32 {
     DEFINES += WIN32
 }
@@ -104,7 +104,7 @@ RESOURCES += \
 # If your system uses different paths for QGLViewer, create a file named
 # "config.pri" and override the necessary variables below (with "=").
 QGLVIEWER_INCL = 3rdparty/libQGLViewer
-QGLVIEWER_LIBS = -L3rdparty/libQGLViewer
+QGLVIEWER_LIBS = -L"$$_PRO_FILE_PWD_"/3rdparty/libQGLViewer/QGLViewer
 lessThan(QT_MAJOR_VERSION, 5): QGLVIEWER_LIBS += -lQGLViewer
 greaterThan(QT_MAJOR_VERSION, 4): QGLVIEWER_LIBS += -lQGLViewer-qt5
 
