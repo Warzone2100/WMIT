@@ -42,6 +42,7 @@ TransformDock::TransformDock(QWidget *parent) :
 	connect(m_ui->mirrorYButton, SIGNAL(clicked()), this, SLOT(mirrorY()));
 	connect(m_ui->mirrorZButton, SIGNAL(clicked()), this, SLOT(mirrorZ()));
 	connect(m_ui->centerMeshButton, SIGNAL(clicked()), this, SLOT(centerMesh()));
+	connect(m_ui->recalculateTBButton, SIGNAL(clicked()), this, SIGNAL(recalculateTB()));
 }
 
 TransformDock::~TransformDock()

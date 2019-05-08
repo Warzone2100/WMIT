@@ -12,8 +12,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>208</width>
-    <height>574</height>
+    <width>297</width>
+    <height>607</height>
    </size>
   </property>
   <property name="features">
@@ -209,6 +209,13 @@
         <widget class="QPushButton" name="flipNormalsButton">
          <property name="text">
           <string>Flip Normals</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="recalculateTBButton">
+         <property name="text">
+          <string>Recalculate Tangents and Bitangents</string>
          </property>
         </widget>
        </item>

@@ -32,6 +32,7 @@
 #include "Util.h"
 #include "Pie.h"
 #include "Vector.h"
+#include "Mesh.h"
 
 typedef std::tuple<WZMVertex, WZMUV, WZMVertex> WZMPoint;
 
@@ -836,7 +837,11 @@ void Mesh::addIndices(const IndexedTri &trio)
 	m_indexArray.push_back(trio);
 
 	// TB-calculation part
+	calculateTBForIndices(trio);
+}
 
+void Mesh::calculateTBForIndices(const IndexedTri &trio)
+{
 	// Shortcuts for vertices
 	WZMVertex &v0 = m_vertexArray[trio.a()];
 	WZMVertex &v1 = m_vertexArray[trio.b()];
@@ -1053,6 +1058,21 @@ void Mesh::center(int axis)
 	}
 
 	move(moveby);
+}
+
+void Mesh::recalculateTB()
+{
+	size_t vert_num = vertices();
+
+	// Zero-out arrays
+	m_tangentArray.resize(vert_num);
+	std::fill(m_tangentArray.begin(), m_tangentArray.end(), WZMVertex4());
+	m_bitangentArray.resize(vert_num);
+	std::fill(m_bitangentArray.begin(), m_bitangentArray.end(), WZMVertex());
+
+	// TB-calculation part
+	for (auto& curTrio : m_indexArray)
+		calculateTBForIndices(curTrio);
 }
 
 void Mesh::importPieAnimation(const ApieAnimObject &animobj)

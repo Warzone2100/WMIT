@@ -83,6 +83,7 @@ signals:
 	void applyTransformations();
 	void changeActiveMesh(int index);
 	void removeMesh(int index);
+	void recalculateTB();
 };
 
 #endif // TRANSFORMDOCK_HPP

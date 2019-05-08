@@ -852,6 +852,21 @@ void WZM::center(int mesh, int axis)
 	}
 }
 
+void WZM::recalculateTB(int mesh)
+{
+	// All or a single mesh
+	if (mesh < 0)
+	{
+		for (auto& curMesh: m_meshes)
+			curMesh.recalculateTB();
+	}
+	else
+	{
+		if (m_meshes.size() > static_cast<size_t>(mesh))
+			m_meshes[static_cast<size_t>(mesh)].recalculateTB();
+	}
+}
+
 WZMVertex WZM::calculateCenterPoint() const
 {
 	WZMVertex center, meshcenter;

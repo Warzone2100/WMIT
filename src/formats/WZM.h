@@ -126,6 +126,7 @@ public:
 	virtual void reverseWinding(int mesh = -1);
 	virtual void flipNormals(int mesh = -1);
 	virtual void center(int mesh, int axis);
+	virtual void recalculateTB(int mesh = -1);
 
 	virtual WZMVertex calculateCenterPoint() const;
 protected:
