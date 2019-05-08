@@ -118,6 +118,7 @@ public:
 	void move(const WZMVertex& moveby);
 	void center(int axis); // -1 == all, x == 0, y == 1, z == 2
 
+	void recalculateTB();
 	void importPieAnimation(const ApieAnimObject& animobj);
 
 	WZMVertex getCenterPoint() const;
@@ -144,6 +145,7 @@ protected:
 	void reservePoints(const unsigned size);
 	void reserveIndices(const unsigned size);
 	void addIndices(const IndexedTri& trio);
+	void calculateTBForIndices(const IndexedTri &trio);
 	void addPoint(const WZMVertex &vertex, const WZMUV &uv, const WZMVertex &normal);
 	void finishImport();
 

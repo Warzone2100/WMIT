@@ -844,8 +844,17 @@ void QWZM::slotMirrorAxis(int axis)
 	mirror(axis, m_active_mesh);
 }
 
+void QWZM::slotRecalculateTB()
+{
+	applyTransformations();
+	recalculateTB(m_active_mesh);
+}
+
 void QWZM::applyTransformations()
 {
+	if (!m_pending_changes)
+		return;
+
 	scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2], m_active_mesh);
 
 	// reset values

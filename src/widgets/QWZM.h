@@ -84,6 +84,7 @@ public slots:
 	void setScaleY(GLfloat y);
 	void setScaleZ(GLfloat z);
 	void slotMirrorAxis(int axis);
+	void slotRecalculateTB();
 
 	void setActiveMesh(int mesh = -1);
 	void applyTransformations();

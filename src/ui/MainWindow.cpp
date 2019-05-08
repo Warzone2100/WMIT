@@ -153,6 +153,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_transformDock, SIGNAL(flipNormals(int)), this, SLOT(flipNormals(int)));
 	connect(m_transformDock, SIGNAL(applyTransformations()), &m_model, SLOT(applyTransformations()));
 	connect(m_transformDock, SIGNAL(changeActiveMesh(int)), &m_model, SLOT(setActiveMesh(int)));
+	connect(m_transformDock, SIGNAL(recalculateTB()), &m_model, SLOT(slotRecalculateTB()));
 	connect(m_transformDock, SIGNAL(removeMesh(int)), this, SLOT(removeMesh(int)));
 	connect(m_transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
 	connect(m_transformDock, SIGNAL(centerMesh(int,int)), this, SLOT(centerMesh(int,int)));
