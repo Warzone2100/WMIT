@@ -315,6 +315,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 	settings.setValue("3DView/ShowModelCenter", m_ui->actionShowModelCenter->isChecked());
 	settings.setValue("3DView/ShowNormals", m_ui->actionShowNormals->isChecked());
+	settings.setValue("3DView/ShowTangentAndBitangent", m_ui->actionShow_Tangent_And_Bitangent->isChecked());
 	settings.setValue("3DView/ShowAxes", m_ui->actionShowAxes->isChecked());
 	settings.setValue("3DView/ShowGrid", m_ui->actionShowGrid->isChecked());
 	settings.setValue("3DView/ShowLightSource", m_ui->actionShowLightSource->isChecked());
@@ -715,21 +716,33 @@ void MainWindow::viewerInitialized()
 		&m_model, SLOT(setDrawCenterPointFlag(bool)));
 	connect(m_ui->actionShowNormals, SIGNAL(triggered(bool)),
 		&m_model, SLOT(setDrawNormalsFlag(bool)));
+	connect(m_ui->actionShowNormals, SIGNAL(triggered(bool)),
+		m_ui->actionShow_Tangent_And_Bitangent, SLOT(setEnabled(bool)));
+	connect(m_ui->actionShow_Tangent_And_Bitangent, SIGNAL(triggered(bool)),
+		&m_model, SLOT(setDrawTangentAndBitangentFlag(bool)));
 	connect(m_ui->actionShow_Connectors, SIGNAL(triggered(bool)),
 		&m_model, SLOT(setDrawConnectors(bool)));
 
 	/// Load previous state
 	m_ui->actionShowModelCenter->setChecked(m_settings->value("3DView/ShowModelCenter", false).toBool());
 	m_model.setDrawCenterPointFlag(m_ui->actionShowModelCenter->isChecked());
+
 	m_ui->actionShowNormals->setChecked(m_settings->value("3DView/ShowNormals", false).toBool());
 	m_model.setDrawNormalsFlag(m_ui->actionShowNormals->isChecked());
+
 	m_ui->actionShow_Connectors->setChecked(m_settings->value("3DView/ShowConnectors", false).toBool());
 	m_model.setDrawConnectors(m_ui->actionShow_Connectors->isChecked());
 
+	m_ui->actionShow_Tangent_And_Bitangent->setChecked(m_settings->value("3DView/ShowTangentAndBitangent", false).toBool());
+	m_model.setDrawTangentAndBitangentFlag(m_ui->actionShow_Tangent_And_Bitangent->isChecked());
+	m_ui->actionShow_Tangent_And_Bitangent->setEnabled(m_ui->actionShowNormals->isChecked());
+
 	m_ui->actionShowAxes->setChecked(m_settings->value("3DView/ShowAxes", true).toBool());
 	m_ui->actionShowGrid->setChecked(m_settings->value("3DView/ShowGrid", true).toBool());
+
 	m_ui->actionShowLightSource->setChecked(m_settings->value("3DView/ShowLightSource", true).toBool());
 	m_ui->actionLink_Light_Source_To_Camera->setChecked(m_settings->value("3DView/LinkLightToCamera", true).toBool());
+
 	m_actionEnableUserShaders->setChecked(m_settings->value("3DView/EnableUserShaders", false).toBool());
 	m_ui->actionAnimate->setChecked(m_settings->value("3DView/Animate", true).toBool());
 

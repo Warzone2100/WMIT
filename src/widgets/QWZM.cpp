@@ -37,6 +37,7 @@ QWZM::QWZM(QObject *parent):
 	m_timeAnimationStarted(clock()),
 	m_tcmaskColour(0, 0x60, 0, 0xFF),
 	m_drawNormals(false),
+	m_drawTangentAndBitangent(false),
 	m_drawCenterPoint(false),
 	m_animation_elapsed_msecs(-1.f),
 	m_drawConnectors(false)
@@ -212,7 +213,7 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		clearTextureUnits(activeShader);
 
 		if (m_drawNormals)
-			drawNormals(i);
+			drawNormals(i, m_drawTangentAndBitangent);
 		if (m_drawConnectors)
 			drawConnectors(i);
 
@@ -294,7 +295,7 @@ void QWZM::drawCenterPoint()
 	drawAPoint(center, scale, whiteCol, 40.f);
 }
 
-void QWZM::drawNormals(size_t mesh_idx)
+void QWZM::drawNormals(size_t mesh_idx, bool draw_tb)
 {
 	GLboolean lighting, texture;
 
@@ -308,15 +309,36 @@ void QWZM::drawNormals(size_t mesh_idx)
 
 	glColor3f(0.7f, 1.0f, 0.7f);
 
-	WZMVertex nrm;
-		const Mesh& msh = m_meshes.at(mesh_idx);
-		for (size_t j = 0; j < msh.m_vertexArray.size(); ++j)
+	WZMVertex nrm, tb;
+	qglviewer::Vec from, to;
+
+	const Mesh& msh = m_meshes.at(mesh_idx);
+	for (size_t j = 0; j < msh.m_vertexArray.size(); ++j)
+	{
+		nrm = msh.m_normalArray[j].normalize() * 2. / scale_all;
+		from = qglviewer::Vec(msh.m_vertexArray[j].x(), msh.m_vertexArray[j].y(), msh.m_vertexArray[j].z());
+
+		if (draw_tb)
+			glColor3f(0.7f, 1.0f, 0.7f);
+		to = qglviewer::Vec(from + qglviewer::Vec(nrm.x(), nrm.y(), nrm.z()));
+		QGLViewer::drawArrow(from, to);
+
+		if (draw_tb)
 		{
-			nrm = msh.m_normalArray[j].normalize() * 2. / scale_all;
-			qglviewer::Vec from(msh.m_vertexArray[j].x(), msh.m_vertexArray[j].y(), msh.m_vertexArray[j].z());
-			qglviewer::Vec to(from + qglviewer::Vec(nrm.x(), nrm.y(), nrm.z()));
+			const WZMVertex4& tngt = msh.m_tangentArray[j];
+			tb = WZMVertex(tngt.x(), tngt.y(), tngt.z()).normalize() * 2. / scale_all;
+
+			glColor3f(1.0f, 0.7f, 0.7f);
+			to = qglviewer::Vec(from + qglviewer::Vec(tb.x(), tb.y(), tb.z()));
+			QGLViewer::drawArrow(from, to);
+
+			tb = msh.m_bitangentArray[j].normalize() * 2. / scale_all;
+
+			glColor3f(0.7f, 0.7f, 1.0f);
+			to = qglviewer::Vec(from + qglviewer::Vec(tb.x(), tb.y(), tb.z()));
 			QGLViewer::drawArrow(from, to);
 		}
+	}
 
 	if (texture)
 		glEnable(GL_TEXTURE_2D);
@@ -852,6 +874,11 @@ void QWZM::resetAllPendingChanges()
 void QWZM::setDrawNormalsFlag(bool draw)
 {
 	m_drawNormals = draw;
+}
+
+void QWZM::setDrawTangentAndBitangentFlag(bool draw)
+{
+	m_drawTangentAndBitangent = draw;
 }
 
 void QWZM::setDrawCenterPointFlag(bool draw)
