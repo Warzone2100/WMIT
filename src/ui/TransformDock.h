@@ -61,10 +61,7 @@ private slots:
 	void selectScale(int index);
 	void setScale(int value);
 	void setScale(double value);
-	void reverseWindings();
-	void flipNormals();
 	void selectMesh(int index);
-	void removeMesh();
 	void mirrorX();
 	void mirrorY();
 	void mirrorZ();
@@ -75,14 +72,14 @@ signals:
 	void scaleXChanged(double);
 	void scaleYChanged(double);
 	void scaleZChanged(double);
-	void reverseWindings(int mesh);
-	void flipNormals(int mesh);
+	void reverseWindings();
+	void flipNormals();
 	void mirrorAxis(int);
-	void centerMesh(int mesh, int axis);
+	void centerMesh(int axis);
 
 	void applyTransformations();
 	void changeActiveMesh(int index);
-	void removeMesh(int index);
+	void removeMesh();
 	void recalculateTB();
 };
 

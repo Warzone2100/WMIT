@@ -129,11 +129,11 @@ private slots:
 	void scaleXChanged(double scale);
 	void scaleYChanged(double scale);
 	void scaleZChanged(double scale);
-	void reverseWindings(int mesh);
-	void flipNormals(int mesh);
+	void reverseWindings();
+	void flipNormals();
 	void mirrorAxis(int axis);
-	void removeMesh(int mesh);
-	void centerMesh(int mesh, int axis);
+	void removeMesh();
+	void centerMesh(int axis);
 
 	void materialChangedFromUI(const WZMaterial& mat);
 

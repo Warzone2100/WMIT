@@ -915,10 +915,14 @@ void QWZM::addMesh(const Mesh& mesh)
 	meshCountChanged(meshes(), getMeshNames());
 }
 
-void QWZM::rmMesh(int index)
+void QWZM::slotRemoveActiveMesh()
 {
+	auto meshIdx = m_active_mesh;
+	if (meshIdx < 0 || meshIdx >= meshes())
+		return;
+
 	meshCountChanged();
-	WZM::rmMesh(index);
+	WZM::rmMesh(meshIdx);
 	meshCountChanged(meshes(), getMeshNames());
 }
 

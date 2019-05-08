@@ -149,14 +149,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_transformDock, SIGNAL(scaleXChanged(double)), this, SLOT(scaleXChanged(double)));
 	connect(m_transformDock, SIGNAL(scaleYChanged(double)), this, SLOT(scaleYChanged(double)));
 	connect(m_transformDock, SIGNAL(scaleZChanged(double)), this, SLOT(scaleZChanged(double)));
-	connect(m_transformDock, SIGNAL(reverseWindings(int)), this, SLOT(reverseWindings(int)));
-	connect(m_transformDock, SIGNAL(flipNormals(int)), this, SLOT(flipNormals(int)));
+	connect(m_transformDock, SIGNAL(reverseWindings()), this, SLOT(reverseWindings()));
+	connect(m_transformDock, SIGNAL(flipNormals()), this, SLOT(flipNormals()));
 	connect(m_transformDock, SIGNAL(applyTransformations()), &m_model, SLOT(applyTransformations()));
 	connect(m_transformDock, SIGNAL(changeActiveMesh(int)), &m_model, SLOT(setActiveMesh(int)));
 	connect(m_transformDock, SIGNAL(recalculateTB()), &m_model, SLOT(slotRecalculateTB()));
-	connect(m_transformDock, SIGNAL(removeMesh(int)), this, SLOT(removeMesh(int)));
+	connect(m_transformDock, SIGNAL(removeMesh()), this, SLOT(removeMesh()));
 	connect(m_transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
-	connect(m_transformDock, SIGNAL(centerMesh(int,int)), this, SLOT(centerMesh(int,int)));
+	connect(m_transformDock, SIGNAL(centerMesh(int)), this, SLOT(centerMesh(int)));
 	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_transformDock, SLOT(setMeshCount(int,QStringList)));
 
 	/// Mesh dock
@@ -842,15 +842,15 @@ void MainWindow::scaleZChanged(double val)
 	updateModelRender();
 }
 
-void MainWindow::reverseWindings(int mesh)
+void MainWindow::reverseWindings()
 {
-	m_model.reverseWinding(mesh);
+	m_model.reverseWinding(m_model.getActiveMesh());
 	updateModelRender();
 }
 
-void MainWindow::flipNormals(int mesh)
+void MainWindow::flipNormals()
 {
-	m_model.flipNormals(mesh);
+	m_model.flipNormals(m_model.getActiveMesh());
 	updateModelRender();
 }
 
@@ -860,18 +860,15 @@ void MainWindow::mirrorAxis(int axis)
 	updateModelRender();
 }
 
-void MainWindow::removeMesh(int mesh)
+void MainWindow::removeMesh()
 {
-	if (mesh < 0 || mesh > m_model.meshes())
-		return;
-
-	m_model.rmMesh(mesh);
+	m_model.slotRemoveActiveMesh();
 	updateModelRender();
 }
 
-void MainWindow::centerMesh(int mesh, int axis)
+void MainWindow::centerMesh(int axis)
 {
-	m_model.center(mesh, axis);
+	m_model.center(m_model.getActiveMesh(), axis);
 	updateModelRender();
 }
 
