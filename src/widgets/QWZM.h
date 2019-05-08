@@ -89,6 +89,7 @@ public slots:
 	void applyTransformations();
 
 	void setDrawNormalsFlag(bool draw);
+	void setDrawTangentAndBitangentFlag(bool draw);
 	void setDrawCenterPointFlag(bool draw);
 	void setDrawConnectors(bool draw);
 
@@ -120,7 +121,7 @@ private:
 	void defaultConstructor();
 	void drawAPoint(const WZMVertex &center, const WZMVertex &scale, const WZMVertex &color, const float lineLength);
 	void drawCenterPoint();
-	void drawNormals(size_t mesh_idx);
+	void drawNormals(size_t mesh_idx, bool draw_tb);
 	void drawConnectors(size_t mesh_idx);
 
 	bool setupTextureUnits(int type);
@@ -140,7 +141,7 @@ private:
 
 	QColor m_tcmaskColour;
 
-	bool m_drawNormals;
+	bool m_drawNormals, m_drawTangentAndBitangent;
 	bool m_drawCenterPoint;
 
 	float m_animation_elapsed_msecs;

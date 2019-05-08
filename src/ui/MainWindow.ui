@@ -88,6 +88,7 @@
     <addaction name="separator"/>
     <addaction name="actionShowModelCenter"/>
     <addaction name="actionShowNormals"/>
+    <addaction name="actionShow_Tangent_And_Bitangent"/>
     <addaction name="actionShow_Connectors"/>
     <addaction name="separator"/>
     <addaction name="actionShowAxes"/>
@@ -351,6 +352,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionShow_Tangent_And_Bitangent">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Tangent And Bitangent</string>
+   </property>
+   <property name="shortcut">
+    <string>B</string>
    </property>
   </action>
  </widget>
