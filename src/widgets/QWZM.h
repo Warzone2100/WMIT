@@ -66,6 +66,8 @@ public:
 	static QString shaderTypeToString(wz_shader_type_t type);
 	bool isFixedPipelineRenderer() const;
 
+	int getActiveMesh() const {return m_active_mesh;}
+
 	// GLTexture controls
 	void loadGLRenderTexture(wzm_texture_type_t type, QString fileName);
 	void unloadGLRenderTexture(wzm_texture_type_t type);
@@ -87,6 +89,7 @@ public slots:
 	void slotRecalculateTB();
 
 	void setActiveMesh(int mesh = -1);
+	void slotRemoveActiveMesh();
 	void applyTransformations();
 
 	void setDrawNormalsFlag(bool draw);
@@ -115,7 +118,6 @@ public:
 	void exportToOBJ(std::ostream& out) const;
 
 	void addMesh (const Mesh& mesh);
-	void rmMesh (int index);
 
 private:
 	Q_DISABLE_COPY(QWZM)

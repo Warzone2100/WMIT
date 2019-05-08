@@ -35,9 +35,9 @@ TransformDock::TransformDock(QWidget *parent) :
 	connect(m_ui->scaleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setScale(double)));
 	connect(m_ui->scaleComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectScale(int)));
 	connect(m_ui->meshComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectMesh(int)));
-	connect(m_ui->removeMeshButton, SIGNAL(clicked()), this, SLOT(removeMesh()));
-	connect(m_ui->reverseWindingsButton, SIGNAL(clicked()), this, SLOT(reverseWindings()));
-	connect(m_ui->flipNormalsButton, SIGNAL(clicked()), this, SLOT(flipNormals()));
+	connect(m_ui->removeMeshButton, SIGNAL(clicked()), this, SIGNAL(removeMesh()));
+	connect(m_ui->reverseWindingsButton, SIGNAL(clicked()), this, SIGNAL(reverseWindings()));
+	connect(m_ui->flipNormalsButton, SIGNAL(clicked()), this, SIGNAL(flipNormals()));
 	connect(m_ui->mirrorXButton, SIGNAL(clicked()), this, SLOT(mirrorX()));
 	connect(m_ui->mirrorYButton, SIGNAL(clicked()), this, SLOT(mirrorY()));
 	connect(m_ui->mirrorZButton, SIGNAL(clicked()), this, SLOT(mirrorZ()));
@@ -139,16 +139,6 @@ void TransformDock::setScaleValueOnUI(double value)
 	m_ui->scaleSlider->blockSignals(false);
 }
 
-void TransformDock::reverseWindings()
-{
-	emit reverseWindings(m_selected_mesh);
-}
-
-void TransformDock::flipNormals()
-{
-	emit flipNormals(m_selected_mesh);
-}
-
 void TransformDock::setScale(int value)
 {
 	if (m_ui->scaleSpinBox->value() != value)
@@ -232,11 +222,6 @@ void TransformDock::selectMesh(int index)
 	emit changeActiveMesh(m_selected_mesh);
 }
 
-void TransformDock::removeMesh()
-{
-	emit removeMesh(m_selected_mesh);
-}
-
 void TransformDock::mirrorX()
 {
 	emit mirrorAxis(m_ui->globalMirrorCheckBox->isChecked() ? 3 : 0);
@@ -254,5 +239,5 @@ void TransformDock::mirrorZ()
 
 void TransformDock::centerMesh()
 {
-	emit centerMesh(m_selected_mesh, m_ui->scaleComboBox->currentIndex() - 1);
+	emit centerMesh(m_ui->scaleComboBox->currentIndex() - 1);
 }
