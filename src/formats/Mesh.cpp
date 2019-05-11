@@ -198,7 +198,6 @@ Mesh::Mesh(const Pie3Level& p3)
 	importPieAnimation(p3.m_animobj);
 
 	finishImport();
-	recalculateBoundData();
 }
 
 Mesh::~Mesh()
@@ -588,7 +587,6 @@ bool Mesh::importFromOBJ(const std::vector<OBJTri>&	faces,
 	}
 
 	finishImport();
-	recalculateBoundData();
 
 	return true;
 }
@@ -877,7 +875,7 @@ void Mesh::calculateTBForIndices(const IndexedTri &trio)
 	m_bitangentArray[trio.c()] += bitangent;
 }
 
-void Mesh::finishImport()
+void Mesh::finishTBCalculation()
 {
 	for (unsigned int i = 0; i < vertices(); ++i)
 	{
@@ -896,6 +894,12 @@ void Mesh::finishImport()
 			m_tangentArray[i].w() = 1.0f;
 		}
 	}
+}
+
+void Mesh::finishImport()
+{
+	finishTBCalculation();
+	recalculateBoundData();
 }
 
 void Mesh::scale(GLfloat x, GLfloat y, GLfloat z)
@@ -1073,6 +1077,7 @@ void Mesh::recalculateTB()
 	// TB-calculation part
 	for (auto& curTrio : m_indexArray)
 		calculateTBForIndices(curTrio);
+	finishTBCalculation();
 }
 
 void Mesh::importPieAnimation(const ApieAnimObject &animobj)
