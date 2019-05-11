@@ -122,6 +122,7 @@ public:
 	void importPieAnimation(const ApieAnimObject& animobj);
 
 	WZMVertex getCenterPoint() const;
+
 protected:
 	std::string m_name;
 	int m_frame_time, m_frame_cycles;
@@ -146,6 +147,7 @@ protected:
 	void reserveIndices(const unsigned size);
 	void addIndices(const IndexedTri& trio);
 	void calculateTBForIndices(const IndexedTri &trio);
+	void finishTBCalculation();
 	void addPoint(const WZMVertex &vertex, const WZMUV &uv, const WZMVertex &normal);
 	void finishImport();
 
