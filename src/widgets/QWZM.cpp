@@ -24,11 +24,10 @@
 
 #include "QtGLView.h"
 
-static const char tangentAtributeName[] = "tangent";
-
 static const char vertexAtributeName[] = "vertex";
 static const char vertexNormalAtributeName[] = "vertexNormal";
 static const char vertexTexCoordAtributeName[] = "vertexTexCoord";
+static const char vertexTangentAtributeName[] = "vertexTangent";
 
 const GLint QWZM::winding = GL_CW;
 
@@ -164,15 +163,15 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 				shader = m_shaderman->getShader(activeShader);
 				if (shader)
 				{
-					shader->enableAttributeArray(tangentAtributeName);
 					shader->enableAttributeArray(vertexAtributeName);
 					shader->enableAttributeArray(vertexNormalAtributeName);
 					shader->enableAttributeArray(vertexTexCoordAtributeName);
+					shader->enableAttributeArray(vertexTangentAtributeName);
 
-					shader->setAttributeArray(tangentAtributeName, msh.m_tangentArray[0], 4);
 					shader->setAttributeArray(vertexAtributeName, msh.m_vertexArray[0], 3);
 					shader->setAttributeArray(vertexTexCoordAtributeName, msh.m_textureArray[0], 2);
 					shader->setAttributeArray(vertexNormalAtributeName, msh.m_normalArray[0], 3);
+					shader->setAttributeArray(vertexTangentAtributeName, msh.m_tangentArray[0], 4);
 				}
 			}
 		}
@@ -202,10 +201,10 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 			// release shader data
 			if (shader)
 			{
-				shader->disableAttributeArray(tangentAtributeName);
 				shader->disableAttributeArray(vertexAtributeName);
 				shader->disableAttributeArray(vertexNormalAtributeName);
 				shader->disableAttributeArray(vertexTexCoordAtributeName);
+				shader->disableAttributeArray(vertexTangentAtributeName);
 			}
 			releaseShader(activeShader);
 		}
