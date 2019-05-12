@@ -75,6 +75,7 @@
     <addaction name="separator"/>
     <addaction name="actionAppendModel"/>
     <addaction name="actionImport_Animation"/>
+    <addaction name="actionImport_Connectors"/>
     <addaction name="separator"/>
     <addaction name="actionTakeScreenshot"/>
    </widget>
@@ -363,6 +364,11 @@
    </property>
    <property name="shortcut">
     <string>B</string>
+   </property>
+  </action>
+  <action name="actionImport_Connectors">
+   <property name="text">
+    <string>Import Connectors...</string>
    </property>
   </action>
  </widget>

@@ -22,6 +22,7 @@ public:
 
 public slots:
 	void setMeshCount(int value, QStringList names);
+	void resetConnectorViewModel();
 
 signals:
 	void connectorsWereUpdated();
@@ -35,7 +36,6 @@ private:
 	WZM* m_model;
 	int m_selected_mesh;
 	Ui::MeshDock *m_ui;
-	void resetConnectorViewModel();
 };
 
 #include <QAbstractTableModel>

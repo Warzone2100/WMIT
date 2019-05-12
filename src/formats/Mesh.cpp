@@ -735,6 +735,13 @@ size_t Mesh::connectors() const
 	return m_connectors.size();
 }
 
+void Mesh::replaceConnectors(const Mesh &fromMesh)
+{
+	m_connectors.clear();
+	for (const auto& curConn: fromMesh.m_connectors)
+		m_connectors.push_back(curConn);
+}
+
 size_t Mesh::vertices() const
 {
 	return m_vertexArray.size();
