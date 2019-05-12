@@ -600,45 +600,45 @@ bool QWZM::initShader(int type)
 	if (!shader || !shader->bind())
 		return false;
 
-	int uniLoc, baseTexLoc, tcTexLoc, nmTexLoc, smTexLoc;
+	int uniLoc;
+
+	{
+		int baseTexLoc, tcTexLoc, nmTexLoc, smTexLoc;
+
+		switch (type)
+		{
+		case WZ_SHADER_WZ31:
+			baseTexLoc = shader->uniformLocation("Texture0");
+			tcTexLoc = shader->uniformLocation("Texture1");
+			nmTexLoc = shader->uniformLocation("Texture2");
+			smTexLoc = shader->uniformLocation("Texture3");
+			break;
+		case WZ_SHADER_WZ32:
+			baseTexLoc = shader->uniformLocation("Texture");
+			tcTexLoc = shader->uniformLocation("TextureTcmask");
+			nmTexLoc = shader->uniformLocation("TextureNormal");
+			smTexLoc = shader->uniformLocation("TextureSpecular");
+			break;
+		default:
+			return false;
+		}
+
+		shader->setUniformValue(baseTexLoc, GLint(0));
+		shader->setUniformValue(tcTexLoc, GLint(1));
+		shader->setUniformValue(nmTexLoc, GLint(2));
+		shader->setUniformValue(smTexLoc, GLint(3));
+	}
+
+
+	uniLoc = shader->uniformLocation("fogEnabled");
+	shader->setUniformValue(uniLoc, GLint(0));
+
+	uniLoc = shader->uniformLocation("ecmEffect");
+	shader->setUniformValue(uniLoc, GLint(0));
 
 	switch (type)
 	{
-	case WZ_SHADER_WZ31:
-		baseTexLoc = shader->uniformLocation("Texture0");
-		tcTexLoc = shader->uniformLocation("Texture1");
-		nmTexLoc = shader->uniformLocation("Texture2");
-		smTexLoc = shader->uniformLocation("Texture3");
-
-		shader->setUniformValue(baseTexLoc, GLint(0));
-		shader->setUniformValue(tcTexLoc, GLint(1));
-		shader->setUniformValue(nmTexLoc, GLint(2));
-		shader->setUniformValue(smTexLoc, GLint(3));
-
-		uniLoc = shader->uniformLocation("fogEnabled");
-		shader->setUniformValue(uniLoc, GLint(0));
-
-		uniLoc = shader->uniformLocation("ecmEffect");
-		shader->setUniformValue(uniLoc, GLint(0));
-
-		break;
 	case WZ_SHADER_WZ32:
-		baseTexLoc = shader->uniformLocation("Texture");
-		tcTexLoc = shader->uniformLocation("TextureTcmask");
-		nmTexLoc = shader->uniformLocation("TextureNormal");
-		smTexLoc = shader->uniformLocation("TextureSpecular");
-
-		shader->setUniformValue(baseTexLoc, GLint(0));
-		shader->setUniformValue(tcTexLoc, GLint(1));
-		shader->setUniformValue(nmTexLoc, GLint(2));
-		shader->setUniformValue(smTexLoc, GLint(3));
-
-		uniLoc = shader->uniformLocation("fogEnabled");
-		shader->setUniformValue(uniLoc, GLint(0));
-
-		uniLoc = shader->uniformLocation("ecmEffect");
-		shader->setUniformValue(uniLoc, GLint(0));
-
 		uniLoc = shader->uniformLocation("alphaTest");
 		shader->setUniformValue(uniLoc, GLint(0));
 
