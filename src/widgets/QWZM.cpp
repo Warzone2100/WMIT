@@ -636,6 +636,10 @@ bool QWZM::initShader(int type)
 	uniLoc = shader->uniformLocation("ecmEffect");
 	shader->setUniformValue(uniLoc, GLint(0));
 
+	uniLoc = shader->uniformLocation("hasTangents");
+	if (uniLoc >= 0)
+		shader->setUniformValue(uniLoc, GLint(1));
+
 	switch (type)
 	{
 	case WZ_SHADER_WZ32:
