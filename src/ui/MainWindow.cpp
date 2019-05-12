@@ -1035,7 +1035,10 @@ void MainWindow::actionImport_Connectors()
 		tgt_mesh.replaceConnectors(src_mesh);
 	}
 
+	// Update related view
 	updateConnectorsView();
+	// And notify model info about new connectors
+	m_modelinfo.m_pieCaps.set(PIE_OPT_DIRECTIVES::podCONNECTORS);
 }
 
 void MainWindow::actionLocateUserShaders()
