@@ -118,9 +118,11 @@ private slots:
 	void actionReloadUserShader();
 	void actionEnableUserShaders(bool checked);
 	void actionImport_Animation();
+	void actionImport_Connectors();
 
 	void updateRecentFilesMenu();
 	void updateModelRender();
+	void updateConnectorsView();
 	void viewerInitialized();
 	void shaderAction(int);
 

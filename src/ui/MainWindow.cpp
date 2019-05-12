@@ -126,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionSetupTextures, SIGNAL(triggered()), this, SLOT(actionSetupTextures()));
 	connect(m_ui->actionAppendModel, SIGNAL(triggered()), this, SLOT(actionAppendModel()));
 	connect(m_ui->actionImport_Animation, SIGNAL(triggered()), this, SLOT(actionImport_Animation()));
+	connect(m_ui->actionImport_Connectors, SIGNAL(triggered()), this, SLOT(actionImport_Connectors()));
 	connect(m_ui->actionShowAxes, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setAxisIsDrawn(bool)));
 	connect(m_ui->actionShowGrid, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setGridIsDrawn(bool)));
 	connect(m_ui->actionShowLightSource, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setDrawLightSource(bool)));
@@ -986,6 +987,57 @@ void MainWindow::actionImport_Animation()
 	}
 }
 
+void MainWindow::actionImport_Connectors()
+{
+	if (m_model.meshes() == 0)
+	    return;
+
+	QString conn_path = QFileDialog::getOpenFileName(this, "Locate source file", m_pathImport,
+							 "PIE models (*.pie);;Any file (*.*)");
+	if (conn_path.isEmpty())
+	    return;
+
+
+	ModelInfo newinfo;
+	WZM newmodel;
+
+	if (!loadModel(conn_path, newmodel, newinfo))
+		return;
+
+	bool need_ask_about_replacement = true;
+	bool replace_current_ones = false;
+
+	int maxmeshes = std::max(newmodel.meshes(), m_model.meshes());
+	for (int i = 0; i < maxmeshes; ++i)
+	{
+		const Mesh& src_mesh = newmodel.getMesh(i);
+		if (!src_mesh.connectors())
+			continue;
+
+		Mesh& tgt_mesh = m_model.getMesh(i);
+		if (tgt_mesh.connectors())
+		{
+			if (need_ask_about_replacement)
+			{
+				need_ask_about_replacement = false;
+
+				QMessageBox::StandardButton reply;
+				reply = QMessageBox::question(this, "",
+					tr("Do you want to replace any existing connectors?"));
+				if (reply == QMessageBox::Yes)
+					replace_current_ones = true;
+			}
+
+			if (!replace_current_ones)
+				continue;
+		}
+
+		tgt_mesh.replaceConnectors(src_mesh);
+	}
+
+	updateConnectorsView();
+}
+
 void MainWindow::actionLocateUserShaders()
 {
     QString vert_path = QFileDialog::getOpenFileName(this, "Locate vertex shader",
@@ -1030,4 +1082,9 @@ void MainWindow::updateRecentFilesMenu()
 void MainWindow::updateModelRender()
 {
 	m_ui->centralWidget->updateGL();
+}
+
+void MainWindow::updateConnectorsView()
+{
+	m_meshDock->resetConnectorViewModel();
 }

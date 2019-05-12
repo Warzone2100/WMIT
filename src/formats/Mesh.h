@@ -103,6 +103,7 @@ public:
 	void addConnector (const WZMConnector& conn);
 	void rmConnector (int index);
 	size_t connectors() const;
+	void replaceConnectors(const Mesh& fromMesh);
 
 	size_t vertices() const;
 	size_t indices() const;
