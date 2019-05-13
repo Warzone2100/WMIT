@@ -7,10 +7,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
-INCLUDEPATH += src src/basic src/formats src/ui src/widgets 3rdparty/GLee
+INCLUDEPATH += src src/basic src/formats src/ui src/widgets
 
 HEADERS += \
-    3rdparty/GLee/GLee.h \
     src/wmit.h \
     src/basic/IGLShaderManager.h \
     src/basic/IGLShaderRenderable.h \
@@ -55,7 +54,6 @@ SOURCES += \
     src/Generic.cpp \
     src/basic/Polygon_t.cpp \
     src/basic/GLTexture.cpp \
-    3rdparty/GLee/GLee.c \
     src/widgets/QWZM.cpp \
     src/widgets/QtGLView.cpp \
     src/ui/TextureDialog.cpp \
@@ -77,8 +75,7 @@ FORMS += \
 OTHER_FILES += \
     TODO.txt \
     COPYING.txt \
-    HACKING.txt \
-    COPYING.nongpl
+    HACKING.txt
 
 
 CONFIG(debug, debug|release) {

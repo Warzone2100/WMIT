@@ -18,7 +18,6 @@ include_directories(
 	src/formats
 	src/ui
 	src/widgets
-	3rdparty/GLee
 )
 
 set( wmit_SRCS
@@ -36,7 +35,6 @@ set( wmit_SRCS
 	src/Generic.cpp
 	src/basic/Polygon_t.cpp
 	src/basic/GLTexture.cpp
-	3rdparty/GLee/GLee.c
 	src/widgets/QWZM.cpp
 	src/widgets/QtGLView.cpp
 	src/ui/TextureDialog.cpp
