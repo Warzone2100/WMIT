@@ -68,6 +68,8 @@ public:
 
 	int getActiveMesh() const {return m_active_mesh;}
 
+	bool getEnableTangentsInShaders() const {return m_enableTangentsInShaders;}
+
 	// GLTexture controls
 	void loadGLRenderTexture(wzm_texture_type_t type, QString fileName);
 	void unloadGLRenderTexture(wzm_texture_type_t type);
@@ -96,6 +98,8 @@ public slots:
 	void setDrawTangentAndBitangentFlag(bool draw);
 	void setDrawCenterPointFlag(bool draw);
 	void setDrawConnectors(bool draw);
+
+	void setEnableTangentsInShaders(bool enable) {m_enableTangentsInShaders = enable ? 1 : 0;}
 
 public:
 	/// IAnimatable
@@ -149,6 +153,8 @@ private:
 
 	float m_animation_elapsed_msecs;
 	bool m_drawConnectors;
+
+	int m_enableTangentsInShaders;
 };
 
 #endif // QWZM_HPP

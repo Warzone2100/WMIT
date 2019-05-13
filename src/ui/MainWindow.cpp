@@ -681,6 +681,11 @@ void MainWindow::viewerInitialized()
 	m_actionReloadUserShaders->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
 	connect(m_actionReloadUserShaders, SIGNAL(triggered()), this, SLOT(actionReloadUserShader()));
 
+	m_actionEnableTangentInShaders= new QAction("Enable tangents in shaders", this);
+	m_actionEnableTangentInShaders->setCheckable(true);
+	m_actionEnableTangentInShaders->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_T));
+	connect(m_actionEnableTangentInShaders, SIGNAL(triggered(bool)), &m_model, SLOT(setEnableTangentsInShaders(bool)));
+
 	m_shaderGroup = new QActionGroup(this);
 
 	for (int i = WZ_SHADER__FIRST; i < WZ_SHADER__LAST; ++i)
@@ -711,6 +716,7 @@ void MainWindow::viewerInitialized()
 	rendererMenu->addAction(m_actionEnableUserShaders);
 	rendererMenu->addAction(m_actionLocateUserShaders);
 	rendererMenu->addAction(m_actionReloadUserShaders);
+	rendererMenu->addAction(m_actionEnableTangentInShaders);
 
 	m_ui->actionRenderer->setMenu(rendererMenu);
 
@@ -749,6 +755,8 @@ void MainWindow::viewerInitialized()
 	m_ui->actionAnimate->setChecked(m_settings->value("3DView/Animate", true).toBool());
 
 	actionEnableUserShaders(m_actionEnableUserShaders->isChecked());
+
+	m_actionEnableTangentInShaders->setChecked(m_model.getEnableTangentsInShaders());
 
 	// Default to 3.1
 	int shaderTag = m_settings->value("3DView/ShaderTag", wz_shader_type_tag[WZ_SHADER_WZ31]).toInt();
