@@ -813,7 +813,7 @@ void QWZM::releaseShader(int type)
 		}
 	}
 
-	glUseProgram(0);
+	// glUseProgram(0); // should not be needed, as shader->release() does this
 }
 
 /*********** SLOTS ************/

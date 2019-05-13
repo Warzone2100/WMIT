@@ -27,8 +27,6 @@
 #include <QBasicTimer>
 #include <QFileSystemWatcher>
 
-#include "GLee.h"
-
 #include <QGLViewer/qglviewer.h>
 #include <QGLViewer/manipulatedFrame.h>
 
