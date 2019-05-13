@@ -155,6 +155,7 @@ private:
 	QAction *m_actionEnableUserShaders;
 	QAction *m_actionLocateUserShaders;
 	QAction *m_actionReloadUserShaders;
+	QAction *m_actionEnableTangentInShaders;
 	QString m_pathImport, m_pathExport;
 
 	QWZM m_model;

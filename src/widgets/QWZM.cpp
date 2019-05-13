@@ -39,7 +39,8 @@ QWZM::QWZM(QObject *parent):
 	m_drawTangentAndBitangent(false),
 	m_drawCenterPoint(false),
 	m_animation_elapsed_msecs(-1.f),
-	m_drawConnectors(false)
+	m_drawConnectors(false),
+	m_enableTangentsInShaders(true)
 {
 	defaultConstructor();
 }
@@ -636,10 +637,6 @@ bool QWZM::initShader(int type)
 	uniLoc = shader->uniformLocation("ecmEffect");
 	shader->setUniformValue(uniLoc, GLint(0));
 
-	uniLoc = shader->uniformLocation("hasTangents");
-	if (uniLoc >= 0)
-		shader->setUniformValue(uniLoc, GLint(1));
-
 	switch (type)
 	{
 	case WZ_SHADER_WZ32:
@@ -685,6 +682,10 @@ bool QWZM::bindShader(int type)
 		return false;
 
 	int uniloc;
+
+	uniloc = shader->uniformLocation("hasTangents");
+	if (uniloc >= 0)
+		shader->setUniformValue(uniloc, GLint(m_enableTangentsInShaders));
 
 	switch (type)
 	{
