@@ -1,8 +1,0 @@
-// Warzone Model Importer Tool settings for Release configuration
-
-#include "WMIT-All.xcconfig"
-
-
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) NDEBUG
-GCC_ENABLE_FIX_AND_CONTINUE = NO
-ZERO_LINK = NO
