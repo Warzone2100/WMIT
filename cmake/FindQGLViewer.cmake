@@ -10,6 +10,7 @@ find_path(QGLVIEWER_INCLUDE_DIR
 	PATHS /usr/include
 		/usr/local/include
 		$ENV{QGLVIEWERROOT}
+		$ENV{QGLVIEWERROOT}/include
 		$ENV{INCLUDE}
 )
 
@@ -18,6 +19,7 @@ find_library(QGLVIEWER_LIB
 	PATHS /usr/lib
 		/usr/local/lib
 		$ENV{QGLVIEWERROOT}
+		$ENV{QGLVIEWERROOT}/lib
 		$ENV{LD_LIBRARY_PATH}
 		$ENV{LIBRARY_PATH}
 )
