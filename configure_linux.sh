@@ -18,10 +18,10 @@ if [ ! -d "libQGLViewer" ]; then
 	mkdir libQGLViewer
 fi
 cd ..
-cd 3rdparty/libQGLViewer
-qmake PREFIX=$(pwd)/../../build/libQGLViewer/installed/ libQGLViewer.pro
+cd 3rdparty/libQGLViewer/QGLViewer
+qmake PREFIX=$(pwd)/../../../build/libQGLViewer/installed/ QGLViewer.pro
 make && make install
-cd ../..
+cd ../../..
 cd build
 export QGLVIEWERROOT=$(pwd)/libQGLViewer/installed/
 
