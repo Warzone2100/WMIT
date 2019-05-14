@@ -7,9 +7,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
-INCLUDEPATH += src src/basic src/formats src/ui src/widgets
+INCLUDEPATH += src src/basic src/formats src/ui src/widgets 3rdparty/GLEW/include
 
 HEADERS += \
+    3rdparty/GLEW/include/GL/glew.h \
     src/wmit.h \
     src/basic/IGLShaderManager.h \
     src/basic/IGLShaderRenderable.h \
@@ -40,6 +41,7 @@ HEADERS += \
     src/ui/meshdock.h
     
 SOURCES += \
+    3rdparty/GLEW/src/glew.c \
     src/formats/WZM.cpp \
     src/formats/Pie_t.cpp \
     src/formats/Pie.cpp \
@@ -75,7 +77,8 @@ FORMS += \
 OTHER_FILES += \
     TODO.txt \
     COPYING.txt \
-    HACKING.txt
+    HACKING.txt \
+    COPYING.nongpl.txt
 
 
 CONFIG(debug, debug|release) {
@@ -87,6 +90,8 @@ CONFIG(debug, debug|release) {
 win32 {
     DEFINES += WIN32
 }
+
+DEFINES += GLEW_STATIC
     
 LIBS += -lm
 !win32 {
