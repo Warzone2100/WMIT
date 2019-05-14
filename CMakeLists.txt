@@ -78,6 +78,7 @@ include_directories(
 	src/formats
 	src/ui
 	src/widgets
+	3rdparty/GLEW/include
 )
 
 set( wmit_SRCS
@@ -101,6 +102,7 @@ set( wmit_SRCS
 	src/ui/TexConfigDialog.cpp
 	src/ui/MaterialDock.cpp
 	src/ui/meshdock.cpp
+	3rdparty/GLEW/src/glew.c
 )
 
 set( wmit_UIS
@@ -135,6 +137,7 @@ set( wmit_MOCS
 
 set( wmit_INFO
 	COPYING.txt
+	COPYING.nongpl.txt
 	README.md
 )
 
@@ -145,6 +148,7 @@ QT5_WRAP_CPP(MOCS ${wmit_MOCS})
 add_executable(wmit ${wmit_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS})
 target_link_libraries(wmit OpenGL::GL OpenGL::GLU ${QGLVIEWER_LIB})
 target_link_libraries(wmit Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Xml)
+target_compile_definitions(wmit PRIVATE GLEW_STATIC)
 
 ##################################################
 # OS-specific target properties

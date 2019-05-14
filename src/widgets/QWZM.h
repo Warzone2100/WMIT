@@ -28,6 +28,8 @@
 #include <QObject>
 #include <QMap>
 
+#include <GL/glew.h>
+
 #include "WZM.h"
 #include "IAnimatable.h"
 #include "IGLTexturedRenderable.h"

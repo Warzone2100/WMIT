@@ -17,6 +17,8 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <GL/glew.h>
+
 #include "QtGLView.h"
 
 #ifdef Q_OS_MAC
@@ -88,6 +90,9 @@ void QtGLView::animate()
 
 void QtGLView::init()
 {
+	// initialize GLEW
+	glewInit();
+
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightCol0[LIGHT_EMISSIVE]);
 	glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightCol0[LIGHT_AMBIENT]);
