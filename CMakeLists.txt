@@ -171,6 +171,19 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 		endif()
 	endif()
 
+	# Copy QGLVIEWER .dll to the build directory
+	# Note: This assumes that the .dll exists in the same folder as the .lib
+	get_filename_component(_qglviewer_lib_directory "${QGLVIEWER_LIB}" DIRECTORY)
+	get_filename_component(_qglviewer_lib_name_no_extension "${QGLVIEWER_LIB}" NAME_WE)
+	set(_qglviewer_dll "${_qglviewer_lib_directory}/${_qglviewer_lib_name_no_extension}.dll")
+	if(EXISTS "${_qglviewer_dll}")
+		message(STATUS "Will copy to build directory: ${_qglviewer_dll}")
+		add_custom_command(TARGET wmit POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy ${_qglviewer_dll} ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/
+			VERBATIM
+		)
+	endif()
+
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
