@@ -259,6 +259,54 @@ install(FILES ${wmit_INFO}
 get_target_property(_wmit_output_name wmit OUTPUT_NAME)
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 	if(NOT CMAKE_CROSSCOMPILING)
+		# Install any required runtime dependencies / DLLs
+		set(_wz_fixup_bundle_ignored_filenames)
+		set(_wz_fixup_bundle_nocopy_libraries)
+		if(MSVC)
+			# Ignore system (CRT) runtimes in fixup_bundle
+			# - Get a list of all of the required system libraries
+			set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
+			set(CMAKE_INSTALL_DEBUG_LIBRARIES FALSE)
+			set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
+			set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS TRUE)
+			include(InstallRequiredSystemLibraries)
+			# - CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS should now contain the runtime files (full paths)
+			# - Extract just the filenames
+			foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
+				get_filename_component(lib_name "${lib}" NAME)
+				list(APPEND _wz_fixup_bundle_ignored_filenames "${lib_name}")
+				list(APPEND _wz_fixup_bundle_nocopy_libraries "${lib_name}")
+			endforeach()
+			if(_wz_fixup_bundle_ignored_filenames)
+				message( STATUS "fixup_bundle: IGNORE_ITEM ${_wz_fixup_bundle_ignored_filenames}" )
+			else()
+				message( WARNING "InstallRequiredSystemLibraries returned no libraries? (CMake: ${CMAKE_VERSION}; MSVC: ${MSVC_VERSION})" )
+			endif()
+		endif()
+		get_filename_component(_qglviewer_lib_directory "${QGLVIEWER_LIB}" DIRECTORY)
+		set(dll_source_dirs "${_qglviewer_lib_directory}")   # directories to search for prerequisites
+		install(CODE "
+			set(_ignored_filenames \"${_wz_fixup_bundle_ignored_filenames}\")
+			if(_ignored_filenames)
+				set(_wz_fixup_bundle_ignore_item \"IGNORE_ITEM \\\"\${_ignored_filenames}\\\"\")
+			else()
+				set(_wz_fixup_bundle_ignore_item)
+			endif()
+			set(BU_CHMOD_BUNDLE_ITEMS ON)
+			include(BundleUtilities)
+			fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/${_wmit_output_name}.exe\" \"\" \"${dll_source_dirs}\" ${_wz_fixup_bundle_ignore_item})
+			# Passing IGNORE_ITEM to fixup_bundle does not prevent fixup_bundle from copying the ignored items themselves to the BINDIR
+			# Iterate over _wz_fixup_bundle_nocopy_libraries and remove them if they've been copied
+			set(_nocopy_libs \"${_wz_fixup_bundle_nocopy_libraries}\")
+			foreach(lib \${_nocopy_libs})
+				set(_lib_fullpath \"\${CMAKE_INSTALL_PREFIX}/${WZ_APP_INSTALL_DEST}/\${lib}\")
+				if(EXISTS \"\${_lib_fullpath}\")
+					execute_process(COMMAND \${CMAKE_COMMAND} -E echo \"++Removing lib: \${lib}\")
+					file(REMOVE \"\${_lib_fullpath}\")
+				endif()
+			endforeach()
+		" COMPONENT Core)
+
 		# Run windeployqt to pick up all Qt dependencies
 		find_program(TOOL_WINDEPLOYQT NAMES windeployqt)
 		if(TOOL_WINDEPLOYQT)
