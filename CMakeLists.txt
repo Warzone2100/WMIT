@@ -1,14 +1,70 @@
-project(wmit)
-
 cmake_minimum_required(VERSION 3.5)
+project(wmit)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+##################################################
+
+# CXX Standard
+if(MSVC)
+	set(CMAKE_CXX_STANDARD 14)
+else()
+	set(CMAKE_CXX_STANDARD 11)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF) # Disable compiler-specific extensions
+
+# Support folders (for nicer IDE organization)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "_CMakePredefinedTargets")
+
+# Use "-fPIC" / "-fPIE" for all targets by default
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+##################################################
+# Compiler-specific options
+
+# Treat source files as UTF-8 (unless they have a BOM) (MSVC)
+# NOTE: For MSVC, this also sets the executable character set.
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+
+include(CheckCCompilerFlag)
+include(CheckCXXCompilerFlag)
+
+# Enable stack protection, if supported by the compiler
+# Prefer -fstack-protector-strong if supported, fall-back to -fstack-protector
+check_c_compiler_flag(-fstack-protector-strong HAS_CFLAG_FSTACK_PROTECTOR_STRONG)
+if (HAS_CFLAG_FSTACK_PROTECTOR_STRONG)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector-strong")
+else()
+	check_c_compiler_flag(-fstack-protector HAS_CFLAG_FSTACK_PROTECTOR)
+	if (HAS_CFLAG_FSTACK_PROTECTOR)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector")
+	endif()
+endif()
+check_cxx_compiler_flag(-fstack-protector-strong HAS_CXXFLAG_FSTACK_PROTECTOR_STRONG)
+if (HAS_CXXFLAG_FSTACK_PROTECTOR_STRONG)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-strong")
+else()
+	check_cxx_compiler_flag(-fstack-protector HAS_CXXFLAG_FSTACK_PROTECTOR)
+	if (HAS_CXXFLAG_FSTACK_PROTECTOR)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector")
+	endif()
+endif()
+
+##################################################
+
 add_definitions(-Wall)
+
+##################################################
+# Find dependencies
 
 find_package(OpenGL REQUIRED)
 find_package(QGLViewer REQUIRED)
 find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL Xml REQUIRED)
+
+##################################################
 
 include_directories(
 	${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}
@@ -73,6 +129,11 @@ set( wmit_MOCS
 	src/ui/meshdock.h
 )
 
+set( wmit_INFO
+	COPYING.txt
+	README.md
+)
+
 QT5_WRAP_UI(UIS ${wmit_UIS})
 QT5_ADD_RESOURCES(RSCS ${wmit_RSCS})
 QT5_WRAP_CPP(MOCS ${wmit_MOCS})
@@ -81,10 +142,20 @@ add_executable(wmit ${wmit_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS})
 target_link_libraries(wmit OpenGL::GL OpenGL::GLU ${QGLVIEWER_LIB})
 target_link_libraries(wmit Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Xml)
 
+##################################################
+# OS-specific target properties
+
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 
 	# Build wmit exe as a Windows app (not a console app)
 	set_target_properties(wmit PROPERTIES WIN32_EXECUTABLE TRUE)
+
+	if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+		message( WARNING "WindowsStore builds are not currently supported" )
+		target_compile_definitions(wmit PRIVATE -D_WIN32_WINNT=0x0A00) # Windows 10+
+	else()
+		target_compile_definitions(wmit PRIVATE -D_WIN32_WINNT=0x0501) # Windows XP+
+	endif()
 
 endif()
 
@@ -97,6 +168,17 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 	set_target_properties(wmit PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "net.wz2100.WMIT")
 	set_target_properties(wmit PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "WMIT")
 	set_target_properties(wmit PROPERTIES MACOSX_BUNDLE_COPYRIGHT "Copyright © 2010-2019 Warzone 2100 Project")
+
+	# Debugging Symbols
+	set_target_properties(wmit PROPERTIES XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT "dwarf-with-dsym")
+
+	# WORKAROUND: Ensure debugging symbols are always generated for Release builds
+	#
+	# Required because the CMake Xcode generator (at least, as of CMake 3.11.x) automatically
+	# sets "Generate Debugging Symbols" to NO for Release builds, and cannot be overridden by
+	# setting CMAKE_XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS.
+	target_compile_options(wmit PRIVATE $<$<CONFIG:MinSizeRel>:-g>)
+	target_compile_options(wmit PRIVATE $<$<CONFIG:Release>:-g>)
 
 	# Workaround: Empty "Archive" build of target
 	# See: https://cmake.org/pipermail/cmake/2012-December/053017.html; https://gitlab.kitware.com/cmake/cmake/issues/15183
@@ -125,10 +207,26 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 	# Set install RPATH for app bundle
 	set_target_properties(wmit PROPERTIES INSTALL_RPATH "@executable_path/../Frameworks")
 
+	# Bundle the INFO files
+	set_property(
+			SOURCE ${wmit_INFO}
+			PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
+	target_sources(wmit PRIVATE ${wmit_INFO})
+
 endif()
+
+##################################################
+# Installing WMIT
 
 install(TARGETS wmit COMPONENT Core DESTINATION ".")
 
+install(FILES ${wmit_INFO}
+	COMPONENT Info
+	DESTINATION "."
+)
+
+##################################################
+# Installing dependencies
 
 get_target_property(_wmit_output_name wmit OUTPUT_NAME)
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
@@ -160,6 +258,9 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 		message( WARNING "Unable to find macdeployqt; installation may not include all required Qt libraries" )
 	endif()
 endif()
+
+##################################################
+# Packaging
 
 add_subdirectory(pkg)
 

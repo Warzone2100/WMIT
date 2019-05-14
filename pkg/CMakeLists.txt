@@ -9,7 +9,7 @@ set(CPACK_PACKAGE_CHECKSUM		SHA256)
 #########################
 # Default components that are added to package
 
-set(CPACK_COMPONENTS_ALL Core)
+set(CPACK_COMPONENTS_ALL Core Info)
 set(CPACK_COMPONENTS_GROUPING ALL_COMPONENTS_IN_ONE)
 
 #########################
@@ -19,6 +19,11 @@ set(CPACK_COMPONENT_CORE_DISPLAY_NAME "Application")
 set(CPACK_COMPONENT_CORE_REQUIRED ON)
 set(CPACK_COMPONENT_CORE_DESCRIPTION "Application")
 set(CPACK_COMPONENT_CORE_GROUP "CoreGroup")
+
+set(CPACK_COMPONENT_INFO_DISPLAY_NAME "Info")
+set(CPACK_COMPONENT_INFO_REQUIRED ON)
+set(CPACK_COMPONENT_INFO_DESCRIPTION "Info Files")
+set(CPACK_COMPONENT_INFO_GROUP "CoreGroup")
 
 set(CPACK_COMPONENT_GROUP_COREGROUP_DISPLAY_NAME "Core files")
 set(CPACK_COMPONENT_GROUP_COREGROUP_REQUIRED ON)
@@ -59,7 +64,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 	# macOS builds
 
-	# Only install the "Core" component (the application), as the macOS app bundle contains all of the data & supporting files & languages
+	# Only install the "Core" component (the application), as the macOS app bundle contains all of the other files
 	set(CPACK_COMPONENTS_ALL Core)
 	unset(CPACK_COMPONENT_CORE_DEPENDS)
 	set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
