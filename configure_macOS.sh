@@ -22,6 +22,9 @@ fi
 cd build
 
 # Compile libQGLViewer (using qmake)
+if [ -n "${TRAVIS}" ]; then
+	echo "travis_fold:start:qmake.QGLViewer.pro"
+fi
 echo "Compile libQGLViewer"
 if [ ! -d "libQGLViewer" ]; then
 	mkdir libQGLViewer
@@ -29,6 +32,9 @@ fi
 cd libQGLViewer
 qmake PREFIX=$(pwd)/installed/ ../../3rdparty/libQGLViewer/QGLViewer/QGLViewer.pro
 make && make install
+if [ -n "${TRAVIS}" ]; then
+	echo "travis_fold:end:qmake.QGLViewer.pro"
+fi
 # Fixup QGLViewer.framework install_name
 Expected_Framework_Library=installed/lib/QGLViewer.framework/QGLViewer
 if [ -f "$Expected_Framework_Library" ]; then
@@ -55,10 +61,16 @@ cd .. > /dev/null
 export QGLVIEWERROOT=$(pwd)/libQGLViewer/installed/lib/
 
 # Use CMake to configure Xcode project
+if [ -n "${TRAVIS}" ]; then
+	echo "travis_fold:start:cmake.configure"
+fi
 echo "Generate Xcode project (using CMake)"
 cmake -G"Xcode" -DCMAKE_PREFIX_PATH="$QT5_DIR" ../
 cmakeConfigureResult=${?}
 cd .. > /dev/null
+if [ -n "${TRAVIS}" ]; then
+	echo "travis_fold:end:cmake.configure"
+fi
 
 if [ $cmakeConfigureResult -ne 0 ]; then
 	echo "error: cmake configure failed"

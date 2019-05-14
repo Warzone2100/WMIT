@@ -1,0 +1,93 @@
+matrix:
+  include:
+    # Package source (Ubuntu 18.04, CMake)
+    - name: "Package Source (Ubuntu 18.04, CMake) [GCC]"
+      language: cpp
+      compiler: gcc
+      sudo: required
+      services:
+        - docker
+      install:
+        - cd docker/ubuntu-18.04/
+        - docker build -t ubuntu .
+        - cd ../..
+      before_script:
+        - source build_tools/ci/travis/export_build_output_desc.sh
+        # Package the source tarball
+        - export MAKEFLAGS="-j$((`grep -c ^processor /proc/cpuinfo`*2))"
+        # Must supply the TRAVIS environment variables to the docker container so autorevision properly receives the revision info from Travis
+        # To do this, append the following to the pertinent lines after —rm:
+        # -e CI -e TRAVIS -e "TRAVIS_BUILD_DIR=/code" -e TRAVIS_BRANCH -e TRAVIS_COMMIT -e TRAVIS_PULL_REQUEST_BRANCH -e TRAVIS_TAG
+        - docker run --rm -e CI -e TRAVIS -e "TRAVIS_BUILD_DIR=/code" -e TRAVIS_BRANCH -e TRAVIS_COMMIT -e TRAVIS_PULL_REQUEST_BRANCH -e TRAVIS_TAG -e MAKEFLAGS -v $(pwd):/code ubuntu cmake -P "/code/build_tools/ci/travis/prepare_git_repo.cmake"
+        - docker run --rm -e CI -e TRAVIS -e "TRAVIS_BUILD_DIR=/code" -e TRAVIS_BRANCH -e TRAVIS_COMMIT -e TRAVIS_PULL_REQUEST_BRANCH -e TRAVIS_TAG -e MAKEFLAGS -v $(pwd):/code ubuntu ./configure_linux.sh
+        - docker run --rm -e CI -e TRAVIS -e "TRAVIS_BUILD_DIR=/code" -e TRAVIS_BRANCH -e TRAVIS_COMMIT -e TRAVIS_PULL_REQUEST_BRANCH -e TRAVIS_TAG -e MAKEFLAGS -v $(pwd):/code ubuntu cmake --build build --target package_source
+        # Extract the .tar.xz into a new location
+        - mkdir extracted && tar -xf build/wmit.tar.xz -C extracted
+      script:
+        # Attempt a build from the tarball source (using CMake)
+        - docker run --rm -e CI -e TRAVIS -e "TRAVIS_BUILD_DIR=/code" -e TRAVIS_BRANCH -e TRAVIS_COMMIT -e TRAVIS_PULL_REQUEST_BRANCH -e TRAVIS_TAG -e MAKEFLAGS -v $(pwd)/extracted/wmit:/code ubuntu ./configure_linux.sh
+        - docker run --rm -e CI -e TRAVIS -e "TRAVIS_BUILD_DIR=/code" -e TRAVIS_BRANCH -e TRAVIS_COMMIT -e TRAVIS_PULL_REQUEST_BRANCH -e TRAVIS_TAG -e MAKEFLAGS -v $(pwd)/extracted/wmit:/code ubuntu cmake --build build
+#        # Prepare the source tarball for deployment
+#        - build_tools/ci/travis/packaged_source_deploy_prepare.sh "build/wmit.tar.xz" "${WZ_BUILD_DESC_PREFIX}-" "tmp/wz_upload"
+#      after_success:
+#        # Deploy the generated .tar.xz to the buildbot
+#        - eval "$(ssh-agent -s)" #start the ssh agent
+#        - export DEPLOY_UPLOAD_PATH="${DEPLOY_UPLOAD_PATH}/${WZ_BUILD_DESC_PREFIX}/src/"
+#        - build_tools/ci/travis/travis_deploy.sh "tmp/wz_upload" "wmit-${WZ_BUILD_DESC_PREFIX}-*_src.tar.xz" --cleanold
+
+    # Build for Fedora :LATEST (CMake) (GCC)
+    - name: "Fedora :LATEST (CMake) [GCC]"
+      dist: xenial
+      language: cpp
+      compiler: gcc
+      sudo: required
+      services:
+        - docker
+      install:
+        - cd docker/fedora-latest/
+        - docker build -t fedora .
+        - cd ../..
+      script:
+        - export MAKEFLAGS="-j$((`grep -c ^processor /proc/cpuinfo`*2))"
+        # Must supply the TRAVIS environment variables to the docker container so autorevision properly receives the revision info from Travis
+        # To do this, append the following to the pertinent lines after —rm:
+        # -e CI -e TRAVIS -e "TRAVIS_BUILD_DIR=/code" -e TRAVIS_BRANCH -e TRAVIS_COMMIT -e TRAVIS_PULL_REQUEST_BRANCH -e TRAVIS_TAG
+        - docker run --rm -e CI -e TRAVIS -e "TRAVIS_BUILD_DIR=/code" -e TRAVIS_BRANCH -e TRAVIS_COMMIT -e TRAVIS_PULL_REQUEST_BRANCH -e TRAVIS_TAG -e MAKEFLAGS -v $(pwd):/code fedora ./configure_linux.sh
+        # Requires `--security-opt seccomp:unconfined` to work around: https://stackoverflow.com/questions/51195528/rcc-error-in-resource-qrc-cannot-find-file-png
+        - docker run --security-opt seccomp:unconfined --rm -e CI -e TRAVIS -e "TRAVIS_BUILD_DIR=/code" -e TRAVIS_BRANCH -e TRAVIS_COMMIT -e TRAVIS_PULL_REQUEST_BRANCH -e TRAVIS_TAG -e MAKEFLAGS -v $(pwd):/code fedora cmake --build build
+
+    # Build for macOS (CMake)
+    - name: "macOS (CMake) [Xcode 9.4, macOS 10.13 SDK]"
+      language: objective-c
+      os: osx
+      osx_image: xcode9.4
+      env:
+        - MACOSX_DEPLOYMENT_TARGET=10.10
+      before_install:
+        - bundle install --gemfile="build_tools/macOS/Gemfile"
+        - brew install gnu-getopt
+        - cd .. && QT_CI_PACKAGES=qt.qt5.597.clang_64 PATH="/usr/local/opt/gnu-getopt/bin:$PATH" bash $TRAVIS_BUILD_DIR/build_tools/ci/install-qt 5.9.7
+        - ls -al "$TRAVIS_BUILD_DIR/../Qt"
+        - cd "$TRAVIS_BUILD_DIR"
+      script:
+        - source build_tools/ci/travis/export_build_output_desc.sh
+        - PATH="$TRAVIS_BUILD_DIR/../Qt/5.9.7/clang_64/bin:$PATH" QT5_DIR="$TRAVIS_BUILD_DIR/../Qt/5.9.7/" build_tools/macOS/travis_cmake_build.sh "${WZ_BUILD_DESC_PREFIX}-" "tmp/wz_upload"
+      # do not deploy
+
+    # Build for macOS (CMake)
+    - name: "macOS (CMake) [Xcode 10.2, macOS 10.14 SDK]"
+      language: objective-c
+      os: osx
+      osx_image: xcode10.2
+      env:
+        - MACOSX_DEPLOYMENT_TARGET=10.10
+      before_install:
+        - bundle install --gemfile="build_tools/macOS/Gemfile"
+        - brew install gnu-getopt
+        - cd .. && QT_CI_PACKAGES=qt.qt5.597.clang_64 PATH="/usr/local/opt/gnu-getopt/bin:$PATH" bash $TRAVIS_BUILD_DIR/build_tools/ci/install-qt 5.9.7
+        - ls -al "$TRAVIS_BUILD_DIR/../Qt"
+        - cd "$TRAVIS_BUILD_DIR"
+      script:
+        - source build_tools/ci/travis/export_build_output_desc.sh
+        - PATH="$TRAVIS_BUILD_DIR/../Qt/5.9.7/clang_64/bin:$PATH" QT5_DIR="$TRAVIS_BUILD_DIR/../Qt/5.9.7/" build_tools/macOS/travis_cmake_build.sh "${WZ_BUILD_DESC_PREFIX}-" "tmp/wz_upload"
+      # do not deploy
