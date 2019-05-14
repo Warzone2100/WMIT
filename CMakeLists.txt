@@ -29,6 +29,14 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
+if(MSVC)
+	# Enable /W3
+	# NOTE: Do not use /Wall, as it enables *many* warnings that are off by default. MS recommends /W4 (max)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+else() # NOT MSVC
+	add_definitions(-Wall)
+endif()
+
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 
@@ -52,10 +60,6 @@ else()
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector")
 	endif()
 endif()
-
-##################################################
-
-add_definitions(-Wall)
 
 ##################################################
 # Find dependencies
