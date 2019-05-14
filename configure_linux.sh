@@ -1,7 +1,14 @@
 #!/bin/sh
 
-if ! [ -x "$(command -v qmake)" ]; then
-	echo "error: Cannot find: qmake"
+QMAKE_BIN=
+if [ -x "$(command -v qmake)" ]; then
+	QMAKE_BIN=qmake
+elif [ -x "$(command -v qmake-qt5)" ]; then
+	QMAKE_BIN=qmake-qt5
+fi
+
+if [ -z "$QMAKE_BIN" ]; then
+	echo "error: Cannot find: qmake (or qmake-qt5)"
 	echo "\tPlease ensure that Qt5 is installed."
 	exit 1
 fi
@@ -19,7 +26,7 @@ if [ ! -d "libQGLViewer" ]; then
 fi
 cd ..
 cd 3rdparty/libQGLViewer/QGLViewer
-qmake PREFIX=$(pwd)/../../../build/libQGLViewer/installed/ QGLViewer.pro
+$QMAKE_BIN PREFIX=$(pwd)/../../../build/libQGLViewer/installed/ QGLViewer.pro
 make && make install
 cd ../../..
 cd build
