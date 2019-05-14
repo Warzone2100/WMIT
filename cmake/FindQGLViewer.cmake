@@ -15,13 +15,14 @@ find_path(QGLVIEWER_INCLUDE_DIR
 )
 
 find_library(QGLVIEWER_LIB
-	NAMES qglviewer-qt5 QGLViewer qglviewer QGLViewer-qt5
+	NAMES qglviewer-qt5 QGLViewer qglviewer QGLViewer-qt5 QGLViewer2
 	PATHS /usr/lib
 		/usr/local/lib
 		$ENV{QGLVIEWERROOT}
 		$ENV{QGLVIEWERROOT}/lib
 		$ENV{LD_LIBRARY_PATH}
 		$ENV{LIBRARY_PATH}
+	PATH_SUFFIXES QGLViewer
 )
 
 if(QGLVIEWER_INCLUDE_DIR)
