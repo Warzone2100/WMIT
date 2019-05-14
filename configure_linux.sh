@@ -20,6 +20,9 @@ fi
 cd build
 
 # Compile libQGLViewer (using qmake)
+if [ -n "${TRAVIS}" ]; then
+	echo "travis_fold:start:qmake.QGLViewer.pro"
+fi
 echo "Compile libQGLViewer"
 if [ ! -d "libQGLViewer" ]; then
 	mkdir libQGLViewer
@@ -29,6 +32,9 @@ cd 3rdparty/libQGLViewer/QGLViewer
 $QMAKE_BIN PREFIX=$(pwd)/../../../build/libQGLViewer/installed/ QGLViewer.pro
 make && make install
 cd ../../..
+if [ -n "${TRAVIS}" ]; then
+	echo "travis_fold:end:qmake.QGLViewer.pro"
+fi
 cd build
 export QGLVIEWERROOT=$(pwd)/libQGLViewer/installed/
 
