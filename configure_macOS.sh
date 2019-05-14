@@ -27,7 +27,7 @@ if [ ! -d "libQGLViewer" ]; then
 	mkdir libQGLViewer
 fi
 cd libQGLViewer
-qmake PREFIX=$(pwd)/installed/ ../../3rdparty/libQGLViewer/libQGLViewer.pro
+qmake PREFIX=$(pwd)/installed/ ../../3rdparty/libQGLViewer/QGLViewer/QGLViewer.pro
 make && make install
 # Fixup QGLViewer.framework install_name
 Expected_Framework_Library=installed/lib/QGLViewer.framework/QGLViewer
