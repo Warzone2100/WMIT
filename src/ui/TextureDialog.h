@@ -21,6 +21,8 @@
 
 #include <QDialog>
 #include <QMap>
+#include <QCloseEvent>
+#include <QSettings>
 
 #include "WZM.h"
 
@@ -36,7 +38,7 @@ class TextureDialog : public QDialog
 	Q_OBJECT
 
 public:
-	explicit TextureDialog(QWidget *parent = 0);
+	explicit TextureDialog(QWidget *parent = nullptr);
 	~TextureDialog();
 
 	void createTextureIcons(const QString& workdir, const QString& modelname);
@@ -55,10 +57,13 @@ private slots:
 	void on_lwPredefined_itemClicked(QListWidgetItem* item);
 	void on_pbConfig_clicked();
 
+	void onFinished(int);
+
 private:
 	Ui::TextureDialog *ui;
 
 	TexConfigDialog* m_texConfigDialog;
+	QSettings m_settings;
 
 	QString m_model_filepath;
 	QMap<wzm_texture_type_t, QString> m_texnames; // actual data read from model
