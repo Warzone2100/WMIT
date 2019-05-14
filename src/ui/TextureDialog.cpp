@@ -35,6 +35,7 @@ TextureDialog::TextureDialog(QWidget *parent) :
 	m_texConfigDialog(new TexConfigDialog(this))
 {
 	ui->setupUi(this);
+	connect(this, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
 
 	// shape texture icons
 	ui->lwTextures->setViewMode(QListView::IconMode);
@@ -42,7 +43,10 @@ TextureDialog::TextureDialog(QWidget *parent) :
 	ui->lwTextures->setMovement(QListView::Static);
 	ui->lwTextures->setFlow(QListView::LeftToRight);
 	ui->lwTextures->setFixedWidth(170);
-	setMinimumWidth(900);
+
+	// UI is ready and now we can load window previous state
+	resize(m_settings.value("TextureDialog/size", QSize(1000, 875)).toSize());
+	move(m_settings.value("TextureDialog/position", pos()).toPoint());
 
 	connect(ui->lwTextures, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
 		this, SLOT(iconDoubleClicked(QListWidgetItem*)));
@@ -247,7 +251,7 @@ void TextureDialog::iconDoubleClicked(QListWidgetItem *icon)
 		icon->setData(Qt::UserRole + 1, newtex);
 
 		QPixmap img(newtex);
-		QString ttp = "Path: " + newtex + "\nWidth: " + QString::number(img.width())+ ", height: " + QString::number(img.height());
+		QString ttp = "Path: " + newtex + "\nWidth: " + QString::number(img.width())+ ", Height: " + QString::number(img.height());
 		icon->setToolTip(ttp);
 		icon->setIcon(QIcon(img));
 	}
@@ -292,4 +296,10 @@ void TextureDialog::on_lwPredefined_itemClicked(QListWidgetItem* item)
 void TextureDialog::on_pbConfig_clicked()
 {
 	m_texConfigDialog->show();
+}
+
+void TextureDialog::onFinished(int)
+{
+	m_settings.setValue("TextureDialog/size", size());
+	m_settings.setValue("TextureDialog/position", pos());
 }
