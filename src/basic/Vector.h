@@ -42,12 +42,22 @@ struct Vector
 		return *this;
 	}
 
-	inline T  operator [](unsigned i) const {
+	inline T  operator [](size_t i) const {
 		return component[i];
 	}
-	inline T& operator [](unsigned i)       {
+	inline T& operator [](size_t i)       {
 		return component[i];
 	}
+#if defined(_MSC_VER) && !defined(_WIN64)
+	// for MSVC
+	inline T  operator [](int i) const {
+		return component[i];
+	}
+	// for MSVC
+	inline T& operator [](int i) {
+		return component[i];
+	}
+#endif
 	inline operator const T*() const {
 		return component;
 	}

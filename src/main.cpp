@@ -29,7 +29,7 @@
 #include "Pie.h"
 #include "wmit.h"
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && defined(QT_STATICPLUGIN)
 #include <QtPlugin>
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin);
 #endif
