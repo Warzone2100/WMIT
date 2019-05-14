@@ -165,6 +165,12 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 		target_compile_definitions(wmit PRIVATE -D_WIN32_WINNT=0x0501) # Windows XP+
 	endif()
 
+	if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+		if(${CMAKE_CROSSCOMPILING})
+			target_compile_definitions(wmit PRIVATE "QT_STATICPLUGIN")
+		endif()
+	endif()
+
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")

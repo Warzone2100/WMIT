@@ -152,7 +152,7 @@ Mesh::Mesh(const Pie3Level& p3)
 			tmpNrm = WZMVertex(v[1] - v[0]).crossProduct(v[2] - v[0]).normalize();
 
 		// For all 3 vertices of the triangle
-		for (u_short i = 0; i < 3; ++i)
+		for (size_t i = 0; i < 3; ++i)
 		{
 			if (p3.normals() != 0)
 			{
