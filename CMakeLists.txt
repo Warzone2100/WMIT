@@ -1,5 +1,23 @@
 cmake_minimum_required(VERSION 3.5)
-project(wmit)
+
+##################################################
+# Get the current version from wmit.h
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/wmit.h")
+	file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/src/wmit.h" WMIT_VERSION_STRING_LINE REGEX "^#define[ \t]+WMIT_VER_STR[ \t]+\"[.0-9]+\"$")
+	string(REGEX REPLACE "^#define[ \t]+WMIT_VER_STR[ \t]+\"([.0-9]+)\"$" "\\1" WMIT_VERSION "${WMIT_VERSION_STRING_LINE}")
+	unset(WMIT_VERSION_STRING_LINE)
+else()
+	message(WARNING "Can't find ${CMAKE_CURRENT_SOURCE_DIR}/src/wmit.h - unable to extract WMIT_VER_STR")
+endif()
+if(NOT DEFINED WMIT_VERSION OR NOT WMIT_VERSION OR WMIT_VERSION STREQUAL "")
+	set(WMIT_VERSION "0.0.0")
+	message(WARNING "Failed to extract WMIT_VER_STR - defaulting to ${WMIT_VERSION}")
+endif()
+
+##################################################
+
+project(wmit VERSION "${WMIT_VERSION}")
+message(STATUS "WMIT: ${WMIT_VERSION}")
 
 OPTION(PACKAGE_SOURCE_ONLY "Disables some requirements - use ONLY for configuring to package source" OFF)
 
@@ -173,6 +191,9 @@ set( wmit_INFO
 	README.md
 )
 
+##################################################
+# Create WMIT target
+
 add_executable(wmit ${wmit_SRCS} ${wmit_HEADERS} ${wmit_RSCS} ${wmit_UIS})
 set_target_properties(wmit PROPERTIES AUTOMOC TRUE) # handles QT5_WRAP_CPP
 set_target_properties(wmit PROPERTIES AUTORCC TRUE) # handles QT5_ADD_RESOURCES
@@ -229,6 +250,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 	set_target_properties(wmit PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "net.wz2100.WMIT")
 	set_target_properties(wmit PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "WMIT")
 	set_target_properties(wmit PROPERTIES MACOSX_BUNDLE_COPYRIGHT "Copyright © 2010-2019 Warzone 2100 Project")
+	set_target_properties(wmit PROPERTIES MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 
 	# Debugging Symbols
 	set_target_properties(wmit PROPERTIES XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT "dwarf-with-dsym")
