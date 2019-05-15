@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(wmit)
 
+OPTION(PACKAGE_SOURCE_ONLY "Disables some requirements - use ONLY for configuring to package source" OFF)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 ##################################################
@@ -64,15 +66,27 @@ endif()
 ##################################################
 # Find dependencies
 
-find_package(OpenGL REQUIRED)
-find_package(QGLViewer REQUIRED)
-find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL Xml REQUIRED)
+set(_required_dependency_flag "REQUIRED")
+if(PACKAGE_SOURCE_ONLY)
+	message( WARNING "Ignoring dependency failures - this should only be used for configuring to package source" )
+	set(_required_dependency_flag "")
+endif()
+
+find_package(OpenGL ${_required_dependency_flag})
+find_package(QGLViewer ${_required_dependency_flag})
+find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL Xml ${_required_dependency_flag})
 
 ##################################################
 
 include_directories(
 	${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}
-	${QGLVIEWER_INCLUDE_DIR}
+)
+
+if(NOT PACKAGE_SOURCE_ONLY)
+	include_directories(${QGLVIEWER_INCLUDE_DIR})
+endif()
+
+include_directories(
 	src
 	src/basic
 	src/formats
@@ -163,8 +177,10 @@ add_executable(wmit ${wmit_SRCS} ${wmit_HEADERS} ${wmit_RSCS} ${wmit_UIS})
 set_target_properties(wmit PROPERTIES AUTOMOC TRUE) # handles QT5_WRAP_CPP
 set_target_properties(wmit PROPERTIES AUTORCC TRUE) # handles QT5_ADD_RESOURCES
 set_target_properties(wmit PROPERTIES AUTOUIC TRUE) # handles QT5_WRAP_UI
-target_link_libraries(wmit OpenGL::GL OpenGL::GLU ${QGLVIEWER_LIB})
-target_link_libraries(wmit Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Xml)
+if(NOT PACKAGE_SOURCE_ONLY)
+	target_link_libraries(wmit OpenGL::GL OpenGL::GLU ${QGLVIEWER_LIB})
+	target_link_libraries(wmit Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Xml)
+endif()
 target_compile_definitions(wmit PRIVATE GLEW_STATIC)
 set_target_properties(wmit PROPERTIES OUTPUT_NAME "WMIT")
 
