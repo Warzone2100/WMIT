@@ -83,7 +83,6 @@ include_directories(
 
 set( wmit_SRCS
 	src/formats/WZM.cpp
-#	src/formats/Pie_t.cpp
 	src/formats/Pie.cpp
 	src/formats/Mesh.cpp
 	src/ui/UVEditor.cpp
@@ -94,7 +93,6 @@ set( wmit_SRCS
 	src/Util.cpp
 	src/main.cpp
 	src/Generic.cpp
-#	src/basic/Polygon_t.cpp
 	src/basic/GLTexture.cpp
 	src/widgets/QWZM.cpp
 	src/widgets/QtGLView.cpp
@@ -122,17 +120,40 @@ set( wmit_RSCS
 )
 
 set( wmit_MOCS
-	src/ui/UVEditor.h
-	src/ui/MaterialDock.h
-	src/ui/TransformDock.h
-	src/ui/MainWindow.h
-	src/ui/ImportDialog.h
-	src/ui/ExportDialog.h
-	src/widgets/QWZM.h
-	src/widgets/QtGLView.h
 	src/ui/TextureDialog.h
+	src/widgets/QtGLView.h
+	src/ui/ExportDialog.h
+	src/ui/ImportDialog.h
+	src/ui/MainWindow.h
 	src/ui/TexConfigDialog.h
+	src/ui/TransformDock.h
+	src/ui/UVEditor.h
+	src/widgets/QWZM.h
+	src/ui/MaterialDock.h
 	src/ui/meshdock.h
+)
+
+set( wmit_HEADERS
+	3rdparty/GLEW/include/GL/glew.h
+	src/wmit.h
+	src/basic/IGLShaderManager.h
+	src/basic/IGLShaderRenderable.h
+	src/Generic.h
+	src/Util.h
+	src/formats/Mesh.h
+	src/formats/OBJ.h
+	src/formats/Pie.h
+	src/formats/Pie_t.hpp
+	src/formats/WZM.h
+	src/basic/GLTexture.h
+	src/basic/IAnimatable.h
+	src/basic/IGLRenderable.h
+	src/basic/IGLTexturedRenderable.h
+	src/basic/IGLTextureManager.h
+	src/basic/Polygon.h
+	src/basic/Polygon_t.hpp
+	src/basic/Vector.h
+	src/basic/VectorTypes.h
 )
 
 set( wmit_INFO
@@ -145,7 +166,7 @@ QT5_WRAP_UI(UIS ${wmit_UIS})
 QT5_ADD_RESOURCES(RSCS ${wmit_RSCS})
 QT5_WRAP_CPP(MOCS ${wmit_MOCS})
 
-add_executable(wmit ${wmit_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS})
+add_executable(wmit ${wmit_SRCS} ${wmit_HEADERS} ${UIS} ${RSCS} ${TRS} ${MOCS})
 target_link_libraries(wmit OpenGL::GL OpenGL::GLU ${QGLVIEWER_LIB})
 target_link_libraries(wmit Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Xml)
 target_compile_definitions(wmit PRIVATE GLEW_STATIC)

@@ -86,8 +86,8 @@ protected:
 };
 
 // Include template implementations
-#define POLYGON_T_CPP
-#include "Polygon_t.cpp"
-#undef POLYGON_T_CPP
+#define POLYGON_T_HPP
+#include "Polygon_t.hpp"
+#undef POLYGON_T_HPP
 
 #endif // POLYGON_HPP
