@@ -6,6 +6,15 @@ Import and export .WZM, [.PIE](https://github.com/Warzone2100/warzone2100/blob/m
 For use with: [Warzone 2100](https://github.com/Warzone2100/warzone2100)
 
 
+## Latest development builds
+
+[![Build Status](https://travis-ci.com/Warzone2100/WMIT.svg?branch=master)](https://travis-ci.com/Warzone2100/WMIT)
+[![Windows Build Status](https://ci.appveyor.com/api/projects/status/1efyn5i3qxuw6ppb/branch/master?svg=true)](https://ci.appveyor.com/project/Warzone2100/wmit/branch/master)
+
+- **Windows** (x86): [**Installer**](https://ci.appveyor.com/api/projects/Warzone2100/WMIT/artifacts/wmit-master_x86_installer.zip?branch=master&pr=false&job=Environment%3A%20APPVEYOR_BUILD_WORKER_IMAGE%3DVisual%20Studio%202017%2C%20WZ_JOB_ID%3Drelease_x86)
+- **Windows** (x64): [**Installer**](https://ci.appveyor.com/api/projects/Warzone2100/WMIT/artifacts/wmit-master_x64_installer.zip?branch=master&pr=false&job=Environment%3A%20APPVEYOR_BUILD_WORKER_IMAGE%3DVisual%20Studio%202017%2C%20WZ_JOB_ID%3Drelease_x64)
+
+
 ## How to build
 
 ### Getting the Source
