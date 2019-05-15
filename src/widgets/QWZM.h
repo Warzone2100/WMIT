@@ -20,6 +20,8 @@
 #ifndef QWZM_HPP
 #define QWZM_HPP
 
+#include <GL/glew.h>
+
 #include <time.h>
 
 #include <QtCore>
@@ -27,8 +29,6 @@
 #include <QStringList>
 #include <QObject>
 #include <QMap>
-
-#include <GL/glew.h>
 
 #include "WZM.h"
 #include "IAnimatable.h"

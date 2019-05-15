@@ -17,8 +17,6 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <GL/glew.h>
-
 #include "QtGLView.h"
 
 #ifdef Q_OS_MAC
