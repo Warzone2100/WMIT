@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <map>
 #include <list>
-#include <QtOpenGL/qgl.h>
+#include <GL/glew.h>
 #include "VectorTypes.h"
 #include "Polygon.h"
 

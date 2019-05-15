@@ -20,6 +20,8 @@
 #ifndef QTGLVIEW_HPP
 #define QTGLVIEW_HPP
 
+#include <GL/glew.h>
+
 #include <QtCore>
 #include <QString>
 #include <QList>
