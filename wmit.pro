@@ -27,6 +27,7 @@ HEADERS += \
     src/formats/Mesh.h \
     src/formats/OBJ.h \
     src/formats/Pie.h \
+    src/formats/Pie_t.hpp \
     src/formats/WZM.h \
     src/basic/GLTexture.h \
     src/basic/IAnimatable.h \
@@ -34,6 +35,7 @@ HEADERS += \
     src/basic/IGLTexturedRenderable.h \
     src/basic/IGLTextureManager.h \
     src/basic/Polygon.h \
+    src/basic/Polygon_t.hpp \
     src/basic/Vector.h \
     src/basic/VectorTypes.h \
     src/widgets/QWZM.h \
@@ -43,7 +45,6 @@ HEADERS += \
 SOURCES += \
     3rdparty/GLEW/src/glew.c \
     src/formats/WZM.cpp \
-    src/formats/Pie_t.cpp \
     src/formats/Pie.cpp \
     src/formats/Mesh.cpp \
     src/ui/UVEditor.cpp \
@@ -54,7 +55,6 @@ SOURCES += \
     src/Util.cpp \
     src/main.cpp \
     src/Generic.cpp \
-    src/basic/Polygon_t.cpp \
     src/basic/GLTexture.cpp \
     src/widgets/QWZM.cpp \
     src/widgets/QtGLView.cpp \

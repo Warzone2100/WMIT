@@ -394,6 +394,6 @@ protected:
 };
 
 // Include template implementations
-#include "Pie_t.cpp"
+#include "Pie_t.hpp"
 
 #endif // PIE_HPP
