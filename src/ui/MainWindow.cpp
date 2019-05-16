@@ -63,7 +63,7 @@ QString MainWindow::buildAppTitle()
 	return name;
 }
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
+MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	m_ui(new Ui::MainWindow),
 	m_materialDock(new MaterialDock(this)),
 	m_transformDock(new TransformDock(this)),
@@ -74,7 +74,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	m_shaderSignalMapper(new QSignalMapper(this)),
 	m_actionEnableUserShaders(nullptr),
 	m_actionLocateUserShaders(nullptr),
-	m_actionReloadUserShaders(nullptr)
+	m_actionReloadUserShaders(nullptr),
+	m_model(&model)
 {
 	m_ui->setupUi(this);
 
@@ -152,20 +153,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	connect(m_transformDock, SIGNAL(scaleZChanged(double)), this, SLOT(scaleZChanged(double)));
 	connect(m_transformDock, SIGNAL(reverseWindings()), this, SLOT(reverseWindings()));
 	connect(m_transformDock, SIGNAL(flipNormals()), this, SLOT(flipNormals()));
-	connect(m_transformDock, SIGNAL(applyTransformations()), &m_model, SLOT(applyTransformations()));
-	connect(m_transformDock, SIGNAL(changeActiveMesh(int)), &m_model, SLOT(setActiveMesh(int)));
-	connect(m_transformDock, SIGNAL(recalculateTB()), &m_model, SLOT(slotRecalculateTB()));
+	connect(m_transformDock, SIGNAL(applyTransformations()), m_model, SLOT(applyTransformations()));
+	connect(m_transformDock, SIGNAL(changeActiveMesh(int)), m_model, SLOT(setActiveMesh(int)));
+	connect(m_transformDock, SIGNAL(recalculateTB()), m_model, SLOT(slotRecalculateTB()));
 	connect(m_transformDock, SIGNAL(removeMesh()), this, SLOT(removeMesh()));
 	connect(m_transformDock, SIGNAL(mirrorAxis(int)), this, SLOT(mirrorAxis(int)));
 	connect(m_transformDock, SIGNAL(centerMesh(int)), this, SLOT(centerMesh(int)));
-	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_transformDock, SLOT(setMeshCount(int,QStringList)));
+	connect(m_model, SIGNAL(meshCountChanged(int,QStringList)), m_transformDock, SLOT(setMeshCount(int,QStringList)));
 
 	/// Mesh dock
 	m_meshDock->toggleViewAction()->setShortcut(QKeySequence(Qt::Key_M));
 	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0), m_meshDock->toggleViewAction());
 
 	connect(m_meshDock, SIGNAL(connectorsWereUpdated()), this, SLOT(updateModelRender()));
-	connect(&m_model, SIGNAL(meshCountChanged(int,QStringList)), m_meshDock, SLOT(setMeshCount(int,QStringList)));
+	connect(m_model, SIGNAL(meshCountChanged(int,QStringList)), m_meshDock, SLOT(setMeshCount(int,QStringList)));
 
 	/// Reset state
 	clear();
@@ -178,7 +179,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::clear()
 {
-	m_model.clear();
+	m_model->clear();
 	m_modelinfo.clear();
 
 	setWindowTitle(buildAppTitle());
@@ -188,7 +189,7 @@ void MainWindow::clear()
 
 void MainWindow::doAfterModelWasLoaded(const bool success)
 {
-	const bool hasAnim = m_model.hasAnimObject();
+	const bool hasAnim = m_model->hasAnimObject();
 
 	m_ui->actionClose->setEnabled(success);
 	m_ui->actionSave->setEnabled(success);
@@ -219,7 +220,7 @@ bool MainWindow::openFile(const QString &filePath)
 
 		m_modelinfo = tmpinfo;
 		m_modelinfo.m_currentFile = modelFileNfo.absoluteFilePath();
-		m_model = tmpmodel;
+		*m_model = tmpmodel;
 
 		setWindowTitle(buildAppTitle());
 
@@ -229,7 +230,7 @@ bool MainWindow::openFile(const QString &filePath)
 			return false;
 		}
 
-		m_materialDock->setMaterial(m_model.getMaterial());
+		m_materialDock->setMaterial(m_model->getMaterial());
 
 		doAfterModelWasLoaded();
 	}
@@ -413,15 +414,15 @@ bool MainWindow::fireTextureDialog(const bool reinit)
 
 	if (reinit)
 	{
-		m_model.getTexturesMap(texmap);
+		m_model->getTexturesMap(texmap);
 		m_textureDialog->setTexturesMap(texmap);
 		m_textureDialog->createTextureIcons(m_pathImport, m_modelinfo.m_currentFile);
 	}
 
 	if (m_textureDialog->exec() == QDialog::Accepted)
 	{
-		m_model.clearTextureNames();
-		m_model.clearGLRenderTextures();
+		m_model->clearTextureNames();
+		m_model->clearGLRenderTextures();
 
 		m_textureDialog->getTexturesFilepath(texmap);
 		for (QMap<wzm_texture_type_t, QString>::const_iterator it = texmap.begin(); it != texmap.end(); ++it)
@@ -429,8 +430,8 @@ bool MainWindow::fireTextureDialog(const bool reinit)
 			if (!it.value().isEmpty())
 			{
 				QFileInfo texFileNfo(it.value());
-				m_model.loadGLRenderTexture(it.key(), texFileNfo.filePath());
-				m_model.setTextureName(it.key(), texFileNfo.fileName().toStdString());
+				m_model->loadGLRenderTexture(it.key(), texFileNfo.filePath());
+				m_model->setTextureName(it.key(), texFileNfo.fileName().toStdString());
 			}
 		}
 
@@ -515,7 +516,7 @@ void MainWindow::actionSave()
 		return;
 	}
 
-	saveModel(m_model, m_modelinfo);
+	saveModel(*m_model, m_modelinfo);
 }
 
 void MainWindow::PrependFileToRecentList(const QString& filename)
@@ -602,7 +603,7 @@ void MainWindow::actionSaveAs()
 	m_modelinfo = tmpModelinfo;
 	PrependFileToRecentList(m_modelinfo.m_saveAsFile);
 
-	saveModel(m_model, m_modelinfo);
+	saveModel(*m_model, m_modelinfo);
 }
 
 bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *errMessage)
@@ -664,9 +665,9 @@ void MainWindow::viewerInitialized()
 	// Only do init once
 	disconnect(m_ui->centralWidget, SIGNAL(viewerInitialized()), this, SLOT(viewerInitialized()));
 
-	m_ui->centralWidget->addToRenderList(&m_model);
-	m_ui->centralWidget->addToAnimateList(&m_model);
-	m_meshDock->setModel(&m_model);
+	m_ui->centralWidget->addToRenderList(m_model);
+	m_ui->centralWidget->addToAnimateList(m_model);
+	m_meshDock->setModel(m_model);
 
 	m_actionEnableUserShaders = new QAction("Enable external shaders", this);
 	m_actionEnableUserShaders->setCheckable(true);
@@ -684,7 +685,7 @@ void MainWindow::viewerInitialized()
 	m_actionEnableTangentInShaders= new QAction("Enable tangents in shaders", this);
 	m_actionEnableTangentInShaders->setCheckable(true);
 	m_actionEnableTangentInShaders->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_T));
-	connect(m_actionEnableTangentInShaders, SIGNAL(triggered(bool)), &m_model, SLOT(setEnableTangentsInShaders(bool)));
+	connect(m_actionEnableTangentInShaders, SIGNAL(triggered(bool)), m_model, SLOT(setEnableTangentsInShaders(bool)));
 
 	m_shaderGroup = new QActionGroup(this);
 
@@ -721,28 +722,28 @@ void MainWindow::viewerInitialized()
 	m_ui->actionRenderer->setMenu(rendererMenu);
 
 	connect(m_ui->actionShowModelCenter, SIGNAL(triggered(bool)),
-		&m_model, SLOT(setDrawCenterPointFlag(bool)));
+		m_model, SLOT(setDrawCenterPointFlag(bool)));
 	connect(m_ui->actionShowNormals, SIGNAL(triggered(bool)),
-		&m_model, SLOT(setDrawNormalsFlag(bool)));
+		m_model, SLOT(setDrawNormalsFlag(bool)));
 	connect(m_ui->actionShowNormals, SIGNAL(triggered(bool)),
 		m_ui->actionShow_Tangent_And_Bitangent, SLOT(setEnabled(bool)));
 	connect(m_ui->actionShow_Tangent_And_Bitangent, SIGNAL(triggered(bool)),
-		&m_model, SLOT(setDrawTangentAndBitangentFlag(bool)));
+		m_model, SLOT(setDrawTangentAndBitangentFlag(bool)));
 	connect(m_ui->actionShow_Connectors, SIGNAL(triggered(bool)),
-		&m_model, SLOT(setDrawConnectors(bool)));
+		m_model, SLOT(setDrawConnectors(bool)));
 
 	/// Load previous state
 	m_ui->actionShowModelCenter->setChecked(m_settings->value("3DView/ShowModelCenter", false).toBool());
-	m_model.setDrawCenterPointFlag(m_ui->actionShowModelCenter->isChecked());
+	m_model->setDrawCenterPointFlag(m_ui->actionShowModelCenter->isChecked());
 
 	m_ui->actionShowNormals->setChecked(m_settings->value("3DView/ShowNormals", false).toBool());
-	m_model.setDrawNormalsFlag(m_ui->actionShowNormals->isChecked());
+	m_model->setDrawNormalsFlag(m_ui->actionShowNormals->isChecked());
 
 	m_ui->actionShow_Connectors->setChecked(m_settings->value("3DView/ShowConnectors", false).toBool());
-	m_model.setDrawConnectors(m_ui->actionShow_Connectors->isChecked());
+	m_model->setDrawConnectors(m_ui->actionShow_Connectors->isChecked());
 
 	m_ui->actionShow_Tangent_And_Bitangent->setChecked(m_settings->value("3DView/ShowTangentAndBitangent", false).toBool());
-	m_model.setDrawTangentAndBitangentFlag(m_ui->actionShow_Tangent_And_Bitangent->isChecked());
+	m_model->setDrawTangentAndBitangentFlag(m_ui->actionShow_Tangent_And_Bitangent->isChecked());
 	m_ui->actionShow_Tangent_And_Bitangent->setEnabled(m_ui->actionShowNormals->isChecked());
 
 	m_ui->actionShowAxes->setChecked(m_settings->value("3DView/ShowAxes", true).toBool());
@@ -756,7 +757,7 @@ void MainWindow::viewerInitialized()
 
 	actionEnableUserShaders(m_actionEnableUserShaders->isChecked());
 
-	m_actionEnableTangentInShaders->setChecked(m_model.getEnableTangentsInShaders());
+	m_actionEnableTangentInShaders->setChecked(m_model->getEnableTangentsInShaders());
 
 	// Default to 3.1
 	int shaderTag = m_settings->value("3DView/ShaderTag", wz_shader_type_tag[WZ_SHADER_WZ31]).toInt();
@@ -812,7 +813,7 @@ void MainWindow::shaderAction(int type)
 
 	if (static_cast<wz_shader_type_t>(type) != WZ_SHADER_NONE)
 	{
-		if (!m_model.setActiveShader(static_cast<wz_shader_type_t>(type)))
+		if (!m_model->setActiveShader(static_cast<wz_shader_type_t>(type)))
 		{
 		    QMessageBox::warning(this, "Shaders error",
 		       "Unable to activate requested shaders!");
@@ -820,7 +821,7 @@ void MainWindow::shaderAction(int type)
 	}
 	else
 	{
-		m_model.disableShaders();
+		m_model->disableShaders();
 	}
 	updateModelRender();
 
@@ -829,61 +830,61 @@ void MainWindow::shaderAction(int type)
 
 void MainWindow::scaleXYZChanged(double val)
 {
-	m_model.setScaleXYZ(val);
+	m_model->setScaleXYZ(val);
 	updateModelRender();
 }
 
 void MainWindow::scaleXChanged(double val)
 {
-	m_model.setScaleX(val);
+	m_model->setScaleX(val);
 	updateModelRender();
 }
 
 void MainWindow::scaleYChanged(double val)
 {
-	m_model.setScaleY(val);
+	m_model->setScaleY(val);
 	updateModelRender();
 }
 
 void MainWindow::scaleZChanged(double val)
 {
-	m_model.setScaleZ(val);
+	m_model->setScaleZ(val);
 	updateModelRender();
 }
 
 void MainWindow::reverseWindings()
 {
-	m_model.reverseWinding(m_model.getActiveMesh());
+	m_model->reverseWinding(m_model->getActiveMesh());
 	updateModelRender();
 }
 
 void MainWindow::flipNormals()
 {
-	m_model.flipNormals(m_model.getActiveMesh());
+	m_model->flipNormals(m_model->getActiveMesh());
 	updateModelRender();
 }
 
 void MainWindow::mirrorAxis(int axis)
 {
-	m_model.slotMirrorAxis(axis);
+	m_model->slotMirrorAxis(axis);
 	updateModelRender();
 }
 
 void MainWindow::removeMesh()
 {
-	m_model.slotRemoveActiveMesh();
+	m_model->slotRemoveActiveMesh();
 	updateModelRender();
 }
 
 void MainWindow::centerMesh(int axis)
 {
-	m_model.center(m_model.getActiveMesh(), axis);
+	m_model->center(m_model->getActiveMesh(), axis);
 	updateModelRender();
 }
 
 void MainWindow::materialChangedFromUI(const WZMaterial &mat)
 {
-	m_model.setMaterial(mat);
+	m_model->setMaterial(mat);
 	updateModelRender();
 }
 
@@ -932,7 +933,7 @@ void MainWindow::actionAppendModel()
 		{
 			for (int i = 0; i < newmodel.meshes(); ++i)
 			{
-				m_model.addMesh(newmodel.getMesh(i));
+				m_model->addMesh(newmodel.getMesh(i));
 			}
 
 			doAfterModelWasLoaded();
@@ -947,9 +948,9 @@ void MainWindow::actionTakeScreenshot()
 
 void MainWindow::actionSetTeamColor()
 {
-    QColor newColor = QColorDialog::getColor(m_model.getTCMaskColor(), this, "Select new TeamColor");
+    QColor newColor = QColorDialog::getColor(m_model->getTCMaskColor(), this, "Select new TeamColor");
     if (newColor.isValid())
-        m_model.setTCMaskColor(newColor);
+        m_model->setTCMaskColor(newColor);
 }
 
 void MainWindow::actionEnableUserShaders(bool checked)
@@ -964,7 +965,7 @@ void MainWindow::actionEnableUserShaders(bool checked)
 
 void MainWindow::actionImport_Animation()
 {
-	if (m_model.meshes() == 0)
+	if (m_model->meshes() == 0)
 	    return;
 
 	QString anim_path = QFileDialog::getOpenFileName(this, "Locate animation file", m_pathImport,
@@ -974,7 +975,7 @@ void MainWindow::actionImport_Animation()
 
 	int meshIdx = -1;
 	{
-		QStringList items = m_model.getMeshNames();
+		QStringList items = m_model->getMeshNames();
 
 		QString item = QInputDialog::getItem(this, tr("Select mesh for animation import"), "", items, 0, false);
 		if (!item.isEmpty())
@@ -984,7 +985,7 @@ void MainWindow::actionImport_Animation()
 	if (meshIdx < 0)
 		return;
 
-	auto &mesh = m_model.getMesh(meshIdx);
+	auto &mesh = m_model->getMesh(meshIdx);
 
 	ApieAnimObject pieAnim;
 	if (pieAnim.readStandaloneAniFile(anim_path.toLocal8Bit()))
@@ -997,7 +998,7 @@ void MainWindow::actionImport_Animation()
 
 void MainWindow::actionImport_Connectors()
 {
-	if (m_model.meshes() == 0)
+	if (m_model->meshes() == 0)
 	    return;
 
 	QString conn_path = QFileDialog::getOpenFileName(this, "Locate source file", m_pathImport,
@@ -1015,14 +1016,14 @@ void MainWindow::actionImport_Connectors()
 	bool need_ask_about_replacement = true;
 	bool replace_current_ones = false;
 
-	int maxmeshes = std::max(newmodel.meshes(), m_model.meshes());
+	int maxmeshes = std::max(newmodel.meshes(), m_model->meshes());
 	for (int i = 0; i < maxmeshes; ++i)
 	{
 		const Mesh& src_mesh = newmodel.getMesh(i);
 		if (!src_mesh.connectors())
 			continue;
 
-		Mesh& tgt_mesh = m_model.getMesh(i);
+		Mesh& tgt_mesh = m_model->getMesh(i);
 		if (tgt_mesh.connectors())
 		{
 			if (need_ask_about_replacement)

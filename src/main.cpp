@@ -62,7 +62,8 @@ int main(int argc, char *argv[])
 		a.setOrganizationName(WMIT_ORG);
 		QSettings::setDefaultFormat(QSettings::IniFormat);
 
-		MainWindow w;
+		QWZM model; // must be destructed *after* all of MainWindow's children to prevent a crash on exit (on some platforms)
+		MainWindow w(model);
 		w.show();
 
 		if (argc == 2)
