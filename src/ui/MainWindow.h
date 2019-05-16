@@ -87,7 +87,7 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	MainWindow(QWidget *parent = nullptr);
+	MainWindow(QWZM &model, QWidget *parent = nullptr);
 	~MainWindow();
 
 	void clear();
@@ -158,7 +158,7 @@ private:
 	QAction *m_actionEnableTangentInShaders;
 	QString m_pathImport, m_pathExport;
 
-	QWZM m_model;
+	QWZM *m_model;
 	ModelInfo m_modelinfo;
 	QString m_pathvert, m_pathfrag;
 
