@@ -100,6 +100,11 @@ LIBS += -lm
     LIBS += -lglu32 -lopengl32
 }
 
+# Disable gazillion warnings from GCC
+#CONFIG += warn_off
+QMAKE_CFLAGS_WARN_ON += -Wno-cast-function-type
+QMAKE_CXXFLAGS_WARN_ON += -Wno-deprecated-copy
+
 RESOURCES += \
     resources.qrc
 
