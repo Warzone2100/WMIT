@@ -147,7 +147,6 @@ Mesh::Mesh(const Pie3Level& p3)
 		v[1] = WZMVertex(p3.m_points[itL->getIndex(1)]);
 		v[2] = WZMVertex(p3.m_points[itL->getIndex(2)]);
 
-		// Calculate inverted normal here and reverse winding below
 		if (p3.normals() == 0)
 			tmpNrm = WZMVertex(v[1] - v[0]).crossProduct(v[2] - v[0]).normalize();
 
@@ -155,10 +154,7 @@ Mesh::Mesh(const Pie3Level& p3)
 		for (size_t i = 0; i < 3; ++i)
 		{
 			if (p3.normals() != 0)
-			{
 				tmpNrm = *nrmIt++;
-				tmpNrm.invert();
-			}
 
 			inResult = tupleSet.insert(WZMPoint(v[i], itL->getUV(i, 0), tmpNrm));
 
@@ -257,9 +253,7 @@ Mesh::operator Pie3Level() const
 			p3UV.v() = m_textureArray[tri[i]].v();
 			p3Poly.m_texCoords[i] = p3UV;
 
-			WZMVertex invNormal(m_normalArray[tri[i]]);
-			invNormal.invert();
-			p3.m_normals.emplace_back(invNormal);
+			p3.m_normals.push_back(m_normalArray[tri[i]]);
 		}
 		p3.m_polygons.push_back(p3Poly);
 	}
