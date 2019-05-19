@@ -130,7 +130,7 @@ void QtGLView::init()
 #define FP12_MULTIPLIER (1 << 12)
 void QtGLView::draw()
 {
-	static float mtxPrj[16], mtxMV[16], larr[4] = {1.f};
+	static float mtxPrj[16], mtxMV[16], larr[4] = {0.f};
 
 	camera()->getProjectionMatrix(mtxPrj);
 	camera()->getModelViewMatrix(mtxMV);
