@@ -127,20 +127,29 @@ void QtGLView::init()
 	emit viewerInitialized();
 }
 
+#define FP12_MULTIPLIER (1 << 12)
 void QtGLView::draw()
 {
-	static float mtxPrj[16], mtxMV[16];
+	static float mtxPrj[16], mtxMV[16], larr[4] = {1.f};
 
 	camera()->getProjectionMatrix(mtxPrj);
 	camera()->getModelViewMatrix(mtxMV);
 
 	if (linkLightToCamera)
 		light.setPosition(camera()->position());
-	glLightfv(GL_LIGHT0, GL_POSITION, light.position());
+
+	qglviewer::Vec lvec = light.position();
+	lvec.normalize();
+	lvec *= FP12_MULTIPLIER;
+	larr[0] = lvec.x;
+	larr[1] = lvec.y;
+	larr[2] = lvec.z;
+
+	glLightfv(GL_LIGHT0, GL_POSITION, larr);
 
 	foreach(IGLRenderable* obj, renderList)
 	{
-		obj->render(mtxMV, mtxPrj, light.position());
+		obj->render(mtxMV, mtxPrj, larr);
 	}
 }
 
