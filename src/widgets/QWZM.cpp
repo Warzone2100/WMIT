@@ -687,67 +687,33 @@ bool QWZM::bindShader(int type)
 	if (uniloc >= 0)
 		shader->setUniformValue(uniloc, GLint(m_enableTangentsInShaders));
 
+	uniloc = shader->uniformLocation("tcmask");
+	if (hasGLRenderTexture(WZM_TEX_TCMASK))
+	{
+		shader->setUniformValue(uniloc, GLint(1));
+		uniloc = shader->uniformLocation("teamcolour");
+		shader->setUniformValue(uniloc,
+					m_tcmaskColour.redF(), m_tcmaskColour.greenF(),
+					m_tcmaskColour.blueF(), m_tcmaskColour.alphaF());
+	}
+	else
+		shader->setUniformValue(uniloc, GLint(0));
+
+	uniloc = shader->uniformLocation("normalmap");
+	if (hasGLRenderTexture(WZM_TEX_NORMALMAP))
+		shader->setUniformValue(uniloc, GLint(1));
+	else
+		shader->setUniformValue(uniloc, GLint(0));
+
+	uniloc = shader->uniformLocation("specularmap");
+	if (hasGLRenderTexture(WZM_TEX_SPECULAR))
+		shader->setUniformValue(uniloc, GLint(1));
+	else
+		shader->setUniformValue(uniloc, GLint(0));
+
 	switch (type)
 	{
-	case WZ_SHADER_WZ31:
-		uniloc = shader->uniformLocation("tcmask");
-		if (hasGLRenderTexture(WZM_TEX_TCMASK))
-		{
-			shader->setUniformValue(uniloc, GLint(1));
-			uniloc = shader->uniformLocation("teamcolour");
-			shader->setUniformValue(uniloc,
-						m_tcmaskColour.redF(), m_tcmaskColour.greenF(), m_tcmaskColour.blueF(), m_tcmaskColour.alphaF());
-		}
-		else
-		{
-			shader->setUniformValue(uniloc, GLint(0));
-		}
-
-		uniloc = shader->uniformLocation("normalmap");
-		if (hasGLRenderTexture(WZM_TEX_NORMALMAP))
-		{
-			shader->setUniformValue(uniloc, GLint(1));
-		}
-		else
-		{
-			shader->setUniformValue(uniloc, GLint(0));
-		}
-
-		uniloc = shader->uniformLocation("specularmap");
-		if (hasGLRenderTexture(WZM_TEX_SPECULAR))
-		{
-			shader->setUniformValue(uniloc, GLint(1));
-		}
-		else
-		{
-			shader->setUniformValue(uniloc, GLint(0));
-		}
-		break;
 	case WZ_SHADER_WZ32:
-		uniloc = shader->uniformLocation("tcmask");
-		if (hasGLRenderTexture(WZM_TEX_TCMASK))
-		{
-			shader->setUniformValue(uniloc, GLint(1));
-			uniloc = shader->uniformLocation("teamcolour");
-			shader->setUniformValue(uniloc,
-						m_tcmaskColour.redF(), m_tcmaskColour.greenF(),
-						m_tcmaskColour.blueF(), m_tcmaskColour.alphaF());
-		}
-		else
-			shader->setUniformValue(uniloc, GLint(0));
-
-		uniloc = shader->uniformLocation("normalmap");
-		if (hasGLRenderTexture(WZM_TEX_NORMALMAP))
-			shader->setUniformValue(uniloc, GLint(1));
-		else
-			shader->setUniformValue(uniloc, GLint(0));
-
-		uniloc = shader->uniformLocation("specularmap");
-		if (hasGLRenderTexture(WZM_TEX_SPECULAR))
-			shader->setUniformValue(uniloc, GLint(1));
-		else
-			shader->setUniformValue(uniloc, GLint(0));
-
 		uniloc = shader->uniformLocation("ModelViewMatrix");
 		shader->setUniformValue(uniloc,	render_mtxModelView);
 
@@ -762,7 +728,7 @@ bool QWZM::bindShader(int type)
 		shader->setUniformValue(uniloc,	render_mtxNM);
 
 		uniloc = shader->uniformLocation("lightPosition");
-		shader->setUniformValue(uniloc,	render_posSun *	render_mtxModelView_preAnim.inverted());
+		shader->setUniformValue(uniloc,	render_posSun * render_mtxModelView_preAnim.inverted());
 /*
 		uniloc = shader->uniformLocation("sceneColor");
 		shader->setUniformValue(uniloc,
