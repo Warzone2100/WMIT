@@ -49,16 +49,14 @@ bool tryToReadDirective(std::istream &in, const char* directive, const bool isOp
 	std::streampos entrypoint = in.tellg();
 
 	in >> str;
-	if (in.eof())
-		return isOptional;
-	if (in.fail())
-		return false;
-
-	if (str.compare(directive) != 0)
+	if (in.fail() || (str.compare(directive) != 0))
 	{
 		// Not a failure if some other directive found and this is optional, just rewind
 		if (isOptional)
+		{
+			in.clear();
 			in.seekg(entrypoint);
+		}
 		return isOptional;
 	}
 
