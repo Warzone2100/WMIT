@@ -867,13 +867,13 @@ void Mesh::calculateTBForIndices(const IndexedTri &trio)
 	WZMVertex4 tangent = WZMVertex((deltaPos1 * deltaUV2.v() - deltaPos2 * deltaUV1.v()) * r);
 	WZMVertex bitangent = (deltaPos2 * deltaUV1.u() - deltaPos1 * deltaUV2.u()) * r;
 
-	m_tangentArray[trio.a()] += tangent;
-	m_tangentArray[trio.b()] += tangent;
-	m_tangentArray[trio.c()] += tangent;
+	m_tangentArray[trio.a()] -= tangent;
+	m_tangentArray[trio.b()] -= tangent;
+	m_tangentArray[trio.c()] -= tangent;
 
-	m_bitangentArray[trio.a()] += bitangent;
-	m_bitangentArray[trio.b()] += bitangent;
-	m_bitangentArray[trio.c()] += bitangent;
+	m_bitangentArray[trio.a()] -= bitangent;
+	m_bitangentArray[trio.b()] -= bitangent;
+	m_bitangentArray[trio.c()] -= bitangent;
 }
 
 void Mesh::finishTBCalculation()
@@ -883,16 +883,17 @@ void Mesh::finishTBCalculation()
 		WZMVertex n = m_normalArray[i];
 
 		// Gram-Schmidt orthogonalize
-		m_tangentArray[i] = WZMVertex4(WZMVertex(m_tangentArray[i].xyz() - n * n.dotProduct(m_tangentArray[i].xyz())).normalize());
+		WZMVertex t = m_tangentArray[i].xyz();
+		t = WZMVertex(t - n * n.dotProduct(t)).normalize();
 
 		// Calculate handedness
-		if (n.crossProduct(m_tangentArray[i].xyz()).dotProduct(m_bitangentArray[i]) < 0.0f)
+		if (n.crossProduct(t).dotProduct(m_bitangentArray[i]) < 0.0f)
 		{
-			m_tangentArray[i].w() = -1.0f;
+			m_tangentArray[i] = WZMVertex4(t, -1.f);
 		}
 		else
 		{
-			m_tangentArray[i].w() = 1.0f;
+			m_tangentArray[i] = WZMVertex4(t, 1.f);
 		}
 	}
 }
