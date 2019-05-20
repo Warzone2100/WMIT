@@ -142,19 +142,19 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 			{
 				render_mtxModelView_preAnim = render_mtxModelView;
 
-				glScalef(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
 				glTranslatef(curAnimFrame.trans.x(), curAnimFrame.trans.y(), curAnimFrame.trans.z());
 				glRotatef(curAnimFrame.rot.x(), 1.f, 0.f, 0.f);
 				glRotatef(curAnimFrame.rot.y(), 0.f, 1.f, 0.f);
 				glRotatef(curAnimFrame.rot.z(), 0.f, 0.f, 1.f);
+				glScalef(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
 
 				if (!isFixedPipelineRenderer())
 				{
-					render_mtxModelView.scale(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
 					render_mtxModelView.translate(curAnimFrame.trans.x(), curAnimFrame.trans.y(), curAnimFrame.trans.z());
 					render_mtxModelView.rotate(curAnimFrame.rot.x(), 1.f, 0.f, 0.f);
 					render_mtxModelView.rotate(curAnimFrame.rot.y(), 0.f, 1.f, 0.f);
-					render_mtxModelView.rotate(curAnimFrame.rot.z(), 0.f, 0.f, 1.f);;
+					render_mtxModelView.rotate(curAnimFrame.rot.z(), 0.f, 0.f, 1.f);
+					render_mtxModelView.scale(curAnimFrame.scale.x(), curAnimFrame.scale.y(), curAnimFrame.scale.z());
 				}
 			}
 		}
