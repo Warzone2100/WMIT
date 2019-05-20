@@ -76,6 +76,7 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 	if (!isFixedPipelineRenderer())
 	{
 		const static QVector4D wz_scale(-WZ_SCALE, WZ_SCALE, WZ_SCALE, 1.f);
+		const static QVector4D pos_invert(-1.f, -1.f, -1.f, 1.f);
 
 		render_mtxModelView = QMatrix4x4(mtxModelView).transposed();
 		if (m_active_mesh < 0)
@@ -85,6 +86,10 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 
 		render_mtxProj = QMatrix4x4(mtxProj).transposed();
 		render_posSun = QVector4D(posSun[0], posSun[1], posSun[2], posSun[3]) * wz_scale;
+
+		// Invert sun position for external shader, so it's same as in wz
+		if (isShaderExternal(activeShader))
+			render_posSun *= pos_invert;
 	}
 
 	glScalef(-WZ_SCALE, WZ_SCALE, WZ_SCALE); // Scale from warzone to fit in our scene. possibly a FIXME
