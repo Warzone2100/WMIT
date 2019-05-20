@@ -21,7 +21,7 @@
 #include <QDialog>
 
 #include <QString>
-#include <QSet>
+#include <QList>
 
 namespace Ui {
     class TexConfigDialog;
@@ -33,12 +33,12 @@ class TexConfigDialog : public QDialog
 
 	Ui::TexConfigDialog *ui;
 
-	QSet<QString> m_searchdirs;
+	QList<QString> m_searchdirs;
 
 	void resetDirsList();
 
 public:
-	TexConfigDialog(QWidget *parent = 0);
+	TexConfigDialog(QWidget *parent = nullptr);
 	~TexConfigDialog();
 
 	void saveSearchDirs();
@@ -48,7 +48,7 @@ protected:
 	void changeEvent(QEvent *e);
 
 signals:
-	void updateTextureSearchDirs(QStringList);
+	void updateTextureSearchDirs(const QStringList&);
 
 private slots:
 	void on_buttonBox_rejected();

@@ -22,6 +22,7 @@
 
 #include <QFileDialog>
 #include <QSettings>
+#include <QSet>
 
 #include "wmit.h"
 
@@ -42,26 +43,26 @@ TexConfigDialog::~TexConfigDialog()
 void TexConfigDialog::loadSearchDirs()
 {
 	QSettings settings;
-	QStringList list = settings.value(WMIT_SETTINGS_TEXSEARCHDIRS, QStringList()).toStringList();
-	m_searchdirs = QSet<QString>::fromList(list);
+	m_searchdirs = settings.value(WMIT_SETTINGS_TEXSEARCHDIRS, QStringList()).toStringList();
+	m_searchdirs.sort();
 
 	resetDirsList();
 
-	emit updateTextureSearchDirs(m_searchdirs.toList());
+	emit updateTextureSearchDirs(m_searchdirs);
 }
 
 void TexConfigDialog::saveSearchDirs()
 {
 	QSettings settings;
-	settings.setValue(WMIT_SETTINGS_TEXSEARCHDIRS, QVariant(m_searchdirs.toList()));
+	settings.setValue(WMIT_SETTINGS_TEXSEARCHDIRS, QVariant(m_searchdirs));
 
-	emit updateTextureSearchDirs(m_searchdirs.toList());
+	emit updateTextureSearchDirs(m_searchdirs);
 }
 
 void TexConfigDialog::resetDirsList()
 {
 	ui->lw_dirs->clear();
-	ui->lw_dirs->addItems(m_searchdirs.toList());
+	ui->lw_dirs->addItems(m_searchdirs);
 }
 
 void TexConfigDialog::changeEvent(QEvent *e)
@@ -109,14 +110,20 @@ void TexConfigDialog::on_pb_remove_clicked()
 void TexConfigDialog::on_buttonBox_accepted()
 {
 	m_searchdirs.clear();
+
+	QSet<QString> dirs;
+
 	QListWidgetItem* itm;
 
 	for (int i = 0; i < ui->lw_dirs->count(); ++i)
 	{
 		itm = ui->lw_dirs->item(i);
 		if (itm)
-			m_searchdirs += itm->text();
+			dirs += itm->text();
 	}
+
+	m_searchdirs = dirs.toList();
+	m_searchdirs.sort();
 
 	saveSearchDirs();
 	resetDirsList();

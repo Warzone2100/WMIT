@@ -52,8 +52,8 @@ TextureDialog::TextureDialog(QWidget *parent) :
 		this, SLOT(iconDoubleClicked(QListWidgetItem*)));
 
 	// connect then kick loader for chain reaction
-	connect(m_texConfigDialog, SIGNAL(updateTextureSearchDirs(QStringList)),
-		this, SLOT(setSearchDirs(QStringList)));
+	connect(m_texConfigDialog, SIGNAL(updateTextureSearchDirs(const QStringList&)),
+		this, SLOT(setSearchDirs(const QStringList&)));
 
 	m_texConfigDialog->loadSearchDirs();
 
