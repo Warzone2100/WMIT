@@ -648,7 +648,7 @@ bool QWZM::initShader(int type)
 		uniLoc = shader->uniformLocation("alphaTest");
 		shader->setUniformValue(uniLoc, GLint(0));
 
-		const GLfloat defaultLight[4][4] = {{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f},  {0.8f, 0.8f, 0.8f, 1.0f},  {1.0f, 1.0f, 1.0f, 1.0f}};
+		const GLfloat defaultLight[4][4] = {{0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f},  {0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f}};
 
 		uniLoc = shader->uniformLocation("colour");
 		shader->setUniformValue(uniLoc,	1.f, 1.f, 1.f, 1.f);
