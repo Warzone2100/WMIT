@@ -257,25 +257,25 @@ void APieLevel< V, P, C>::write(std::ostream &out, const PieCaps &caps) const
 }
 
 template<typename V, typename P, typename C>
-int APieLevel< V, P, C>::points() const
+size_t APieLevel< V, P, C>::points() const
 {
 	return m_points.size();
 }
 
 template<typename V, typename P, typename C>
-int APieLevel< V, P, C>::normals() const
+size_t APieLevel< V, P, C>::normals() const
 {
 	return m_normals.size();
 }
 
 template<typename V, typename P, typename C>
-int APieLevel< V, P, C>::polygons() const
+size_t APieLevel< V, P, C>::polygons() const
 {
 	return m_polygons.size();
 }
 
 template<typename V, typename P, typename C>
-int APieLevel< V, P, C>::connectors() const
+size_t APieLevel< V, P, C>::connectors() const
 {
 	return m_connectors.size();
 }
@@ -637,7 +637,7 @@ void APieModel<L>::write(std::ostream& out, const PieCaps *piecaps) const
 }
 
 template <typename L>
-unsigned APieModel<L>::levels() const
+size_t APieModel<L>::levels() const
 {
 	return m_levels.size();
 }

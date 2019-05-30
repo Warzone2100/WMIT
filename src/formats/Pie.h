@@ -181,10 +181,10 @@ public:
 	virtual bool read(std::istream& in, PieCaps& caps);
 	virtual void write(std::ostream& out, const PieCaps& caps) const;
 
-	int points() const;
-	int normals() const;
-	int polygons() const;
-	int connectors() const;
+	size_t points() const;
+	size_t normals() const;
+	size_t polygons() const;
+	size_t connectors() const;
 
 	bool isValid() const;
 
@@ -214,7 +214,7 @@ public:
 	virtual bool read(std::istream& in);
 	virtual void write(std::ostream& out, const PieCaps* piecaps = nullptr) const;
 
-	unsigned levels() const;
+	size_t levels() const;
 	virtual unsigned getType() const;
 
 	bool isValid() const;
