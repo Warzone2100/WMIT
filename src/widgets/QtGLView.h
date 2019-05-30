@@ -40,7 +40,8 @@ class IGLRenderable;
 class IAnimatable;
 class ITexturedRenderable;
 class ITCMaskRenderable;
-class QGLShaderProgram;
+class QOpenGLShaderProgram;
+class QOpenGLTexture;
 
 class QtGLView : public QGLViewer, public IGLTextureManager, public IGLShaderManager
 {
@@ -86,10 +87,10 @@ protected:
 
 	struct ManagedGLTexture : public GLTexture
 	{
+		QOpenGLTexture *pTexture;
 		int users;
 		bool update;
-		ManagedGLTexture(GLuint id, GLsizei w, GLsizei h):
-				GLTexture(id, w, h), users(1), update(false){}
+		ManagedGLTexture(QOpenGLTexture *pInputTexture);
 
 		virtual ~ManagedGLTexture(){}
 	};

@@ -1093,7 +1093,7 @@ void MainWindow::updateRecentFilesMenu()
 
 void MainWindow::updateModelRender()
 {
-	m_ui->centralWidget->updateGL();
+	m_ui->centralWidget->update();
 }
 
 void MainWindow::updateConnectorsView()
