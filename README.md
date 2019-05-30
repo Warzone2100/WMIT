@@ -32,7 +32,7 @@ Clone the Git repo:
 * Prerequisites
    * **Visual Studio 2017+**
    * **CMake 3.11+** (https://cmake.org/)
-   * **QT 5 (ideally, Qt 5.9+)** (https://www.qt.io/)
+   * **QT 5.4+ (ideally, Qt 5.9+)** (https://www.qt.io/)
    * NSIS _[optional] (used to generate the installer package)_ (https://nsis.sourceforge.io/Download)
 
 * **Building:**
@@ -54,7 +54,7 @@ Clone the Git repo:
 * Prerequisites
    * **GCC / Clang**
    * **CMake 3.5+** (https://cmake.org/)
-   * **QT 5 (ideally, Qt 5.9+)** (https://www.qt.io/)
+   * **QT 5.4+ (ideally, Qt 5.9+)** (https://www.qt.io/)
 * Examples of installing prerequisites:
    * Ubuntu 18.04:
       * `sudo apt-get install git cmake build-essential ninja-build automake qt5-default`

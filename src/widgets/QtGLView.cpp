@@ -28,7 +28,8 @@
 #include <QImage>
 #include <QApplication>
 
-#include <QGLShaderProgram>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLTexture>
 #include <QtDebug>
 
 #include <QGLViewer/vec.h>
@@ -72,8 +73,7 @@ QtGLView::~QtGLView()
 /* This is crashing on F29 and unclear if we need this on destroy
 	foreach (ManagedGLTexture texture, m_textures)
 	{
-		const GLuint id = texture.id();
-		QGLWidget::deleteTexture(id);
+ 		texture.pTexture->destroy();
 	}
 */
 }
@@ -358,23 +358,28 @@ void QtGLView::updateTextures()
 			texIt.value().update = false;
 			if (!image.isNull())
 			{
-				image = convertToGLFormat(image.mirrored(false, true));
-				glBindTexture(GL_TEXTURE_2D, texIt.value().id());
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+				texIt.value().pTexture->setData(image.mirrored(false, true));
 			}
 		}
 	}
-	updateGL();
+	update();
 }
 
 void QtGLView::_deleteTexture(t_texIt& texIt)
 {
 	textureUpdater.removePath(texIt.key());
-	QGLWidget::deleteTexture(texIt.value().id());
+	texIt.value().pTexture->destroy();
 	texIt = m_textures.erase(texIt);
 }
 
 /// GLTextureManager components
+
+QtGLView::ManagedGLTexture::ManagedGLTexture(QOpenGLTexture *pInputTexture):
+	GLTexture(pInputTexture->textureId(), pInputTexture->width(), pInputTexture->height()),
+	pTexture(pInputTexture),
+	users(1),
+	update(false)
+{}
 
 GLTexture QtGLView::createTexture(const QString& fileName)
 {
@@ -384,9 +389,10 @@ GLTexture QtGLView::createTexture(const QString& fileName)
 		if (texIt == m_textures.end())
 		{
 			QImage image(fileName);
-			ManagedGLTexture texture(QGLWidget::bindTexture(image, GL_TEXTURE_2D, GL_RGBA, QGLContext::LinearFilteringBindOption),
-									 image.width(),
-									 image.height());
+			QOpenGLTexture *pTexture = new QOpenGLTexture(image);
+			pTexture->setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
+			ManagedGLTexture texture(pTexture);
+			texture.pTexture->bind();
 
 			m_textures.insert(fileName, texture);
 
@@ -484,9 +490,9 @@ void QtGLView::deleteAllTextures()
 bool QtGLView::loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag,
                           QString* errString)
 {
-	if (QGLShaderProgram::hasOpenGLShaderPrograms(context()))
+	if (QOpenGLShaderProgram::hasOpenGLShaderPrograms(context()))
 	{
-		QGLShaderProgram* shader = getShader(type);
+		QOpenGLShaderProgram* shader = getShader(type);
 		bool ok_flag = true;
 
 		if (shader != nullptr)
@@ -496,16 +502,16 @@ bool QtGLView::loadShader(int type, const QString& fileNameVert, const QString& 
 		}
 		else
 		{
-			shader = new QGLShaderProgram(this);
+			shader = new QOpenGLShaderProgram(this);
 		}
 
-		if (!shader->addShaderFromSourceFile(QGLShader::Vertex, fileNameVert))
+		if (!shader->addShaderFromSourceFile(QOpenGLShader::Vertex, fileNameVert))
 		{
 			if (errString)
 				*errString = QString("QtGLView::loadShader - Error loading vertex shader:\n%1").arg(shader->log());
 			ok_flag = false;
 		}
-		else if (!shader->addShaderFromSourceFile(QGLShader::Fragment, fileNameFrag))
+		else if (!shader->addShaderFromSourceFile(QOpenGLShader::Fragment, fileNameFrag))
 		{
 			if (errString)
 				*errString = QString("QtGLView::loadShader - Error loading fragment shader:\n%1").arg(shader->log());
@@ -533,9 +539,9 @@ bool QtGLView::loadShader(int type, const QString& fileNameVert, const QString& 
 
 void QtGLView::unloadShader(int type)
 {
-	if (QGLShaderProgram::hasOpenGLShaderPrograms(context()))
+	if (QOpenGLShaderProgram::hasOpenGLShaderPrograms(context()))
 	{
-		QGLShaderProgram* shader = getShader(type);
+		QOpenGLShaderProgram* shader = getShader(type);
 
 		if (shader != nullptr)
 		{

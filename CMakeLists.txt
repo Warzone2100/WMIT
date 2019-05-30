@@ -92,7 +92,7 @@ endif()
 
 find_package(OpenGL ${_required_dependency_flag})
 find_package(QGLViewer ${_required_dependency_flag})
-find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL Xml ${_required_dependency_flag})
+find_package(Qt5 5.4.0 COMPONENTS Core Gui Widgets OpenGL Xml ${_required_dependency_flag})
 
 ##################################################
 

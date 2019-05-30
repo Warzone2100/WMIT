@@ -23,11 +23,11 @@
 #include <QPointer>
 #include <QHash>
 #include <QHashIterator>
-#include <QGLShaderProgram>
+#include <QOpenGLShaderProgram>
 
 struct ShaderInfo
 {
-	QPointer<QGLShaderProgram> program;
+	QPointer<QOpenGLShaderProgram> program;
 	bool is_external;
 };
 
@@ -52,7 +52,7 @@ public:
 		return m_shaders.contains(type) && m_shaders.value(type).is_external;
 	}
 
-	virtual QGLShaderProgram* getShader(int type)
+	virtual QOpenGLShaderProgram* getShader(int type)
 	{
 		if (m_shaders.contains(type))
 			return m_shaders[type].program.data();

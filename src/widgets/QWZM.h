@@ -29,6 +29,7 @@
 #include <QStringList>
 #include <QObject>
 #include <QMap>
+#include <QColor>
 
 #include "WZM.h"
 #include "IAnimatable.h"

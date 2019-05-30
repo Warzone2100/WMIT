@@ -57,7 +57,7 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 {
 	int activeShader = getActiveShader();
 
-	QGLShaderProgram* shader = nullptr;
+	QOpenGLShaderProgram* shader = nullptr;
 
 	glPushAttrib(GL_TEXTURE_BIT);
 
@@ -601,7 +601,7 @@ bool QWZM::initShader(int type)
 	if (!m_shaderman)
 		return false;
 
-	QGLShaderProgram* shader = m_shaderman->getShader(type);
+	QOpenGLShaderProgram* shader = m_shaderman->getShader(type);
 
 	if (!shader || !shader->bind())
 		return false;
@@ -681,7 +681,7 @@ bool QWZM::bindShader(int type)
 	if (!m_shaderman)
 		return false;
 
-	QGLShaderProgram* shader = m_shaderman->getShader(type);
+	QOpenGLShaderProgram* shader = m_shaderman->getShader(type);
 
 	if (!shader || !shader->bind())
 		return false;
@@ -777,7 +777,7 @@ void QWZM::releaseShader(int type)
 {
 	if (m_shaderman)
 	{
-		QGLShaderProgram* shader = m_shaderman->getShader(type);
+		QOpenGLShaderProgram* shader = m_shaderman->getShader(type);
 		if (shader)
 		{
 			shader->release();
