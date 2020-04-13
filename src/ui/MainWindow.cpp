@@ -337,6 +337,7 @@ bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, boo
 
 	if (!guessModelTypeFromFilename(file, type))
 	{
+		printf("Could not guess model type from filename. Only formats PIE, WZM, and OBJ are supported.\n");
 		return false;
 	}
 
