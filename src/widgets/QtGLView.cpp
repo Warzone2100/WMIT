@@ -37,41 +37,12 @@
 #include "IGLTexturedRenderable.h"
 #include "IGLShaderRenderable.h"
 #include "IAnimatable.h"
+#include "WZLight.h"
 
 using namespace qglviewer;
 
-enum LIGHTING_TYPE {
-	LIGHT_EMISSIVE, LIGHT_AMBIENT, LIGHT_DIFFUSE, LIGHT_SPECULAR, LIGHT_TYPE_MAX
-};
-
-typedef std::array<std::array<GLfloat, 4>, LIGHT_TYPE_MAX> light_cols_t;
 const Vec lightPos(2.25, 6., 4.5);
-const static light_cols_t lightCol0_default = {{
-	{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f}, {0.8f, 0.8f, 0.8f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}
-};
-static light_cols_t lightCol0_external = lightCol0_default;
-static light_cols_t lightCol0 = lightCol0_default;
-static bool lightCol_use_external = false;
 
-const static QString base_lightcol_name = "3DView/LightColor";
-
-void getExtLightColFromSettings(const LIGHTING_TYPE type, const char* lightcol_suffix)
-{
-	QStringList lightCol = QSettings().value(base_lightcol_name + lightcol_suffix).toStringList();
-	if (lightCol.count() == 4)
-		for (size_t idx = 0; idx < 4; ++idx) {
-			lightCol0_external[type][idx] = lightCol[static_cast<int>(idx)].toFloat();
-		}
-}
-
-void setExtLightColToSettings(const LIGHTING_TYPE type, const char* lightcol_suffix)
-{
-	QStringList lightCol;
-	for (size_t idx = 0; idx < 4; ++idx) {
-		lightCol.append(QString("%1").arg(static_cast<double>(lightCol0_external[type][idx])));
-	}
-	QSettings().setValue(base_lightcol_name + lightcol_suffix, lightCol);
-}
 
 QtGLView::QtGLView(QWidget *parent) :
 		QGLViewer(parent),
@@ -85,13 +56,8 @@ QtGLView::QtGLView(QWidget *parent) :
 	setGridIsDrawn(true);
 	setAxisIsDrawn(true);
 
-	getExtLightColFromSettings(LIGHT_EMISSIVE, "_E");
-	getExtLightColFromSettings(LIGHT_AMBIENT, "_A");
-	getExtLightColFromSettings(LIGHT_DIFFUSE, "_D");
-	getExtLightColFromSettings(LIGHT_SPECULAR, "_S");
+	loadLightColorSetting();
 
-	lightCol_use_external = QSettings().value(base_lightcol_name + "_UseExternal",
-						  lightCol_use_external).toBool();
 	if (lightCol_use_external)
 	{
 		lightCol0 = lightCol0_external;
@@ -112,12 +78,7 @@ QtGLView::~QtGLView()
 	}
 */
 
-	setExtLightColToSettings(LIGHT_EMISSIVE, "_E");
-	setExtLightColToSettings(LIGHT_AMBIENT, "_A");
-	setExtLightColToSettings(LIGHT_DIFFUSE, "_D");
-	setExtLightColToSettings(LIGHT_SPECULAR, "_S");
-
-	QSettings().setValue(base_lightcol_name + "_UseExternal", lightCol_use_external);
+	saveLightColorSettings();
 }
 
 void QtGLView::animate()
