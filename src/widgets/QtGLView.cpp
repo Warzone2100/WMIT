@@ -44,27 +44,30 @@ enum LIGHTING_TYPE {
 	LIGHT_EMISSIVE, LIGHT_AMBIENT, LIGHT_DIFFUSE, LIGHT_SPECULAR, LIGHT_TYPE_MAX
 };
 
+typedef std::array<std::array<GLfloat, 4>, LIGHT_TYPE_MAX> light_cols_t;
 const Vec lightPos(2.25, 6., 4.5);
-static GLfloat lightCol0[LIGHT_TYPE_MAX][4] = {
-	{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f}, {0.8f, 0.8f, 0.8f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}
+const static light_cols_t lightCol0_default = {{
+	{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f}, {0.8f, 0.8f, 0.8f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}
 };
+static light_cols_t lightCol0_external = lightCol0_default;
+static light_cols_t lightCol0 = lightCol0_default;
 
 const static QString base_lightcol_name = "3DView/LightColor";
 
-void getLightColFromSettings(const LIGHTING_TYPE type, const char* lightcol_suffix)
+void getExtLightColFromSettings(const LIGHTING_TYPE type, const char* lightcol_suffix)
 {
 	QStringList lightCol = QSettings().value(base_lightcol_name + lightcol_suffix).toStringList();
 	if (lightCol.count() == 4)
-		for (int idx = 0; idx < 4; ++idx) {
-			lightCol0[type][idx] = lightCol[idx].toFloat();
+		for (size_t idx = 0; idx < 4; ++idx) {
+			lightCol0_external[type][idx] = lightCol[static_cast<int>(idx)].toFloat();
 		}
 }
 
-void setLightColToSettings(const LIGHTING_TYPE type, const char* lightcol_suffix)
+void setExtLightColToSettings(const LIGHTING_TYPE type, const char* lightcol_suffix)
 {
 	QStringList lightCol;
-	for (int idx = 0; idx < 4; ++idx) {
-		lightCol.append(QString("%1").arg(static_cast<double>(lightCol0[type][idx])));
+	for (size_t idx = 0; idx < 4; ++idx) {
+		lightCol.append(QString("%1").arg(static_cast<double>(lightCol0_external[type][idx])));
 	}
 	QSettings().setValue(base_lightcol_name + lightcol_suffix, lightCol);
 }
@@ -81,10 +84,15 @@ QtGLView::QtGLView(QWidget *parent) :
 	setGridIsDrawn(true);
 	setAxisIsDrawn(true);
 
-	getLightColFromSettings(LIGHT_EMISSIVE, "_E");
-	getLightColFromSettings(LIGHT_AMBIENT, "_A");
-	getLightColFromSettings(LIGHT_DIFFUSE, "_D");
-	getLightColFromSettings(LIGHT_SPECULAR, "_S");
+	getExtLightColFromSettings(LIGHT_EMISSIVE, "_E");
+	getExtLightColFromSettings(LIGHT_AMBIENT, "_A");
+	getExtLightColFromSettings(LIGHT_DIFFUSE, "_D");
+	getExtLightColFromSettings(LIGHT_SPECULAR, "_S");
+
+	if (QSettings().value(base_lightcol_name + "_UseExternal").toBool())
+	{
+		lightCol0 = lightCol0_external;
+	}
 }
 
 QtGLView::~QtGLView()
@@ -101,10 +109,10 @@ QtGLView::~QtGLView()
 	}
 */
 
-	setLightColToSettings(LIGHT_EMISSIVE, "_E");
-	setLightColToSettings(LIGHT_AMBIENT, "_A");
-	setLightColToSettings(LIGHT_DIFFUSE, "_D");
-	setLightColToSettings(LIGHT_SPECULAR, "_S");
+	setExtLightColToSettings(LIGHT_EMISSIVE, "_E");
+	setExtLightColToSettings(LIGHT_AMBIENT, "_A");
+	setExtLightColToSettings(LIGHT_DIFFUSE, "_D");
+	setExtLightColToSettings(LIGHT_SPECULAR, "_S");
 }
 
 void QtGLView::animate()
@@ -120,11 +128,11 @@ void QtGLView::init()
 	// initialize GLEW
 	glewInit();
 
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightCol0[LIGHT_EMISSIVE]);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightCol0[LIGHT_EMISSIVE].data());
 	glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightCol0[LIGHT_AMBIENT]);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightCol0[LIGHT_DIFFUSE]);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, lightCol0[LIGHT_SPECULAR]);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lightCol0[LIGHT_AMBIENT].data());
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightCol0[LIGHT_DIFFUSE].data());
+	glLightfv(GL_LIGHT0, GL_SPECULAR, lightCol0[LIGHT_SPECULAR].data());
 	glEnable(GL_LIGHT0);
 
 	glEnable(GL_LIGHTING);
