@@ -21,6 +21,7 @@
 #include "Pie.h"
 
 #include "QtGLView.h"
+#include "WZLight.h"
 
 static const char vertexAtributeName[] = "vertex";
 static const char vertexNormalAtributeName[] = "vertexNormal";
@@ -587,15 +588,6 @@ void QWZM::clearTextureUnits(int type)
 	}
 }
 
-enum WZ_LIGHTING_TYPE
-{
-	LIGHT_EMISSIVE,
-	LIGHT_AMBIENT,
-	LIGHT_DIFFUSE,
-	LIGHT_SPECULAR,
-	LIGHT_MAX
-};
-
 bool QWZM::initShader(int type)
 {
 	if (!m_shaderman)
@@ -648,26 +640,24 @@ bool QWZM::initShader(int type)
 		uniLoc = shader->uniformLocation("alphaTest");
 		shader->setUniformValue(uniLoc, GLint(0));
 
-		const GLfloat defaultLight[4][4] = {{0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f},  {0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f}};
-
 		uniLoc = shader->uniformLocation("colour");
 		shader->setUniformValue(uniLoc,	1.f, 1.f, 1.f, 1.f);
 
 		uniLoc = shader->uniformLocation("sceneColor");
-		shader->setUniformValue(uniLoc,	defaultLight[LIGHT_EMISSIVE][0], defaultLight[LIGHT_EMISSIVE][1],
-				defaultLight[LIGHT_EMISSIVE][2], defaultLight[LIGHT_EMISSIVE][3]);
+		shader->setUniformValue(uniLoc,	lightCol0[LIGHT_EMISSIVE][0], lightCol0[LIGHT_EMISSIVE][1],
+				lightCol0[LIGHT_EMISSIVE][2], lightCol0[LIGHT_EMISSIVE][3]);
 
 		uniLoc = shader->uniformLocation("ambient");
-		shader->setUniformValue(uniLoc,	defaultLight[LIGHT_AMBIENT][0], defaultLight[LIGHT_AMBIENT][1],
-				defaultLight[LIGHT_AMBIENT][2], defaultLight[LIGHT_AMBIENT][3]);
+		shader->setUniformValue(uniLoc,	lightCol0[LIGHT_AMBIENT][0], lightCol0[LIGHT_AMBIENT][1],
+				lightCol0[LIGHT_AMBIENT][2], lightCol0[LIGHT_AMBIENT][3]);
 
 		uniLoc = shader->uniformLocation("diffuse");
-		shader->setUniformValue(uniLoc,	defaultLight[LIGHT_DIFFUSE][0], defaultLight[LIGHT_DIFFUSE][1],
-				defaultLight[LIGHT_DIFFUSE][2], defaultLight[LIGHT_DIFFUSE][3]);
+		shader->setUniformValue(uniLoc,	lightCol0[LIGHT_DIFFUSE][0], lightCol0[LIGHT_DIFFUSE][1],
+				lightCol0[LIGHT_DIFFUSE][2], lightCol0[LIGHT_DIFFUSE][3]);
 
 		uniLoc = shader->uniformLocation("specular");
-		shader->setUniformValue(uniLoc,	defaultLight[LIGHT_SPECULAR][0], defaultLight[LIGHT_SPECULAR][1],
-				defaultLight[LIGHT_SPECULAR][2], defaultLight[LIGHT_SPECULAR][3]);
+		shader->setUniformValue(uniLoc,	lightCol0[LIGHT_SPECULAR][0], lightCol0[LIGHT_SPECULAR][1],
+				lightCol0[LIGHT_SPECULAR][2], lightCol0[LIGHT_SPECULAR][3]);
 
 		break;
 	}
