@@ -22,7 +22,7 @@
 
 #include <GL/glew.h>
 
-#include <time.h>
+#include <chrono>
 
 #include <QtCore>
 #include <QString>
@@ -145,14 +145,14 @@ private:
 
 	int m_active_mesh;
 	bool m_pending_changes;
-	clock_t m_timeAnimationStarted;
+	std::chrono::steady_clock::time_point m_timeAnimationStarted;
 
 	QColor m_tcmaskColour;
 
 	bool m_drawNormals, m_drawTangentAndBitangent;
 	bool m_drawCenterPoint;
 
-	float m_animation_elapsed_msecs;
+	double m_animation_elapsed_msecs;
 	bool m_drawConnectors;
 
 	int m_enableTangentsInShaders;
