@@ -51,6 +51,7 @@ const static light_cols_t lightCol0_default = {{
 };
 static light_cols_t lightCol0_external = lightCol0_default;
 static light_cols_t lightCol0 = lightCol0_default;
+static bool lightCol_use_external = false;
 
 const static QString base_lightcol_name = "3DView/LightColor";
 
@@ -89,7 +90,9 @@ QtGLView::QtGLView(QWidget *parent) :
 	getExtLightColFromSettings(LIGHT_DIFFUSE, "_D");
 	getExtLightColFromSettings(LIGHT_SPECULAR, "_S");
 
-	if (QSettings().value(base_lightcol_name + "_UseExternal").toBool())
+	lightCol_use_external = QSettings().value(base_lightcol_name + "_UseExternal",
+						  lightCol_use_external).toBool();
+	if (lightCol_use_external)
 	{
 		lightCol0 = lightCol0_external;
 	}
@@ -113,6 +116,8 @@ QtGLView::~QtGLView()
 	setExtLightColToSettings(LIGHT_AMBIENT, "_A");
 	setExtLightColToSettings(LIGHT_DIFFUSE, "_D");
 	setExtLightColToSettings(LIGHT_SPECULAR, "_S");
+
+	QSettings().setValue(base_lightcol_name + "_UseExternal", lightCol_use_external);
 }
 
 void QtGLView::animate()
