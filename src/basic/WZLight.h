@@ -34,6 +34,9 @@ const static light_cols_t lightCol0_default = {{
 	{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f}, {0.8f, 0.8f, 0.8f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}
 };
 
+//{{0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f},  {0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f}};
+
+
 static light_cols_t lightCol0_external = lightCol0_default;
 static light_cols_t lightCol0 = lightCol0_default;
 static bool lightCol_use_external = false;
