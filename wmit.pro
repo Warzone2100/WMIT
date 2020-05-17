@@ -38,6 +38,7 @@ HEADERS += \
     src/basic/Polygon_t.hpp \
     src/basic/Vector.h \
     src/basic/VectorTypes.h \
+    src/basic/WZLight.h \
     src/widgets/QWZM.h \
     src/ui/MaterialDock.h \
     src/ui/meshdock.h
@@ -56,6 +57,7 @@ SOURCES += \
     src/main.cpp \
     src/Generic.cpp \
     src/basic/GLTexture.cpp \
+    src/basic/WZLight.cpp \
     src/widgets/QWZM.cpp \
     src/widgets/QtGLView.cpp \
     src/ui/TextureDialog.cpp \
