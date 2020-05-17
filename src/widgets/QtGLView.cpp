@@ -49,6 +49,25 @@ static GLfloat lightCol0[LIGHT_TYPE_MAX][4] = {
 	{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f}, {0.8f, 0.8f, 0.8f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}
 };
 
+const static QString base_lightcol_name = "3DView/LightColor";
+
+void getLightColFromSettings(const LIGHTING_TYPE type, const char* lightcol_suffix)
+{
+	QStringList lightCol = QSettings().value(base_lightcol_name + lightcol_suffix).toStringList();
+	if (lightCol.count() == 4)
+		for (int idx = 0; idx < 4; ++idx) {
+			lightCol0[type][idx] = lightCol[idx].toFloat();
+		}
+}
+
+void setLightColToSettings(const LIGHTING_TYPE type, const char* lightcol_suffix)
+{
+	QStringList lightCol;
+	for (int idx = 0; idx < 4; ++idx) {
+		lightCol.append(QString("%1").arg(static_cast<double>(lightCol0[type][idx])));
+	}
+	QSettings().setValue(base_lightcol_name + lightcol_suffix, lightCol);
+}
 
 QtGLView::QtGLView(QWidget *parent) :
 		QGLViewer(parent),
@@ -61,6 +80,11 @@ QtGLView::QtGLView(QWidget *parent) :
 	setShortcut(DISPLAY_FPS, 0); // Disable stuff that won't work.
 	setGridIsDrawn(true);
 	setAxisIsDrawn(true);
+
+	getLightColFromSettings(LIGHT_EMISSIVE, "_E");
+	getLightColFromSettings(LIGHT_AMBIENT, "_A");
+	getLightColFromSettings(LIGHT_DIFFUSE, "_D");
+	getLightColFromSettings(LIGHT_SPECULAR, "_S");
 }
 
 QtGLView::~QtGLView()
@@ -76,6 +100,11 @@ QtGLView::~QtGLView()
  		texture.pTexture->destroy();
 	}
 */
+
+	setLightColToSettings(LIGHT_EMISSIVE, "_E");
+	setLightColToSettings(LIGHT_AMBIENT, "_A");
+	setLightColToSettings(LIGHT_DIFFUSE, "_D");
+	setLightColToSettings(LIGHT_SPECULAR, "_S");
 }
 
 void QtGLView::animate()
