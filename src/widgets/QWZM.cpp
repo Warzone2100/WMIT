@@ -17,8 +17,6 @@
 	along with WMIT.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <time.h>
-
 #include "QWZM.h"
 #include "Pie.h"
 
@@ -33,12 +31,12 @@ const GLint QWZM::winding = GL_CW;
 
 QWZM::QWZM(QObject *parent):
 	QObject(parent),
-	m_timeAnimationStarted(clock()),
+	m_timeAnimationStarted(std::chrono::steady_clock::now()),
 	m_tcmaskColour(0, 0x60, 0, 0xFF),
 	m_drawNormals(false),
 	m_drawTangentAndBitangent(false),
 	m_drawCenterPoint(false),
-	m_animation_elapsed_msecs(-1.f),
+	m_animation_elapsed_msecs(-1.),
 	m_drawConnectors(false),
 	m_enableTangentsInShaders(true)
 {
@@ -131,10 +129,11 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 				render_mtxModelView.scale(scale_all * scale_xyz[0], scale_all * scale_xyz[1], scale_all * scale_xyz[2]);
 		}
 
-		if ((m_animation_elapsed_msecs >= 0) && !msh.m_frameArray.empty())
+		if ((m_animation_elapsed_msecs >= 0.) && !msh.m_frameArray.empty())
 		{
-			const size_t animframe_to_draw = static_cast<size_t>(m_animation_elapsed_msecs /
-								  static_cast<float>(msh.m_frame_time)) % msh.m_frameArray.size();
+			const size_t animframe_fromtime = static_cast<size_t>(m_animation_elapsed_msecs /
+								  static_cast<double>(msh.m_frame_time));
+			const size_t animframe_to_draw = animframe_fromtime % msh.m_frameArray.size();
 			const Frame& curAnimFrame = msh.m_frameArray[animframe_to_draw];
 
 			// disabled frame if negative, for implementing key frame animation
@@ -371,8 +370,9 @@ void QWZM::drawConnectors(size_t mesh_idx)
 
 void QWZM::animate()
 {
-	const clock_t elapsed = clock() - m_timeAnimationStarted;
-	m_animation_elapsed_msecs = (static_cast<float>(elapsed) / CLOCKS_PER_SEC) * 1000.f;
+	using namespace std::chrono;
+	duration<double> time_span = steady_clock::now() - m_timeAnimationStarted;
+	m_animation_elapsed_msecs = time_span.count() * 1000.;
 }
 
 void QWZM::clear()
