@@ -32,7 +32,8 @@ enum LIGHTING_WZVER {
 	LIGHT_WZ32, LIGHT_WZ33, LIGHT_WZVER_MAX
 };
 
-typedef std::array<std::array<GLfloat, 4>, LIGHT_TYPE_MAX> light_cols_t;
+typedef std::array<GLfloat, 4> light_col_t;
+typedef std::array<light_col_t, LIGHT_TYPE_MAX> light_cols_t;
 
 extern light_cols_t lightCol0;
 
