@@ -21,6 +21,7 @@
 #define MATERIALDOCK_H
 
 #include "WZM.h"
+#include "WZLight.h"
 
 #include <QDockWidget>
 
@@ -49,6 +50,7 @@ public slots:
 private slots:
 	void changeShininess(int value);
 	void changeShininess(double value);
+	void colorsChanged(const light_cols_t& light_cols);
 
 private:
 	Ui::MaterialDock *m_ui;

@@ -28,6 +28,8 @@ MaterialDock::MaterialDock(QWidget *parent) :
 {
 	m_ui->setupUi(this);
 
+	connect(m_ui->colorWidget, SIGNAL(colorsChanged(light_cols_t)), this, SLOT(colorsChanged(light_cols_t)));
+
 	connect(m_ui->shininessDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(changeShininess(double)));
 	connect(m_ui->shininessSlider, SIGNAL(valueChanged(int)), this, SLOT(changeShininess(int)));
 }
@@ -52,9 +54,24 @@ void MaterialDock::changeEvent(QEvent *event)
 	}
 }
 
+void copyMaterialColors(const WZMVertex &mat_col, light_col_t& cols)
+{
+	for (size_t idx = 0; idx < 4; ++idx) {
+		cols[idx] = mat_col[idx];
+	}
+}
+
 void MaterialDock::setMaterial(const WZMaterial &mat)
 {
 	m_material = mat;
+
+	light_cols_t cols;
+	copyMaterialColors(mat.vals[WZM_MAT_AMBIENT], cols[LIGHT_AMBIENT]);
+	copyMaterialColors(mat.vals[WZM_MAT_EMISSIVE], cols[LIGHT_EMISSIVE]);
+	copyMaterialColors(mat.vals[WZM_MAT_DIFFUSE], cols[LIGHT_DIFFUSE]);
+	copyMaterialColors(mat.vals[WZM_MAT_SPECULAR], cols[LIGHT_SPECULAR]);
+
+	m_ui->colorWidget->setLightColors(cols);
 
 	setShininessOnUI(m_material.shininess);
 }
@@ -87,5 +104,22 @@ void MaterialDock::changeShininess(double value)
 	}
 
 	m_material.shininess = value;
+	emit materialChanged(m_material);
+}
+
+void setMaterialColors(WZMVertex &mat_col, const light_col_t& cols)
+{
+	for (size_t idx = 0; idx < 4; ++idx) {
+		mat_col[idx] = cols[idx];
+	}
+}
+
+void MaterialDock::colorsChanged(const light_cols_t &light_cols)
+{
+	setMaterialColors(m_material.vals[WZM_MAT_AMBIENT], light_cols[LIGHT_AMBIENT]);
+	setMaterialColors(m_material.vals[WZM_MAT_EMISSIVE], light_cols[LIGHT_EMISSIVE]);
+	setMaterialColors(m_material.vals[WZM_MAT_DIFFUSE], light_cols[LIGHT_DIFFUSE]);
+	setMaterialColors(m_material.vals[WZM_MAT_SPECULAR], light_cols[LIGHT_SPECULAR]);
+
 	emit materialChanged(m_material);
 }
