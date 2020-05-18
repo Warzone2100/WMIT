@@ -1,0 +1,21 @@
+name: Build WMIT
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get Qt
+      run: sudo apt-get install qtbase5-dev qt5-default
+    - name: Refresh submodules
+      run: git submodule update --init --recursive 
+    - name: Configure
+      run: ./configure_linux.sh
+    - name: Make
+      run: cmake --build build
