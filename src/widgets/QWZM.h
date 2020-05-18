@@ -126,6 +126,8 @@ public:
 
 	void addMesh (const Mesh& mesh);
 
+	void setEcmState(bool enable);
+
 private:
 	Q_DISABLE_COPY(QWZM)
 	void defaultConstructor();
@@ -157,6 +159,7 @@ private:
 	double m_animation_elapsed_msecs;
 	float m_shadertime;
 	bool m_drawConnectors;
+	int m_ecmState;
 
 	int m_enableTangentsInShaders;
 };

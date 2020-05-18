@@ -125,6 +125,7 @@ private slots:
 	void updateConnectorsView();
 	void viewerInitialized();
 	void shaderAction(int);
+	void setEcmState(bool checked);
 
 	// transformations
 	void scaleXYZChanged(double scale);

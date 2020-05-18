@@ -40,6 +40,7 @@ QWZM::QWZM(QObject *parent):
 	m_animation_elapsed_msecs(-1.),
 	m_shadertime(0.f),
 	m_drawConnectors(false),
+	m_ecmState(0),
 	m_enableTangentsInShaders(true)
 {
 	defaultConstructor();
@@ -644,9 +645,6 @@ bool QWZM::initShader(int type)
 	uniLoc = shader->uniformLocation("fogEnabled");
 	shader->setUniformValue(uniLoc, GLint(0));
 
-	uniLoc = shader->uniformLocation("ecmEffect");
-	shader->setUniformValue(uniLoc, GLint(0));
-
 	switch (type)
 	{
 	case WZ_SHADER_WZ32:
@@ -722,6 +720,9 @@ bool QWZM::bindShader(int type)
 
 	uniloc = shader->uniformLocation("graphicsCycle");
 	shader->setUniformValue(uniloc, GLfloat(m_shadertime));
+
+	uniloc = shader->uniformLocation("ecmEffect");
+	shader->setUniformValue(uniloc, GLint(m_ecmState));
 
 	switch (type)
 	{
@@ -896,6 +897,11 @@ void QWZM::addMesh(const Mesh& mesh)
 {
 	WZM::addMesh(mesh);
 	meshCountChanged(meshes(), getMeshNames());
+}
+
+void QWZM::setEcmState(bool enable)
+{
+	m_ecmState = enable ? 1 : 0;
 }
 
 void QWZM::slotRemoveActiveMesh()

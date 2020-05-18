@@ -134,6 +134,7 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionShowLightSource, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setDrawLightSource(bool)));
 	connect(m_ui->actionLink_Light_Source_To_Camera, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setLinkLightToCamera(bool)));
 	connect(m_ui->actionAnimate, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setAnimateState(bool)));
+	connect(m_ui->actionEnable_Ecm_Effect, SIGNAL(toggled(bool)), this, SLOT(setEcmState(bool)));
 	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
 	connect(m_ui->actionSetTeamColor, SIGNAL(triggered()), this, SLOT(actionSetTeamColor()));
 
@@ -326,6 +327,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	settings.setValue("3DView/LinkLightToCamera", m_ui->actionLink_Light_Source_To_Camera->isChecked());
 	settings.setValue("3DView/EnableUserShaders", m_actionEnableUserShaders->isChecked());
 	settings.setValue("3DView/Animate", m_ui->actionAnimate->isChecked());
+	settings.setValue("3DView/EcmEffect", m_ui->actionEnable_Ecm_Effect->isChecked());
 	settings.setValue("3DView/ShowConnectors", m_ui->actionShow_Connectors->isChecked());
 	settings.setValue("3DView/ShaderTag", wz_shader_type_tag[getShaderType()]);
 
@@ -761,6 +763,8 @@ void MainWindow::viewerInitialized()
 	m_actionEnableUserShaders->setChecked(m_settings->value("3DView/EnableUserShaders", false).toBool());
 	m_ui->actionAnimate->setChecked(m_settings->value("3DView/Animate", true).toBool());
 
+	m_ui->actionEnable_Ecm_Effect->setChecked(m_settings->value("3DView/EcmEffect", false).toBool());
+
 	actionEnableUserShaders(m_actionEnableUserShaders->isChecked());
 
 	m_actionEnableTangentInShaders->setChecked(m_model->getEnableTangentsInShaders());
@@ -843,6 +847,11 @@ void MainWindow::shaderAction(int type)
 	updateModelRender();
 
 	setWindowTitle(buildAppTitle());
+}
+
+void MainWindow::setEcmState(bool checked)
+{
+	m_model->setEcmState(checked);
 }
 
 void MainWindow::scaleXYZChanged(double val)
