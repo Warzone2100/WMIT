@@ -155,6 +155,7 @@ private:
 	bool m_drawCenterPoint;
 
 	double m_animation_elapsed_msecs;
+	float m_shadertime;
 	bool m_drawConnectors;
 
 	int m_enableTangentsInShaders;
