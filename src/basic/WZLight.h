@@ -28,18 +28,16 @@ enum LIGHTING_TYPE {
 	LIGHT_EMISSIVE, LIGHT_AMBIENT, LIGHT_DIFFUSE, LIGHT_SPECULAR, LIGHT_TYPE_MAX
 };
 
-typedef std::array<std::array<GLfloat, 4>, LIGHT_TYPE_MAX> light_cols_t;
-
-const static light_cols_t lightCol0_default = {{
-	{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f}, {0.8f, 0.8f, 0.8f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}
+enum LIGHTING_WZVER {
+	LIGHT_WZ32, LIGHT_WZ33, LIGHT_WZVER_MAX
 };
 
-//{{0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f},  {0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f}};
+typedef std::array<std::array<GLfloat, 4>, LIGHT_TYPE_MAX> light_cols_t;
 
+extern light_cols_t lightCol0;
 
-static light_cols_t lightCol0_external = lightCol0_default;
-static light_cols_t lightCol0 = lightCol0_default;
-static bool lightCol_use_external = false;
+void switchLightToWzVer(LIGHTING_WZVER ver, bool allow_external);
+void switchLightToExternal();
 
 void loadLightColorSetting();
 void saveLightColorSettings();

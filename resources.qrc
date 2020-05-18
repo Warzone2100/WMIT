@@ -5,5 +5,7 @@
         <file>data/shaders/wz31.vert</file>
         <file>data/shaders/wz32_tcmask.frag</file>
         <file>data/shaders/wz32_tcmask.vert</file>
+	<file>data/shaders/wz33_tcmask.frag</file>
+        <file>data/shaders/wz33_tcmask.vert</file>
     </qresource>
 </RCC>
