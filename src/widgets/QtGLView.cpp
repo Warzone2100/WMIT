@@ -43,7 +43,6 @@ using namespace qglviewer;
 
 const Vec lightPos(2.25, 6., 4.5);
 
-
 QtGLView::QtGLView(QWidget *parent) :
 		QGLViewer(parent),
 		drawLightSource(true),
@@ -57,11 +56,6 @@ QtGLView::QtGLView(QWidget *parent) :
 	setAxisIsDrawn(true);
 
 	loadLightColorSetting();
-
-	if (lightCol_use_external)
-	{
-		lightCol0 = lightCol0_external;
-	}
 }
 
 QtGLView::~QtGLView()
@@ -89,16 +83,21 @@ void QtGLView::animate()
 	}
 }
 
+void QtGLView::setLightColors()
+{
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightCol0[LIGHT_EMISSIVE].data());
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lightCol0[LIGHT_AMBIENT].data());
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightCol0[LIGHT_DIFFUSE].data());
+	glLightfv(GL_LIGHT0, GL_SPECULAR, lightCol0[LIGHT_SPECULAR].data());
+}
+
 void QtGLView::init()
 {
 	// initialize GLEW
 	glewInit();
 
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightCol0[LIGHT_EMISSIVE].data());
+	setLightColors();
 	glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightCol0[LIGHT_AMBIENT].data());
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightCol0[LIGHT_DIFFUSE].data());
-	glLightfv(GL_LIGHT0, GL_SPECULAR, lightCol0[LIGHT_SPECULAR].data());
 	glEnable(GL_LIGHT0);
 
 	glEnable(GL_LIGHTING);

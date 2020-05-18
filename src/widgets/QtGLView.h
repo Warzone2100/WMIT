@@ -75,6 +75,7 @@ public:
                             QString *errString);
 	virtual void unloadShader(int type);
 
+	void setLightColors();
 public slots:
 	void setDrawLightSource(bool draw);
 	void setLinkLightToCamera(bool link);

@@ -24,6 +24,15 @@
 
 const static QString base_lightcol_name = "3DView/LightColor";
 
+const static std::array<light_cols_t,LIGHT_WZVER_MAX> lightCol0_default = {{
+	{{{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f}, {0.8f, 0.8f, 0.8f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}},
+	{{{0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f},  {0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f}}}
+}};
+
+static light_cols_t lightCol0_external = lightCol0_default[LIGHT_WZ33];
+light_cols_t lightCol0 = lightCol0_default[LIGHT_WZ33];
+static bool lightCol_use_external = false;
+
 void getExtLightColFromSettings(const LIGHTING_TYPE type, const char* lightcol_suffix)
 {
 	QStringList lightCol = QSettings().value(base_lightcol_name + lightcol_suffix).toStringList();
@@ -62,4 +71,17 @@ void saveLightColorSettings()
 	setExtLightColToSettings(LIGHT_SPECULAR, "_S");
 
 	QSettings().setValue(base_lightcol_name + "_UseExternal", lightCol_use_external);
+}
+
+void switchLightToWzVer(LIGHTING_WZVER ver, bool allow_external)
+{
+	if (allow_external && lightCol_use_external)
+		switchLightToExternal();
+	else
+		lightCol0 = lightCol0_default[ver];
+}
+
+void switchLightToExternal()
+{
+	lightCol0 = lightCol0_external;
 }

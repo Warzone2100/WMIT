@@ -41,6 +41,7 @@
 #include <QVariant>
 
 #include "Pie.h"
+#include "WZLight.h"
 
 QString MainWindow::buildAppTitle()
 {
@@ -635,6 +636,10 @@ bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *
 			pathvert = WMIT_SHADER_WZ32TC_DEFPATH_VERT;
 			pathfrag = WMIT_SHADER_WZ32TC_DEFPATH_FRAG;
 			break;
+		case WZ_SHADER_WZ33:
+			pathvert = WMIT_SHADER_WZ33TC_DEFPATH_VERT;
+			pathfrag = WMIT_SHADER_WZ33TC_DEFPATH_FRAG;
+			break;
 		default:
 			break;
 		}
@@ -809,11 +814,22 @@ void MainWindow::shaderAction(int type)
 		}
 	};
 
+	// Handle light
+	switch (static_cast<wz_shader_type_t>(type))
+	{
+	case WZ_SHADER_WZ33:
+		switchLightToWzVer(LIGHT_WZ33, true);
+		break;
+	default:
+		switchLightToWzVer(LIGHT_WZ32, true);
+	}
+
 	if (!useUserShader)
 		reloadShader(stype, false);
 
 	if (static_cast<wz_shader_type_t>(type) != WZ_SHADER_NONE)
 	{
+
 		if (!m_model->setActiveShader(static_cast<wz_shader_type_t>(type)))
 		{
 		    QMessageBox::warning(this, "Shaders error",
@@ -1094,6 +1110,7 @@ void MainWindow::updateRecentFilesMenu()
 
 void MainWindow::updateModelRender()
 {
+	m_ui->centralWidget->setLightColors();
 	m_ui->centralWidget->update();
 }
 
