@@ -38,6 +38,7 @@ QWZM::QWZM(QObject *parent):
 	m_drawTangentAndBitangent(false),
 	m_drawCenterPoint(false),
 	m_animation_elapsed_msecs(-1.),
+	m_shadertime(0.f),
 	m_drawConnectors(false),
 	m_enableTangentsInShaders(true)
 {
@@ -374,6 +375,12 @@ void QWZM::animate()
 	using namespace std::chrono;
 	duration<double> time_span = steady_clock::now() - m_timeAnimationStarted;
 	m_animation_elapsed_msecs = time_span.count() * 1000.;
+
+	// Do it like they do it in WZ
+	uint32_t base = static_cast<uint32_t>(m_animation_elapsed_msecs) % 1000;
+	if (base > 500)
+		base = 1000 - base;	// cycle
+	m_shadertime = base / 1000.0f;
 }
 
 void QWZM::clear()
@@ -712,6 +719,9 @@ bool QWZM::bindShader(int type)
 		shader->setUniformValue(uniloc, GLint(1));
 	else
 		shader->setUniformValue(uniloc, GLint(0));
+
+	uniloc = shader->uniformLocation("graphicsCycle");
+	shader->setUniformValue(uniloc, GLfloat(m_shadertime));
 
 	switch (type)
 	{

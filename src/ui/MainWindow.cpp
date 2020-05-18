@@ -812,7 +812,7 @@ void MainWindow::shaderAction(int type)
 				"\nNOTE: Model might temporarily go into stealth mode due to this error...\n\n" +
 				errMessage);
 		}
-	};
+	}
 
 	// Handle light
 	switch (static_cast<wz_shader_type_t>(type))
