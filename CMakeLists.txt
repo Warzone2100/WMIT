@@ -118,6 +118,7 @@ set( wmit_HEADERS
 	src/wmit.h
 	src/basic/IGLShaderManager.h
 	src/basic/IGLShaderRenderable.h
+	src/basic/WZLight.h
 	src/ui/TextureDialog.h
 	src/Generic.h
 	src/Util.h
@@ -161,6 +162,7 @@ set( wmit_SRCS
 	src/main.cpp
 	src/Generic.cpp
 	src/basic/GLTexture.cpp
+	src/basic/WZLight.cpp
 	src/widgets/QWZM.cpp
 	src/widgets/QtGLView.cpp
 	src/ui/TextureDialog.cpp
