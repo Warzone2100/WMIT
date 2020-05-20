@@ -125,6 +125,7 @@ set( wmit_HEADERS
 	src/widgets/QtGLView.h
 	src/ui/ExportDialog.h
 	src/ui/ImportDialog.h
+	src/ui/LightColorWidget.h
 	src/ui/LightColorDock.h
 	src/ui/MainWindow.h
 	src/ui/TexConfigDialog.h
@@ -156,6 +157,7 @@ set( wmit_SRCS
 	src/formats/Mesh.cpp
 	src/ui/UVEditor.cpp
 	src/ui/TransformDock.cpp
+	src/ui/LightColorWidget.cpp
 	src/ui/LightColorDock.cpp
 	src/ui/MainWindow.cpp
 	src/ui/ImportDialog.cpp
@@ -176,6 +178,7 @@ set( wmit_SRCS
 set( wmit_UIS
 	src/ui/UVEditor.ui
 	src/ui/TransformDock.ui
+	src/ui/LightColorWidget.ui
 	src/ui/LightColorDock.ui
 	src/ui/MainWindow.ui
 	src/ui/ImportDialog.ui
