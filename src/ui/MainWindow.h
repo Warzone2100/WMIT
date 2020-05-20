@@ -143,6 +143,7 @@ private slots:
 	void materialChangedFromUI(const WZMaterial& mat);
 
 	void lightColorChangedFromUI();
+	void useCustomLightColorChangedFromUI(bool);
 
 private:
 	Ui::MainWindow *m_ui;

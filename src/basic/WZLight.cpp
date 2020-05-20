@@ -29,16 +29,17 @@ const static std::array<light_cols_t,LIGHT_WZVER_MAX> lightCol0_default = {{
 	{{{0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f},  {0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f}}}
 }};
 
-light_cols_t lightCol0_external = lightCol0_default[LIGHT_WZ33];
+light_cols_t lightCol0_custom = lightCol0_default[LIGHT_WZ33];
 light_cols_t lightCol0 = lightCol0_default[LIGHT_WZ33];
-static bool lightCol_use_external = false;
+static bool lightCol_use_custom = false;
+static LIGHTING_WZVER last_ver;
 
 void getExtLightColFromSettings(const LIGHTING_TYPE type, const char* lightcol_suffix)
 {
 	QStringList lightCol = QSettings().value(base_lightcol_name + lightcol_suffix).toStringList();
 	if (lightCol.count() == 4)
 		for (size_t idx = 0; idx < 4; ++idx) {
-			lightCol0_external[type][idx] = lightCol[static_cast<int>(idx)].toFloat();
+			lightCol0_custom[type][idx] = lightCol[static_cast<int>(idx)].toFloat();
 		}
 }
 
@@ -46,7 +47,7 @@ void setExtLightColToSettings(const LIGHTING_TYPE type, const char* lightcol_suf
 {
 	QStringList lightCol;
 	for (size_t idx = 0; idx < 4; ++idx) {
-		lightCol.append(QString("%1").arg(static_cast<double>(lightCol0_external[type][idx])));
+		lightCol.append(QString("%1").arg(static_cast<double>(lightCol0_custom[type][idx])));
 	}
 	QSettings().setValue(base_lightcol_name + lightcol_suffix, lightCol);
 }
@@ -59,8 +60,8 @@ void loadLightColorSetting()
 	getExtLightColFromSettings(LIGHT_DIFFUSE, "_D");
 	getExtLightColFromSettings(LIGHT_SPECULAR, "_S");
 
-	lightCol_use_external = QSettings().value(base_lightcol_name + "_UseExternal",
-						  lightCol_use_external).toBool();
+	lightCol_use_custom = QSettings().value(base_lightcol_name + "_UseCustom",
+						  lightCol_use_custom).toBool();
 }
 
 void saveLightColorSettings()
@@ -70,25 +71,38 @@ void saveLightColorSettings()
 	setExtLightColToSettings(LIGHT_DIFFUSE, "_D");
 	setExtLightColToSettings(LIGHT_SPECULAR, "_S");
 
-	QSettings().setValue(base_lightcol_name + "_UseExternal", lightCol_use_external);
+	QSettings().setValue(base_lightcol_name + "_UseCustom", lightCol_use_custom);
+}
+
+void switchLightToCustom()
+{
+	lightCol0 = lightCol0_custom;
 }
 
 void switchLightToWzVer(LIGHTING_WZVER ver, bool allow_external)
 {
-	if (allow_external && lightCol_use_external)
-		switchLightToExternal();
+	if (allow_external && lightCol_use_custom)
+		switchLightToCustom();
 	else
 		lightCol0 = lightCol0_default[ver];
+	last_ver = ver;
 }
 
-void switchLightToExternal()
+bool switchLightToCustomIfNeeded()
 {
-	lightCol0 = lightCol0_external;
+	if (lightCol_use_custom)
+		switchLightToCustom();
+	return lightCol_use_custom;
 }
 
-bool updateLightToExternalIfNeeded()
+bool isUsingCustomLightColor()
 {
-	if (lightCol_use_external)
-		switchLightToExternal();
-	return lightCol_use_external;
+	return lightCol_use_custom;
+}
+
+void setUseCustomLightColor(bool use)
+{
+	lightCol_use_custom = use;
+	if (!switchLightToCustomIfNeeded())
+		switchLightToWzVer(last_ver, false);
 }

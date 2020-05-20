@@ -29,6 +29,10 @@ LightColorDock::LightColorDock(light_cols_t &light_cols, QWidget *parent) :
 {
 	m_ui->setupUi(this);
 
+	useCustomColors(false);
+	connect(m_ui->chkCustomColors, SIGNAL(stateChanged(int)),
+		this, SLOT(useCustomColorsChangedOnWidget(int)));
+
 	refreshColorUI();
 	connect(m_ui->colorWidget, SIGNAL(colorsChanged(light_cols_t)),
 		this, SLOT(colorsChangedOnWidget(light_cols_t)));
@@ -60,7 +64,18 @@ void LightColorDock::colorsChangedOnWidget(const light_cols_t &light_cols)
 	emit colorsChanged();
 }
 
+void LightColorDock::useCustomColorsChangedOnWidget(int val)
+{
+	emit useCustomColorsChanged(val == static_cast<int>(Qt::CheckState::Checked));
+}
+
 void LightColorDock::refreshColorUI()
 {
 	m_ui->colorWidget->setLightColors(m_light_cols);
+}
+
+void LightColorDock::useCustomColors(const bool useState)
+{
+	m_ui->chkCustomColors->setCheckState(useState ?
+		Qt::CheckState::Checked : Qt::CheckState::Unchecked);
 }

@@ -54,8 +54,6 @@ QtGLView::QtGLView(QWidget *parent) :
 	setShortcut(DISPLAY_FPS, 0); // Disable stuff that won't work.
 	setGridIsDrawn(true);
 	setAxisIsDrawn(true);
-
-	loadLightColorSetting();
 }
 
 QtGLView::~QtGLView()
@@ -71,8 +69,6 @@ QtGLView::~QtGLView()
  		texture.pTexture->destroy();
 	}
 */
-
-	saveLightColorSettings();
 }
 
 void QtGLView::animate()

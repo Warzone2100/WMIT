@@ -35,12 +35,14 @@ enum LIGHTING_WZVER {
 typedef std::array<GLfloat, 4> light_col_t;
 typedef std::array<light_col_t, LIGHT_TYPE_MAX> light_cols_t;
 
-extern light_cols_t lightCol0_external;
+extern light_cols_t lightCol0_custom;
 extern light_cols_t lightCol0;
 
 void switchLightToWzVer(LIGHTING_WZVER ver, bool allow_external);
-void switchLightToExternal();
-bool updateLightToExternalIfNeeded();
+bool switchLightToCustomIfNeeded();
+
+bool isUsingCustomLightColor();
+void setUseCustomLightColor(bool);
 
 void loadLightColorSetting();
 void saveLightColorSettings();

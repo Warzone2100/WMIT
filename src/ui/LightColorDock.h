@@ -42,12 +42,15 @@ protected:
 
 signals:
 	void colorsChanged();
+	void useCustomColorsChanged(bool);
 
 private slots:
 	void colorsChangedOnWidget(const light_cols_t& light_cols);
+	void useCustomColorsChangedOnWidget(int);
 
 public slots:
 	void refreshColorUI();
+	void useCustomColors(const bool useState);
 
 private:
 	Ui::LightColorDock *m_ui;
