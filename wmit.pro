@@ -42,6 +42,7 @@ HEADERS += \
     src/widgets/QWZM.h \
     src/ui/MaterialDock.h \
     src/ui/LightColorWidget.h \
+    src/ui/LightColorDock.h \
     src/ui/meshdock.h
     
 SOURCES += \
@@ -65,6 +66,7 @@ SOURCES += \
     src/ui/TexConfigDialog.cpp \
     src/ui/MaterialDock.cpp \
     src/ui/LightColorWidget.cpp \
+    src/ui/LightColorDock.cpp \
     src/ui/meshdock.cpp
     
 FORMS += \
@@ -77,6 +79,7 @@ FORMS += \
     src/ui/TexConfigDialog.ui \
     src/ui/MaterialDock.ui \
     src/ui/LightColorWidget.ui \
+    src/ui/LightColorDock.ui \
     src/ui/meshdock.ui
     
 OTHER_FILES += \

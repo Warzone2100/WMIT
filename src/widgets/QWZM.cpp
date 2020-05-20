@@ -655,22 +655,6 @@ bool QWZM::initShader(int type)
 		uniLoc = shader->uniformLocation("colour");
 		shader->setUniformValue(uniLoc,	1.f, 1.f, 1.f, 1.f);
 
-		uniLoc = shader->uniformLocation("sceneColor");
-		shader->setUniformValue(uniLoc,	lightCol0[LIGHT_EMISSIVE][0], lightCol0[LIGHT_EMISSIVE][1],
-				lightCol0[LIGHT_EMISSIVE][2], lightCol0[LIGHT_EMISSIVE][3]);
-
-		uniLoc = shader->uniformLocation("ambient");
-		shader->setUniformValue(uniLoc,	lightCol0[LIGHT_AMBIENT][0], lightCol0[LIGHT_AMBIENT][1],
-				lightCol0[LIGHT_AMBIENT][2], lightCol0[LIGHT_AMBIENT][3]);
-
-		uniLoc = shader->uniformLocation("diffuse");
-		shader->setUniformValue(uniLoc,	lightCol0[LIGHT_DIFFUSE][0], lightCol0[LIGHT_DIFFUSE][1],
-				lightCol0[LIGHT_DIFFUSE][2], lightCol0[LIGHT_DIFFUSE][3]);
-
-		uniLoc = shader->uniformLocation("specular");
-		shader->setUniformValue(uniLoc,	lightCol0[LIGHT_SPECULAR][0], lightCol0[LIGHT_SPECULAR][1],
-				lightCol0[LIGHT_SPECULAR][2], lightCol0[LIGHT_SPECULAR][3]);
-
 		break;
 	}
 
@@ -743,6 +727,23 @@ bool QWZM::bindShader(int type)
 
 		uniloc = shader->uniformLocation("lightPosition");
 		shader->setUniformValue(uniloc,	render_posSun * render_mtxModelView_preAnim.inverted());
+
+		uniloc = shader->uniformLocation("sceneColor");
+		shader->setUniformValue(uniloc,	lightCol0[LIGHT_EMISSIVE][0], lightCol0[LIGHT_EMISSIVE][1],
+				lightCol0[LIGHT_EMISSIVE][2], lightCol0[LIGHT_EMISSIVE][3]);
+
+		uniloc = shader->uniformLocation("ambient");
+		shader->setUniformValue(uniloc,	lightCol0[LIGHT_AMBIENT][0], lightCol0[LIGHT_AMBIENT][1],
+				lightCol0[LIGHT_AMBIENT][2], lightCol0[LIGHT_AMBIENT][3]);
+
+		uniloc = shader->uniformLocation("diffuse");
+		shader->setUniformValue(uniloc,	lightCol0[LIGHT_DIFFUSE][0], lightCol0[LIGHT_DIFFUSE][1],
+				lightCol0[LIGHT_DIFFUSE][2], lightCol0[LIGHT_DIFFUSE][3]);
+
+		uniloc = shader->uniformLocation("specular");
+		shader->setUniformValue(uniloc,	lightCol0[LIGHT_SPECULAR][0], lightCol0[LIGHT_SPECULAR][1],
+				lightCol0[LIGHT_SPECULAR][2], lightCol0[LIGHT_SPECULAR][3]);
+
 /*
 		uniloc = shader->uniformLocation("sceneColor");
 		shader->setUniformValue(uniloc,

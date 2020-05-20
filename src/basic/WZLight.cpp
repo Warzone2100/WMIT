@@ -29,7 +29,7 @@ const static std::array<light_cols_t,LIGHT_WZVER_MAX> lightCol0_default = {{
 	{{{0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f},  {0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f}}}
 }};
 
-static light_cols_t lightCol0_external = lightCol0_default[LIGHT_WZ33];
+light_cols_t lightCol0_external = lightCol0_default[LIGHT_WZ33];
 light_cols_t lightCol0 = lightCol0_default[LIGHT_WZ33];
 static bool lightCol_use_external = false;
 
@@ -84,4 +84,11 @@ void switchLightToWzVer(LIGHTING_WZVER ver, bool allow_external)
 void switchLightToExternal()
 {
 	lightCol0 = lightCol0_external;
+}
+
+bool updateLightToExternalIfNeeded()
+{
+	if (lightCol_use_external)
+		switchLightToExternal();
+	return lightCol_use_external;
 }
