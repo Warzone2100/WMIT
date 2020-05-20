@@ -70,7 +70,7 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	m_materialDock(new MaterialDock(this)),
 	m_transformDock(new TransformDock(this)),
 	m_meshDock(new MeshDock(this)),
-	m_lightColorDock(new LightColorDock(lightCol0_external, this)),
+	m_lightColorDock(new LightColorDock(lightCol0_custom, this)),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
 	m_settings(new QSettings(this)),
@@ -111,6 +111,8 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	resize(QSettings().value("Window/size", size()).toSize());
 	move(QSettings().value("Window/position", pos()).toPoint());
 	restoreState(QSettings().value("Window/state", QByteArray()).toByteArray());
+
+	loadLightColorSetting();
 
 	m_ui->actionOpen->setIcon(QIcon::fromTheme("document-open", style()->standardIcon(QStyle::SP_DirOpenIcon)));
 	m_ui->menuOpenRecent->setIcon(QIcon::fromTheme("document-open-recent"));
@@ -178,7 +180,8 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 
 	// LightColor dock
 	connect(m_lightColorDock, SIGNAL(colorsChanged()), this, SLOT(lightColorChangedFromUI()));
-	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0), m_lightColorDock->toggleViewAction());
+	connect(m_lightColorDock, SIGNAL(useCustomColorsChanged(bool)), this, SLOT(useCustomLightColorChangedFromUI(bool)));
+	m_ui->menuView->insertAction(m_ui->actionSetTeamColor, m_lightColorDock->toggleViewAction());
 
 	/// Reset state
 	clear();
@@ -340,6 +343,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	settings.setValue("3DView/EcmEffect", m_ui->actionEnable_Ecm_Effect->isChecked());
 	settings.setValue("3DView/ShowConnectors", m_ui->actionShow_Connectors->isChecked());
 	settings.setValue("3DView/ShaderTag", wz_shader_type_tag[getShaderType()]);
+
+	saveLightColorSettings();
 
 	event->accept();
 }
@@ -779,8 +784,8 @@ void MainWindow::viewerInitialized()
 
 	m_actionEnableTangentInShaders->setChecked(m_model->getEnableTangentsInShaders());
 
-	// Default to 3.1
-	int shaderTag = m_settings->value("3DView/ShaderTag", wz_shader_type_tag[WZ_SHADER_WZ31]).toInt();
+	// Default to latest
+	int shaderTag = m_settings->value("3DView/ShaderTag", wz_shader_type_tag[WZ_SHADER__LATEST]).toInt();
 	int shaderActIdx = -1;
 	for (int i = WZ_SHADER__FIRST; i < WZ_SHADER__LAST; ++i)
 	{
@@ -810,6 +815,7 @@ void MainWindow::viewerInitialized()
 	}
 
 	m_lightColorDock->refreshColorUI();
+	m_lightColorDock->useCustomColors(isUsingCustomLightColor());
 }
 
 void MainWindow::shaderAction(int type)
@@ -928,8 +934,13 @@ void MainWindow::materialChangedFromUI(const WZMaterial &mat)
 
 void MainWindow::lightColorChangedFromUI()
 {
-	if (updateLightToExternalIfNeeded())
+	if (switchLightToCustomIfNeeded())
 		updateModelRender();
+}
+
+void MainWindow::useCustomLightColorChangedFromUI(bool use)
+{
+	setUseCustomLightColor(use);
 }
 
 void MainWindow::actionReloadUserShader()
