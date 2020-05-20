@@ -28,9 +28,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="LightColorWidget" name="colorWidget" native="true">
-      <layout class="QVBoxLayout" name="verticalLayout_5"/>
-     </widget>
+     <widget class="LightColorWidget" name="colorWidget" native="true"/>
     </item>
     <item>
      <widget class="QGroupBox" name="shininessGroupBox">

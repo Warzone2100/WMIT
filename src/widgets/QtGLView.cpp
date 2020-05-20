@@ -148,6 +148,7 @@ void QtGLView::draw()
 	larr[2] = lvec.z;
 
 	glLightfv(GL_LIGHT0, GL_POSITION, larr);
+	setLightColors();
 
 	foreach(IGLRenderable* obj, renderList)
 	{

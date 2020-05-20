@@ -26,6 +26,7 @@
 #include "ExportDialog.h"
 #include "TextureDialog.h"
 #include "UVEditor.h"
+#include "LightColorDock.h"
 
 #include <fstream>
 
@@ -69,6 +70,7 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	m_materialDock(new MaterialDock(this)),
 	m_transformDock(new TransformDock(this)),
 	m_meshDock(new MeshDock(this)),
+	m_lightColorDock(new LightColorDock(lightCol0_external, this)),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
 	m_settings(new QSettings(this)),
@@ -92,12 +94,16 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	m_meshDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	m_meshDock->hide();
 
+	m_lightColorDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	m_lightColorDock->hide();
+
 	m_UVEditor->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	m_UVEditor->hide();
 
 	addDockWidget(Qt::RightDockWidgetArea, m_materialDock, Qt::Horizontal);
 	addDockWidget(Qt::RightDockWidgetArea, m_transformDock, Qt::Horizontal);
 	addDockWidget(Qt::RightDockWidgetArea, m_meshDock, Qt::Horizontal);
+	addDockWidget(Qt::RightDockWidgetArea, m_lightColorDock, Qt::Horizontal);
 	addDockWidget(Qt::LeftDockWidgetArea, m_UVEditor, Qt::Horizontal);
 
 	// UI is ready and now we can load window previous state (will do nothing if state wasn't saved).
@@ -169,6 +175,10 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 
 	connect(m_meshDock, SIGNAL(connectorsWereUpdated()), this, SLOT(updateModelRender()));
 	connect(m_model, SIGNAL(meshCountChanged(int,QStringList)), m_meshDock, SLOT(setMeshCount(int,QStringList)));
+
+	// LightColor dock
+	connect(m_lightColorDock, SIGNAL(colorsChanged()), this, SLOT(lightColorChangedFromUI()));
+	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0), m_lightColorDock->toggleViewAction());
 
 	/// Reset state
 	clear();
@@ -798,6 +808,8 @@ void MainWindow::viewerInitialized()
 			}
 		}
 	}
+
+	m_lightColorDock->refreshColorUI();
 }
 
 void MainWindow::shaderAction(int type)
@@ -912,6 +924,12 @@ void MainWindow::materialChangedFromUI(const WZMaterial &mat)
 {
 	m_model->setMaterial(mat);
 	updateModelRender();
+}
+
+void MainWindow::lightColorChangedFromUI()
+{
+	if (updateLightToExternalIfNeeded())
+		updateModelRender();
 }
 
 void MainWindow::actionReloadUserShader()
@@ -1119,7 +1137,6 @@ void MainWindow::updateRecentFilesMenu()
 
 void MainWindow::updateModelRender()
 {
-	m_ui->centralWidget->setLightColors();
 	m_ui->centralWidget->update();
 }
 

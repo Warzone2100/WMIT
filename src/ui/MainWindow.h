@@ -34,6 +34,7 @@
 #include "QWZM.h"
 #include "Pie.h"
 #include "wmit.h"
+#include "WZLight.h"
 
 class MaterialDock;
 class TransformDock;
@@ -42,6 +43,7 @@ class ImportDialog;
 class ExportDialog;
 class TextureDialog;
 class UVEditor;
+class LightColorDock;
 
 namespace Ui
 {
@@ -140,12 +142,15 @@ private slots:
 
 	void materialChangedFromUI(const WZMaterial& mat);
 
+	void lightColorChangedFromUI();
+
 private:
 	Ui::MainWindow *m_ui;
 
 	MaterialDock *m_materialDock;
 	TransformDock *m_transformDock;
 	MeshDock *m_meshDock;
+	LightColorDock *m_lightColorDock;
 
 	TextureDialog *m_textureDialog;
 	UVEditor *m_UVEditor;
