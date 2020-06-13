@@ -246,6 +246,19 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 			VERBATIM
 		)
 	endif()
+	
+	# GH CI will fail verify_app without dlls being present in build dir
+	if(DEFINED ENV{GITHUB_WORKSPACE})
+		message(STATUS "Will copy Qt5 dlls to build directory...")
+		add_custom_command(TARGET wmit PRE_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Qt5::Core> ${CMAKE_CURRENT_BINARY_DIR}/
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Qt5::Gui> ${CMAKE_CURRENT_BINARY_DIR}/
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Qt5::Widgets> ${CMAKE_CURRENT_BINARY_DIR}/
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Qt5::OpenGL> ${CMAKE_CURRENT_BINARY_DIR}/
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Qt5::Xml> ${CMAKE_CURRENT_BINARY_DIR}/
+			VERBATIM
+		)
+	endif()
 
 endif()
 

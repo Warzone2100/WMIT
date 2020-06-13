@@ -3,8 +3,9 @@
 # To successfully run this script:
 # - Ensure that Qt5 is installed and in the PATH
 # - Ensure that the environment is set for the appropriate Visual Studio configuration
-#   (ex. Use the appropriate Start Menu "x86/x64 Native Tools Command Prompt for VS 2017" shortcut)
+#   (ex. Use the appropriate Start Menu "x86/x64 Native Tools Command Prompt for VS 20XX" shortcut)
 #
+Write-Output "QT5_DIR: $env:QT5_DIR"
 
 if ((Get-Command "qmake" -ErrorAction SilentlyContinue) -eq $null)
 {
@@ -75,6 +76,11 @@ if (Test-Path 'env:Platform')
 		$target_architecture="$env:Platform"
 	}
 }
-cmake -G "Visual Studio 15 2017" -A "$target_architecture" -DCMAKE_PREFIX_PATH="$env:QT5_DIR" ../../
+$target_generator="Visual Studio 15 2017"
+if (Test-Path 'env:CmakeGeneratorToUse')
+{
+	$target_generator="$env:CmakeGeneratorToUse"
+}
+cmake -G "$target_generator" -A "$target_architecture" -DCMAKE_PREFIX_PATH="$env:QT5_DIR" ../../
 popd
 popd
