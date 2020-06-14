@@ -135,9 +135,6 @@ void TextureDialog::createTextureIcons(const QString& workdir, const QString& mo
 	m_work_dir = workdir;
 	m_model_filepath = modelname;
 
-	if (workdir.isEmpty() || modelname.isEmpty() || !m_texnames.size())
-		return;
-
 	QMap<wzm_texture_type_t, QString>::const_iterator it;
 	for (it = m_texnames.begin(); it != m_texnames.end(); ++it)
 	{
@@ -155,6 +152,13 @@ void TextureDialog::setSearchDirs(const QStringList &list)
 void TextureDialog::setTexturesMap(const QMap<wzm_texture_type_t, QString> &texnames)
 {
 	m_texnames = texnames;
+	// Add missing ones
+	for (int i = WZM_TEX__FIRST; i < WZM_TEX__LAST; ++i)
+	{
+		wzm_texture_type_t ttyp = static_cast<wzm_texture_type_t>(i);
+		if (!m_texnames.contains(ttyp))
+			m_texnames.insert(ttyp, QString());
+	}
 }
 
 void TextureDialog::getTexturesFilepath(QMap<wzm_texture_type_t, QString> &files) const
@@ -179,12 +183,11 @@ void TextureDialog::getTexturesFilepath(QMap<wzm_texture_type_t, QString> &files
 
 QString TextureDialog::findTexture(wzm_texture_type_t type) const
 {
-	QFileInfo modelnfo(m_model_filepath);
 	QString fileTexName = m_texnames.value(type);
 
+	// Pre-configured search
 	if (!fileTexName.isEmpty())
 	{
-		// Pre-configured search
 		foreach(QString filePath, m_predefined_textures)
 		{
 			if (fileTexName.compare(QFileInfo(filePath).fileName(), Qt::CaseSensitive) == 0)
@@ -192,8 +195,15 @@ QString TextureDialog::findTexture(wzm_texture_type_t type) const
 				return filePath;
 			}
 		}
+	}
 
-		// Local search
+	if (m_model_filepath.isEmpty())
+		return QString();
+
+	// Local search
+	QFileInfo modelnfo(m_model_filepath);
+	if (!fileTexName.isEmpty())
+	{
 		QFileInfo nfo(modelnfo.path() + "/" + fileTexName);
 		if (nfo.exists())
 		{
