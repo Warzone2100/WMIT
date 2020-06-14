@@ -223,6 +223,8 @@ Mesh::operator Pie3Level() const
 	IndexedTri tri;
 	Pie3Polygon p3Poly;
 	Pie3UV	p3UV;
+	WZMVertex fixedVert;
+	typedef Pie3Vertex::equal_wEps equals;
 
 	p3Poly.m_flags = 0x200;
 
@@ -231,9 +233,9 @@ Mesh::operator Pie3Level() const
 		tri = *itTri;
 		for (i = 0; i < 3; ++i)
 		{
-			typedef Pie3Vertex::equal_wEps equals;
-			WZMVertex fixedVert(m_vertexArray[tri[i]]);
-			mybinder1st<equals> compare(fixedVert);
+			auto curIndex = tri[i];
+			fixedVert = m_vertexArray[curIndex];
+			mybinder1st<equals> compare(fixedVert, equals(0.0001f));
 
 			itPV = std::find_if(p3.m_points.begin(), p3.m_points.end(), compare);
 
@@ -249,11 +251,11 @@ Mesh::operator Pie3Level() const
 			}
 
 			// TODO: deal with UV animation
-			p3UV.u() = m_textureArray[tri[i]].u();
-			p3UV.v() = m_textureArray[tri[i]].v();
+			p3UV.u() = m_textureArray[curIndex].u();
+			p3UV.v() = m_textureArray[curIndex].v();
 			p3Poly.m_texCoords[i] = p3UV;
 
-			p3.m_normals.push_back(m_normalArray[tri[i]]);
+			p3.m_normals.push_back(m_normalArray[curIndex]);
 		}
 		p3.m_polygons.push_back(p3Poly);
 	}
