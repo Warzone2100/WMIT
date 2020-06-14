@@ -90,3 +90,8 @@ jobs:
         set PATH=%PATH%;${{ steps.qt.outputs.qt_dir_native }}\bin;
         "C:\Program Files\PowerShell\7\pwsh.EXE" -command ". .\configure_win.ps1"
         msbuild build/x64/PACKAGE.vcxproj /p:Configuration=Release
+    - name: Archive installer
+      uses: actions/upload-artifact@v2
+      with:
+        name: wmit-setup-win64
+        path: build/x64/wmit.exe*
