@@ -119,6 +119,7 @@ Mesh::Mesh(const Pie3Level& p3)
 	WZMVertex v[3];
 
 	auto nrmIt = p3.m_normals.begin();
+	bool noPieNormals = p3.normals() == 0;
 
 	defaultConstructor();
 
@@ -133,21 +134,28 @@ Mesh::Mesh(const Pie3Level& p3)
 	// For each pie3 polygon
 	for (itL = p3.m_polygons.begin(); itL != p3.m_polygons.end(); ++itL)
 	{
-		// pie2 integer-type problem?
-		if (itL->getIndex(0) == itL->getIndex(1) || itL->getIndex(1) == itL->getIndex(2) || itL->getIndex(0) == itL->getIndex(2))
+		// Presumably those issues are no longer present in newer models.
+		// N.B. Make sure to advance normals when skipping with normals present
+		if (noPieNormals)
 		{
-			continue;
-		}
-		if (itL->m_texCoords[0] == itL->m_texCoords[1] || itL->m_texCoords[1] == itL->m_texCoords[2] || itL->m_texCoords[0] == itL->m_texCoords[2])
-		{
-			continue;
+			// pie2 integer-type problem?
+			if (itL->getIndex(0) == itL->getIndex(1) || itL->getIndex(1) == itL->getIndex(2) ||
+					itL->getIndex(0) == itL->getIndex(2))
+			{
+				continue;
+			}
+			if (itL->m_texCoords[0] == itL->m_texCoords[1] || itL->m_texCoords[1] == itL->m_texCoords[2] ||
+					itL->m_texCoords[0] == itL->m_texCoords[2])
+			{
+				continue;
+			}
 		}
 
 		v[0] = WZMVertex(p3.m_points[itL->getIndex(0)]);
 		v[1] = WZMVertex(p3.m_points[itL->getIndex(1)]);
 		v[2] = WZMVertex(p3.m_points[itL->getIndex(2)]);
 
-		if (p3.normals() == 0)
+		if (noPieNormals)
 			tmpNrm = WZMVertex(v[1] - v[0]).crossProduct(v[2] - v[0]).normalize();
 
 		// For all 3 vertices of the triangle
