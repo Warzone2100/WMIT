@@ -1049,6 +1049,11 @@ void MainWindow::actionImport_Animation()
 		// Might disable some anim-unfriendly actions
 		doAfterModelWasLoaded(true);
 	}
+	else
+	{
+		QMessageBox::warning(this, "Import error",
+			"Unable to import animation file!");
+	}
 }
 
 void MainWindow::actionImport_Connectors()
