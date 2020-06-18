@@ -38,6 +38,16 @@ int main(int argc, char *argv[])
 {
     //QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
 
+	if(argc == 2 && strcmp("--help", argv[1]) == 0)
+	{
+		printf("Usage:\n");
+		printf("  WMIT (opens application)\n");
+		printf("  WMIT --help (shows this message)\n");
+		printf("  WMIT [filename] (opens a file)\n");
+		printf("  WMIT [input] [output] (converts between formats wzm, pie and obj)\n");
+		exit(0);
+	}
+
 	if (argc > 2)
 	{
 		// command line conversion mode
@@ -49,10 +59,18 @@ int main(int argc, char *argv[])
 		info.m_saveAsFile = argv[2];
 
 		if (!MainWindow::loadModel(inname, model, info, true))
+		{
+			printf("Could not load model\n");
 			return 1;
+		}
 
 		info.defaultPieCapsIfNeeded();
-		return !MainWindow::saveModel(model, info);
+
+		if(!MainWindow::saveModel(model, info))
+		{
+			printf("Could not save model\n");
+			return 1;
+		}
 	}
 	else
 	{
