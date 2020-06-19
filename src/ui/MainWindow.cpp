@@ -1066,7 +1066,7 @@ void MainWindow::actionImport_Animation()
 						meshIdx = items.indexOf(item);
 				}
 
-				if ((meshIdx < 0) or !okFlag)
+				if ((meshIdx < 0) || !okFlag)
 					break;
 
 				auto &mesh = m_model->getMesh(meshIdx);
