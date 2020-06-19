@@ -44,6 +44,7 @@ class ExportDialog;
 class TextureDialog;
 class UVEditor;
 class LightColorDock;
+class AboutDialog;
 
 namespace Ui
 {
@@ -122,6 +123,7 @@ private slots:
 	void actionImport_Animation();
 	void actionImport_Connectors();
 
+	void aboutWMIT();
 	void updateRecentFilesMenu();
 	void updateModelRender();
 	void updateConnectorsView();
@@ -153,6 +155,7 @@ private:
 	TransformDock *m_transformDock;
 	MeshDock *m_meshDock;
 	LightColorDock *m_lightColorDock;
+	AboutDialog *m_aboutDialog;
 
 	TextureDialog *m_textureDialog;
 	UVEditor *m_UVEditor;

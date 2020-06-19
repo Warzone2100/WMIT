@@ -7,5 +7,7 @@
         <file>data/shaders/wz32_tcmask.vert</file>
 	<file>data/shaders/wz33_tcmask.frag</file>
         <file>data/shaders/wz33_tcmask.vert</file>
+        <file>data/images/wmit_logo_64.png</file>
+        <file>data/images/wmit_banner.png</file>
     </qresource>
 </RCC>

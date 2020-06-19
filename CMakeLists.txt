@@ -119,6 +119,7 @@ set( wmit_HEADERS
 	src/basic/IGLShaderManager.h
 	src/basic/IGLShaderRenderable.h
 	src/basic/WZLight.h
+	src/ui/aboutdialog.h
 	src/ui/TextureDialog.h
 	src/Generic.h
 	src/Util.h
@@ -156,6 +157,7 @@ set( wmit_SRCS
 	src/formats/Pie.cpp
 	src/formats/Mesh.cpp
 	src/ui/UVEditor.cpp
+	src/ui/aboutdialog.cpp
 	src/ui/TransformDock.cpp
 	src/ui/LightColorWidget.cpp
 	src/ui/LightColorDock.cpp
@@ -177,6 +179,7 @@ set( wmit_SRCS
 
 set( wmit_UIS
 	src/ui/UVEditor.ui
+	src/ui/aboutdialog.ui
 	src/ui/TransformDock.ui
 	src/ui/LightColorWidget.ui
 	src/ui/LightColorDock.ui

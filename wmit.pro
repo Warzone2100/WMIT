@@ -11,6 +11,7 @@ INCLUDEPATH += src src/basic src/formats src/ui src/widgets 3rdparty/GLEW/includ
 
 HEADERS += \
     3rdparty/GLEW/include/GL/glew.h \
+    src/ui/aboutdialog.h \
     src/wmit.h \
     src/basic/IGLShaderManager.h \
     src/basic/IGLShaderRenderable.h \
@@ -60,6 +61,7 @@ SOURCES += \
     src/Generic.cpp \
     src/basic/GLTexture.cpp \
     src/basic/WZLight.cpp \
+    src/ui/aboutdialog.cpp \
     src/widgets/QWZM.cpp \
     src/widgets/QtGLView.cpp \
     src/ui/TextureDialog.cpp \
@@ -80,6 +82,7 @@ FORMS += \
     src/ui/MaterialDock.ui \
     src/ui/LightColorWidget.ui \
     src/ui/LightColorDock.ui \
+    src/ui/aboutdialog.ui \
     src/ui/meshdock.ui
     
 OTHER_FILES += \
