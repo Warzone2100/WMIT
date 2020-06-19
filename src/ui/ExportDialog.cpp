@@ -47,6 +47,11 @@ void ExportDialog::changeEvent(QEvent *e)
 PieExportDialog::PieExportDialog(const PieCaps &caps, QWidget* parent)
 	: ExportDialog(parent), m_caps(caps)
 {
+	ui->gbExportCaps->setTitle(tr("Directives"));
+	ui->lblCapsDescription->setText(tr("Please select directives to allow during model export. "
+					   "Note that you do not have to deselect directives that are not present in current model. "
+					   "E.g. normal map will not be exported unless it was assigned and is allowed."));
+
 	auto model = new PieContentModel(m_caps, ui->tvExportCaps);
 	ui->tvExportCaps->setModel(model);
 	ui->tvExportCaps->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
