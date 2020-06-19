@@ -1028,7 +1028,7 @@ void MainWindow::actionImport_Animation()
 	if (anim_path.isEmpty())
 	    return;
 
-	const char* title_str = "Animation Import";
+	const QString title_str = tr("Animation Import");
 
 	ApieAnimList pieAnim;
 	if (pieAnim.readAniFile(anim_path.toLocal8Bit()))
@@ -1049,21 +1049,25 @@ void MainWindow::actionImport_Animation()
 		}
 		else
 		{
+			bool okFlag;
 			for (int cnt = 0; cnt < int(pieAnim.anims.size()); cnt++)
 			{
 				auto &anim = pieAnim.anims[cnt];
 				int meshIdx = -1;
 				{
 					QStringList items = m_model->getMeshNames();
+					QString lbl = tr("Select mesh for animation import:");
+					if (!anim.name.empty())
+						lbl = tr("Select mesh for animation import: %1").arg(anim.name.c_str());
 
-					QString item = QInputDialog::getItem(this, tr("Select mesh for animation import"),
-									     QString(anim.name.c_str()), items, 0, false);
+					QString item = QInputDialog::getItem(this, title_str,
+						lbl, items, 0, false, &okFlag);
 					if (!item.isEmpty())
 						meshIdx = items.indexOf(item);
 				}
 
-				if (meshIdx < 0)
-					return;
+				if ((meshIdx < 0) or !okFlag)
+					break;
 
 				auto &mesh = m_model->getMesh(meshIdx);
 				mesh.importPieAnimation(anim);
