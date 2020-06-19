@@ -459,6 +459,10 @@ bool ApieAnimObject::readStandaloneAniStream(std::istream &fin)
 		return false;
 	}
 
+	// Cut off CR
+	if (!str.empty() && str.back() == '\r')
+		str = str.substr(0, str.size() - 1);
+
 	// Attempt to read mesh name
 	if (str.find(PIE_MODEL_DIRECTIVE_ANIMOBJECT) == 0)
 	{
