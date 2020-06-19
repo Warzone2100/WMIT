@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 	{
 		QApplication a(argc, argv);
 
+		a.setWindowIcon(QIcon(WMIT_IMAGES_LOGO_64));
 		a.setApplicationName(WMIT_APPNAME);
 		a.setOrganizationName(WMIT_ORG);
 		QSettings::setDefaultFormat(QSettings::IniFormat);

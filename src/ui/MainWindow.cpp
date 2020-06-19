@@ -27,6 +27,7 @@
 #include "TextureDialog.h"
 #include "UVEditor.h"
 #include "LightColorDock.h"
+#include "aboutdialog.h"
 
 #include <fstream>
 
@@ -71,6 +72,7 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	m_transformDock(new TransformDock(this)),
 	m_meshDock(new MeshDock(this)),
 	m_lightColorDock(new LightColorDock(lightCol0_custom, this)),
+	m_aboutDialog(nullptr),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
 	m_settings(new QSettings(this)),
@@ -145,6 +147,7 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionEnable_Ecm_Effect, SIGNAL(toggled(bool)), this, SLOT(setEcmState(bool)));
 	connect(m_ui->actionEnable_Alpha_Test, SIGNAL(toggled(bool)), this, SLOT(setAlphaTestState(bool)));
 	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
+	connect(m_ui->actionAbout, SIGNAL(triggered()), this, SLOT(aboutWMIT()));
 	connect(m_ui->actionSetTeamColor, SIGNAL(triggered()), this, SLOT(actionSetTeamColor()));
 
 	/// Material dock
@@ -1146,6 +1149,13 @@ void MainWindow::actionImport_Connectors()
 	updateConnectorsView();
 	// And notify model info about new connectors
 	m_modelinfo.m_pieCaps.set(PIE_OPT_DIRECTIVES::podCONNECTORS);
+}
+
+void MainWindow::aboutWMIT()
+{
+	if (!m_aboutDialog)
+		m_aboutDialog = new AboutDialog(this);
+	m_aboutDialog->show();
 }
 
 void MainWindow::actionLocateUserShaders()
