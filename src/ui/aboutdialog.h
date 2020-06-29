@@ -34,8 +34,13 @@ public:
 	explicit AboutDialog(QWidget *parent = nullptr);
 	~AboutDialog();
 
+private slots:
+	void on_pbCredits_clicked();
+	void on_pbLicense_clicked();
+
 private:
 	Ui::AboutDialog *ui;
+	QString m_licenseText;
 };
 
 #endif // ABOUTDIALOG_H

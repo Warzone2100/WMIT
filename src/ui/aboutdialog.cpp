@@ -22,6 +22,8 @@
 
 #include "wmit.h"
 
+#include <QFile>
+
 AboutDialog::AboutDialog(QWidget *parent) :
 	QDialog(parent),
 	ui(new Ui::AboutDialog)
@@ -32,9 +34,23 @@ AboutDialog::AboutDialog(QWidget *parent) :
 	ui->lblLogo->setPixmap(logo);
 
 	setWindowTitle(tr("About WMIT %1").arg(WMIT_VER_STR));
+
+	m_licenseText = ui->textEdit->toHtml();
 }
 
 AboutDialog::~AboutDialog()
 {
 	delete ui;
+}
+
+void AboutDialog::on_pbCredits_clicked()
+{
+	QFile resfile(":/AUTHORS");
+	resfile.open(QIODevice::ReadOnly);
+	ui->textEdit->setMarkdown(resfile.readAll());
+}
+
+void AboutDialog::on_pbLicense_clicked()
+{
+	ui->textEdit->setHtml(m_licenseText);
 }
