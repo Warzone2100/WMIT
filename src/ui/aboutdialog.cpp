@@ -47,7 +47,12 @@ void AboutDialog::on_pbCredits_clicked()
 {
 	QFile resfile(":/AUTHORS");
 	resfile.open(QIODevice::ReadOnly);
-	ui->textEdit->setMarkdown(resfile.readAll());
+	QString text(resfile.readAll());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+	ui->textEdit->setMarkdown(text);
+#else
+	ui->textEdit->setText(text);
+#endif
 }
 
 void AboutDialog::on_pbLicense_clicked()
