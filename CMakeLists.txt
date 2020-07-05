@@ -296,6 +296,9 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 			PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
 	target_sources(wmit PRIVATE ${wmit_INFO})
 
+	# Silence OpenGL deprecation warnings
+	target_compile_definitions(wmit PRIVATE GL_SILENCE_DEPRECATION)
+
 endif()
 
 ##################################################
