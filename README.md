@@ -8,11 +8,36 @@ For use with: [Warzone 2100](https://github.com/Warzone2100/warzone2100)
 
 ## Latest development builds
 
-[![Build Status](https://travis-ci.com/Warzone2100/WMIT.svg?branch=master)](https://travis-ci.com/Warzone2100/WMIT)
-[![Windows Build Status](https://ci.appveyor.com/api/projects/status/1efyn5i3qxuw6ppb/branch/master?svg=true)](https://ci.appveyor.com/project/Warzone2100/wmit/branch/master)
+[![Windows Build Status](https://img.shields.io/github/workflow/status/Warzone2100/WMIT/Windows/master?label=Windows&logo=windows)](https://github.com/Warzone2100/WMIT/actions?query=workflow%3AWindows+branch%3Amaster+event%3Apush)
+ [![macOS Build Status](https://img.shields.io/github/workflow/status/Warzone2100/WMIT/macOS/master?label=macOS&logo=apple&logoColor=FFFFFF)](https://github.com/Warzone2100/WMIT/actions?query=workflow%3AmacOS+branch%3Amaster+event%3Apush)
+ [![Ubuntu Build Status](https://img.shields.io/github/workflow/status/Warzone2100/WMIT/Ubuntu/master?label=Ubuntu&logo=ubuntu&logoColor=FFFFFF)](https://github.com/Warzone2100/WMIT/actions?query=workflow%3AUbuntu+branch%3Amaster+event%3Apush)
 
-- **Windows** (x86): [**Installer**](https://ci.appveyor.com/api/projects/Warzone2100/WMIT/artifacts/wmit-master_x86_installer.zip?branch=master&pr=false&job=Environment%3A%20APPVEYOR_BUILD_WORKER_IMAGE%3DVisual%20Studio%202017%2C%20WZ_JOB_ID%3Drelease_x86)
-- **Windows** (x64): [**Installer**](https://ci.appveyor.com/api/projects/Warzone2100/WMIT/artifacts/wmit-master_x64_installer.zip?branch=master&pr=false&job=Environment%3A%20APPVEYOR_BUILD_WORKER_IMAGE%3DVisual%20Studio%202017%2C%20WZ_JOB_ID%3Drelease_x64)
+### Windows
+
+How to get the latest Windows development builds:
+1. View the **[latest successful Windows builds](https://github.com/Warzone2100/WMIT/actions?query=workflow%3AWindows+branch%3Amaster+event%3Apush+is%3Asuccess)**.
+2. Select the latest workflow run in the table / list.
+   This should display a list of **Artifacts** from the run.
+3. Download the `wmit_win_x86` or `wmit_win_x64` artifact (depending on whether you want the 32-bit or 64-bit build).
+> Note: A free GitHub account is currently required to download the artifacts.
+
+### macOS
+
+How to get the latest macOS development builds:
+1. View the **[latest successful macOS builds](https://github.com/Warzone2100/WMIT/actions?query=workflow%3AmacOS+branch%3Amaster+event%3Apush+is%3Asuccess)**.
+2. Select the latest workflow run in the table / list.
+   This should display a list of **Artifacts** from the run.
+3. Download the `wmit_macOS` artifact.
+> Note: A free GitHub account is currently required to download the artifacts.
+
+### Linux (from source)
+
+Clone this Git repo and build, following the instructions under:
+[How to Build](#how-to-build)
+
+> Development builds are a snapshot of the current state of development, from the 
+> latest (successfully-built) commit. Help testing these builds is always welcomed,
+> but they should be considered a work-in-progress.
 
 
 ## How to build
