@@ -65,7 +65,7 @@ if [ -n "${TRAVIS}" ]; then
 	echo "travis_fold:start:cmake.configure"
 fi
 echo "Generate Xcode project (using CMake)"
-cmake -G"Xcode" -DCMAKE_PREFIX_PATH="$QT5_DIR" ../
+cmake -G"Xcode" -DCMAKE_PREFIX_PATH="$QT5_DIR" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY= -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO ../
 cmakeConfigureResult=${?}
 cd .. > /dev/null
 if [ -n "${TRAVIS}" ]; then
