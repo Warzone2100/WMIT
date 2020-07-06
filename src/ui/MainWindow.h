@@ -128,6 +128,7 @@ private slots:
 	void viewerInitialized();
 	void shaderAction(int);
 	void setEcmState(bool checked);
+	void setAlphaTestState(bool checked);
 
 	// transformations
 	void scaleXYZChanged(double scale);

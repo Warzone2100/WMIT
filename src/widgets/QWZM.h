@@ -106,6 +106,8 @@ public slots:
 
 	void setEnableTangentsInShaders(bool enable) {m_enableTangentsInShaders = enable ? 1 : 0;}
 
+	void setAlphaTestState(bool enable) {m_alphatest = enable ? 1 : 0;}
+
 public:
 	/// IAnimatable
 	void animate();
@@ -162,6 +164,7 @@ private:
 	float m_shadertime;
 	bool m_drawConnectors;
 	int m_ecmState;
+	int m_alphatest;
 
 	int m_enableTangentsInShaders;
 };

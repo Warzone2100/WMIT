@@ -85,6 +85,7 @@
     </property>
     <addaction name="actionRenderer"/>
     <addaction name="actionAnimate"/>
+    <addaction name="actionEnable_Alpha_Test"/>
     <addaction name="actionEnable_Ecm_Effect"/>
     <addaction name="actionSetTeamColor"/>
     <addaction name="separator"/>
@@ -378,6 +379,17 @@
    </property>
    <property name="text">
     <string>Enable Ecm Effect</string>
+   </property>
+  </action>
+  <action name="actionEnable_Alpha_Test">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable Alpha Test</string>
    </property>
   </action>
  </widget>
