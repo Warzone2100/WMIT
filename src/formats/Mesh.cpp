@@ -100,7 +100,7 @@ WZMVertex &WZMConnector::getPos()
 
 Mesh::Mesh()
 {
-	defaultConstructor();
+	clear();
 }
 
 Mesh::Mesh(const Pie3Level& p3)
@@ -115,13 +115,15 @@ Mesh::Mesh(const Pie3Level& p3)
 	std::vector<int>::iterator itMap;
 
 	IndexedTri iTri;
+	TexAnimData texAnim;
 	WZMVertex tmpNrm;
 	WZMVertex v[3];
 
 	auto nrmIt = p3.m_normals.begin();
 	bool noPieNormals = p3.normals() == 0;
+	bool hasTexAnim = false;
 
-	defaultConstructor();
+	clear();
 
 	/*
 	 *	Try to prevent duplicate vertices
@@ -131,8 +133,20 @@ Mesh::Mesh(const Pie3Level& p3)
 	 *	completely useless.
 	 */
 
+	reservePoints(p3.m_points.size());
+	reserveIndices(p3.m_polygons.size());
+
+	itL = p3.m_polygons.begin();
+	hasTexAnim = (itL != p3.m_polygons.end()) && (itL->m_flags & 0x4000);
+	if (hasTexAnim)
+	{
+		m_texAnimFrames = itL->m_frames;
+		m_texAnimPlaybackRate = itL->m_playbackRate;
+		reserveTexAnimation(p3.m_polygons.size());
+	}
+
 	// For each pie3 polygon
-	for (itL = p3.m_polygons.begin(); itL != p3.m_polygons.end(); ++itL)
+	for (; itL != p3.m_polygons.end(); ++itL)
 	{
 		// Presumably those issues are no longer present in newer models.
 		// N.B. Make sure to advance normals when skipping with normals present
@@ -184,6 +198,12 @@ Mesh::Mesh(const Pie3Level& p3)
 			}
 		}
 		addIndices(iTri);
+		if (hasTexAnim)
+		{
+			texAnim.width = itL->m_width;
+			texAnim.height = itL->m_height;
+			m_texAnimArray.emplace_back(texAnim);
+		}
 	}
 
 	std::list<Pie3Connector>::const_iterator itC;
@@ -218,7 +238,7 @@ Mesh::operator Pie3Level() const
 	Pie3Level p3;
 
 	std::vector<Pie3Vertex>::iterator itPV;
-
+	std::vector<TexAnimData>::const_iterator itTexAni;
 	std::vector<IndexedTri>::const_iterator itTri;
 
 	unsigned i;
@@ -235,6 +255,14 @@ Mesh::operator Pie3Level() const
 	typedef Pie3Vertex::equal_wEps equals;
 
 	p3Poly.m_flags = 0x200;
+	if (m_texAnimFrames > 0)
+	{
+		p3Poly.m_flags |= 0x4000;
+		p3Poly.m_frames = m_texAnimFrames;
+		p3Poly.m_playbackRate = m_texAnimPlaybackRate;
+	}
+
+	itTexAni = m_texAnimArray.begin();
 
 	for (itTri = m_indexArray.begin(); itTri != m_indexArray.end(); ++itTri)
 	{
@@ -258,12 +286,18 @@ Mesh::operator Pie3Level() const
 				p3Poly.m_indices[i] = std::distance(p3.m_points.begin(), itPV);
 			}
 
-			// TODO: deal with UV animation
 			p3UV.u() = m_textureArray[curIndex].u();
 			p3UV.v() = m_textureArray[curIndex].v();
 			p3Poly.m_texCoords[i] = p3UV;
 
 			p3.m_normals.push_back(m_normalArray[curIndex]);
+		}
+
+		if (m_texAnimFrames > 0)
+		{
+			p3Poly.m_width = itTexAni->width;
+			p3Poly.m_height = itTexAni->height;
+			++itTexAni;
 		}
 		p3.m_polygons.push_back(p3Poly);
 	}
@@ -789,17 +823,13 @@ bool Mesh::isValid() const
 	return true;
 }
 
-void Mesh::defaultConstructor()
-{
-	m_name.clear();
-	m_teamColours = false;
-}
-
 void Mesh::clear()
 {
 	m_name.clear();
 	m_frame_time = m_frame_cycles = 0.f;
+	m_texAnimFrames = m_texAnimPlaybackRate = 0;
 	m_frameArray.clear();
+	m_texAnimArray.clear();
 
 	m_vertexArray.clear();
 	m_textureArray.clear();
@@ -824,6 +854,11 @@ inline void Mesh::reservePoints(const unsigned size)
 inline void Mesh::reserveIndices(const unsigned size)
 {
 	m_indexArray.reserve(size);
+}
+
+void Mesh::reserveTexAnimation(const unsigned size)
+{
+	m_texAnimArray.reserve(size);
 }
 
 void Mesh::addPoint(const WZMVertex& vertex, const WZMUV& uv, const WZMVertex &normal)
