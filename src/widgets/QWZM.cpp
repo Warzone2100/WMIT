@@ -777,6 +777,10 @@ bool QWZM::bindShader(int type)
 		if (uniloc >= 0)
 			shader->setUniformValue(uniloc,	m_material.shininess);
 
+		uniloc = shader->uniformLocation("alphaTest");
+		if (uniloc >= 0)
+			shader->setUniformValue(uniloc,	1);
+
 		break;
 	}
 
