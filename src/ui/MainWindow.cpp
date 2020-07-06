@@ -1028,26 +1028,59 @@ void MainWindow::actionImport_Animation()
 	if (anim_path.isEmpty())
 	    return;
 
-	int meshIdx = -1;
+	const QString title_str = tr("Animation Import");
+
+	ApieAnimList pieAnim;
+	if (pieAnim.readAniFile(anim_path.toLocal8Bit()))
 	{
-		QStringList items = m_model->getMeshNames();
+		if (int(pieAnim.anims.size()) >= m_model->meshes())
+		{
+			if (int(pieAnim.anims.size()) > m_model->meshes())
+			{
+				QMessageBox::information(this, title_str,
+					"There are more animation objects then meshes! Will only import up to number of meshes.");
+			}
 
-		QString item = QInputDialog::getItem(this, tr("Select mesh for animation import"), "", items, 0, false);
-		if (!item.isEmpty())
-			meshIdx = items.indexOf(item);
-	}
+			int max_idx = std::min<int>(m_model->meshes(), pieAnim.anims.size());
+			for (int idx = 0; idx < max_idx; ++idx) {
+				auto &mesh = m_model->getMesh(idx);
+				mesh.importPieAnimation(pieAnim.anims[idx]);
+			}
+		}
+		else
+		{
+			bool okFlag;
+			for (int cnt = 0; cnt < int(pieAnim.anims.size()); cnt++)
+			{
+				auto &anim = pieAnim.anims[cnt];
+				int meshIdx = -1;
+				{
+					QStringList items = m_model->getMeshNames();
+					QString lbl = tr("Select mesh for animation import:");
+					if (!anim.name.empty())
+						lbl = tr("Select mesh for animation import: %1").arg(anim.name.c_str());
 
-	if (meshIdx < 0)
-		return;
+					QString item = QInputDialog::getItem(this, title_str,
+						lbl, items, 0, false, &okFlag);
+					if (!item.isEmpty())
+						meshIdx = items.indexOf(item);
+				}
 
-	auto &mesh = m_model->getMesh(meshIdx);
+				if ((meshIdx < 0) || !okFlag)
+					break;
 
-	ApieAnimObject pieAnim;
-	if (pieAnim.readStandaloneAniFile(anim_path.toLocal8Bit()))
-	{
-		mesh.importPieAnimation(pieAnim);
+				auto &mesh = m_model->getMesh(meshIdx);
+				mesh.importPieAnimation(anim);
+			}
+		}
+
 		// Might disable some anim-unfriendly actions
 		doAfterModelWasLoaded(true);
+	}
+	else
+	{
+		QMessageBox::warning(this, title_str,
+			"Unable to import animation file!");
 	}
 }
 

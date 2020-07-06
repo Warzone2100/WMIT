@@ -156,16 +156,29 @@ public:
 class ApieAnimObject
 {
 public:
+	std::string name;
 	int time, cycles, numframes;
 	std::vector<ApieAnimFrame> frames;
 
 	bool isValid() const {return !frames.empty();}
-	void clear() {frames.clear();}
+	void clear() {frames.clear(); name.clear();}
 
 	bool read(std::istream& in);
 	void write(std::ostream& out) const;
 
+	bool readStandaloneAniStream(std::istream& fin);
 	bool readStandaloneAniFile(const char* file);
+};
+
+class ApieAnimList
+{
+public:
+	std::vector<ApieAnimObject> anims;
+
+	void clear() {anims.clear();}
+	size_t count() const {return anims.size();}
+
+	bool readAniFile(const char* file);
 };
 
 template<typename V, typename P, typename C>

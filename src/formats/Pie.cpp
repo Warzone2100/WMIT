@@ -443,12 +443,47 @@ bool ApieAnimObject::readStandaloneAniFile(const char *file)
 	if (!fin.is_open())
 		return false;
 
-	return tryToReadDirective(fin, PIE_MODEL_DIRECTIVE_ANIMOBJECT, false,
+	return readStandaloneAniStream(fin);
+}
+
+bool ApieAnimObject::readStandaloneAniStream(std::istream &fin)
+{
+	std::string str;
+	std::streampos entrypoint = fin.tellg();
+
+	clear();
+
+	std::getline(fin, str);
+	if (fin.fail())
+	{
+		return false;
+	}
+
+	// Cut off CR
+	if (!str.empty() && str.back() == '\r')
+		str = str.substr(0, str.size() - 1);
+
+	// Attempt to read mesh name
+	if (str.find(PIE_MODEL_DIRECTIVE_ANIMOBJECT) == 0)
+	{
+		str.clear();
+
+		fin.clear();
+		fin.seekg(entrypoint);
+	}
+
+	if (tryToReadDirective(fin, PIE_MODEL_DIRECTIVE_ANIMOBJECT, false,
 		[this](std::istream& inn)
 		{
 			return read(inn);
-		}
-	);
+		}))
+	{
+			name = str;
+			// read up to next line
+			std::getline(fin, str);
+			return true;
+	}
+	return false;
 }
 
 const char *getPieDirectiveName(PIE_OPT_DIRECTIVES dir)
@@ -481,4 +516,23 @@ const char *getPieDirectiveDescription(PIE_OPT_DIRECTIVES dir)
 	default:
 		return "";
 	}
+}
+
+bool ApieAnimList::readAniFile(const char *file)
+{
+	std::ifstream fin;
+
+	clear();
+
+	fin.open(file, std::ios::in | std::ios::binary);
+
+	if (!fin.is_open())
+		return false;
+
+	ApieAnimObject nextAnim;
+	while (nextAnim.readStandaloneAniStream(fin))
+	{
+		anims.emplace_back(nextAnim);
+	};
+	return count() > 0;
 }
