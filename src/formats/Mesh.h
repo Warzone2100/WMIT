@@ -67,6 +67,11 @@ struct Frame
 	WZMVertex trans, rot, scale;
 };
 
+struct TexAnimData
+{
+	float width, height;
+};
+
 class Pie3Level;
 class ApieAnimObject;
 struct Mesh_exportToOBJ_InOutParams;
@@ -127,7 +132,10 @@ public:
 protected:
 	std::string m_name;
 	int m_frame_time, m_frame_cycles;
+	unsigned m_texAnimFrames;
+	unsigned m_texAnimPlaybackRate;
 	std::vector<Frame> m_frameArray;
+	std::vector<TexAnimData> m_texAnimArray;
 
 	std::vector<WZMVertex> m_vertexArray;
 	std::vector<WZMUV> m_textureArray;
@@ -146,6 +154,7 @@ protected:
 	void clear();
 	void reservePoints(const unsigned size);
 	void reserveIndices(const unsigned size);
+	void reserveTexAnimation(const unsigned size);
 	void addIndices(const IndexedTri& trio);
 	void calculateTBForIndices(const IndexedTri &trio);
 	void finishTBCalculation();
@@ -153,8 +162,6 @@ protected:
 	void finishImport();
 
 	void recalculateBoundData();
-private:
-	void defaultConstructor();
 };
 
 #endif // MESH_HPP
