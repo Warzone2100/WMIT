@@ -41,6 +41,7 @@ QWZM::QWZM(QObject *parent):
 	m_shadertime(0.f),
 	m_drawConnectors(false),
 	m_ecmState(0),
+	m_alphatest(1),
 	m_enableTangentsInShaders(true)
 {
 	defaultConstructor();
@@ -779,7 +780,7 @@ bool QWZM::bindShader(int type)
 
 		uniloc = shader->uniformLocation("alphaTest");
 		if (uniloc >= 0)
-			shader->setUniformValue(uniloc,	1);
+			shader->setUniformValue(uniloc,	m_alphatest);
 
 		break;
 	}
