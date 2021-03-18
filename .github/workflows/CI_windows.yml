@@ -117,7 +117,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.13.0
       with:
-        version: 5.12.9
+        version: 5.15.2
         arch: ${{ steps.settings.outputs.QTCI_ARCH }}
         dir: 'C:/Qt'
     - name: Verify Qt install + version
