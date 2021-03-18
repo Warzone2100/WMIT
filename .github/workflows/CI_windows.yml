@@ -103,16 +103,17 @@ jobs:
         # Export Variables
 
         # Export everything important to environment variables (for future steps)
-        echo "VCPKG_DEFAULT_TRIPLET=${VCPKG_DEFAULT_TRIPLET}" >> $GITHUB_ENV
-        echo "WZ_VC_TARGET_PLATFORMNAME=${WZ_VC_TARGET_PLATFORMNAME}" >> $GITHUB_ENV
-        echo "WZ_BUILD_DESC=${WZ_BUILD_DESC}" >> $GITHUB_ENV
-        echo "TCI_ARCH=${QTCI_ARCH}" >> $GITHUB_ENV
+        echo "VCPKG_DEFAULT_TRIPLET=${VCPKG_DEFAULT_TRIPLET}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "WZ_VC_TARGET_PLATFORMNAME=${WZ_VC_TARGET_PLATFORMNAME}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "WZ_BUILD_DESC=${WZ_BUILD_DESC}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "TCI_ARCH=${QTCI_ARCH}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "::set-output name=QTCI_ARCH::${QTCI_ARCH}"
-        echo "WZ_VC_GENERATOR=${WZ_VC_GENERATOR}" >> $GITHUB_ENV
-        #echo "WZ_VC_TOOLCHAIN=${WZ_VC_TOOLCHAIN}" >> $GITHUB_ENV
-        echo "WZ_VISUAL_STUDIO_INSTALL_PATH=${WZ_VISUAL_STUDIO_INSTALL_PATH}" >> $GITHUB_ENV
-        echo "VCPKG_VISUAL_STUDIO_PATH=${VCPKG_VISUAL_STUDIO_PATH}" >> $GITHUB_ENV
-        echo "WZ_DISTRIBUTOR=${WZ_DISTRIBUTOR}" >> $GITHUB_ENV
+        echo "WZ_VC_GENERATOR=${WZ_VC_GENERATOR}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        #echo "WZ_VC_TOOLCHAIN=${WZ_VC_TOOLCHAIN}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "::set-output name=WZ_VISUAL_STUDIO_INSTALL_PATH::${WZ_VISUAL_STUDIO_INSTALL_PATH}"
+        echo "WZ_VISUAL_STUDIO_INSTALL_PATH=${WZ_VISUAL_STUDIO_INSTALL_PATH}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "VCPKG_VISUAL_STUDIO_PATH=${VCPKG_VISUAL_STUDIO_PATH}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "WZ_DISTRIBUTOR=${WZ_DISTRIBUTOR}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "::set-output name=WZ_DEPLOY_RELEASE::${WZ_DEPLOY_RELEASE}"
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.13.0
