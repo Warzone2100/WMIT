@@ -115,7 +115,7 @@ jobs:
         echo "WZ_DISTRIBUTOR=${WZ_DISTRIBUTOR}" >> $GITHUB_ENV
         echo "::set-output name=WZ_DEPLOY_RELEASE::${WZ_DEPLOY_RELEASE}"
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2.7.2
+      uses: jurplel/install-qt-action@v2.13.0
       with:
         version: 5.12.9
         arch: ${{ steps.settings.outputs.QTCI_ARCH }}
