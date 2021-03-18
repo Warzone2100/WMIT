@@ -37,7 +37,7 @@ jobs:
       run: |
         OUTPUT_DIR="${HOME}/output"
         echo "OUTPUT_DIR=${OUTPUT_DIR}"
-        echo "::set-env name=OUTPUT_DIR::${OUTPUT_DIR}"
+        echo "OUTPUT_DIR=${OUTPUT_DIR}" >> $GITHUB_ENV
         mkdir -p "${OUTPUT_DIR}"
     - name: Configure
       run: |
@@ -69,7 +69,7 @@ jobs:
         WMIT_OUTPUT_ZIP="${OUTPUT_DIR}/wmit_macOS.zip"
         mv "./build/WMIT.zip" "${WMIT_OUTPUT_ZIP}"
         echo "WMIT_OUTPUT_ZIP=${WMIT_OUTPUT_ZIP}"
-        echo "::set-env name=WMIT_OUTPUT_ZIP::${WMIT_OUTPUT_ZIP}"
+        echo "WMIT_OUTPUT_ZIP=${WMIT_OUTPUT_ZIP}" >> $GITHUB_ENV
     - name: Output Debug Info
       shell: sh {0}
       run: |
