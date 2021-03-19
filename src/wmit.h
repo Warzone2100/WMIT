@@ -21,6 +21,9 @@
 #define WMIT_SHADER_WZ33TC_DEFPATH_VERT ":/data/shaders/wz33_tcmask.vert"
 #define WMIT_SHADER_WZ33TC_DEFPATH_FRAG ":/data/shaders/wz33_tcmask.frag"
 
+#define WMIT_SHADER_WZ40TC_DEFPATH_VERT ":/data/shaders/wz40_tcmask.vert"
+#define WMIT_SHADER_WZ40TC_DEFPATH_FRAG ":/data/shaders/wz40_tcmask.frag"
+
 #define WMIT_IMAGES_NOTEXTURE ":/data/images/notex.png"
 #define WMIT_IMAGES_BANNER ":/data/images/wmit_banner.png"
 #define WMIT_IMAGES_LOGO_64 ":/data/images/wmit_logo_64.png"

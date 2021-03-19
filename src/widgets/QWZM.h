@@ -39,16 +39,19 @@
 enum wz_shader_type_t {WZ_SHADER_NONE,
 		       WZ_SHADER_WZ31,
 		       WZ_SHADER_WZ32,
+		       // 3.3 and 3.4 are identical, shader and lighting-wise
 		       WZ_SHADER_WZ33,
+		       WZ_SHADER_WZ40,
 		       WZ_SHADER__LAST,
-		       WZ_SHADER__LATEST = WZ_SHADER_WZ33,
+		       WZ_SHADER__LATEST = WZ_SHADER_WZ40,
 		       WZ_SHADER__FIRST = WZ_SHADER_NONE};
 
 static const int wz_shader_type_tag[WZ_SHADER__LAST] = {
 	0,
 	31,
 	32,
-	33
+	33,
+	40
 };
 
 class Pie3Model;
