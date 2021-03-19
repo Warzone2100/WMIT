@@ -26,7 +26,8 @@ const static QString base_lightcol_name = "3DView/LightColor";
 
 const static std::array<light_cols_t,LIGHT_WZVER_MAX> lightCol0_default = {{
 	{{{0.0f, 0.0f, 0.0f, 1.0f},  {0.5f, 0.5f, 0.5f, 1.0f}, {0.8f, 0.8f, 0.8f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}},
-	{{{0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f},  {0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f}}}
+	{{{0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f},  {0.f, 0.f, 0.f, 1.f},  {1.f, 1.f, 1.f, 1.f}}},
+	{{{0.f, 0.f, 0.f, 1.f},  {0.5f, 0.5f, 0.5f, 1.0f},  {1.f, 1.f, 1.f, 1.f},  {1.f, 1.f, 1.f, 1.f}}}
 }};
 
 light_cols_t lightCol0_custom = lightCol0_default[LIGHT_WZ33];

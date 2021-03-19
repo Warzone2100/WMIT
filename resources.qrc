@@ -10,5 +10,7 @@
         <file>data/images/wmit_logo_64.png</file>
         <file>data/images/wmit_banner.png</file>
         <file>AUTHORS</file>
+        <file>data/shaders/wz40_tcmask.frag</file>
+        <file>data/shaders/wz40_tcmask.vert</file>
     </qresource>
 </RCC>

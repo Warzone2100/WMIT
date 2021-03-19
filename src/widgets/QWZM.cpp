@@ -520,13 +520,16 @@ QString QWZM::shaderTypeToString(wz_shader_type_t type)
 		str = "Fixed pipeline";
 		break;
 	case WZ_SHADER_WZ31:
-		str = "WZ 3.1 shaders";
+		str = "WZ 3.1";
 		break;
 	case WZ_SHADER_WZ32:
-		str = "WZ 3.2 shaders";
+		str = "WZ 3.2";
 		break;
 	case WZ_SHADER_WZ33:
-		str = "WZ 3.3 shaders";
+		str = "WZ 3.3/3.4";
+		break;
+	case WZ_SHADER_WZ40:
+		str = "WZ 4.0";
 		break;
 	default:
 		str = "<Unknown>";
@@ -560,6 +563,7 @@ bool QWZM::setupTextureUnits(int type)
 	case WZ_SHADER_WZ31:
 	case WZ_SHADER_WZ32:
 	case WZ_SHADER_WZ33:
+	case WZ_SHADER_WZ40:
 		if (hasGLRenderTexture(WZM_TEX_DIFFUSE))
 			activateAndBindTexture(0, m_gl_textures[WZM_TEX_DIFFUSE]);
 		else
@@ -592,6 +596,7 @@ void QWZM::clearTextureUnits(int type)
 	case WZ_SHADER_WZ31:
 	case WZ_SHADER_WZ32:
 	case WZ_SHADER_WZ33:
+	case WZ_SHADER_WZ40:
 		deactivateTexture(3);
 		deactivateTexture(2);
 		deactivateTexture(1);
@@ -627,6 +632,7 @@ bool QWZM::initShader(int type)
 			break;
 		case WZ_SHADER_WZ32:
 		case WZ_SHADER_WZ33:
+		case WZ_SHADER_WZ40:
 			baseTexLoc = shader->uniformLocation("Texture");
 			tcTexLoc = shader->uniformLocation("TextureTcmask");
 			nmTexLoc = shader->uniformLocation("TextureNormal");
@@ -650,6 +656,7 @@ bool QWZM::initShader(int type)
 	{
 	case WZ_SHADER_WZ32:
 	case WZ_SHADER_WZ33:
+	case WZ_SHADER_WZ40:
 		uniLoc = shader->uniformLocation("alphaTest");
 		shader->setUniformValue(uniLoc, GLint(0));
 
@@ -713,6 +720,7 @@ bool QWZM::bindShader(int type)
 	{
 	case WZ_SHADER_WZ32:
 	case WZ_SHADER_WZ33:
+	case WZ_SHADER_WZ40:
 		uniloc = shader->uniformLocation("ModelViewMatrix");
 		shader->setUniformValue(uniloc,	render_mtxModelView);
 

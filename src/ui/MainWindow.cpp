@@ -662,6 +662,10 @@ bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *
 			pathvert = WMIT_SHADER_WZ33TC_DEFPATH_VERT;
 			pathfrag = WMIT_SHADER_WZ33TC_DEFPATH_FRAG;
 			break;
+		case WZ_SHADER_WZ40:
+			pathvert = WMIT_SHADER_WZ40TC_DEFPATH_VERT;
+			pathfrag = WMIT_SHADER_WZ40TC_DEFPATH_FRAG;
+			break;
 		default:
 			break;
 		}
@@ -847,6 +851,9 @@ void MainWindow::shaderAction(int type)
 	{
 	case WZ_SHADER_WZ33:
 		switchLightToWzVer(LIGHT_WZ33, true);
+		break;
+	case WZ_SHADER_WZ40:
+		switchLightToWzVer(LIGHT_WZ40, true);
 		break;
 	default:
 		switchLightToWzVer(LIGHT_WZ32, true);

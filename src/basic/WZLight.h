@@ -29,7 +29,10 @@ enum LIGHTING_TYPE {
 };
 
 enum LIGHTING_WZVER {
-	LIGHT_WZ32, LIGHT_WZ33, LIGHT_WZVER_MAX
+	LIGHT_WZ32,
+	LIGHT_WZ33,
+	LIGHT_WZ40,
+	LIGHT_WZVER_MAX
 };
 
 typedef std::array<GLfloat, 4> light_col_t;
