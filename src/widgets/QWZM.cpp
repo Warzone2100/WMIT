@@ -89,8 +89,8 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		render_mtxProj = QMatrix4x4(mtxProj).transposed();
 		render_posSun = QVector4D(posSun[0], posSun[1], posSun[2], posSun[3]) * wz_scale;
 
-		// Invert sun position for external shader, so it's same as in wz
-		if (isShaderExternal(activeShader))
+		// Invert sun position for 4.0 shader, which is doing some invertion to workaround wz light weirdness
+		if (activeShader == WZ_SHADER_WZ40)
 			render_posSun *= pos_invert;
 	}
 
