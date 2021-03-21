@@ -74,11 +74,12 @@ std::ostream& operator<< (std::ostream& out, const WZMaterial& mat)
 	return out;
 }
 
-WZM::WZM(): m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
+WZM::WZM(): m_pie_read_type(0),
+	m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
 {
 }
 
-WZM::WZM(const Pie3Model &p3): m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
+WZM::WZM(const Pie3Model &p3)
 {
 	std::vector<Pie3Level>::const_iterator it;
 	std::stringstream ss;
@@ -91,6 +92,7 @@ WZM::WZM(const Pie3Model &p3): m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
 	if (p3.levels() > 0)
 		m_material = p3.m_levels.begin()->m_material;
 
+	m_pie_read_type = p3.m_read_type;
 	m_events = p3.m_events;
 	m_ani_interpolate = p3.m_ani_interpolate;
 
@@ -117,6 +119,7 @@ WZM::operator Pie3Model() const
 	p3.m_texture_tcmask = getTextureName(WZM_TEX_TCMASK);
 	p3.m_texture_specmap = getTextureName(WZM_TEX_SPECULAR);
 
+	p3.m_read_type = m_pie_read_type;
 	p3.m_events = m_events;
 	p3.m_ani_interpolate = m_ani_interpolate;
 
@@ -720,6 +723,7 @@ void WZM::clear()
 	m_material.setDefaults();
 	m_events.clear();
 	m_ani_interpolate = PIE_MODEL_DEF_INTERPOLATE;
+	m_pie_read_type = 0;
 }
 
 void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)
