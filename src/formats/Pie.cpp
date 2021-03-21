@@ -35,7 +35,7 @@ int pieVersion(std::istream& in)
 	if (in.good() && pie.compare(PIE_MODEL_SIGNATURE) == 0)
 	{
 		in.seekg(start);
-		if (version >= 2 || version <= 3)
+		if (version == 2 || version == 3)
 		{
 			return version;
 		}
