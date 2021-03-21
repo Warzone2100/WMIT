@@ -50,13 +50,16 @@
 #define PIE_MODEL_DIRECTIVE_SHADERS "SHADERS"
 #define PIE_MODEL_DIRECTIVE_EVENT "EVENT" // WZ 3.3
 #define PIE_MODEL_DIRECTIVE_ANIMOBJECT "ANIMOBJECT" // WZ 3.3
-#define PIE_MODEL_DIRECTIVE_NORMALS "NORMALS" // WZ after 3.3 (TBD)
+#define PIE_MODEL_DIRECTIVE_NORMALS "NORMALS" // WZ 4.0
+#define PIE_MODEL_DIRECTIVE_INTERPOLATE "INTERPOLATE" // WZ 4.0
 
 #define PIE_MODEL_FEATURE_TEXTURED 0x200
 #define PIE_MODEL_FEATURE_TCMASK 0x10000
 
 #define PIE_MODEL_TEXPAGE_PREFIX "page-"
 #define PIE_MODEL_TCMASK_SUFFIX "_tcmask"
+
+#define PIE_MODEL_DEF_INTERPOLATE 1
 
 // Saw on https://stackoverflow.com/questions/17350214/using-enum-class-with-stdbitset
 
@@ -112,15 +115,16 @@ public:
 
 enum class PIE_OPT_DIRECTIVES
 {
+	podINTERPOLATE,
 	podNORMALMAP,
 	podSPECULARMAP,
 	podEVENT,
 	podMATERIALS,
 	podSHADERS,
-
 	podNORMALS,
 	podCONNECTORS,
 	podANIMOBJECT,
+
 	pod_MAXVAL
 };
 
@@ -138,9 +142,9 @@ struct EnumTraits<PIE_OPT_DIRECTIVES>
 
 typedef EnumClassBitset<PIE_OPT_DIRECTIVES> PieCaps;
 
-// Note that string bits are reversed!
-const static PieCaps PIE2_CAPS("11010111");
-const static PieCaps PIE3_CAPS("11010111");
+// Note that string bits are reversed and pod_MAXVAL is "before" first char of caps string
+const static PieCaps PIE2_CAPS("110101110");
+const static PieCaps PIE3_CAPS("110101110");
 
 class ApieAnimFrame
 {
@@ -266,6 +270,7 @@ protected:
 	unsigned int m_read_type;
 	const PieCaps m_def_caps;
 	PieCaps m_caps;
+	unsigned int m_ani_interpolate;
 };
 
 template <typename V>

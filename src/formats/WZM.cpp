@@ -74,11 +74,11 @@ std::ostream& operator<< (std::ostream& out, const WZMaterial& mat)
 	return out;
 }
 
-WZM::WZM()
+WZM::WZM(): m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
 {
 }
 
-WZM::WZM(const Pie3Model &p3)
+WZM::WZM(const Pie3Model &p3): m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
 {
 	std::vector<Pie3Level>::const_iterator it;
 	std::stringstream ss;
@@ -92,6 +92,7 @@ WZM::WZM(const Pie3Model &p3)
 		m_material = p3.m_levels.begin()->m_material;
 
 	m_events = p3.m_events;
+	m_ani_interpolate = p3.m_ani_interpolate;
 
 	for (it = p3.m_levels.begin(); it != p3.m_levels.end(); ++it)
 	{
@@ -117,6 +118,7 @@ WZM::operator Pie3Model() const
 	p3.m_texture_specmap = getTextureName(WZM_TEX_SPECULAR);
 
 	p3.m_events = m_events;
+	p3.m_ani_interpolate = m_ani_interpolate;
 
 	std::transform(m_meshes.begin(), m_meshes.end(),
 				   back_inserter(p3.m_levels), Mesh::backConvert);
@@ -717,6 +719,7 @@ void WZM::clear()
 	m_textures.clear();
 	m_material.setDefaults();
 	m_events.clear();
+	m_ani_interpolate = PIE_MODEL_DEF_INTERPOLATE;
 }
 
 void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)
