@@ -22,6 +22,7 @@
 #include <QTextCodec>
 #include <QSettings>
 
+#include <iostream>
 #include <fstream>
 
 #include "MainWindow.h"
@@ -34,13 +35,20 @@
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin);
 #endif
 
+void printWelcomeBanner()
+{
+	std::cout << "Welcome to " WMIT_APPNAME " " WMIT_VER_STR <<
+	std::endl << std::endl;
+}
+
 int main(int argc, char *argv[])
 {
     //QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
 
 	if(argc == 2 && strcmp("--help", argv[1]) == 0)
 	{
-		printf("Welcome to " WMIT_APPNAME " " WMIT_VER_STR "\n\n");
+		printWelcomeBanner();
+
 		printf("Usage:\n");
 		printf("  <no parameters> (opens GUI application)\n");
 		printf("  --help (shows this message)\n");
@@ -51,6 +59,12 @@ int main(int argc, char *argv[])
 
 	if (argc > 2)
 	{
+		printWelcomeBanner();
+		std::cout << "Converting files:" << std::endl;
+		std::cout << "Input file \"" << argv[1] << '"' << std::endl;
+		std::cout << "Output file \"" << argv[2] << '"' << std::endl;
+		std::cout << std::endl;
+
 		// command line conversion mode
 		QString inname = argv[1];
 
@@ -58,7 +72,13 @@ int main(int argc, char *argv[])
 		WZM model;
 
 		info.m_saveAsFile = argv[2];
+		if (!MainWindow::guessModelTypeFromFilename(info.m_saveAsFile, info.m_save_type))
+		{
+			std::cerr << "Could not guess save model type from filename. Only PIE3, WZM, and OBJ formats are supported!" << std::endl;
+			return 1;
+		}
 
+		std::cout << "Loading model..." << std::endl;
 		if (!MainWindow::loadModel(inname, model, info, true))
 		{
 			printf("Could not load model\n");
@@ -67,12 +87,14 @@ int main(int argc, char *argv[])
 
 		info.defaultPieCapsIfNeeded();
 
+		std::cout << "Saving model..." << std::endl;
 		if(!MainWindow::saveModel(model, info))
 		{
 			printf("Could not save model\n");
 			return 1;
 		}
 
+		std::cout << "Done." << std::endl;
 		return 0;
 	}
 	else
