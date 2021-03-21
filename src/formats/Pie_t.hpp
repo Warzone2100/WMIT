@@ -354,7 +354,8 @@ APieModel<L>::~APieModel()
 template <typename L>
 unsigned APieModel<L>::getType() const
 {
-	unsigned type = 0;
+	// keep "effects"-related flags
+	unsigned type = m_read_type & 0xFF;
 
 	if (!m_texture.empty())
 	{

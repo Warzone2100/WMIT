@@ -135,6 +135,7 @@ protected:
 	std::vector<Mesh> m_meshes;
 	std::map<wzm_texture_type_t, std::string> m_textures;
 	WZMaterial m_material;
+	unsigned int m_pie_read_type;
 	std::map<int, std::string> m_events;
 	unsigned int m_ani_interpolate;
 };
