@@ -1,4 +1,5 @@
-wmit.pro.user
+wmit.pro.*
+CMakeLists.txt.*
 config.pri
 /Makefile
 
