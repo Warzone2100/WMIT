@@ -1,0 +1,8 @@
+Some data used in tests was copied from Warzone 2100 repository and
+is subject to its license terms (GNU General Public License, version 2 or later)
+as described in accompanying "COPYING.README".
+Please see <https://github.com/Warzone2100/warzone2100> for more details.
+
+You can also get a copy of license text from local 'COPYING.txt'.
+
+Original game developed by Pumpkin Studios, and published by EIDOS Interactive.
