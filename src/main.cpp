@@ -35,10 +35,20 @@
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin);
 #endif
 
-void printWelcomeBanner()
+void printWelcomeBanner(const bool printLicense)
 {
-	std::cout << "Welcome to " WMIT_APPNAME " " WMIT_VER_STR <<
-	std::endl << std::endl;
+	std::cout << "Welcome to " WMIT_APPNAME " " WMIT_VER_STR << std::endl;
+
+	if (printLicense)
+	{
+		std::cout << std::endl <<
+		"Copyright (C) 2010-2021 Warzone 2100 Project" << std::endl <<
+		"This program comes with ABSOLUTELY NO WARRANTY;" << std::endl <<
+		"This is free software, and you are welcome to redistribute it" << std::endl <<
+		"under certain conditions; see About in graphical UI for details." << std::endl;
+	}
+
+	std::cout << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -47,7 +57,7 @@ int main(int argc, char *argv[])
 
 	if(argc == 2 && strcmp("--help", argv[1]) == 0)
 	{
-		printWelcomeBanner();
+		printWelcomeBanner(true);
 
 		printf("Usage:\n");
 		printf("  <no parameters> (opens GUI application)\n");
@@ -59,7 +69,7 @@ int main(int argc, char *argv[])
 
 	if (argc > 2)
 	{
-		printWelcomeBanner();
+		printWelcomeBanner(false);
 		std::cout << "Converting files:" << std::endl;
 		std::cout << "Input file \"" << argv[1] << '"' << std::endl;
 		std::cout << "Output file \"" << argv[2] << '"' << std::endl;
