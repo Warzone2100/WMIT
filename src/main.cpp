@@ -40,11 +40,12 @@ int main(int argc, char *argv[])
 
 	if(argc == 2 && strcmp("--help", argv[1]) == 0)
 	{
+		printf("Welcome to " WMIT_APPNAME " " WMIT_VER_STR "\n\n");
 		printf("Usage:\n");
-		printf("  WMIT (opens application)\n");
-		printf("  WMIT --help (shows this message)\n");
-		printf("  WMIT [filename] (opens a file)\n");
-		printf("  WMIT [input] [output] (converts between formats wzm, pie and obj)\n");
+		printf("  <no parameters> (opens GUI application)\n");
+		printf("  --help (shows this message)\n");
+		printf("  [filename] (opens a file in GUI)\n");
+		printf("  [input] [output] (converts between formats wzm, pie and obj)\n");
 		exit(0);
 	}
 
@@ -71,6 +72,8 @@ int main(int argc, char *argv[])
 			printf("Could not save model\n");
 			return 1;
 		}
+
+		return 0;
 	}
 	else
 	{
