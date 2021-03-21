@@ -340,7 +340,8 @@ void APieModel<L>::clearAll()
 }
 
 template <typename L>
-APieModel<L>::APieModel(const PieCaps& def_caps): m_def_caps(def_caps)
+APieModel<L>::APieModel(const PieCaps& def_caps):
+	m_def_caps(def_caps), m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
 {
 }
 
@@ -418,6 +419,22 @@ bool APieModel<L>::readHeaderBlock(std::istream& in)
 	{
 		return false;
 	}
+
+	return tryToReadDirective(in, PIE_MODEL_DIRECTIVE_INTERPOLATE, true,
+		[this](std::istream& inn)
+		{
+			unsigned uint;
+
+			// INTERPOLATE %u
+			inn >> uint;
+			if (inn.fail())
+				return false;
+
+			m_caps.set(PIE_OPT_DIRECTIVES::podINTERPOLATE);
+			m_ani_interpolate = uint;
+			return true;
+		}
+	);
 
 	return true;
 }
@@ -604,6 +621,11 @@ void APieModel<L>::write(std::ostream& out, const PieCaps *piecaps) const
 	out << PIE_MODEL_SIGNATURE << " " << version() << '\n';
 
 	out << PIE_MODEL_DIRECTIVE_TYPE << " " << std::hex << getType() << std::dec << '\n';
+
+	if (caps.test(PIE_OPT_DIRECTIVES::podINTERPOLATE))
+	{
+		out << PIE_MODEL_DIRECTIVE_INTERPOLATE << ' ' << m_ani_interpolate << '\n';
+	}
 
 	out << PIE_MODEL_DIRECTIVE_TEXTURE << " 0 " << m_texture << ' '
 			<< textureWidth() << ' '

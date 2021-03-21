@@ -136,6 +136,7 @@ protected:
 	std::map<wzm_texture_type_t, std::string> m_textures;
 	WZMaterial m_material;
 	std::map<int, std::string> m_events;
+	unsigned int m_ani_interpolate;
 };
 
 #endif // WZM_HPP
