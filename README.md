@@ -1,7 +1,10 @@
 # WMIT
 Warzone Model Import Tool
 
-Import and export .WZM, [.PIE](https://github.com/Warzone2100/warzone2100/blob/master/doc/PIE.md), and .OBJ files.
+Import and export [.PIE](https://github.com/Warzone2100/warzone2100/blob/master/doc/PIE.md), and .OBJ files.
+
+Also can import files in .WZM format.
+> Note: support for .WZM format is deprecated and will be removed in a future release. Please migrate your files into .PIE format.
 
 For use with: [Warzone 2100](https://github.com/Warzone2100/warzone2100)
 
