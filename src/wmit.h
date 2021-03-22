@@ -28,4 +28,6 @@
 #define WMIT_IMAGES_BANNER ":/data/images/wmit_banner.png"
 #define WMIT_IMAGES_LOGO_64 ":/data/images/wmit_logo_64.png"
 
+#define WMIT_WARN_DEPRECATED_WZM "WARNING: support for .WZM format is deprecated and will be removed in a future release. Please migrate your files into .PIE format!"
+
 enum wmit_filetype_t { WMIT_FT_PIE = 0, WMIT_FT_PIE2, WMIT_FT_WZM, WMIT_FT_OBJ };
