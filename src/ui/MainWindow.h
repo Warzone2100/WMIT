@@ -63,7 +63,7 @@ struct ModelInfo
 
 	void clear()
 	{
-		m_save_type = m_read_type = WMIT_FT_WZM;
+		m_save_type = m_read_type = WMIT_FT_PIE;
 		m_pieCaps.reset();
 		m_currentFile.clear();
 		m_saveAsFile.clear();
