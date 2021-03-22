@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 		printf("  <no parameters> (opens GUI application)\n");
 		printf("  --help (shows this message)\n");
 		printf("  [filename] (opens a file in GUI)\n");
-		printf("  [input] [output] (converts between formats wzm, pie and obj)\n");
+		printf("  [input] [output] (converts between formats PIE and OBJ. Deprecated WZM format is supported as input.)\n");
 		exit(0);
 	}
 
@@ -88,11 +88,22 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
+		if (info.m_save_type == WMIT_FT_WZM)
+		{
+			std::cerr << WMIT_WARN_DEPRECATED_WZM << std::endl;
+			return 1;
+		}
+
 		std::cout << "Loading model..." << std::endl;
 		if (!MainWindow::loadModel(inname, model, info, true))
 		{
 			printf("Could not load model\n");
 			return 1;
+		}
+
+		if (info.m_read_type == WMIT_FT_WZM)
+		{
+			std::cout << WMIT_WARN_DEPRECATED_WZM << std::endl;
 		}
 
 		info.defaultPieCapsIfNeeded();
