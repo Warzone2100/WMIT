@@ -24,7 +24,7 @@
    <item>
     <widget class="QLabel" name="lblText">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Warzone Model Import Tool&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Import and export &lt;a href=&quot;https://github.com/Warzone2100/warzone2100/blob/master/doc/PIE.md&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#3584e4;&quot;&gt;.PIE&lt;/span&gt;&lt;/a&gt;, .WZM and .OBJ files. For use with: &lt;a href=&quot;https://github.com/Warzone2100/warzone2100&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#3584e4;&quot;&gt;Warzone 2100&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Warzone Model Import Tool&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Import and export &lt;a href=&quot;https://github.com/Warzone2100/warzone2100/blob/master/doc/PIE.md&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#3584e4;&quot;&gt;.PIE&lt;/span&gt;&lt;/a&gt; and .OBJ files. For use with: &lt;a href=&quot;https://github.com/Warzone2100/warzone2100&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#3584e4;&quot;&gt;Warzone 2100&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
