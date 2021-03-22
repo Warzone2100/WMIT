@@ -84,13 +84,7 @@ int main(int argc, char *argv[])
 		info.m_saveAsFile = argv[2];
 		if (!MainWindow::guessModelTypeFromFilename(info.m_saveAsFile, info.m_save_type))
 		{
-			std::cerr << "Could not guess save model type from filename. Only PIE3, WZM, and OBJ formats are supported!" << std::endl;
-			return 1;
-		}
-
-		if (info.m_save_type == WMIT_FT_WZM)
-		{
-			std::cerr << WMIT_WARN_DEPRECATED_WZM << std::endl;
+			std::cerr << "Could not guess save model type from filename. Only PIE and OBJ formats are supported!" << std::endl;
 			return 1;
 		}
 
@@ -99,11 +93,6 @@ int main(int argc, char *argv[])
 		{
 			printf("Could not load model\n");
 			return 1;
-		}
-
-		if (info.m_read_type == WMIT_FT_WZM)
-		{
-			std::cout << WMIT_WARN_DEPRECATED_WZM << std::endl;
 		}
 
 		info.defaultPieCapsIfNeeded();

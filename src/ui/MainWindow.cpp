@@ -284,33 +284,41 @@ bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_
 bool MainWindow::saveModel(const WZM &model, const ModelInfo &info)
 {
 	std::ofstream out;
+	bool save_result = true;
+
+	if (info.m_save_type == WMIT_FT_WZM)
+	{
+		std::cerr << WMIT_WARN_DEPRECATED_WZM << std::endl;
+		return false;
+	}
+
 	out.open(info.m_saveAsFile.toLocal8Bit().constData());
 
 	switch (info.m_save_type)
 	{
-	case WMIT_FT_WZM:
-		model.write(out);
-		break;
 	case WMIT_FT_OBJ:
 		model.exportToOBJ(out);
 		break;
-	default:
+	case WMIT_FT_PIE:
+	{
 		Pie3Model p3 = model;
-
-		if (info.m_save_type == WMIT_FT_PIE2)
-		{
-			Pie2Model p2 = p3;
-			p2.write(out, &info.m_pieCaps);
-		}
-		else
-		{
-			p3.write(out, &info.m_pieCaps);
-		}
+		p3.write(out, &info.m_pieCaps);
+		break;
+	}
+	case WMIT_FT_PIE2:
+	{
+		Pie3Model p3 = model;
+		Pie2Model p2 = p3;
+		p2.write(out, &info.m_pieCaps);
+		break;
+	}
+	default:
+		save_result = false;
 	}
 
 	out.close();
 
-	return true;
+	return save_result;
 }
 
 void MainWindow::changeEvent(QEvent *event)
@@ -365,6 +373,11 @@ bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, boo
 	}
 
 	info.m_read_type = type;
+
+	if (info.m_read_type == WMIT_FT_WZM)
+	{
+		std::cout << WMIT_WARN_DEPRECATED_WZM << std::endl;
+	}
 
 	bool read_success = false;
 	std::ifstream f;
@@ -560,10 +573,14 @@ void MainWindow::actionSaveAs()
 	ModelInfo tmpModelinfo(m_modelinfo);
 
 	QStringList filters;
-	filters << "PIE3 models (*.pie)" << "PIE2 models (*.pie)" << "WZM models (*.wzm)" << "OBJ files (*.obj)";
+	filters << "PIE3 models (*.pie)" <<
+		   "PIE2 models (*.pie)" <<
+		   "OBJ files (*.obj)";
 
 	QList<wmit_filetype_t> types;
-	types << WMIT_FT_PIE << WMIT_FT_PIE2 << WMIT_FT_WZM << WMIT_FT_OBJ;
+	types << WMIT_FT_PIE
+	      << WMIT_FT_PIE2
+	      << WMIT_FT_OBJ;
 
 	QFileDialog* fDialog = new QFileDialog();
 
@@ -614,9 +631,8 @@ void MainWindow::actionSaveAs()
 			tmpModelinfo.m_saveAsFile += ".obj";
 		break;
 	case WMIT_FT_WZM:
-		if (finfo.suffix().toLower() != "wzm")
-			tmpModelinfo.m_saveAsFile += ".wzm";
-		break;
+		std::cerr << WMIT_WARN_DEPRECATED_WZM << std::endl;
+		return;
 	}
 
 	if (dlg && dlg->result() != QDialog::Accepted)
