@@ -409,3 +409,8 @@ endif()
 
 add_subdirectory(pkg)
 
+##################################################
+# Testing
+
+include(CTest)
+add_subdirectory(tests)
