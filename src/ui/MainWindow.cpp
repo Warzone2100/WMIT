@@ -550,10 +550,12 @@ void MainWindow::actionSave()
 	if (m_modelinfo.m_currentFile.isEmpty())
 	{
 		actionSaveAs();
-		return;
 	}
-
-	saveModel(*m_model, m_modelinfo);
+	else if (!saveModel(*m_model, m_modelinfo))
+	{
+		QMessageBox::critical(this, "Save error",
+				      QString("Unable to save '%1'").arg(m_modelinfo.m_saveAsFile));
+	}
 }
 
 void MainWindow::PrependFileToRecentList(const QString& filename)
@@ -632,6 +634,7 @@ void MainWindow::actionSaveAs()
 		break;
 	case WMIT_FT_WZM:
 		std::cerr << WMIT_WARN_DEPRECATED_WZM << std::endl;
+		QMessageBox::critical(this, "Save error", WMIT_WARN_DEPRECATED_WZM);
 		return;
 	}
 
@@ -643,7 +646,11 @@ void MainWindow::actionSaveAs()
 	m_modelinfo = tmpModelinfo;
 	PrependFileToRecentList(m_modelinfo.m_saveAsFile);
 
-	saveModel(*m_model, m_modelinfo);
+	if (!saveModel(*m_model, m_modelinfo))
+	{
+		QMessageBox::critical(this, "Save error",
+		      QString("Unable to save as '%1'").arg(m_modelinfo.m_saveAsFile));
+	}
 }
 
 bool MainWindow::reloadShader(wz_shader_type_t type, bool user_shader, QString *errMessage)
