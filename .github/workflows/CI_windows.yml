@@ -51,7 +51,7 @@ jobs:
         # MSVC version / generator info
 
         $WZ_VISUAL_STUDIO_INSTALL_PATH = ""
-        if ($env:WZ_COMPILER_VER -eq "MSVC_2022") {
+        if ($env:WZ_MSVC_VER -eq "MSVC_2022") {
           $WZ_VC_GENERATOR = "Visual Studio 17 2022"
           #$env:WZ_VC_TOOLCHAIN = "v143"
           # Get the installation path for a specific version of MSVC (2022)
