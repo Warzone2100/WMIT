@@ -25,7 +25,7 @@ jobs:
     runs-on: windows-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: recursive
     - name: Generate Settings for Run [${{ matrix.compiler }}:${{ matrix.architecture }}]
@@ -107,16 +107,16 @@ jobs:
         echo "WZ_VC_TARGET_PLATFORMNAME=${WZ_VC_TARGET_PLATFORMNAME}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "WZ_BUILD_DESC=${WZ_BUILD_DESC}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "QTCI_ARCH=${QTCI_ARCH}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        echo "::set-output name=QTCI_ARCH::${QTCI_ARCH}"
+        echo "QTCI_ARCH=${QTCI_ARCH}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         echo "WZ_VC_GENERATOR=${WZ_VC_GENERATOR}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         #echo "WZ_VC_TOOLCHAIN=${WZ_VC_TOOLCHAIN}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        echo "::set-output name=WZ_VISUAL_STUDIO_INSTALL_PATH::${WZ_VISUAL_STUDIO_INSTALL_PATH}"
+        echo "WZ_VISUAL_STUDIO_INSTALL_PATH=${WZ_VISUAL_STUDIO_INSTALL_PATH}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         echo "WZ_VISUAL_STUDIO_INSTALL_PATH=${WZ_VISUAL_STUDIO_INSTALL_PATH}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "VCPKG_VISUAL_STUDIO_PATH=${VCPKG_VISUAL_STUDIO_PATH}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "WZ_DISTRIBUTOR=${WZ_DISTRIBUTOR}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        echo "::set-output name=WZ_DEPLOY_RELEASE::${WZ_DEPLOY_RELEASE}"
+        echo "WZ_DEPLOY_RELEASE=${WZ_DEPLOY_RELEASE}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2.13.0
+      uses: jurplel/install-qt-action@v3.0.0
       with:
         version: 5.15.2
         arch: ${{ steps.settings.outputs.QTCI_ARCH }}
@@ -155,7 +155,7 @@ jobs:
     # Upload build artifacts
     #####################################################
     - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: wmit_win_${{ matrix.architecture }}
         path: '${{ github.workspace }}\output\installer'
