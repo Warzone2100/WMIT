@@ -8,6 +8,8 @@ jobs:
   build-ubuntu:
     name: Ubuntu
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
     - uses: actions/checkout@v3
