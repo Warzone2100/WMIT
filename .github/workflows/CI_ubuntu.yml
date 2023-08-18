@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Get Qt
-      run: sudo apt-get install qtbase5-dev qt5-default
+      run: sudo apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
     - name: Refresh submodules
       run: git submodule update --init --recursive 
     - name: Configure
