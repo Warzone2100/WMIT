@@ -2,7 +2,7 @@
 
 #define WMIT_ORG "WMIT"
 #define WMIT_APPNAME "WMIT"
-#define WMIT_VER_STR "0.7.0"
+#define WMIT_VER_STR "0.7.1"
 
 #define WMIT_SETTINGS_IMPORTVAL "importFolder"
 #define WMIT_SETTINGS_EXPORTVAL "exportFolder"
