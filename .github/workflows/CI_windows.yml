@@ -179,7 +179,7 @@ jobs:
       if: success() && (startsWith(github.ref, 'refs/tags/') && (steps.settings.outputs.WZ_DEPLOY_RELEASE == 'true') && (github.repository == 'Warzone2100/WMIT'))
       run: |
         $SOURCE_TAG = "$($env:WZ_GITHUB_REF -replace "refs/tags/")"
-        gh release upload "${SOURCE_TAG}" "${{ github.workspace }}\output\installer\*.exe"
+        gh release upload "${SOURCE_TAG}" "${{ github.workspace }}\output\installer\wmit_$($env:WZ_BUILD_DESC).exe"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GH_REPO: ${{ github.repository }}
