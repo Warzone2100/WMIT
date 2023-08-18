@@ -23,6 +23,8 @@ jobs:
       VSCMD_SKIP_SENDTELEMETRY: 1
     name: '${{ matrix.architecture }} [${{ matrix.compiler }}]'
     runs-on: windows-latest
+    permissions:
+      contents: write # Needed to upload to releases
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
     - uses: actions/checkout@v3
@@ -106,7 +108,7 @@ jobs:
         # Determine which matrix combinations to deploy
 
         $WZ_DEPLOY_RELEASE = 'false'
-        if ($env:WZ_MSVC_VER -eq "MSVC_2019") {
+        if ($env:WZ_MSVC_VER -eq "MSVC_2022") {
             $WZ_DEPLOY_RELEASE = 'true'
         }
 
@@ -174,12 +176,11 @@ jobs:
     # Upload Release assets (if a release tag)
     #####################################################
     - name: Upload Release Assets
-      if: startsWith(github.ref, 'refs/tags/') && (steps.settings.outputs.WZ_DEPLOY_RELEASE == 'true') && (github.repository == 'Warzone2100/WMIT')
-      uses: past-due/action-gh-release@v1
-      with:
-        # Do not explicitly specify a tag_name, so this action takes the github.ref and parses it for just the tag
-        files: |
-          ${{ github.workspace }}\output\installer\*.exe
-        # draft: true
+      if: success() && (startsWith(github.ref, 'refs/tags/') && (steps.settings.outputs.WZ_DEPLOY_RELEASE == 'true') && (github.repository == 'Warzone2100/WMIT'))
+      run: |
+        $SOURCE_TAG = "$($env:WZ_GITHUB_REF -replace "refs/tags/")"
+        gh release upload "${SOURCE_TAG}" "${{ github.workspace }}\output\installer\*.exe"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+        WZ_GITHUB_REF: ${{ github.ref }}

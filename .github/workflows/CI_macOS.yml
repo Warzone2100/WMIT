@@ -12,6 +12,8 @@ on:
 
 jobs:
   macos-build:
+    permissions:
+      contents: write # Needed to upload to releases
     env:
       MACOSX_DEPLOYMENT_TARGET: 10.12
       VSCMD_SKIP_SENDTELEMETRY: 1
@@ -120,12 +122,11 @@ jobs:
     # Upload Release assets (if a release tag)
     #####################################################
     - name: Upload Release Assets
-      if: startsWith(github.ref, 'refs/tags/') && (github.repository == 'Warzone2100/WMIT')
-      uses: past-due/action-gh-release@v1
-      with:
-        # Do not explicitly specify a tag_name, so this action takes the github.ref and parses it for just the tag
-        files: |
-          ${{ env.WMIT_OUTPUT_ZIP }}
-        # draft: true
+      if: success() && (startsWith(github.ref, 'refs/tags/') && (github.repository == 'Warzone2100/WMIT'))
+      run: |
+        $SOURCE_TAG = "$($env:WZ_GITHUB_REF -replace "refs/tags/")"
+        gh release upload "${SOURCE_TAG}" "${WMIT_OUTPUT_ZIP}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+        WZ_GITHUB_REF: ${{ github.ref }}
