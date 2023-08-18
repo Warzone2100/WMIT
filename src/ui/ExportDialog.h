@@ -68,8 +68,17 @@ public:
 	PieExportDialog(const PieCaps& caps, QWidget* parent = nullptr);
 
 	const PieCaps& getCaps() const {return m_caps;}
+
+private:
+	void changeSelectAll(bool selected);
+
+private slots:
+	void actionDeselectAll();
+	void actionSelectAll();
+
 private:
 	PieCaps m_caps;
+	PieContentModel *model;
 };
 
 #endif // EXPORTDIALOG_HPP

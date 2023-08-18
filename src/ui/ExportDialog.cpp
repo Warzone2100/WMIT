@@ -52,10 +52,33 @@ PieExportDialog::PieExportDialog(const PieCaps &caps, QWidget* parent)
 					   "Note that you do not have to deselect directives that are not present in current model. "
 					   "E.g. normal map will not be exported unless it was assigned and is allowed."));
 
-	auto model = new PieContentModel(m_caps, ui->tvExportCaps);
+	model = new PieContentModel(m_caps, ui->tvExportCaps);
 	ui->tvExportCaps->setModel(model);
 	ui->tvExportCaps->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui->tvExportCaps->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+
+	connect(ui->pushButton_deselect_all, SIGNAL(clicked()), this, SLOT(actionDeselectAll()));
+	connect(ui->pushButton_select_all, SIGNAL(clicked()), this, SLOT(actionSelectAll()));
+}
+
+void PieExportDialog::changeSelectAll(bool selected)
+{
+	if (!model) { return; }
+	int rowCount = model->rowCount();
+	for (int row = 0; row < rowCount; ++row)
+	{
+		model->setData(model->index(row, 1), selected, Qt::CheckStateRole);
+	}
+}
+
+void PieExportDialog::actionDeselectAll()
+{
+	changeSelectAll(false);
+}
+
+void PieExportDialog::actionSelectAll()
+{
+	changeSelectAll(true);
 }
 
 PieContentModel::PieContentModel(PieCaps &caps, QObject *parent): QAbstractTableModel(parent),
