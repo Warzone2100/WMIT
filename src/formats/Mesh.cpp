@@ -40,8 +40,12 @@ typedef std::tuple<WZMVertex, WZMUV, WZMVertex> WZMPoint;
 #define INT_SCALE       1000
 static const float FROM_INT_SCALE = 0.001f;
 
-struct compareWZMPoint_less_wEps: public std::binary_function<WZMPoint&, WZMPoint&, bool>
+struct compareWZMPoint_less_wEps
 {
+	using first_argument_type  = WZMPoint&;
+	using second_argument_type = WZMPoint&;
+	using result_type          = bool;
+
 	const WZMVertex::less_wEps vertLess;
 	const WZMUV::less_wEps uvLess;
 	const WZMVertex::equal_wEps vertEq;

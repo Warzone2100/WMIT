@@ -62,8 +62,12 @@ struct Vector
 		return component;
 	}
 
-	struct equal_wEps : public std::binary_function<Vector, Vector, bool>
+	struct equal_wEps
 	{
+		using first_argument_type  = Vector;
+		using second_argument_type = Vector;
+		using result_type          = bool;
+
 		equal_wEps(T eps = std::numeric_limits<T>::epsilon())
 		{
 			setEps(eps);
@@ -206,8 +210,12 @@ struct Vector
 		return component[i] < rhs.component[i];
 	}
 
-	struct less_wEps : public std::binary_function<Vector, Vector, bool>
+	struct less_wEps
 	{
+		using first_argument_type  = Vector;
+		using second_argument_type = Vector;
+		using result_type          = bool;
+
 		less_wEps(T eps = -1): compare(eps) {}
 		bool operator() (Vector lhs, Vector rhs)const
 		{
