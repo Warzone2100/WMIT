@@ -127,10 +127,12 @@ include_directories(
 	src/ui
 	src/widgets
 	3rdparty/GLEW/include
+	3rdparty/mikktspace
 )
 
 set( wmit_HEADERS
 	3rdparty/GLEW/include/GL/glew.h
+	3rdparty/mikktspace/mikktspace.h
 	src/wmit.h
 	src/basic/IGLShaderManager.h
 	src/basic/IGLShaderRenderable.h
@@ -169,6 +171,7 @@ set( wmit_HEADERS
 
 set( wmit_SRCS
 	3rdparty/GLEW/src/glew.c
+	3rdparty/mikktspace/mikktspace.c
 	src/formats/WZM.cpp
 	src/formats/Pie.cpp
 	src/formats/Mesh.cpp

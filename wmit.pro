@@ -7,10 +7,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
-INCLUDEPATH += src src/basic src/formats src/ui src/widgets 3rdparty/GLEW/include
+INCLUDEPATH += src src/basic src/formats src/ui src/widgets 3rdparty/GLEW/include 3rdparty/mikktspace
 
 HEADERS += \
     3rdparty/GLEW/include/GL/glew.h \
+    3rdparty/mikktspace/mikktspace.h \
     src/ui/aboutdialog.h \
     src/wmit.h \
     src/basic/IGLShaderManager.h \
@@ -48,6 +49,7 @@ HEADERS += \
     
 SOURCES += \
     3rdparty/GLEW/src/glew.c \
+    3rdparty/mikktspace/mikktspace.c \
     src/formats/WZM.cpp \
     src/formats/Pie.cpp \
     src/formats/Mesh.cpp \
