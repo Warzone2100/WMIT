@@ -912,13 +912,18 @@ void Mesh::calculateTBForIndices(const IndexedTri &trio)
 	WZMVertex4 tangent = WZMVertex((deltaPos1 * deltaUV2.v() - deltaPos2 * deltaUV1.v()) * r);
 	WZMVertex bitangent = (deltaPos2 * deltaUV1.u() - deltaPos1 * deltaUV2.u()) * r;
 
-	m_tangentArray[trio.a()] -= tangent;
-	m_tangentArray[trio.b()] -= tangent;
-	m_tangentArray[trio.c()] -= tangent;
+	// Accumulate, do not subtract. The Lengyel expression above already yields
+	// T = +dP/du and B = +dP/dv; negating it here produced a tangent frame whose
+	// U axis ran backwards relative to the one Warzone builds at load time
+	// (lib/ivis_opengl/imdload.cpp, calculateTangentsForTriangle), so normal maps
+	// previewed here were mirrored in U compared to the game.
+	m_tangentArray[trio.a()] += tangent;
+	m_tangentArray[trio.b()] += tangent;
+	m_tangentArray[trio.c()] += tangent;
 
-	m_bitangentArray[trio.a()] -= bitangent;
-	m_bitangentArray[trio.b()] -= bitangent;
-	m_bitangentArray[trio.c()] -= bitangent;
+	m_bitangentArray[trio.a()] += bitangent;
+	m_bitangentArray[trio.b()] += bitangent;
+	m_bitangentArray[trio.c()] += bitangent;
 }
 
 void Mesh::finishTBCalculation()
@@ -931,14 +936,21 @@ void Mesh::finishTBCalculation()
 		WZMVertex t = m_tangentArray[i].xyz();
 		t = WZMVertex(t - n * n.dotProduct(t)).normalize();
 
-		// Calculate handedness
+		// Calculate handedness.
+		//
+		// This is deliberately the inverse of the textbook (Lengyel) sign, to
+		// match lib/ivis_opengl/imdload.cpp:finishTangentsGeneration(). Warzone
+		// texture coordinates have V pointing down the image, so the shader's
+		// reconstructed bitangent must be -dP/dv for standard OpenGL-convention
+		// ("green up") normal maps to light correctly. Flipping the sign here is
+		// what produces that.
 		if (n.crossProduct(t).dotProduct(m_bitangentArray[i]) < 0.0f)
 		{
-			m_tangentArray[i] = WZMVertex4(t, -1.f);
+			m_tangentArray[i] = WZMVertex4(t, 1.f);
 		}
 		else
 		{
-			m_tangentArray[i] = WZMVertex4(t, 1.f);
+			m_tangentArray[i] = WZMVertex4(t, -1.f);
 		}
 	}
 }
