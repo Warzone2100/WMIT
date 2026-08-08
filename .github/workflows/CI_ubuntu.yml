@@ -13,10 +13,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v7
+      with:
+        submodules: recursive
     - name: Get Qt
-      run: sudo apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
-    - name: Refresh submodules
-      run: git submodule update --init --recursive 
+      run: |
+        for i in 1 2 3; do
+          sudo apt-get update && break
+          echo "apt-get update failed (attempt $i), retrying..."
+          sleep 5
+        done
+        sudo apt-get install -y \
+          qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools \
+          libglu1-mesa-dev
     - name: Configure
       run: ./configure_linux.sh
     - name: Make

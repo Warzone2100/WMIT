@@ -54,6 +54,18 @@ else() # NOT MSVC
 	add_definitions(-Wall)
 endif()
 
+# Workaround for QTBUG-145239: Qt's <QtCore/qyieldcpu.h> calls the ACLE
+# intrinsic __yield() without including <arm_acle.h>. Apple Clang 21 (Xcode 26)
+# on arm64 treats the resulting implicit declaration as an error, so every
+# translation unit that includes a Qt header fails to build.
+#
+# Fixed upstream in Qt 6.11.1 / 6.12; remove this once the minimum Qt contains
+# the fix. Scoped to C++ so that genuine implicit declarations in C sources
+# (3rdparty/GLEW/src/glew.c) still error as they should.
+if(APPLE)
+	add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-Wno-error=implicit-function-declaration>")
+endif()
+
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 

@@ -14,13 +14,14 @@ jobs:
   windows-build:
     strategy:
       matrix:
-        compiler: ["MSVC_2022"]
-        architecture: ["x86", "x64"]
+        compiler: ["MSVC_2026"]
+        architecture: ["x64"]
       fail-fast: false
     env:
       WZ_MSVC_VER: ${{ matrix.compiler }}
       WZ_TARGET_ARCH: ${{ matrix.architecture }}
       VSCMD_SKIP_SENDTELEMETRY: 1
+      QT_VERSION: '6.10.3'
     name: '${{ matrix.architecture }} [${{ matrix.compiler }}]'
     runs-on: windows-latest
     permissions:
@@ -42,56 +43,80 @@ jobs:
         if ($env:WZ_TARGET_ARCH -eq "x86") {
           $VCPKG_DEFAULT_TRIPLET = "x86-windows"
           $WZ_VC_TARGET_PLATFORMNAME = "Win32" # special case, map "x86" -> "Win32"
-          $QTCI_ARCH = "win32_msvc2019"
+          # NOTE: Qt 6 has no official prebuilt 32-bit Windows binaries.
+          $QTCI_ARCH = ""
         }
         elseif ($env:WZ_TARGET_ARCH -eq "x64") {
           $VCPKG_DEFAULT_TRIPLET = "x64-windows"
-          $QTCI_ARCH = "win64_msvc2019_64"
+          # Leave empty to let install-qt-action pick the right MSVC arch for the
+          # requested Qt version (win64_msvc2022_64 for Qt >= 6.8, and so on).
+          $QTCI_ARCH = ""
         }
 
         # ------------------------------
         # MSVC version / generator info
 
+        # Map MSVC_<year> -> Visual Studio major version + CMake generator.
+        $WZ_MSVC_TABLE = @{
+          "MSVC_2026" = @{ Major = 18; Generator = "Visual Studio 18 2026" }
+          "MSVC_2022" = @{ Major = 17; Generator = "Visual Studio 17 2022" }
+          "MSVC_2019" = @{ Major = 16; Generator = "Visual Studio 16 2019" }
+          "MSVC_2017" = @{ Major = 15; Generator = "Visual Studio 15 2017" }
+        }
+
+        function Get-VSGeneratorForMajor([int]$major) {
+          foreach ($entry in $WZ_MSVC_TABLE.GetEnumerator()) {
+            if ($entry.Value.Major -eq $major) { return $entry.Value.Generator }
+          }
+          return ""
+        }
+
         $WZ_VISUAL_STUDIO_INSTALL_PATH = ""
-        if ($env:WZ_MSVC_VER -eq "MSVC_2022") {
-          $WZ_VC_GENERATOR = "Visual Studio 17 2022"
-          #$env:WZ_VC_TOOLCHAIN = "v143"
-          # Get the installation path for a specific version of MSVC (2022)
-          $WZ_VISUAL_STUDIO_INSTALL_PATH = & "vswhere.exe" -latest -property installationPath -version "[17.0,18.0)"
-          if ($LastExitCode -ne 0)
-          {
-            echo "::warning ::Could not find MSVC 2022"
-            $WZ_VISUAL_STUDIO_INSTALL_PATH = ""
-          }
-        }
-        elseif ($env:WZ_MSVC_VER -eq "MSVC_2019") {
-          $WZ_VC_GENERATOR = "Visual Studio 16 2019"
-          #$env:WZ_VC_TOOLCHAIN = "v142"
-          # Get the installation path for a specific version of MSVC (2019)
-          $WZ_VISUAL_STUDIO_INSTALL_PATH = & "vswhere.exe" -latest -property installationPath -version "[16.0,17.0)"
-          if ($LastExitCode -ne 0)
-          {
-            echo "::warning ::Could not find MSVC 2019"
-            $WZ_VISUAL_STUDIO_INSTALL_PATH = ""
-          }
-        }
-        elseif ($env:WZ_MSVC_VER -eq "MSVC_2017") {
-          $WZ_VC_GENERATOR = "Visual Studio 15 2017"
-          #$env:WZ_VC_TOOLCHAIN = "v141"
-          # Get the installation path for a specific version of MSVC (2017)
-          $WZ_VISUAL_STUDIO_INSTALL_PATH = & "vswhere.exe" -latest -property installationPath -version "[15.0,16.0)"
-          if ($LastExitCode -ne 0)
-          {
-            echo "::warning ::Could not find MSVC 2017"
-            $WZ_VISUAL_STUDIO_INSTALL_PATH = ""
-          }
+        $WZ_VC_GENERATOR = ""
+
+        if ($WZ_MSVC_TABLE.ContainsKey("$env:WZ_MSVC_VER")) {
+          $wanted = $WZ_MSVC_TABLE["$env:WZ_MSVC_VER"]
+          $WZ_VC_GENERATOR = $wanted.Generator
+          $verRange = "[$($wanted.Major).0,$($wanted.Major + 1).0)"
+          # -prerelease so that a Preview-channel toolchain is still found
+          $WZ_VISUAL_STUDIO_INSTALL_PATH = & "vswhere.exe" -latest -prerelease -property installationPath -version "$verRange"
+          if (($LastExitCode -ne 0) -or ([string]::IsNullOrWhitespace($WZ_VISUAL_STUDIO_INSTALL_PATH))) {
+            echo "::warning ::Could not find ${env:WZ_MSVC_VER} (VS $($wanted.Major).x)"
+             $WZ_VISUAL_STUDIO_INSTALL_PATH = ""
+           }
+         }
+        else {
+          echo "::warning ::Unknown WZ_MSVC_VER `"${env:WZ_MSVC_VER}`" - will use whatever MSVC is installed"
         }
 
         if ([string]::IsNullOrWhitespace(${WZ_VISUAL_STUDIO_INSTALL_PATH}))
         {
-          $WZ_VISUAL_STUDIO_INSTALL_PATH = & "vswhere.exe" -latest -property installationPath
-          echo "::warning ::Default to 'latest' MSVC: `"${WZ_VISUAL_STUDIO_INSTALL_PATH}`""
+          # Fall back to whatever is installed, and - importantly - derive the
+          # generator from *that* install rather than leaving it unset or stale.
+
+          $WZ_VISUAL_STUDIO_INSTALL_PATH = & "vswhere.exe" -latest -prerelease -property installationPath
+          $detectedVersion = & "vswhere.exe" -latest -prerelease -property installationVersion
+
+          if (-not [string]::IsNullOrWhitespace($detectedVersion)) {
+            $detectedMajor = [int]($detectedVersion.Split('.')[0])
+            $detectedGenerator = Get-VSGeneratorForMajor $detectedMajor
+            if (-not [string]::IsNullOrWhitespace($detectedGenerator)) {
+              $WZ_VC_GENERATOR = $detectedGenerator
+            }
+            else {
+              echo "::warning ::No CMake generator mapping for Visual Studio ${detectedMajor}.x - add it to WZ_MSVC_TABLE"
+            }
+            echo "::warning ::Defaulting to installed MSVC ${detectedVersion} (generator: `"${WZ_VC_GENERATOR}`")"
+          }
         }
+
+        if ([string]::IsNullOrWhitespace(${WZ_VC_GENERATOR}))
+        {
+          echo "::error ::Could not determine a CMake Visual Studio generator"
+          exit 1
+        }
+        echo "Using generator: ${WZ_VC_GENERATOR}"
+        echo "Using VS install: ${WZ_VISUAL_STUDIO_INSTALL_PATH}"
 
         $VCPKG_VISUAL_STUDIO_PATH = "${WZ_VISUAL_STUDIO_INSTALL_PATH}"
         #$CMAKE_GENERATOR_INSTANCE = "${WZ_VISUAL_STUDIO_INSTALL_PATH}"
@@ -129,9 +154,9 @@ jobs:
         echo "WZ_DISTRIBUTOR=${WZ_DISTRIBUTOR}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "WZ_DEPLOY_RELEASE=${WZ_DEPLOY_RELEASE}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3.3.0
+      uses: jurplel/install-qt-action@v4.3.1
       with:
-        version: 5.15.2
+        version: ${{ env.QT_VERSION }}
         arch: ${{ steps.settings.outputs.QTCI_ARCH }}
         dir: 'C:/Qt'
     - name: Verify Qt install + version

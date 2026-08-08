@@ -15,8 +15,10 @@ jobs:
     permissions:
       contents: write # Needed to upload to releases
     env:
-      MACOSX_DEPLOYMENT_TARGET: 10.12
+      # Qt 6.11 requires macOS 13 or higher
+      MACOSX_DEPLOYMENT_TARGET: 13.0
       VSCMD_SKIP_SENDTELEMETRY: 1
+      QT_VERSION: '6.11.1'
     name: 'Xcode :LATEST'
     runs-on: macos-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
@@ -28,9 +30,10 @@ jobs:
       run: |
         brew install gnu-getopt
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3.3.0
+      uses: jurplel/install-qt-action@v4.3.1
       with:
-        version: 5.15.2
+        version: ${{ env.QT_VERSION }}
+        # arch is omitted: the action defaults to the universal macOS build
     - name: Verify Qt install + version
       run: |
         echo "Qt version:"
