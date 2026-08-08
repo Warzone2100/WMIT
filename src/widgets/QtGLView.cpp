@@ -148,7 +148,27 @@ void QtGLView::setLightColors()
 void QtGLView::init()
 {
 	// initialize GLEW
-	glewInit();
+	//
+	// glewExperimental is required whenever the context is not a legacy
+	// compatibility context: without it GLEW decides an entry point is
+	// unavailable based on the extension string alone and leaves the function
+	// pointer NULL, and the first call through it jumps to address 0.
+	glewExperimental = GL_TRUE;
+
+	const GLenum glewStatus = glewInit();
+	if (glewStatus != GLEW_OK)
+	{
+		// GLEW_ERROR_NO_GLX_DISPLAY is expected (and harmless) under Wayland.
+		qWarning("glewInit() failed: %s", reinterpret_cast<const char*>(glewGetErrorString(glewStatus)));
+	}
+
+	// Log what we actually got
+	const GLubyte *glVendor = glGetString(GL_VENDOR);
+	const GLubyte *glRenderer = glGetString(GL_RENDERER);
+	const GLubyte *glVersion = glGetString(GL_VERSION);
+	qInfo("OpenGL vendor: %s", glVendor ? reinterpret_cast<const char*>(glVendor) : "(null)");
+	qInfo("OpenGL renderer: %s", glRenderer ? reinterpret_cast<const char*>(glRenderer) : "(null)");
+	qInfo("OpenGL version: %s", glVersion ? reinterpret_cast<const char*>(glVersion) : "(null)");
 
 	setLightColors();
 	glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
