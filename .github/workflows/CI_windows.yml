@@ -163,6 +163,8 @@ jobs:
       run: |
         Write-Host "Qt version:"
         & "qmake" -version
+    - name: Install NSIS
+      run: choco install nsis -y
     - name: Create directories
       run: |
         New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\build"
