@@ -30,6 +30,7 @@
 
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
+#include <QOpenGLContext>
 #include <QtDebug>
 
 #include <QGLViewer/vec.h>
@@ -40,6 +41,58 @@
 #include "WZLight.h"
 
 using namespace qglviewer;
+
+namespace {
+
+/*!
+ * Makes the viewer's OpenGL context current for the lifetime of the object,
+ * and restores the previous state on scope exit.
+ *
+ * Every entry point of the texture and shader managers can be - and in practice
+ * is - called straight from a UI slot (MainWindow::fireTextureDialog() calls
+ * clearGLRenderTextures() / loadGLRenderTexture() right after the texture
+ * dialog is accepted). QOpenGLWidget only makes its context current around
+ * initializeGL()/paintGL()/resizeGL(), so those calls were creating, binding
+ * and destroying QOpenGLTexture objects with *no* current context.
+ *
+ * Under Qt5 this was largely papered over by QGLWidget, whose bindTexture()
+ * made the context current for us - QGLViewer derives from QOpenGLWidget in
+ * Qt6 and no longer does. GL calls with no current context are undefined, and
+ * the actual behaviour is driver-dependent.
+ */
+class ScopedGLContext
+{
+public:
+	explicit ScopedGLContext(QOpenGLWidget *widget) : m_widget(nullptr)
+	{
+		if (widget == nullptr)
+			return;
+
+		QOpenGLContext *ctx = widget->context();
+
+		// Nothing to do before initializeGL() has ever run, and nothing to do
+		// if we are already inside a paintGL()/initializeGL() callback.
+		if (ctx == nullptr || !ctx->isValid() || QOpenGLContext::currentContext() == ctx)
+			return;
+
+		widget->makeCurrent();
+		m_widget = widget;
+	}
+
+	~ScopedGLContext()
+	{
+		if (m_widget != nullptr)
+			m_widget->doneCurrent();
+	}
+
+	ScopedGLContext(const ScopedGLContext&) = delete;
+	ScopedGLContext& operator=(const ScopedGLContext&) = delete;
+
+private:
+	QOpenGLWidget *m_widget;
+};
+
+} // anonymous namespace
 
 const Vec lightPos(2.25, 6., 4.5);
 
@@ -58,17 +111,22 @@ QtGLView::QtGLView(QWidget *parent) :
 
 QtGLView::~QtGLView()
 {
+	// The GL resources below can only be released while our context is current.
+	// (The previously commented-out destroy() loop "crashing on F29" was the
+	// same missing-current-context problem.)
+	ScopedGLContext ctxGuard(this);
+
 	foreach(IGLRenderable* obj, renderList)
 	{
 		dynamicManagedSetup(obj, true);
 	}
 
-/* This is crashing on F29 and unclear if we need this on destroy
-	foreach (ManagedGLTexture texture, m_textures)
+	for (t_texIt texIt = m_textures.begin(); texIt != m_textures.end(); ++texIt)
 	{
- 		texture.pTexture->destroy();
+		if (texIt->pTexture != nullptr)
+			texIt->pTexture->destroy();
 	}
-*/
+	m_textures.clear();
 }
 
 void QtGLView::animate()
@@ -348,6 +406,8 @@ void QtGLView::timerEvent(QTimerEvent *event)
 
 void QtGLView::updateTextures()
 {
+	ScopedGLContext ctxGuard(this);
+
 	t_texIt texIt;
 	for (texIt = m_textures.begin(); texIt != m_textures.end(); ++texIt)
 	{
@@ -382,6 +442,8 @@ QtGLView::ManagedGLTexture::ManagedGLTexture(QOpenGLTexture *pInputTexture):
 
 GLTexture QtGLView::createTexture(const QString& fileName)
 {
+	ScopedGLContext ctxGuard(this);
+
 	if (!fileName.isEmpty())
 	{
 		t_texIt texIt = m_textures.find(fileName);
@@ -446,6 +508,8 @@ QString QtGLView::idToFilePath(GLuint id)
 
 void QtGLView::deleteTexture(GLuint id)
 {
+	ScopedGLContext ctxGuard(this);
+
 	t_texIt texIt;
 	for (texIt = m_textures.begin(); texIt != m_textures.end(); ++texIt)
 	{
@@ -463,6 +527,8 @@ void QtGLView::deleteTexture(GLuint id)
 
 void QtGLView::deleteTexture(const QString& fileName)
 {
+	ScopedGLContext ctxGuard(this);
+
 	t_texIt texIt = m_textures.find(fileName);
 	if (texIt != m_textures.end())
 	{
@@ -476,8 +542,13 @@ void QtGLView::deleteTexture(const QString& fileName)
 
 void QtGLView::deleteAllTextures()
 {
-	t_texIt texIt;
-	for (texIt = m_textures.begin(); texIt != m_textures.end(); ++texIt)
+	ScopedGLContext ctxGuard(this);
+
+	// NOTE: _deleteTexture() erases and already advances texIt, so the loop
+	// must not increment it again - doing so skipped every second entry and,
+	// once the erased element was the last one, incremented an end() iterator.
+	t_texIt texIt = m_textures.begin();
+	while (texIt != m_textures.end())
 	{
 		_deleteTexture(texIt);
 	}
