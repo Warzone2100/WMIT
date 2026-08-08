@@ -401,9 +401,18 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 		if(TOOL_WINDEPLOYQT)
 			install(CODE "
 				execute_process(
-					COMMAND ${TOOL_WINDEPLOYQT} \"\${CMAKE_INSTALL_PREFIX}/${_wmit_output_name}.exe\" --no-compiler-runtime --no-angle --no-svg
+					COMMAND ${TOOL_WINDEPLOYQT} \"\${CMAKE_INSTALL_PREFIX}/${_wmit_output_name}.exe\" --no-compiler-runtime --no-svg
 				)
 			" COMPONENT Core)
+			# Custom cleanup logic post-windeployqt
+			install(CODE [[
+				set(UNWANTED_DLLS "d3dcompiler_47.dll" "dxcompiler.dll" "dxil.dll")
+				foreach(DLL ${UNWANTED_DLLS})
+						if(EXISTS "${CMAKE_INSTALL_PREFIX}/${DLL}")
+								file(REMOVE "${CMAKE_INSTALL_PREFIX}/${DLL}")
+						endif()
+				endforeach()
+			]] COMPONENT Core)
 		else()
 			message( WARNING "Unable to find windeployqt; installation may not include all required Qt libraries" )
 		endif()
