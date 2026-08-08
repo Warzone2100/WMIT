@@ -142,7 +142,10 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->actionShowGrid, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setGridIsDrawn(bool)));
 	connect(m_ui->actionShowLightSource, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setDrawLightSource(bool)));
 	connect(m_ui->actionLink_Light_Source_To_Camera, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setLinkLightToCamera(bool)));
-	connect(m_ui->actionAnimate, SIGNAL(toggled(bool)), m_ui->centralWidget, SLOT(setAnimateState(bool)));
+	// Only spin libQGLViewer's 60 Hz redraw loop when the loaded model actually has an animation object.
+	connect(m_ui->actionAnimate, &QAction::toggled, this, [this](bool enabled) {
+		m_ui->centralWidget->setAnimateState(enabled && m_model->hasAnimObject());
+	});
 	connect(m_ui->actionEnable_Ecm_Effect, SIGNAL(toggled(bool)), this, SLOT(setEcmState(bool)));
 	connect(m_ui->actionEnable_Alpha_Test, SIGNAL(toggled(bool)), this, SLOT(setAlphaTestState(bool)));
 	connect(m_ui->actionAboutQt, SIGNAL(triggered()), QApplication::instance(), SLOT(aboutQt()));
@@ -218,6 +221,9 @@ void MainWindow::doAfterModelWasLoaded(const bool success)
 
 	// Disallow mirroring as it will mess-up animation
 	m_transformDock->setMirrorState(success && !hasAnim);
+
+	// Re-evaluate whether the redraw loop needs to run for this model.
+	m_ui->centralWidget->setAnimateState(success && hasAnim && m_ui->actionAnimate->isChecked());
 
 	m_ui->actionShowModelCenter->setEnabled(!hasAnim);
 }
