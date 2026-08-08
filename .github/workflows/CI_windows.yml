@@ -27,7 +27,7 @@ jobs:
       contents: write # Needed to upload to releases
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
       with:
         submodules: recursive
     - name: Generate Settings for Run [${{ matrix.compiler }}:${{ matrix.architecture }}]
@@ -168,7 +168,7 @@ jobs:
     # Upload build artifacts
     #####################################################
     - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       with:
         name: wmit_win_${{ matrix.architecture }}
         path: '${{ github.workspace }}\output\installer'

@@ -21,7 +21,7 @@ jobs:
     runs-on: macos-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
       with:
         submodules: recursive
     - name: Install Pre-reqs
@@ -114,7 +114,7 @@ jobs:
         echo "  -> Size (bytes): ${ZIP_SIZE}"
         exit 0
     - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       with:
         name: wmit_macOS
         path: '${{ env.WMIT_OUTPUT_ZIP }}'
