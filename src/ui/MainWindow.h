@@ -26,7 +26,6 @@
 #include <QPair>
 
 #include <QSettings>
-#include <QSignalMapper>
 #include <QActionGroup>
 #include <QFileSystemWatcher>
 #include <QBasicTimer>
@@ -161,7 +160,6 @@ private:
 	UVEditor *m_UVEditor;
 	QSettings *m_settings;
 
-	QSignalMapper *m_shaderSignalMapper;
 	QActionGroup* m_shaderGroup;
 	QAction *m_actionEnableUserShaders;
 	QAction *m_actionLocateUserShaders;

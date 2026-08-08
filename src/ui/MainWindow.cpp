@@ -76,7 +76,6 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	m_textureDialog(new TextureDialog(this)),
 	m_UVEditor(new UVEditor(this)),
 	m_settings(new QSettings(this)),
-	m_shaderSignalMapper(new QSignalMapper(this)),
 	m_actionEnableUserShaders(nullptr),
 	m_actionLocateUserShaders(nullptr),
 	m_actionReloadUserShaders(nullptr),
@@ -750,7 +749,6 @@ void MainWindow::viewerInitialized()
 
 		QAction* shaderAct = new QAction(shadername, this);
 
-		m_shaderSignalMapper->setMapping(shaderAct, i);
 		shaderAct->setActionGroup(m_shaderGroup);
 
 		if (i < 9) // FIXME
@@ -759,10 +757,8 @@ void MainWindow::viewerInitialized()
 
 		reloadShader(static_cast<wz_shader_type_t>(i), false);
 
-		connect(shaderAct, SIGNAL(triggered()), m_shaderSignalMapper, SLOT(map()));
+		connect(shaderAct, &QAction::triggered, this, [this, i]() { shaderAction(i); });
 	}
-
-	connect(m_shaderSignalMapper, SIGNAL(mapped(int)), this, SLOT(shaderAction(int)));
 
 	QMenu* rendererMenu = new QMenu(this);
 	rendererMenu->addActions(m_shaderGroup->actions());
