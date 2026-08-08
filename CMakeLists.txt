@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)  # Qt6 requires >= 3.16
 
 ##################################################
 # Get the current version from wmit.h
@@ -26,11 +26,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ##################################################
 
 # CXX Standard
-if(MSVC)
-	set(CMAKE_CXX_STANDARD 14)
-else()
-	set(CMAKE_CXX_STANDARD 11)
-endif()
+# Qt6 requires C++17; Qt5 builds fine with it too.
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) # Disable compiler-specific extensions
 
@@ -92,7 +89,14 @@ endif()
 
 find_package(OpenGL ${_required_dependency_flag})
 find_package(QGLViewer ${_required_dependency_flag})
-find_package(Qt5 5.4.0 COMPONENTS Core Gui Widgets OpenGL Xml ${_required_dependency_flag})
+# Prefer Qt6, fall back to Qt5.
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core ${_required_dependency_flag})
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets OpenGL Xml ${_required_dependency_flag})
+if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+	# QOpenGLWidget moved out of QtOpenGL into its own module in Qt6
+	find_package(Qt6 COMPONENTS OpenGLWidgets ${_required_dependency_flag})
+endif()
+message(STATUS "WMIT: building against Qt${QT_VERSION_MAJOR}")
 
 ##################################################
 
@@ -211,7 +215,11 @@ set_target_properties(wmit PROPERTIES AUTORCC TRUE) # handles QT5_ADD_RESOURCES
 set_target_properties(wmit PROPERTIES AUTOUIC TRUE) # handles QT5_WRAP_UI
 if(NOT PACKAGE_SOURCE_ONLY)
 	target_link_libraries(wmit OpenGL::GL OpenGL::GLU ${QGLVIEWER_LIB})
-	target_link_libraries(wmit Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Xml)
+	target_link_libraries(wmit Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui
+		Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::OpenGL Qt${QT_VERSION_MAJOR}::Xml)
+	if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+		target_link_libraries(wmit Qt6::OpenGLWidgets)
+	endif()
 endif()
 target_compile_definitions(wmit PRIVATE GLEW_STATIC)
 set_target_properties(wmit PROPERTIES OUTPUT_NAME "WMIT")

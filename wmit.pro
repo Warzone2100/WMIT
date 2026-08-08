@@ -124,7 +124,8 @@ RESOURCES += \
 QGLVIEWER_INCL = 3rdparty/libQGLViewer
 QGLVIEWER_LIBS = -L"$$_PRO_FILE_PWD_"/3rdparty/libQGLViewer/QGLViewer
 lessThan(QT_MAJOR_VERSION, 5): QGLVIEWER_LIBS += -lQGLViewer
-greaterThan(QT_MAJOR_VERSION, 4): QGLVIEWER_LIBS += -lQGLViewer-qt5
+equals(QT_MAJOR_VERSION, 5): QGLVIEWER_LIBS += -lQGLViewer-qt5
+greaterThan(QT_MAJOR_VERSION, 5): QGLVIEWER_LIBS += -lQGLViewer-qt6
 
 UI_DIR = ui
 MOC_DIR = moc

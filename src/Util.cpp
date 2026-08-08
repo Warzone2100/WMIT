@@ -23,7 +23,7 @@
 
 #include <QFileInfo>
 #include <QTextStream>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include "Pie.h"
 #include "wmit.h"
@@ -57,11 +57,12 @@ std::string makeWzTCMaskName(const std::string& name)
 */
 
 	QString tcmask(QString::fromStdString(name));
-	QRegExp pageNoRegX(WMIT_WZ_TEXPAGE_REMASK);
+	const QRegularExpression pageNoRegX(WMIT_WZ_TEXPAGE_REMASK);
+	const QRegularExpressionMatch pageNoMatch = pageNoRegX.match(tcmask);
 
-	if ((pageNoRegX.indexIn(tcmask) != -1) && tcmask.contains("."))
+	if (pageNoMatch.hasMatch() && tcmask.contains("."))
 	{
-		tcmask = pageNoRegX.cap(0).append(PIE_MODEL_TCMASK_SUFFIX) +
+		tcmask = pageNoMatch.captured(0).append(PIE_MODEL_TCMASK_SUFFIX) +
 				tcmask.right(tcmask.size() - tcmask.lastIndexOf("."));
 	}
 	else

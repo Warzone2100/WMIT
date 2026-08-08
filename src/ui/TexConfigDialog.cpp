@@ -122,7 +122,7 @@ void TexConfigDialog::on_buttonBox_accepted()
 			dirs += itm->text();
 	}
 
-	m_searchdirs = dirs.toList();
+	m_searchdirs = dirs.values();
 	m_searchdirs.sort();
 
 	saveSearchDirs();

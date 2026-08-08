@@ -48,7 +48,7 @@ QtGLView::QtGLView(QWidget *parent) :
 		drawLightSource(true),
 		linkLightToCamera(true)
 {
-	setStateFileName(QString::null);
+	setStateFileName(QString());
 	connect(&textureUpdater, SIGNAL(fileChanged(QString)), this, SLOT(textureChanged(QString)));
 
 	setShortcut(DISPLAY_FPS, 0); // Disable stuff that won't work.

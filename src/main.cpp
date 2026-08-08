@@ -19,7 +19,6 @@
 
 #include <QApplication>
 #include <QCoreApplication>
-#include <QTextCodec>
 #include <QSettings>
 
 #include <iostream>
@@ -53,7 +52,6 @@ void printWelcomeBanner(const bool printLicense)
 
 int main(int argc, char *argv[])
 {
-    //QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
 
 	if(argc == 2 && strcmp("--help", argv[1]) == 0)
 	{
