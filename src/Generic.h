@@ -73,13 +73,14 @@ public:
 };
 
 template <class F> class mybinder1st
-	: public std::unary_function <typename F::second_argument_type,
-						   typename F::result_type>
 {
 protected:
   const F f;
   typename F::first_argument_type lhs;
 public:
+  using argument_type = typename F::second_argument_type;
+  using result_type   = typename F::result_type;
+
   mybinder1st (const typename F::first_argument_type& x, const F& op = F()) : f(op), lhs(x) {}
   typename F::result_type
 	operator() (const typename F::second_argument_type& rhs) const
@@ -87,13 +88,14 @@ public:
 };
 
 template <class F> class mybinder2nd
-	: public std::unary_function <typename F::second_argument_type,
-									typename F::result_type>
 {
 protected:
   const F f;
   typename F::second_argument_type rhs;
 public:
+  using argument_type = typename F::second_argument_type;
+  using result_type   = typename F::result_type;
+
   mybinder2nd (const typename F::second_argument_type& y, const F& op = F()) : f(op), rhs(y) {}
   typename F::result_type
 	operator() (const typename F::first_argument_type& lhs) const
