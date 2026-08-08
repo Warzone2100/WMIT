@@ -28,6 +28,7 @@
 #include "wmit.h"
 
 #include "TexConfigDialog.h"
+#include "Util.h"
 
 TextureDialog::TextureDialog(QWidget *parent) :
 	QDialog(parent),
@@ -45,8 +46,8 @@ TextureDialog::TextureDialog(QWidget *parent) :
 	ui->lwTextures->setFixedWidth(170);
 
 	// UI is ready and now we can load window previous state
-	resize(m_settings.value("TextureDialog/size", QSize(1000, 875)).toSize());
-	move(m_settings.value("TextureDialog/position", pos()).toPoint());
+	resize(QSize(1000, 875));
+	restoreWidgetGeometry(*this, m_settings, "TextureDialog");
 
 	connect(ui->lwTextures, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
 		this, SLOT(iconDoubleClicked(QListWidgetItem*)));

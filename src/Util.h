@@ -22,10 +22,20 @@
 #include <string>
 #include <QString>
 
+class QSettings;
+class QWidget;
+
 bool isValidWzName(const std::string name);
 std::string makeWzTCMaskName(const std::string& name);
 
 QString getTextureName(const QString& filePath);
+
+/*!
+ * Restores a widget's size and position from \a settings using the keys
+ * "\a groupKey/size" and "\a groupKey/position", discarding geometry that
+ * would not land on a currently connected screen.
+ */
+void restoreWidgetGeometry(QWidget& widget, QSettings& settings, const QString& groupKey);
 
 
 #endif // UTIL_HPP

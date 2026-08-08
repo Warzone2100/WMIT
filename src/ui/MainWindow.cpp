@@ -44,6 +44,7 @@
 
 #include "Pie.h"
 #include "WZLight.h"
+#include "Util.h"
 
 QString MainWindow::buildAppTitle()
 {
@@ -109,9 +110,9 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 
 	// UI is ready and now we can load window previous state (will do nothing if state wasn't saved).
 	// 3DView specifics are loaded later on viewerInitialized event
-	resize(QSettings().value("Window/size", size()).toSize());
-	move(QSettings().value("Window/position", pos()).toPoint());
-	restoreState(QSettings().value("Window/state", QByteArray()).toByteArray());
+	QSettings windowSettings;
+	restoreWidgetGeometry(*this, windowSettings, "Window");
+	restoreState(windowSettings.value("Window/state", QByteArray()).toByteArray());
 
 	loadLightColorSetting();
 

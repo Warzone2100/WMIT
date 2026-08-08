@@ -24,9 +24,66 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QRegularExpression>
+#include <QGuiApplication>
+#include <QScreen>
+#include <QSettings>
+#include <QWidget>
 
 #include "Pie.h"
 #include "wmit.h"
+
+void restoreWidgetGeometry(QWidget& widget, QSettings& settings, const QString& groupKey)
+{
+	const QSize storedSize = settings.value(groupKey + "/size", widget.size()).toSize();
+	const QPoint storedPos = settings.value(groupKey + "/position", widget.pos()).toPoint();
+
+	QSize newSize = storedSize;
+	if (!newSize.isValid() || newSize.isEmpty())
+		newSize = widget.size();
+
+	// Clamp to the largest screen so a size saved on a big monitor cannot leave the window bigger than anything currently attached
+	const QScreen *primary = QGuiApplication::primaryScreen();
+	if (primary != nullptr)
+	{
+		const QSize maxSize = primary->availableGeometry().size();
+		newSize = newSize.boundedTo(maxSize);
+	}
+
+	widget.resize(newSize);
+
+	// Only honour the stored position if the resulting frame is genuinely visible on some screen
+	const QRect target(storedPos, newSize);
+	bool visible = false;
+	const QList<QScreen*> screens = QGuiApplication::screens();
+	for (const QScreen *screen : screens)
+	{
+		// Require a reasonable overlap, not just a single shared pixel, so a window peeking in from off-screen still gets re-centred
+		const QRect overlap = screen->availableGeometry().intersected(target);
+		if (overlap.width() >= qMin(120, newSize.width())
+		    && overlap.height() >= qMin(60, newSize.height()))
+		{
+			visible = true;
+			break;
+		}
+	}
+
+	if (visible)
+	{
+		widget.move(storedPos);
+	}
+	else
+	{
+		if (!storedPos.isNull())
+		{
+			qWarning() << "Ignoring off-screen stored geometry for" << groupKey << storedPos << newSize;
+		}
+		if (primary != nullptr)
+		{
+			const QRect avail = primary->availableGeometry();
+			widget.move(avail.center() - QPoint(newSize.width() / 2, newSize.height() / 2));
+		}
+	}
+}
 
 bool isValidWzName(const std::string name)
 {
