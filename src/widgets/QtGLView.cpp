@@ -373,18 +373,23 @@ void QtGLView::addToRenderList(IGLRenderable* object)
 {
 	dynamicManagedSetup(object);
 	renderList.append(object);
+	update();
 }
 
 void QtGLView::removeFromRenderList(IGLRenderable* object)
 {
 	int index = renderList.indexOf(object, 0);
 	if (index != -1)
+	{
 		renderList.removeAt(index);
+		update();
+	}
 }
 
 void QtGLView::clearRenderList()
 {
 	renderList.clear();
+	update();
 }
 
 void QtGLView::addToAnimateList(IAnimatable *object)
@@ -660,14 +665,16 @@ void QtGLView::setAnimateState(bool enabled)
 	if (animationIsStarted())
 	{
 		if (!enabled)
-		{
 			stopAnimation();
-			repaint();
-		}
 	}
 	else
 	{
 		if (enabled)
 			startAnimation();
 	}
+
+	// Always ask for a frame.
+	// When the animation loop is not running this is the only thing that will produce one, and callers reach here after the
+	// scene has changed (a model was loaded or closed).
+	update();
 }

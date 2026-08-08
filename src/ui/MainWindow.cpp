@@ -226,6 +226,9 @@ void MainWindow::doAfterModelWasLoaded(const bool success)
 	// Re-evaluate whether the redraw loop needs to run for this model.
 	m_ui->centralWidget->setAnimateState(success && hasAnim && m_ui->actionAnimate->isChecked());
 
+	// The viewport is not redrawn continuously any more, so loading, appending or closing a model has to ask for a frame explicitly
+	updateModelRender();
+
 	m_ui->actionShowModelCenter->setEnabled(!hasAnim);
 }
 
@@ -477,6 +480,8 @@ bool MainWindow::fireTextureDialog(const bool reinit)
 				m_model->setTextureName(it.key(), texFileNfo.fileName().toStdString());
 			}
 		}
+
+		updateModelRender();
 
 		return true;
 	}
