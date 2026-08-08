@@ -70,12 +70,28 @@ void main()
 		// Complete replace normal with new value
 		N = normalFromMap.xzy * 2.0 - 1.0;
 
-		// To match wz's light
-		N.y = -N.y;
-
-		// For object-space normal map
-		if (hasTangents == 0)
+		if (hasTangents != 0)
 		{
+			// Tangent-space normal map
+			//
+			// Lighting below is done in tangent space against a lightDir that
+			// is NOT negated, whereas WZ's instanced model path negates
+			// the light and lights in world space. Writing the decoded map as
+			// (a, c, e) in the (t, n, b) basis, the game evaluates
+			//     -a*(L.t) - c*(L.n) - e*(L.b)
+			// whereas "N.y = -N.y" gave
+			//     +a*(L.t) - c*(L.n) + e*(L.b)
+			// i.e. the normal term agreed but BOTH tangential terms were
+			// inverted, so relief was lit from the wrong side along U and V.
+			//
+			// Negating the whole decoded normal reproduces the game's result
+			// exactly, and does not disturb the other branches below.
+			N = -N;
+		}
+		else
+		{
+			// Object-space normal map
+			N.y = -N.y;
 			N = (NormalMatrix * vec4(N, 0.0)).xyz;
 		}
 	}
