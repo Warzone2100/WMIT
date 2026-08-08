@@ -24,6 +24,7 @@
 #include <QInputDialog>
 #include <QFileInfo>
 #include <QDir>
+#include <QtDebug>
 
 #include "wmit.h"
 
@@ -229,6 +230,13 @@ void TextureDialog::scanForTexturesInDirs(const QStringList& dirs)
 	foreach (QString path, dirs)
 	{
 		QDir dir(path, "*.png", QDir::Type, QDir::Files);
+
+		if (!dir.exists())
+		{
+			qWarning() << "Skipping missing texture search directory:" << path;
+			continue;
+		}
+
 		QStringList textures = dir.entryList();
 		foreach (QString texture, textures)
 		{
