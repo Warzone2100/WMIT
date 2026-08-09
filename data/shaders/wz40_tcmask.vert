@@ -50,7 +50,26 @@ void main()
 	{
 		// Building the matrix Eye Space -> Tangent Space with handness
 		vec3 t = normalize((NormalMatrix * vertexTangent).xyz);
-		vec3 b = cross (n, t) * vertexTangent.w;
+
+		// WMIT renders through wz_scale = (-1/128, 1/128, 1/128) (QWZM.cpp), whose
+		// negative x makes the model transform a MIRROR - its determinant is
+		// negative. Under such a transform cross(n, t) comes out with the opposite
+		// handedness to a correctly transformed bitangent, so the frame built here
+		// is left-handed relative to the game's and normal-map relief lights
+		// inverted along V. WZ's engine has no such mirror, which is why its
+		// shaders need no equivalent.
+		//
+		// Fold the determinant's sign in here, where the frame is built, rather
+		// than negating the map's green channel in the fragment shader: everything
+		// else derived from this basis (the debug T/B draw, Mesh.cpp's stored
+		// bitangents, any future parallax) has to be right too.
+		//
+		// determinant() is GLSL 1.50; this shader targets 1.20, hence the explicit
+		// triple product.
+		mat3 nm = mat3(NormalMatrix);
+		float mirror = sign(dot(cross(nm[0], nm[1]), nm[2]));
+
+		vec3 b = cross (n, t) * vertexTangent.w * mirror;
 		mat3 TangentSpaceMatrix = mat3(t, b, n); // conventional (T, B, N)
 
 		// Transform calculated normals for vanilla models by tangent basis
