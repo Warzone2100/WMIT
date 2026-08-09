@@ -82,11 +82,6 @@ void main()
 			// have to agree - any negation here lights normal-mapped surfaces
 			// from the exact opposite side to every other model in the
 			// viewport.
-			//
-			// (The sun is inverted for this shader in C++ instead - see
-			// QWZM.cpp, "Invert sun position for 4.0 shader" - which is what
-			// matches WZ's "lightDir = -normalize(...)". It is already
-			// accounted for by the time we get here.)
 			N = normalFromMap.rgb * 2.0 - 1.0;
 		}
 		else
@@ -98,7 +93,7 @@ void main()
 			// not cancel the .xzy swizzle here the way it does above. Keep it,
 			// as tcmask_instanced.frag does in the engine.
 			N = normalFromMap.xzy * 2.0 - 1.0;
-			N.y = -N.y;
+			N.xz = -N.xz;
 			N = (NormalMatrix * vec4(N, 0.0)).xyz;
 		}
 	}

@@ -38,9 +38,13 @@ void main()
 	texCoord = vertexTexCoord;
 
 	// Lighting we pass to the fragment shader
-	vec3 eyeVec = normalize((ModelViewMatrix * vertex).xyz);
+	// eyeVec runs surface -> eye, as in WZ's tcmask.vert ("normalize(-viewVertex.xyz)").
+	vec3 eyeVec = -normalize((ModelViewMatrix * vertex).xyz);
 	vec3 n = normalize((NormalMatrix * vec4(vertexNormal, 0.0)).xyz);
-	lightDir = normalize(lightPosition.xyz);
+	// lightPosition arrives already inverted from QWZM.cpp, which converts WMIT's
+	// light POSITION (origin -> light) into the sun DIRECTION vector WZ's shaders
+	// expect. Negating here is therefore the same expression WZ uses.
+	lightDir = -normalize(lightPosition.xyz);
 
 	if (hasTangents != 0)
 	{
