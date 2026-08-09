@@ -24,6 +24,10 @@
 # include <CoreFoundation/CFURL.h>
 #endif
 
+#include <QFile>
+#include <QFileInfo>
+#include <QRegularExpression>
+#include <QTextStream>
 #include <QPixmap>
 #include <QImage>
 #include <QApplication>
@@ -591,6 +595,65 @@ void QtGLView::deleteAllTextures()
 
 /// IGLShaderManager component
 
+/*!
+ * Expand #include "..." directives in a shader source file.
+ *
+ * QOpenGLShaderProgram::addShaderFromSourceFile has no include mechanism, but
+ * WZ's shader loader does (lib/ivis_opengl/gfx_api_gl.cpp), and the preview
+ * shaders are most useful to the extent that they can share the engine's
+ * conventions. Paths are resolved relative to the including file, matching WZ.
+ *
+ * Returns false, with the offending path in errString, if a file cannot be read
+ * or the include depth is exceeded.
+ */
+static bool readShaderSource(const QString& fileName, QString& out, QString* errString, int depth = 0)
+{
+	if (depth > 5)
+	{
+		if (errString)
+			*errString = QString("Nested #include depth > 5 at: %1").arg(fileName);
+		return false;
+	}
+
+	QFile file(fileName);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		if (errString)
+			*errString = QString("Could not read shader: %1").arg(fileName);
+		return false;
+	}
+
+	const QString basedir = QFileInfo(fileName).path();
+	QTextStream in(&file);
+	// Not multi-line and not anchored to the start of the file, so it matches
+	// each directive on its own line.
+	static const QRegularExpression re(QStringLiteral("^\\s*#include\\s+\"([^\"]+)\"\\s*$"));
+
+	out.clear();
+	QString line;
+	while (!in.atEnd())
+	{
+		line = in.readLine();
+
+		const QRegularExpressionMatch m = re.match(line);
+		if (!m.hasMatch())
+		{
+			out += line;
+			out += QLatin1Char('\n');
+			continue;
+		}
+
+		QString included;
+		if (!readShaderSource(basedir + QLatin1Char('/') + m.captured(1), included, errString, depth + 1))
+			return false;
+
+		out += included;
+		out += QLatin1Char('\n');
+	}
+
+	return true;
+}
+
 bool QtGLView::loadShader(int type, const QString& fileNameVert, const QString& fileNameFrag,
                           QString* errString)
 {
@@ -609,13 +672,27 @@ bool QtGLView::loadShader(int type, const QString& fileNameVert, const QString& 
 			shader = new QOpenGLShaderProgram(this);
 		}
 
-		if (!shader->addShaderFromSourceFile(QOpenGLShader::Vertex, fileNameVert))
+		QString vertSrc, fragSrc, readErr;
+
+		if (!readShaderSource(fileNameVert, vertSrc, &readErr))
+		{
+			if (errString)
+				*errString = QString("QtGLView::loadShader - %1").arg(readErr);
+			ok_flag = false;
+		}
+		else if (!readShaderSource(fileNameFrag, fragSrc, &readErr))
+		{
+			if (errString)
+				*errString = QString("QtGLView::loadShader - %1").arg(readErr);
+			ok_flag = false;
+		}
+		else if (!shader->addShaderFromSourceCode(QOpenGLShader::Vertex, vertSrc))
 		{
 			if (errString)
 				*errString = QString("QtGLView::loadShader - Error loading vertex shader:\n%1").arg(shader->log());
 			ok_flag = false;
 		}
-		else if (!shader->addShaderFromSourceFile(QOpenGLShader::Fragment, fileNameFrag))
+		else if (!shader->addShaderFromSourceCode(QOpenGLShader::Fragment, fragSrc))
 		{
 			if (errString)
 				*errString = QString("QtGLView::loadShader - Error loading fragment shader:\n%1").arg(shader->log());
