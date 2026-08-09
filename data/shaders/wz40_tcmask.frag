@@ -71,21 +71,23 @@ void main()
 		if (hasTangents != 0)
 		{
 			// Tangent-space normal map, sampled unswizzled because the vertex
-			// shader now builds the conventional (T, B, N) basis.
+			// shader builds the conventional (T, B, N) basis.
 			//
-			// Lighting below is done in tangent space against a lightDir that
-			// is NOT negated, whereas WZ's instanced model path negates
-			// the light and lights in world space. Writing the decoded map as
-			// (a, e, c) along (T, B, N), the game evaluates
-			//     -a*(L.T) - e*(L.B) - c*(L.N)
-			// whereas the old per-component negation gave
-			//     +a*(L.T) - e*(L.B) + c*(L.N)
-			// so relief was lit from the wrong side.
+			// No sign correction belongs here. The vertex shader hands the
+			// fragment shader a lightDir already expressed in this same basis,
+			// and the invariant that fixes the sign is local: with normalmap
+			// == 0 this shader lights "N = normal", which the vertex shader
+			// set to n * TangentSpaceMatrix == (0, 0, 1). A flat normal map
+			// decodes to (0, 0, 1) as well, so the mapped and unmapped cases
+			// have to agree - any negation here lights normal-mapped surfaces
+			// from the exact opposite side to every other model in the
+			// viewport.
 			//
-			// Negating the whole decoded normal reproduces the game's result
-			// exactly, and - unlike a per-component fix - does not have to be
-			// revisited when the basis ordering or the swizzle changes.
-			N = -(normalFromMap.rgb * 2.0 - 1.0);
+			// (The sun is inverted for this shader in C++ instead - see
+			// QWZM.cpp, "Invert sun position for 4.0 shader" - which is what
+			// matches WZ's "lightDir = -normalize(...)". It is already
+			// accounted for by the time we get here.)
+			N = normalFromMap.rgb * 2.0 - 1.0;
 		}
 		else
 		{
