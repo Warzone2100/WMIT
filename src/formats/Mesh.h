@@ -125,6 +125,14 @@ public:
 	void center(int axis); // -1 == all, x == 0, y == 1, z == 2
 
 	void recalculateTB();
+
+	// Accessors used by the MikkTSpace callbacks in Mesh.cpp
+	// (indices() already exists above)
+	const IndexedTri& getIndex(size_t i) const { return m_indexArray[i]; }
+	const WZMVertex& getVertex(size_t i) const { return m_vertexArray[i]; }
+	const WZMVertex& getNormal(size_t i) const { return m_normalArray[i]; }
+	const WZMUV& getUV(size_t i) const { return m_textureArray[i]; }
+	void setTangent(size_t i, const WZMVertex4& t) { m_tangentArray[i] = t; }
 	void importPieAnimation(const ApieAnimObject& animobj);
 
 	WZMVertex getCenterPoint() const;
@@ -156,8 +164,6 @@ protected:
 	void reserveIndices(const unsigned size);
 	void reserveTexAnimation(const unsigned size);
 	void addIndices(const IndexedTri& trio);
-	void calculateTBForIndices(const IndexedTri &trio);
-	void finishTBCalculation();
 	void addPoint(const WZMVertex &vertex, const WZMUV &uv, const WZMVertex &normal);
 	void finishImport();
 

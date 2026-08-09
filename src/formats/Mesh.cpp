@@ -19,6 +19,8 @@
 
 #include "Mesh.h"
 
+#include "mikktspace.h"
+
 #include <algorithm>
 #include <functional>
 #include <iterator>
@@ -884,84 +886,78 @@ void Mesh::addIndices(const IndexedTri &trio)
 
 	m_indexArray.push_back(trio);
 
-	// TB-calculation part
-	calculateTBForIndices(trio);
+	// Tangents are no longer accumulated per triangle: MikkTSpace needs the
+	// whole mesh at once. Both callers (Mesh.cpp:202 and :626) run
+	// finishImport() once all indices are added, which drives recalculateTB().
 }
 
-void Mesh::calculateTBForIndices(const IndexedTri &trio)
+// MikkTSpace tangent generation
+//
+// Matches lib/ivis_opengl/imdload.cpp in WZ2100, which uses this same
+// reference implementation. Keeping the two in step is the whole point: WMIT's
+// viewport is only useful as a preview if its tangent frame is the game's.
+//
+// WZ2100 texture coordinates have V pointing DOWN the image while MikkTSpace
+// assumes the standard convention, so it is handed V-flipped coordinates. T is
+// unaffected by that flip and B = dP/dv changes sign, reproducing the -dP/dv
+// bitangent that ordinary OpenGL-convention ("green up") normal maps need.
+// Thus, fSign is used directly as w.
+
+namespace
 {
-	// Shortcuts for vertices
-	WZMVertex &v0 = m_vertexArray[trio.a()];
-	WZMVertex &v1 = m_vertexArray[trio.b()];
-	WZMVertex &v2 = m_vertexArray[trio.c()];
-
-	// Shortcuts for UVs
-	WZMUV &uv0 = m_textureArray[trio.a()];
-	WZMUV &uv1 = m_textureArray[trio.b()];
-	WZMUV &uv2 = m_textureArray[trio.c()];
-
-	// Edges of the triangle : postion delta
-	WZMVertex deltaPos1 = v1 - v0;
-	WZMVertex deltaPos2 = v2 - v0;
-
-	// UV delta
-	WZMUV deltaUV1 = uv1 - uv0;
-	WZMUV deltaUV2 = uv2 - uv0;
-
-	// check for nan
-	float r = (deltaUV1.u() * deltaUV2.v() - deltaUV1.v() * deltaUV2.u());
-	if (r)
-		r = 1.f / r;
-
-	WZMVertex4 tangent = WZMVertex((deltaPos1 * deltaUV2.v() - deltaPos2 * deltaUV1.v()) * r);
-	WZMVertex bitangent = (deltaPos2 * deltaUV1.u() - deltaPos1 * deltaUV2.u()) * r;
-
-	// Accumulate, do not subtract. The Lengyel expression above already yields
-	// T = +dP/du and B = +dP/dv; negating it here produced a tangent frame whose
-	// U axis ran backwards relative to the one Warzone builds at load time
-	// (lib/ivis_opengl/imdload.cpp, calculateTangentsForTriangle), so normal maps
-	// previewed here were mirrored in U compared to the game.
-	m_tangentArray[trio.a()] += tangent;
-	m_tangentArray[trio.b()] += tangent;
-	m_tangentArray[trio.c()] += tangent;
-
-	m_bitangentArray[trio.a()] += bitangent;
-	m_bitangentArray[trio.b()] += bitangent;
-	m_bitangentArray[trio.c()] += bitangent;
-}
-
-void Mesh::finishTBCalculation()
-{
-	for (unsigned int i = 0; i < vertices(); ++i)
+	int mikkGetNumFaces(const SMikkTSpaceContext *pContext)
 	{
-		WZMVertex n = m_normalArray[i];
+		return static_cast<int>(static_cast<const Mesh *>(pContext->m_pUserData)->indices());
+	}
 
-		// Gram-Schmidt orthogonalize
-		WZMVertex t = m_tangentArray[i].xyz();
-		t = WZMVertex(t - n * n.dotProduct(t)).normalize();
+	int mikkGetNumVerticesOfFace(const SMikkTSpaceContext *, const int)
+	{
+		return 3; // WZM/PIE meshes are triangulated
+	}
 
-		// Calculate handedness.
-		//
-		// This is deliberately the inverse of the textbook (Lengyel) sign, to
-		// match lib/ivis_opengl/imdload.cpp:finishTangentsGeneration(). Warzone
-		// texture coordinates have V pointing down the image, so the shader's
-		// reconstructed bitangent must be -dP/dv for standard OpenGL-convention
-		// ("green up") normal maps to light correctly. Flipping the sign here is
-		// what produces that.
-		if (n.crossProduct(t).dotProduct(m_bitangentArray[i]) < 0.0f)
-		{
-			m_tangentArray[i] = WZMVertex4(t, 1.f);
-		}
-		else
-		{
-			m_tangentArray[i] = WZMVertex4(t, -1.f);
-		}
+	inline unsigned mikkIndex(const Mesh *mesh, const int iFace, const int iVert)
+	{
+		const IndexedTri &tri = mesh->getIndex(static_cast<size_t>(iFace));
+		return iVert == 0 ? tri.a() : (iVert == 1 ? tri.b() : tri.c());
+	}
+
+	void mikkGetPosition(const SMikkTSpaceContext *pContext, float fvPosOut[], const int iFace, const int iVert)
+	{
+		const Mesh *mesh = static_cast<const Mesh *>(pContext->m_pUserData);
+		const WZMVertex &v = mesh->getVertex(mikkIndex(mesh, iFace, iVert));
+		fvPosOut[0] = v.x();
+		fvPosOut[1] = v.y();
+		fvPosOut[2] = v.z();
+	}
+
+	void mikkGetNormal(const SMikkTSpaceContext *pContext, float fvNormOut[], const int iFace, const int iVert)
+	{
+		const Mesh *mesh = static_cast<const Mesh *>(pContext->m_pUserData);
+		const WZMVertex &n = mesh->getNormal(mikkIndex(mesh, iFace, iVert));
+		fvNormOut[0] = n.x();
+		fvNormOut[1] = n.y();
+		fvNormOut[2] = n.z();
+	}
+
+	void mikkGetTexCoord(const SMikkTSpaceContext *pContext, float fvTexcOut[], const int iFace, const int iVert)
+	{
+		const Mesh *mesh = static_cast<const Mesh *>(pContext->m_pUserData);
+		const WZMUV &uv = mesh->getUV(mikkIndex(mesh, iFace, iVert));
+		fvTexcOut[0] = uv.u();
+		fvTexcOut[1] = 1.f - uv.v(); // V flip - see the note above
+	}
+
+	void mikkSetTSpaceBasic(const SMikkTSpaceContext *pContext, const float fvTangent[], const float fSign, const int iFace, const int iVert)
+	{
+		Mesh *mesh = static_cast<Mesh *>(pContext->m_pUserData);
+		mesh->setTangent(mikkIndex(mesh, iFace, iVert),
+		                 WZMVertex4(fvTangent[0], fvTangent[1], fvTangent[2], fSign));
 	}
 }
 
 void Mesh::finishImport()
 {
-	finishTBCalculation();
+	recalculateTB();
 	recalculateBoundData();
 }
 
@@ -1137,10 +1133,42 @@ void Mesh::recalculateTB()
 	m_bitangentArray.resize(vert_num);
 	std::fill(m_bitangentArray.begin(), m_bitangentArray.end(), WZMVertex());
 
-	// TB-calculation part
-	for (auto& curTrio : m_indexArray)
-		calculateTBForIndices(curTrio);
-	finishTBCalculation();
+	if (m_indexArray.empty() || vert_num == 0)
+	{
+		return;
+	}
+
+	// MikkTSpace returns its results unindexed and warns against writing them
+	// through an index list that merges vertices. That is safe here because
+	// this mesh's index array only ever merges vertices agreeing on position,
+	// UV *and* normal (compareWZMPoint_less_wEps, 1e-4) - the same criterion
+	// MikkTSpace welds on internally - so every corner sharing an index also
+	// receives the same tangent.
+	SMikkTSpaceInterface mikkInterface = {};
+	mikkInterface.m_getNumFaces = mikkGetNumFaces;
+	mikkInterface.m_getNumVerticesOfFace = mikkGetNumVerticesOfFace;
+	mikkInterface.m_getPosition = mikkGetPosition;
+	mikkInterface.m_getNormal = mikkGetNormal;
+	mikkInterface.m_getTexCoord = mikkGetTexCoord;
+	mikkInterface.m_setTSpaceBasic = mikkSetTSpaceBasic;
+
+	SMikkTSpaceContext mikkContext = {};
+	mikkContext.m_pInterface = &mikkInterface;
+	mikkContext.m_pUserData = this;
+
+	if (!genTangSpaceDefault(&mikkContext))
+	{
+		std::cerr << "Mesh::recalculateTB - MikkTSpace tangent generation failed" << std::endl;
+		return;
+	}
+
+	// The renderer reconstructs the bitangent as w * cross(N, T).
+	// Keep the stored array consistent with that, for the debug draw and for scale() and mirror() which transform it alongside the tangent.
+	for (size_t i = 0; i < vert_num; ++i)
+	{
+		m_bitangentArray[i] = m_normalArray[i].crossProduct(m_tangentArray[i].xyz())
+		                      * m_tangentArray[i].w();
+	}
 }
 
 void Mesh::importPieAnimation(const ApieAnimObject &animobj)

@@ -68,29 +68,34 @@ void main()
 		#endif
 
 		// Complete replace normal with new value
-		N = normalFromMap.xzy * 2.0 - 1.0;
-
 		if (hasTangents != 0)
 		{
-			// Tangent-space normal map
+			// Tangent-space normal map, sampled unswizzled because the vertex
+			// shader now builds the conventional (T, B, N) basis.
 			//
 			// Lighting below is done in tangent space against a lightDir that
 			// is NOT negated, whereas WZ's instanced model path negates
 			// the light and lights in world space. Writing the decoded map as
-			// (a, c, e) in the (t, n, b) basis, the game evaluates
-			//     -a*(L.t) - c*(L.n) - e*(L.b)
-			// whereas "N.y = -N.y" gave
-			//     +a*(L.t) - c*(L.n) + e*(L.b)
-			// i.e. the normal term agreed but BOTH tangential terms were
-			// inverted, so relief was lit from the wrong side along U and V.
+			// (a, e, c) along (T, B, N), the game evaluates
+			//     -a*(L.T) - e*(L.B) - c*(L.N)
+			// whereas the old per-component negation gave
+			//     +a*(L.T) - e*(L.B) + c*(L.N)
+			// so relief was lit from the wrong side.
 			//
 			// Negating the whole decoded normal reproduces the game's result
-			// exactly, and does not disturb the other branches below.
-			N = -N;
+			// exactly, and - unlike a per-component fix - does not have to be
+			// revisited when the basis ordering or the swizzle changes.
+			N = -(normalFromMap.rgb * 2.0 - 1.0);
 		}
 		else
 		{
 			// Object-space normal map
+			//
+			// This path goes through NormalMatrix and never touches
+			// TangentSpaceMatrix, so the (T, N, B) -> (T, B, N) reorder does
+			// not cancel the .xzy swizzle here the way it does above. Keep it,
+			// as tcmask_instanced.frag does in the engine.
+			N = normalFromMap.xzy * 2.0 - 1.0;
 			N.y = -N.y;
 			N = (NormalMatrix * vec4(N, 0.0)).xyz;
 		}
