@@ -442,7 +442,16 @@ void QtGLView::updateTextures()
 			texIt.value().update = false;
 			if (!image.isNull())
 			{
-				texIt.value().pTexture->setData(image.mirrored(false, true));
+				// NOT mirrored: this has to match the initial upload in
+				// GLTexture(), which hands the QImage to QOpenGLTexture
+				// unflipped. WZ2100 texture coordinates put v = 0 at the TOP
+				// of the image (the .pie origin is top-left) and the game
+				// uploads its textures the same way, so the unflipped form is
+				// the correct one. Mirroring here made a texture flip
+				// vertically the moment it was re-read from disk - i.e. every
+				// time an artist saved from their paint package with the model
+				// open.
+				texIt.value().pTexture->setData(image);
 			}
 		}
 	}
