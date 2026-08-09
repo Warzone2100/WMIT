@@ -26,10 +26,12 @@ attribute vec4 vertexTangent;
 out float vertexDistance;
 out vec3 normal, lightDir, halfVec;
 out vec2 texCoord;
+out mat3 TangentSpaceMatrix;
 #else
 varying float vertexDistance;
 varying vec3 normal, lightDir, halfVec;
 varying vec2 texCoord;
+varying mat3 TangentSpaceMatrix;
 #endif
 
 void main()
@@ -48,7 +50,7 @@ void main()
 
 	if (hasTangents != 0)
 	{
-		// Building the matrix Eye Space -> Tangent Space with handness
+		// Building the matrix Tangent Space -> Eye Space with handness
 		vec3 t = normalize((NormalMatrix * vertexTangent).xyz);
 
 		// WMIT renders through wz_scale = (-1/128, 1/128, 1/128) (QWZM.cpp), whose
@@ -59,25 +61,18 @@ void main()
 		// inverted along V. WZ's engine has no such mirror, which is why its
 		// shaders need no equivalent.
 		//
-		// Fold the determinant's sign in here, where the frame is built, rather
-		// than negating the map's green channel in the fragment shader: everything
-		// else derived from this basis (the debug T/B draw, Mesh.cpp's stored
-		// bitangents, any future parallax) has to be right too.
-		//
 		// determinant() is GLSL 1.50; this shader targets 1.20, hence the explicit
 		// triple product.
 		mat3 nm = mat3(NormalMatrix);
 		float mirror = sign(dot(cross(nm[0], nm[1]), nm[2]));
 
 		vec3 b = cross (n, t) * vertexTangent.w * mirror;
-		mat3 TangentSpaceMatrix = mat3(t, b, n); // conventional (T, B, N)
 
-		// Transform calculated normals for vanilla models by tangent basis
-		n = n * TangentSpaceMatrix;
-
-		// Transform light and eye direction vectors by tangent basis
-		lightDir *= TangentSpaceMatrix;
-		eyeVec *= TangentSpaceMatrix;
+		// Handed to the fragment shader, which applies it - as WZ's tcmask.vert
+		// does. Nothing is rotated INTO tangent space here: lightDir, eyeVec and
+		// the geometric normal all stay in eye space, so the mapped and unmapped
+		// cases are lit in the same space without a second convention.
+		TangentSpaceMatrix = mat3(t, b, n); // conventional (T, B, N)
 	}
 
 	normal = n;

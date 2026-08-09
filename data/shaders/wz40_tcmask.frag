@@ -32,10 +32,12 @@ uniform vec4 fogColor;
 in float vertexDistance;
 in vec3 normal, lightDir, halfVec;
 in vec2 texCoord;
+in mat3 TangentSpaceMatrix;
 #else
 varying float vertexDistance;
 varying vec3 normal, lightDir, halfVec;
 varying vec2 texCoord;
+varying mat3 TangentSpaceMatrix;
 #endif
 
 #if (!defined(GL_ES) && (__VERSION__ >= 130)) || (defined(GL_ES) && (__VERSION__ >= 300))
@@ -43,6 +45,8 @@ out vec4 FragColor;
 #else
 // Uses gl_FragColor
 #endif
+
+#include "tangentspace.glsl"
 
 void main()
 {
@@ -67,39 +71,17 @@ void main()
 		vec3 normalFromMap = texture2D(TextureNormal, texCoord).xyz;
 		#endif
 
-		// Complete replace normal with new value
-		if (hasTangents != 0)
-		{
-			// Tangent-space normal map, sampled unswizzled because the vertex
-			// shader builds the conventional (T, B, N) basis.
-			//
-			// No sign correction belongs here. The vertex shader hands the
-			// fragment shader a lightDir already expressed in this same basis,
-			// and the invariant that fixes the sign is local: with normalmap
-			// == 0 this shader lights "N = normal", which the vertex shader
-			// set to n * TangentSpaceMatrix == (0, 0, 1). A flat normal map
-			// decodes to (0, 0, 1) as well, so the mapped and unmapped cases
-			// have to agree - any negation here lights normal-mapped surfaces
-			// from the exact opposite side to every other model in the
-			// viewport.
-			N = normalFromMap.rgb * 2.0 - 1.0;
-		}
-		else
-		{
-			// Object-space normal map
-			//
-			// This path goes through NormalMatrix and never touches
-			// TangentSpaceMatrix, so the (T, N, B) -> (T, B, N) reorder does
-			// not cancel the .xzy swizzle here the way it does above. Keep it,
-			// as tcmask_instanced.frag does in the engine.
-			N = normalFromMap.xzy * 2.0 - 1.0;
-			N.xz = -N.xz;
-			N = (NormalMatrix * vec4(N, 0.0)).xyz;
-		}
+		// Completely replace normal with new value
+		//
+		// Shared with the engine verbatim - see tangentspace.glsl, copied from
+		// WZ's data/base/shaders. This shader lights in eye space rather than
+		// world space, which changes nothing here: the basis and NormalMatrix
+		// simply map into eye space instead.
+		N = wzDecodeNormalMap(normalFromMap, hasTangents, TangentSpaceMatrix, mat3(NormalMatrix));
 	}
 	N = normalize(N);
 
-	// Сalculate and combine final lightning
+	// Calculate and combine final lightning
 	vec4 light = sceneColor;
 	vec3 L = lightDir; //can be normalized for better quality
 	float lambertTerm = max(dot(N, L), 0.0);
