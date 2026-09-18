@@ -44,7 +44,7 @@ void ExportDialog::changeEvent(QEvent *e)
     }
 }
 
-PieExportDialog::PieExportDialog(const PieCaps &caps, QWidget* parent)
+PieExportDialog::PieExportDialog(const PieCaps &caps, bool hasComments, QWidget* parent)
 	: ExportDialog(parent), m_caps(caps)
 {
 	ui->gbExportCaps->setTitle(tr("Directives"));
@@ -57,8 +57,16 @@ PieExportDialog::PieExportDialog(const PieCaps &caps, QWidget* parent)
 	ui->tvExportCaps->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui->tvExportCaps->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
 
+	ui->cbKeepComments->setVisible(hasComments);
+	ui->cbKeepComments->setChecked(hasComments);
+
 	connect(ui->pushButton_deselect_all, SIGNAL(clicked()), this, SLOT(actionDeselectAll()));
 	connect(ui->pushButton_select_all, SIGNAL(clicked()), this, SLOT(actionSelectAll()));
+}
+
+bool PieExportDialog::getKeepComments() const
+{
+	return ui->cbKeepComments->isChecked();
 }
 
 void PieExportDialog::changeSelectAll(bool selected)
