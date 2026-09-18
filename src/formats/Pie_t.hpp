@@ -30,20 +30,6 @@
   *
 */
 
-/// PIE 2 and PIE 3 carry a page size that PIE 4 leaves out and the game ignores.
-static inline void skipOptionalTextureSize(std::istream& in)
-{
-	std::streampos mark = in.tellg();
-	unsigned width, height;
-
-	in >> width >> height;
-	if (in.fail())
-	{
-		in.clear();
-		in.seekg(mark);
-	}
-}
-
 template<typename V, typename P, typename C>
 APieLevel< V, P, C>::APieLevel(): m_material(true)
 {
@@ -63,8 +49,40 @@ bool APieLevel< V, P, C>::readAnimObjectDirective(std::istream& in, PieCaps& cap
 }
 
 // TODO: Write error messages to std::cerr
+/// All optional, but TYPE and INTERPOLATE come first and in that order.
 template<typename V, typename P, typename C>
-bool APieLevel< V, P, C>::read(std::istream& in, PieCaps& caps)
+bool APieLevel< V, P, C>::readLevelSettings(std::istream& in)
+{
+	std::string str;
+	unsigned uint;
+	std::streampos entrypoint = in.tellg();
+
+	in >> str >> std::hex >> uint >> std::dec;
+	if (!in.fail() && str.compare(PIE_MODEL_DIRECTIVE_TYPE) == 0)
+	{
+		m_type = uint;
+		entrypoint = in.tellg();
+	}
+
+	in.clear();
+	in.seekg(entrypoint);
+
+	in >> str >> uint;
+	if (!in.fail() && str.compare(PIE_MODEL_DIRECTIVE_INTERPOLATE) == 0)
+	{
+		m_ani_interpolate = uint;
+	}
+	else
+	{
+		in.clear();
+		in.seekg(entrypoint);
+	}
+
+	return readPieTextureDirectives(in, m_textures);
+}
+
+template<typename V, typename P, typename C>
+bool APieLevel< V, P, C>::read(std::istream& in, PieCaps& caps, unsigned version)
 {
 	std::string str;
 	unsigned uint;
@@ -77,6 +95,11 @@ bool APieLevel< V, P, C>::read(std::istream& in, PieCaps& caps)
 	// LEVEL %u
 	in >> str >> uint;
 	if ( in.fail() || str.compare("LEVEL") != 0)
+	{
+		streamfail();
+	}
+
+	if (version >= PIE_MODEL_VERSION_PIE4 && !readLevelSettings(in))
 	{
 		streamfail();
 	}
@@ -207,11 +230,32 @@ bool APieLevel< V, P, C>::read(std::istream& in, PieCaps& caps)
 }
 
 template<typename V, typename P, typename C>
-void APieLevel< V, P, C>::write(std::ostream &out, const PieCaps &caps) const
+void APieLevel< V, P, C>::writeLevelSettings(std::ostream& out, const PieCaps& caps) const
+{
+	if (m_type)
+	{
+		out << PIE_MODEL_DIRECTIVE_TYPE << ' ' << std::hex << *m_type << std::dec << '\n';
+	}
+
+	if (m_ani_interpolate)
+	{
+		out << PIE_MODEL_DIRECTIVE_INTERPOLATE << ' ' << *m_ani_interpolate << '\n';
+	}
+
+	writePieTextureDirectives(out, m_textures, caps);
+}
+
+template<typename V, typename P, typename C>
+void APieLevel< V, P, C>::write(std::ostream &out, const PieCaps &caps, unsigned version) const
 {
 	typename std::vector<V>::const_iterator ptIt;
 	typename std::vector<P>::const_iterator polyIt;
 	typename std::list<C>::const_iterator cIt;
+
+	if (version >= PIE_MODEL_VERSION_PIE4)
+	{
+		writeLevelSettings(out, caps);
+	}
 
 	if (caps.test(PIE_OPT_DIRECTIVES::podMATERIALS) && !m_material.isDefault())
 		out << PIE_MODEL_DIRECTIVE_MATERIALS << " " << m_material << '\n';
@@ -297,6 +341,9 @@ size_t APieLevel< V, P, C>::connectors() const
 template<typename V, typename P, typename C>
 void APieLevel< V, P, C>::clearAll()
 {
+	m_type.reset();
+	m_ani_interpolate.reset();
+	m_textures.clear();
 	m_points.clear();
 	m_normals.clear();
 	m_polygons.clear();
@@ -472,62 +519,38 @@ bool APieModel<L>::readTexturesBlock(std::istream& in)
 	return readTextureDirective(in) && readNormalmapDirective(in) && readSpecmapDirective(in);
 }
 
-/**
-  * Reads the PIE 4 texture directives, which may appear in any order, more than
-  * once, and for any of the tilesets.
-  */
+/// The default tileset is kept in the members that every version uses.
 template <typename L>
 bool APieModel<L>::readTextureDirectives(std::istream& in)
 {
-	bool foundDiffuse = false;
+	PieTilesetTextures textures;
 
-	for (;;)
-	{
-		std::string directive, name;
-		unsigned tileset;
-		std::streampos entrypoint = in.tellg();
-
-		in >> directive >> tileset >> name;
-		if (in.fail())
-		{
-			in.clear();
-			in.seekg(entrypoint);
-			break;
-		}
-
-		if (!isPieTextureDirective(directive))
-		{
-			in.seekg(entrypoint);
-			break;
-		}
-
-		if (tileset >= PIE_MODEL_TILESETS)
-		{
-			return false;
-		}
-
-		// Accept the page size that PIE 3 files carry, in case one is present.
-		if (directive.compare(PIE_MODEL_DIRECTIVE_TEXTURE) == 0)
-		{
-			skipOptionalTextureSize(in);
-			if (tileset == 0)
-			{
-				if (!isValidWzName(name))
-					return false;
-				foundDiffuse = true;
-			}
-		}
-
-		if (!storeTextureDirective(directive, tileset, name))
-		{
-			return false;
-		}
-	}
-
-	if (!foundDiffuse)
+	if (!readPieTextureDirectives(in, textures))
 	{
 		return false;
 	}
+
+	auto defaultTileset = textures.find(0);
+	if (defaultTileset == textures.end())
+	{
+		return false;
+	}
+
+	for (const auto& entry : defaultTileset->second)
+	{
+		if (!storeTextureDirective(entry.first, 0, entry.second))
+		{
+			return false;
+		}
+	}
+
+	if (!isValidWzName(m_texture))
+	{
+		return false;
+	}
+
+	textures.erase(defaultTileset);
+	m_tileset_textures = textures;
 
 	applyTCMaskFallback();
 	return true;
@@ -722,7 +745,7 @@ bool APieModel<L>::readLevels(int levels, std::istream& in)
 	for (; levels > 0; --levels)
 	{
 		L lvl;
-		if (!lvl.read(in, m_caps))
+		if (!lvl.read(in, m_caps, version()))
 		{
 			return false;
 		}
@@ -780,24 +803,7 @@ void APieModel<L>::writeTextureDirectives(std::ostream& out, const PieCaps& caps
 		return;
 	}
 
-	static const char* const order[] = {
-		PIE_MODEL_DIRECTIVE_TEXTURE,
-		PIE_MODEL_DIRECTIVE_TCMASK,
-		PIE_MODEL_DIRECTIVE_NORMALMAP,
-		PIE_MODEL_DIRECTIVE_SPECULARMAP
-	};
-
-	for (const auto& tileset : m_tileset_textures)
-	{
-		for (const char* const directive : order)
-		{
-			auto found = tileset.second.find(directive);
-			if (found != tileset.second.end() && !found->second.empty())
-			{
-				out << directive << ' ' << tileset.first << ' ' << found->second << '\n';
-			}
-		}
-	}
+	writePieTextureDirectives(out, m_tileset_textures, caps);
 }
 
 template <typename L>
@@ -832,7 +838,7 @@ void APieModel<L>::write(std::ostream& out, const PieCaps *piecaps) const
 	for (it = m_levels.begin(); it != m_levels.end(); ++it, ++i)
 	{
 		out << "LEVEL " << i << '\n';
-		it->write(out, caps);
+		it->write(out, caps, version());
 	}
 }
 

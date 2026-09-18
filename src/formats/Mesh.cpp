@@ -131,6 +131,10 @@ Mesh::Mesh(const Pie3Level& p3)
 
 	clear();
 
+	m_pie_type = p3.m_type;
+	m_pie_interpolate = p3.m_ani_interpolate;
+	m_pie_textures = p3.m_textures;
+
 	/*
 	 *	Try to prevent duplicate vertices
 	 *	(remember, different UV's, or animations,
@@ -242,6 +246,10 @@ Pie3Level Mesh::backConvert(const Mesh& wzmMesh)
 Mesh::operator Pie3Level() const
 {
 	Pie3Level p3;
+
+	p3.m_type = m_pie_type;
+	p3.m_ani_interpolate = m_pie_interpolate;
+	p3.m_textures = m_pie_textures;
 
 	std::vector<Pie3Vertex>::iterator itPV;
 	std::vector<TexAnimData>::const_iterator itTexAni;
@@ -832,6 +840,9 @@ bool Mesh::isValid() const
 void Mesh::clear()
 {
 	m_name.clear();
+	m_pie_type.reset();
+	m_pie_interpolate.reset();
+	m_pie_textures.clear();
 	m_frame_time = m_frame_cycles = 0.f;
 	m_texAnimFrames = m_texAnimPlaybackRate = 0;
 	m_frameArray.clear();
