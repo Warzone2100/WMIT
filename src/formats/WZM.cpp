@@ -74,7 +74,7 @@ std::ostream& operator<< (std::ostream& out, const WZMaterial& mat)
 	return out;
 }
 
-WZM::WZM(): m_pie_read_type(0),
+WZM::WZM(): m_pie_read_type(0), m_pie_version(3),
 	m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
 {
 }
@@ -92,7 +92,10 @@ WZM::WZM(const Pie3Model &p3)
 	if (p3.levels() > 0)
 		m_material = p3.m_levels.begin()->m_material;
 
+	m_tileset_textures = p3.m_tileset_textures;
+
 	m_pie_read_type = p3.m_read_type;
+	m_pie_version = p3.version();
 	m_events = p3.m_events;
 	m_ani_interpolate = p3.m_ani_interpolate;
 
@@ -118,7 +121,9 @@ WZM::operator Pie3Model() const
 	p3.m_texture_normalmap = getTextureName(WZM_TEX_NORMALMAP);
 	p3.m_texture_tcmask = getTextureName(WZM_TEX_TCMASK);
 	p3.m_texture_specmap = getTextureName(WZM_TEX_SPECULAR);
+	p3.m_tileset_textures = m_tileset_textures;
 
+	p3.setVersion(m_pie_version);
 	p3.m_read_type = m_pie_read_type;
 	p3.m_events = m_events;
 	p3.m_ani_interpolate = m_ani_interpolate;
@@ -720,10 +725,12 @@ void WZM::clear()
 {
 	m_meshes.clear();
 	m_textures.clear();
+	m_tileset_textures.clear();
 	m_material.setDefaults();
 	m_events.clear();
 	m_ani_interpolate = PIE_MODEL_DEF_INTERPOLATE;
 	m_pie_read_type = 0;
+	m_pie_version = 3;
 }
 
 void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)

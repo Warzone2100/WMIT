@@ -35,9 +35,9 @@ int pieVersion(std::istream& in)
 	if (in.good() && pie.compare(PIE_MODEL_SIGNATURE) == 0)
 	{
 		in.seekg(start);
-		if (version == 2 || version == 3)
+		if (version >= PIE_MODEL_MIN_VERSION && version <= PIE_MODEL_MAX_VERSION)
 		{
-			return version;
+			return static_cast<int>(version);
 		}
 	}
 	return -1;
@@ -68,17 +68,12 @@ bool tryToReadDirective(std::istream &in, const char* directive, const bool isOp
   Pie version 2
   *********************************************/
 
-Pie2Model::Pie2Model(): APieModel(PIE2_CAPS)
+Pie2Model::Pie2Model(): APieModel(PIE2_CAPS, 2)
 {
 }
 
 Pie2Model::~Pie2Model()
 {
-}
-
-unsigned Pie2Model::version() const
-{
-	return 2;
 }
 
 unsigned Pie2Model::textureHeight() const
@@ -332,11 +327,11 @@ Pie3Level::operator Pie2Level() const
 	return p2;
 }
 
-Pie3Model::Pie3Model(): APieModel(PIE3_CAPS)
+Pie3Model::Pie3Model(): APieModel(PIE3_CAPS, 3)
 {
 }
 
-Pie3Model::Pie3Model(const Pie2Model& p2): APieModel(PIE3_CAPS)
+Pie3Model::Pie3Model(const Pie2Model& p2): APieModel(PIE3_CAPS, 3)
 {
 	m_texture = p2.m_texture;
 	m_texture_tcmask = p2.m_texture_tcmask;
@@ -355,9 +350,15 @@ Pie3Model::~Pie3Model()
 {
 }
 
-unsigned Pie3Model::version() const
+bool Pie3Model::setVersion(unsigned version)
 {
-	return 3;
+	if (version != 3 && version != PIE_MODEL_VERSION_PIE4)
+	{
+		return false;
+	}
+
+	m_version = version;
+	return true;
 }
 
 Pie3Model::operator Pie2Model() const
@@ -488,6 +489,14 @@ bool ApieAnimObject::readStandaloneAniStream(std::istream &fin)
 	return false;
 }
 
+bool isPieTextureDirective(const std::string& directive)
+{
+	return directive.compare(PIE_MODEL_DIRECTIVE_TEXTURE) == 0 ||
+		directive.compare(PIE_MODEL_DIRECTIVE_TCMASK) == 0 ||
+		directive.compare(PIE_MODEL_DIRECTIVE_NORMALMAP) == 0 ||
+		directive.compare(PIE_MODEL_DIRECTIVE_SPECULARMAP) == 0;
+}
+
 const char *getPieDirectiveName(PIE_OPT_DIRECTIVES dir)
 {
 	switch (dir) {
@@ -500,6 +509,7 @@ const char *getPieDirectiveName(PIE_OPT_DIRECTIVES dir)
 	case PIE_OPT_DIRECTIVES::podCONNECTORS: return PIE_MODEL_DIRECTIVE_CONNECTORS;
 	case PIE_OPT_DIRECTIVES::podANIMOBJECT: return PIE_MODEL_DIRECTIVE_ANIMOBJECT;
 	case PIE_OPT_DIRECTIVES::podINTERPOLATE: return PIE_MODEL_DIRECTIVE_INTERPOLATE;
+	case PIE_OPT_DIRECTIVES::podTCMASK: return PIE_MODEL_DIRECTIVE_TCMASK;
 	default:
 		return "";
 	}
@@ -517,6 +527,7 @@ const char *getPieDirectiveDescription(PIE_OPT_DIRECTIVES dir)
 	case PIE_OPT_DIRECTIVES::podCONNECTORS: return "Connectors are used to place and orient other components against each other.";
 	case PIE_OPT_DIRECTIVES::podANIMOBJECT: return "(3.3+) If the mesh is animated, this directive will tell the game how to animate it.";
 	case PIE_OPT_DIRECTIVES::podINTERPOLATE: return "(4.0+) Optional. Specifies if the model wants to have interpolated frames. Default is set to interpolate.";
+	case PIE_OPT_DIRECTIVES::podTCMASK: return "(PIE 4) Sets the team colour mask texture page for the model. Earlier versions derive the name from the texture page instead.";
 	default:
 		return "";
 	}
