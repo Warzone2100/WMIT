@@ -30,4 +30,10 @@
 
 #define WMIT_WARN_DEPRECATED_WZM "WARNING: support for .WZM format is deprecated and will be removed in a future release. Please migrate your files into .PIE format!"
 
-enum wmit_filetype_t { WMIT_FT_PIE = 0, WMIT_FT_PIE2, WMIT_FT_WZM, WMIT_FT_OBJ };
+// Values are stored in settings and in the recent files list, so only append.
+enum wmit_filetype_t { WMIT_FT_PIE = 0, WMIT_FT_PIE2, WMIT_FT_WZM, WMIT_FT_OBJ, WMIT_FT_PIE4 };
+
+inline bool isPieFileType(wmit_filetype_t type)
+{
+	return type == WMIT_FT_PIE || type == WMIT_FT_PIE2 || type == WMIT_FT_PIE4;
+}

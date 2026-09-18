@@ -35,6 +35,8 @@ enum class PieLineEnding
 
 const char* getPieLineEndingChars(PieLineEnding ending);
 
+std::string applyPieLineEnding(const std::string& text, PieLineEnding ending);
+
 /**
   * A PIE file with its comments removed, ready for the model readers.
   *

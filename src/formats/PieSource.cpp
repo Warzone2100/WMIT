@@ -30,6 +30,28 @@ const char* getPieLineEndingChars(PieLineEnding ending)
 	}
 }
 
+std::string applyPieLineEnding(const std::string& text, PieLineEnding ending)
+{
+	if (ending == PieLineEnding::LF)
+	{
+		return text;
+	}
+
+	const std::string newline(getPieLineEndingChars(ending));
+	std::string out;
+
+	out.reserve(text.size() + text.size() / 16);
+	for (std::string::size_type i = 0; i < text.size(); ++i)
+	{
+		if (text[i] == '\n')
+			out += newline;
+		else
+			out += text[i];
+	}
+
+	return out;
+}
+
 static bool isPieLineEnd(char c)
 {
 	return c == '\n' || c == '\r';
