@@ -30,6 +30,15 @@
   *
 */
 
+static inline void warnAboutDroppedDirective(const char* directive, unsigned version)
+{
+	if (version >= PIE_MODEL_VERSION_PIE4)
+	{
+		std::cerr << "PIE: " << directive << " is not part of PIE 4 and the game ignores it."
+			  << std::endl;
+	}
+}
+
 template<typename V, typename P, typename C>
 APieLevel< V, P, C>::APieLevel(): m_material(true)
 {
@@ -108,6 +117,7 @@ bool APieLevel< V, P, C>::read(std::istream& in, PieCaps& caps, unsigned version
 	in >> str;
 	if ( str.compare(PIE_MODEL_DIRECTIVE_MATERIALS) == 0)
 	{
+		warnAboutDroppedDirective(PIE_MODEL_DIRECTIVE_MATERIALS, version);
 		in >> m_material;
 		if (in.fail())
 			streamfail();
@@ -118,6 +128,7 @@ bool APieLevel< V, P, C>::read(std::istream& in, PieCaps& caps, unsigned version
 	// Optional: shaders
 	if (str.compare(PIE_MODEL_DIRECTIVE_SHADERS) == 0)
 	{
+		warnAboutDroppedDirective(PIE_MODEL_DIRECTIVE_SHADERS, version);
 		in >> str >> m_shader_vert >> m_shader_frag;
 		if (in.fail())
 			streamfail();
@@ -222,6 +233,14 @@ bool APieLevel< V, P, C>::read(std::istream& in, PieCaps& caps, unsigned version
 		in.seekg(mark);
 	}
 
+	if (normals() != 0 && normals() != polygons() * 3)
+	{
+		std::cerr << "PIE: this level has " << polygons() << " polygons but "
+			  << normals() / 3 << " normals. The game discards a NORMALS block "
+			  << "that does not match, and reads any normal map as object space."
+			  << std::endl;
+	}
+
 	if (!in.eof() && !readAnimObjectDirective(in, caps))
 		streamfail();
 
@@ -255,6 +274,18 @@ void APieLevel< V, P, C>::write(std::ostream &out, const PieCaps &caps, unsigned
 	if (version >= PIE_MODEL_VERSION_PIE4)
 	{
 		writeLevelSettings(out, caps);
+	}
+
+	if (polygons() > PIE_MODEL_MAX_POLYGONS)
+	{
+		std::cerr << "PIE: this level has " << polygons() << " polygons, and the game accepts "
+			  << PIE_MODEL_MAX_POLYGONS << " at most." << std::endl;
+	}
+
+	if (points() > PIE_MODEL_MAX_POINTS)
+	{
+		std::cerr << "PIE: this level has " << points() << " points, and the game accepts "
+			  << PIE_MODEL_MAX_POINTS << " at most." << std::endl;
 	}
 
 	if (caps.test(PIE_OPT_DIRECTIVES::podMATERIALS) && !m_material.isDefault())
