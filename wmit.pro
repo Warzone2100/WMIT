@@ -29,6 +29,7 @@ HEADERS += \
     src/formats/Mesh.h \
     src/formats/OBJ.h \
     src/formats/Pie.h \
+    src/formats/PieSource.h \
     src/formats/Pie_t.hpp \
     src/formats/WZM.h \
     src/basic/GLTexture.h \
@@ -52,6 +53,7 @@ SOURCES += \
     3rdparty/mikktspace/mikktspace.c \
     src/formats/WZM.cpp \
     src/formats/Pie.cpp \
+    src/formats/PieSource.cpp \
     src/formats/Mesh.cpp \
     src/ui/UVEditor.cpp \
     src/ui/TransformDock.cpp \

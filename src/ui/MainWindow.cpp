@@ -30,6 +30,7 @@
 #include "aboutdialog.h"
 
 #include <fstream>
+#include <sstream>
 
 #include <QFileInfo>
 #include <QFileDialog>
@@ -420,11 +421,19 @@ bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, boo
 		break;
 	case WMIT_FT_PIE:
 	case WMIT_FT_PIE2:
-		int pieversion = pieVersion(f);
+	{
+		// The readers cannot see comments, so take them out first.
+		PieSource source;
+		if (!source.load(f))
+			break;
+		info.m_lineEnding = source.lineEnding();
+
+		std::istringstream pie(source.text());
+		int pieversion = pieVersion(pie);
 		if (pieversion <= 2)
 		{
 			Pie2Model p2;
-			read_success = p2.read(f);
+			read_success = p2.read(pie);
 			if (read_success)
 			{
 				Pie3Model p3(p2);
@@ -435,13 +444,15 @@ bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, boo
 		else // 3 or higher
 		{
 			Pie3Model p3;
-			read_success = p3.read(f);
+			read_success = p3.read(pie);
 			if (read_success)
 			{
 				info.m_pieCaps = p3.getCaps();
 				model = WZM(p3);
 			}
 		}
+		break;
+	}
 	}
 
 	f.close();

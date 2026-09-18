@@ -28,6 +28,7 @@
 #include <GL/glew.h>
 #include "VectorTypes.h"
 #include "Polygon.h"
+#include "PieSource.h"
 
 #include "WZM.h" // for friends
 
