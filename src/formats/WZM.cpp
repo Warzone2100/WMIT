@@ -74,7 +74,7 @@ std::ostream& operator<< (std::ostream& out, const WZMaterial& mat)
 	return out;
 }
 
-WZM::WZM(): m_pie_read_type(0), m_pie_version(3),
+WZM::WZM(): m_pie_read_type(0), m_pie_version(3), m_tileset(0),
 	m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
 {
 }
@@ -633,6 +633,61 @@ void WZM::clearTextureNames()
 	m_textures.clear();
 }
 
+std::string WZM::texTypeToPieDirective(wzm_texture_type_t type)
+{
+	switch (type)
+	{
+	case WZM_TEX_DIFFUSE: return PIE_MODEL_DIRECTIVE_TEXTURE;
+	case WZM_TEX_TCMASK: return PIE_MODEL_DIRECTIVE_TCMASK;
+	case WZM_TEX_NORMALMAP: return PIE_MODEL_DIRECTIVE_NORMALMAP;
+	case WZM_TEX_SPECULAR: return PIE_MODEL_DIRECTIVE_SPECULARMAP;
+	default: return std::string();
+	}
+}
+
+void WZM::setTileset(unsigned tileset)
+{
+	if (tileset < PIE_MODEL_TILESETS)
+	{
+		m_tileset = tileset;
+	}
+}
+
+std::string WZM::resolveTextureName(int mesh, wzm_texture_type_t type, unsigned tileset) const
+{
+	const std::string directive = texTypeToPieDirective(type);
+
+	auto fromMesh = [&](unsigned wanted) -> std::string
+	{
+		if (mesh < 0 || static_cast<size_t>(mesh) >= m_meshes.size() || directive.empty())
+			return std::string();
+		return m_meshes[mesh].getPieTextureOverride(wanted, directive);
+	};
+
+	auto fromModel = [&](unsigned wanted) -> std::string
+	{
+		if (wanted == 0)
+			return getTextureName(type);
+
+		auto tilesetIt = m_tileset_textures.find(wanted);
+		if (tilesetIt == m_tileset_textures.end() || directive.empty())
+			return std::string();
+
+		auto found = tilesetIt->second.find(directive);
+		return found == tilesetIt->second.end() ? std::string() : found->second;
+	};
+
+	std::string name = fromMesh(tileset);
+	if (name.empty())
+		name = fromModel(tileset);
+	if (name.empty() && tileset != 0)
+		name = fromMesh(0);
+	if (name.empty() && tileset != 0)
+		name = fromModel(0);
+
+	return name;
+}
+
 std::string WZM::texTypeToString(wzm_texture_type_t type)
 {
 	std::string str;
@@ -731,6 +786,7 @@ void WZM::clear()
 	m_ani_interpolate = PIE_MODEL_DEF_INTERPOLATE;
 	m_pie_read_type = 0;
 	m_pie_version = 3;
+	m_tileset = 0;
 }
 
 void WZM::scale(GLfloat x, GLfloat y, GLfloat z, int mesh)

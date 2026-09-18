@@ -112,6 +112,24 @@ public:
 	virtual void setMaterial(const WZMaterial& mat) {m_material = mat;}
 
 	static std::string texTypeToString(wzm_texture_type_t type);
+	static std::string texTypeToPieDirective(wzm_texture_type_t type);
+
+	/// Which tileset the model is being shown for. Only affects what is displayed.
+	virtual void setTileset(unsigned tileset);
+	virtual unsigned getTileset() const {return m_tileset;}
+
+	/**
+	  * Works out which texture page a mesh uses, the way the game does: what
+	  * the mesh sets for this tileset, else what the model sets for it, else
+	  * what either sets for the default tileset.
+	  *
+	  * @param mesh index of the mesh, or -1 for the model wide setting alone
+	  */
+	virtual std::string resolveTextureName(int mesh, wzm_texture_type_t type, unsigned tileset) const;
+	std::string resolveTextureName(int mesh, wzm_texture_type_t type) const
+	{
+		return resolveTextureName(mesh, type, m_tileset);
+	}
 
 	/// might throw out_of_range exception? not decided yet
 	virtual Mesh& getMesh(int index);
@@ -142,6 +160,7 @@ protected:
 	WZMaterial m_material;
 	unsigned int m_pie_read_type;
 	unsigned int m_pie_version;
+	unsigned int m_tileset;
 	std::map<int, std::string> m_events;
 	unsigned int m_ani_interpolate;
 };

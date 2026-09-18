@@ -238,6 +238,35 @@ Mesh::~Mesh()
 {
 }
 
+std::string Mesh::getPieTextureOverride(unsigned tileset, const std::string& directive) const
+{
+	auto tilesetIt = m_pie_textures.find(tileset);
+	if (tilesetIt == m_pie_textures.end())
+	{
+		return std::string();
+	}
+
+	auto found = tilesetIt->second.find(directive);
+	return found == tilesetIt->second.end() ? std::string() : found->second;
+}
+
+void Mesh::setPieTextureOverride(unsigned tileset, const std::string& directive, const std::string& name)
+{
+	if (name.empty())
+	{
+		auto tilesetIt = m_pie_textures.find(tileset);
+		if (tilesetIt != m_pie_textures.end())
+		{
+			tilesetIt->second.erase(directive);
+			if (tilesetIt->second.empty())
+				m_pie_textures.erase(tilesetIt);
+		}
+		return;
+	}
+
+	m_pie_textures[tileset][directive] = name;
+}
+
 Pie3Level Mesh::backConvert(const Mesh& wzmMesh)
 {
 	return wzmMesh;
