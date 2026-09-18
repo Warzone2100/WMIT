@@ -137,6 +137,19 @@ public:
 	void setTangent(size_t i, const WZMVertex4& t) { m_tangentArray[i] = t; }
 	void importPieAnimation(const ApieAnimObject& animobj);
 
+	// The texture page this mesh sets for a tileset, empty if it sets none.
+	std::string getPieTextureOverride(unsigned tileset, const std::string& directive) const;
+	void setPieTextureOverride(unsigned tileset, const std::string& directive, const std::string& name);
+	const std::map<unsigned, std::map<std::string, std::string> >& getPieTextureOverrides() const
+	{
+		return m_pie_textures;
+	}
+
+	std::optional<unsigned> getPieType() const {return m_pie_type;}
+	void setPieType(std::optional<unsigned> type) {m_pie_type = type;}
+	std::optional<unsigned> getPieInterpolate() const {return m_pie_interpolate;}
+	void setPieInterpolate(std::optional<unsigned> interpolate) {m_pie_interpolate = interpolate;}
+
 	WZMVertex getCenterPoint() const;
 
 protected:
