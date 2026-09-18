@@ -80,6 +80,10 @@ public:
 
 	// GLTexture controls
 	void loadGLRenderTexture(wzm_texture_type_t type, QString fileName);
+
+	/// A mesh whose own page cannot be found keeps the model wide one.
+	void loadGLRenderTextureOverrides();
+	void setTileset(unsigned tileset) override;
 	void unloadGLRenderTexture(wzm_texture_type_t type);
 	bool hasGLRenderTexture(wzm_texture_type_t type) const;
 	void clearGLRenderTextures();
@@ -143,13 +147,17 @@ private:
 	void drawNormals(size_t mesh_idx, bool draw_tb);
 	void drawConnectors(size_t mesh_idx);
 
-	bool setupTextureUnits(int type);
+	bool setupTextureUnits(int type, int mesh = -1);
+	GLuint glTextureForMesh(wzm_texture_type_t type, int mesh) const;
 	void clearTextureUnits(int type);
 
 	void applyPendingChangesToModel(WZM& model) const;
 	void resetAllPendingChanges();
 
 	std::map<wzm_texture_type_t, GLuint> m_gl_textures;
+
+	/// Texture pages asked for by a single mesh or tileset, keyed by page name.
+	std::map<std::string, GLuint> m_gl_override_textures;
 
 	GLfloat scale_all, scale_xyz[3];
 	static const GLint winding;

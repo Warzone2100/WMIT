@@ -121,6 +121,7 @@ protected:
 	void changeEvent(QEvent *event);
 	void closeEvent(QCloseEvent *event);
 private slots:
+	void tilesetAction(unsigned tileset);
 	void actionOpen();
 	void actionOpenRecent(QAction *action);
 	void actionClearRecentFiles();
@@ -177,6 +178,7 @@ private:
 	QSettings *m_settings;
 
 	QActionGroup* m_shaderGroup;
+	QActionGroup* m_tilesetGroup;
 	QAction *m_actionEnableUserShaders;
 	QAction *m_actionLocateUserShaders;
 	QAction *m_actionReloadUserShaders;

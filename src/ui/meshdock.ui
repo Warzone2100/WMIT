@@ -56,6 +56,28 @@
      </widget>
     </item>
     <item>
+     <widget class="QGroupBox" name="gbLevelSettings">
+      <property name="title">
+       <string>PIE 4 Overrides</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="lblLevelSettings">
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Settings this mesh uses instead of the model wide ones. Leave a field empty to use the model wide setting.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableView" name="meshLevelSettings"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
