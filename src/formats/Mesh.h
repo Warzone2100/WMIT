@@ -23,7 +23,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <list>
+#include <optional>
 
 #include <GL/glew.h>
 #include "VectorTypes.h"
@@ -139,6 +141,14 @@ public:
 
 protected:
 	std::string m_name;
+
+	/** Settings this mesh overrides for itself, kept as they were read from a
+	  * PIE 4 file. Anything left unset falls back to the model wide setting.
+	  */
+	std::optional<unsigned> m_pie_type;
+	std::optional<unsigned> m_pie_interpolate;
+	std::map<unsigned, std::map<std::string, std::string> > m_pie_textures;
+
 	int m_frame_time, m_frame_cycles;
 	unsigned m_texAnimFrames;
 	unsigned m_texAnimPlaybackRate;

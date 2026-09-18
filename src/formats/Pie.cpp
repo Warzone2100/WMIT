@@ -489,6 +489,88 @@ bool ApieAnimObject::readStandaloneAniStream(std::istream &fin)
 	return false;
 }
 
+void skipOptionalTextureSize(std::istream& in)
+{
+	std::streampos mark = in.tellg();
+	unsigned width, height;
+
+	in >> width >> height;
+	if (in.fail())
+	{
+		in.clear();
+		in.seekg(mark);
+	}
+}
+
+bool readPieTextureDirectives(std::istream& in, PieTilesetTextures& out)
+{
+	for (;;)
+	{
+		std::string directive, name;
+		unsigned tileset;
+		std::streampos entrypoint = in.tellg();
+
+		in >> directive >> tileset >> name;
+		if (in.fail())
+		{
+			in.clear();
+			in.seekg(entrypoint);
+			break;
+		}
+
+		if (!isPieTextureDirective(directive))
+		{
+			in.seekg(entrypoint);
+			break;
+		}
+
+		if (tileset >= PIE_MODEL_TILESETS)
+		{
+			return false;
+		}
+
+		if (directive.compare(PIE_MODEL_DIRECTIVE_TEXTURE) == 0)
+		{
+			skipOptionalTextureSize(in);
+		}
+
+		out[tileset][directive] = name;
+	}
+
+	return true;
+}
+
+void writePieTextureDirectives(std::ostream& out, const PieTilesetTextures& textures, const PieCaps& caps)
+{
+	static const struct
+	{
+		const char* directive;
+		PIE_OPT_DIRECTIVES cap;
+	} order[] = {
+		{PIE_MODEL_DIRECTIVE_TEXTURE, PIE_OPT_DIRECTIVES::pod_MAXVAL},
+		{PIE_MODEL_DIRECTIVE_TCMASK, PIE_OPT_DIRECTIVES::podTCMASK},
+		{PIE_MODEL_DIRECTIVE_NORMALMAP, PIE_OPT_DIRECTIVES::podNORMALMAP},
+		{PIE_MODEL_DIRECTIVE_SPECULARMAP, PIE_OPT_DIRECTIVES::podSPECULARMAP}
+	};
+
+	for (const auto& tileset : textures)
+	{
+		for (const auto& entry : order)
+		{
+			if (entry.cap != PIE_OPT_DIRECTIVES::pod_MAXVAL && !caps.test(entry.cap))
+			{
+				continue;
+			}
+
+			auto found = tileset.second.find(entry.directive);
+			if (found != tileset.second.end() && !found->second.empty())
+			{
+				out << entry.directive << ' ' << tileset.first << ' ' << found->second << '\n';
+			}
+		}
+	}
+}
+
 bool isPieTextureDirective(const std::string& directive)
 {
 	return directive.compare(PIE_MODEL_DIRECTIVE_TEXTURE) == 0 ||

@@ -45,3 +45,7 @@ add_test(NAME Compare_PIE4_to_PIE3 COMMAND diff ${PROJECT_SOURCE_DIR}/tests/pie/
 ### Test that a PIE 3 model can be written back out as PIE 4
 add_test(NAME Convert_PIE3_to_PIE4 COMMAND wmit --pie-version=4 ${PROJECT_SOURCE_DIR}/tests/pie/exjeep3.pie out_pie3_as_pie4.pie)
 add_test(NAME Compare_PIE3_to_PIE4 COMMAND diff ${PROJECT_SOURCE_DIR}/tests/pie/pie4_simple.pie out_pie3_as_pie4.pie)
+
+### Test that settings a level overrides for itself are preserved
+add_test(NAME Convert_PIE4_level_overrides COMMAND wmit ${PROJECT_SOURCE_DIR}/tests/pie/pie4_level_overrides.pie out_pie4_level_overrides.pie)
+add_test(NAME Compare_PIE4_level_overrides COMMAND diff ${PROJECT_SOURCE_DIR}/tests/pie/pie4_level_overrides.pie out_pie4_level_overrides.pie)

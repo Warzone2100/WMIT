@@ -25,6 +25,7 @@
 #include <type_traits>
 #include <map>
 #include <list>
+#include <optional>
 #include <GL/glew.h>
 #include "VectorTypes.h"
 #include "Polygon.h"
@@ -163,6 +164,18 @@ const static PieCaps PIE4_CAPS("1111001110");
 
 bool isPieTextureDirective(const std::string& directive);
 
+/// Texture page names, keyed by tileset index and then by directive name.
+typedef std::map<unsigned, std::map<std::string, std::string> > PieTilesetTextures;
+
+/// PIE 2 and PIE 3 carry a page size that PIE 4 leaves out and the game ignores.
+void skipOptionalTextureSize(std::istream& in);
+
+/// Stops at the first line that is not a texture directive, leaving the stream in front of it.
+bool readPieTextureDirectives(std::istream& in, PieTilesetTextures& out);
+
+/// Always in the same order, so that a file written twice comes out the same.
+void writePieTextureDirectives(std::ostream& out, const PieTilesetTextures& textures, const PieCaps& caps);
+
 class ApieAnimFrame
 {
 public:
@@ -212,8 +225,8 @@ public:
 	APieLevel();
 	virtual ~APieLevel() {}
 
-	virtual bool read(std::istream& in, PieCaps& caps);
-	virtual void write(std::ostream& out, const PieCaps& caps) const;
+	virtual bool read(std::istream& in, PieCaps& caps, unsigned version);
+	virtual void write(std::ostream& out, const PieCaps& caps, unsigned version) const;
 
 	size_t points() const;
 	size_t normals() const;
@@ -225,6 +238,15 @@ public:
 protected:
 	void clearAll();
 	bool readAnimObjectDirective(std::istream &in, PieCaps& caps);
+	bool readLevelSettings(std::istream& in);
+	void writeLevelSettings(std::ostream& out, const PieCaps& caps) const;
+
+	/** Settings that this level overrides for itself (PIE 4). Anything left
+	  * unset falls back to the model wide setting.
+	  */
+	std::optional<unsigned> m_type;
+	std::optional<unsigned> m_ani_interpolate;
+	PieTilesetTextures m_textures;
 
 	std::vector<V> m_points;
 	std::vector<PieNormal> m_normals;
@@ -285,11 +307,10 @@ protected:
 	std::string m_texture_tcmask;
 	std::string m_texture_specmap;
 
-	/** Texture overrides for the urban and rockies tilesets (PIE 4), keyed by
-	  * tileset index and then by directive name. The default tileset is held in
-	  * the members above.
+	/** Texture overrides for the urban and rockies tilesets (PIE 4). The
+	  * default tileset is held in the members above.
 	  */
-	std::map<unsigned, std::map<std::string, std::string> > m_tileset_textures;
+	PieTilesetTextures m_tileset_textures;
 
 	std::map<int, std::string> m_events; // Animation events associated with this model
 
