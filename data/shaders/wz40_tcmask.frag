@@ -1,5 +1,4 @@
-// Version directive is set by Warzone when loading the shader
-// (This shader supports GLSL 1.20 - 1.50 core.)
+#version 120
 
 //#pragma debug(on)
 
