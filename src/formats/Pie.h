@@ -69,6 +69,10 @@
 #define PIE_MODEL_FEATURE_TEXTURED 0x200
 #define PIE_MODEL_FEATURE_TCMASK 0x10000
 
+// Limits the game enforces on a single level.
+#define PIE_MODEL_MAX_POLYGONS 8192
+#define PIE_MODEL_MAX_POINTS 768
+
 #define PIE_MODEL_TEXPAGE_PREFIX "page-"
 #define PIE_MODEL_TCMASK_SUFFIX "_tcmask"
 
