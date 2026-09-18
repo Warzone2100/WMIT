@@ -72,8 +72,15 @@ struct ModelInfo
 
 	void defaultPieCapsIfNeeded()
 	{
-		if (m_read_type != WMIT_FT_PIE && m_read_type != WMIT_FT_PIE2)
-			m_pieCaps = m_save_type == WMIT_FT_PIE? PIE3_CAPS : PIE2_CAPS;
+		if (isPieFileType(m_read_type))
+			return;
+
+		switch (m_save_type)
+		{
+		case WMIT_FT_PIE4: m_pieCaps = PIE4_CAPS; break;
+		case WMIT_FT_PIE2: m_pieCaps = PIE2_CAPS; break;
+		default: m_pieCaps = PIE3_CAPS; break;
+		}
 	}
 
 	void prepareForSaveToSelf()
@@ -99,6 +106,9 @@ public:
 
 	static bool loadModel(const QString& file, WZM& model, ModelInfo &info, bool nogui = false);
 	static bool guessModelTypeFromFilename(const QString &fname, wmit_filetype_t &type);
+
+	/// Empty when the save loses nothing.
+	static QString describePieDowngrade(const ModelInfo& info);
 	static bool saveModel(const WZM& model, const ModelInfo &info);
 
 	void PrependFileToRecentList(const QString &filename);

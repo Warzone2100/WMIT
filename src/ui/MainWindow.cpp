@@ -291,6 +291,20 @@ bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_
 	return true;
 }
 
+QString MainWindow::describePieDowngrade(const ModelInfo& info)
+{
+	if (info.m_read_type != WMIT_FT_PIE4 || info.m_save_type == WMIT_FT_PIE4)
+	{
+		return QString();
+	}
+
+	return tr("This model was loaded from a PIE 4 file. Saving it as %1 drops the "
+		  "TCMASK directive and any texture overrides for the urban and rockies "
+		  "tilesets. The team colour mask page will be derived from the texture "
+		  "page name instead.")
+		.arg(info.m_save_type == WMIT_FT_PIE2 ? "PIE 2" : "PIE 3");
+}
+
 bool MainWindow::saveModel(const WZM &model, const ModelInfo &info)
 {
 	std::ofstream out;
@@ -302,7 +316,11 @@ bool MainWindow::saveModel(const WZM &model, const ModelInfo &info)
 		return false;
 	}
 
-	out.open(info.m_saveAsFile.toLocal8Bit().constData());
+	out.open(info.m_saveAsFile.toLocal8Bit().constData(), std::ios::out | std::ios::binary);
+
+	// The writers always end lines with a newline, so build the file first and
+	// convert it afterwards if the model came with Windows line endings.
+	std::ostringstream pie;
 
 	switch (info.m_save_type)
 	{
@@ -310,16 +328,20 @@ bool MainWindow::saveModel(const WZM &model, const ModelInfo &info)
 		model.exportToOBJ(out);
 		break;
 	case WMIT_FT_PIE:
+	case WMIT_FT_PIE4:
 	{
 		Pie3Model p3 = model;
-		p3.write(out, &info.m_pieCaps);
+		p3.setVersion(info.m_save_type == WMIT_FT_PIE4 ? PIE_MODEL_VERSION_PIE4 : 3);
+		p3.write(pie, &info.m_pieCaps);
+		out << applyPieLineEnding(pie.str(), info.m_lineEnding);
 		break;
 	}
 	case WMIT_FT_PIE2:
 	{
 		Pie3Model p3 = model;
 		Pie2Model p2 = p3;
-		p2.write(out, &info.m_pieCaps);
+		p2.write(pie, &info.m_pieCaps);
+		out << applyPieLineEnding(pie.str(), info.m_lineEnding);
 		break;
 	}
 	default:
@@ -421,6 +443,7 @@ bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, boo
 		break;
 	case WMIT_FT_PIE:
 	case WMIT_FT_PIE2:
+	case WMIT_FT_PIE4:
 	{
 		// The readers cannot see comments, so take them out first.
 		PieSource source;
@@ -432,6 +455,7 @@ bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, boo
 		int pieversion = pieVersion(pie);
 		if (pieversion <= 2)
 		{
+			info.m_read_type = WMIT_FT_PIE2;
 			Pie2Model p2;
 			read_success = p2.read(pie);
 			if (read_success)
@@ -441,8 +465,10 @@ bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, boo
 				model = WZM(p3);
 			}
 		}
-		else // 3 or higher
+		else
 		{
+			info.m_read_type = pieversion >= PIE_MODEL_VERSION_PIE4 ? WMIT_FT_PIE4 : WMIT_FT_PIE;
+
 			Pie3Model p3;
 			read_success = p3.read(pie);
 			if (read_success)
@@ -597,12 +623,14 @@ void MainWindow::actionSaveAs()
 	ModelInfo tmpModelinfo(m_modelinfo);
 
 	QStringList filters;
-	filters << "PIE3 models (*.pie)" <<
+	filters << "PIE4 models (*.pie)" <<
+		   "PIE3 models (*.pie)" <<
 		   "PIE2 models (*.pie)" <<
 		   "OBJ files (*.obj)";
 
 	QList<wmit_filetype_t> types;
-	types << WMIT_FT_PIE
+	types << WMIT_FT_PIE4
+	      << WMIT_FT_PIE
 	      << WMIT_FT_PIE2
 	      << WMIT_FT_OBJ;
 
@@ -640,7 +668,19 @@ void MainWindow::actionSaveAs()
 	{
 	case WMIT_FT_PIE:
 	case WMIT_FT_PIE2:
+	case WMIT_FT_PIE4:
 		tmpModelinfo.defaultPieCapsIfNeeded();
+
+		{
+			const QString downgrade = describePieDowngrade(tmpModelinfo);
+			if (!downgrade.isEmpty() &&
+			    QMessageBox::warning(this, tr("Save as"), downgrade,
+						 QMessageBox::Save | QMessageBox::Cancel) != QMessageBox::Save)
+			{
+				return;
+			}
+		}
+
 		dlg = new PieExportDialog(tmpModelinfo.m_pieCaps, this);
 		if (dlg->exec() == QDialog::Accepted)
 		{

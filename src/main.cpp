@@ -24,6 +24,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <QStringList>
+
 #include "MainWindow.h"
 #include "WZM.h"
 #include "Pie.h"
@@ -33,6 +35,17 @@
 #include <QtPlugin>
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin);
 #endif
+
+static bool pieVersionToFileType(int version, wmit_filetype_t& type)
+{
+	switch (version)
+	{
+	case 2: type = WMIT_FT_PIE2; return true;
+	case 3: type = WMIT_FT_PIE; return true;
+	case 4: type = WMIT_FT_PIE4; return true;
+	default: return false;
+	}
+}
 
 void printWelcomeBanner(const bool printLicense)
 {
@@ -62,24 +75,48 @@ int main(int argc, char *argv[])
 		printf("  --help (shows this message)\n");
 		printf("  [filename] (opens a file in GUI)\n");
 		printf("  [input] [output] (converts between formats PIE and OBJ. Deprecated WZM format is supported as input.)\n");
+		printf("  --pie-version=N (writes PIE version N, one of 2, 3 or 4. Defaults to the version of the input file.)\n");
 		exit(0);
 	}
 
-	if (argc > 2)
+	QStringList files;
+	int forcedPieVersion = 0;
+
+	for (int i = 1; i < argc; ++i)
+	{
+		const QString arg(argv[i]);
+
+		if (arg.startsWith("--pie-version="))
+		{
+			bool ok = false;
+			wmit_filetype_t unused;
+			forcedPieVersion = arg.section('=', 1).toInt(&ok);
+			if (!ok || !pieVersionToFileType(forcedPieVersion, unused))
+			{
+				std::cerr << "PIE version must be 2, 3 or 4." << std::endl;
+				return 1;
+			}
+			continue;
+		}
+
+		files << arg;
+	}
+
+	if (files.size() > 1)
 	{
 		printWelcomeBanner(false);
 		std::cout << "Converting files:" << std::endl;
-		std::cout << "Input file \"" << argv[1] << '"' << std::endl;
-		std::cout << "Output file \"" << argv[2] << '"' << std::endl;
+		std::cout << "Input file \"" << files[0].toStdString() << '"' << std::endl;
+		std::cout << "Output file \"" << files[1].toStdString() << '"' << std::endl;
 		std::cout << std::endl;
 
 		// command line conversion mode
-		QString inname = argv[1];
+		QString inname = files[0];
 
 		ModelInfo info;
 		WZM model;
 
-		info.m_saveAsFile = argv[2];
+		info.m_saveAsFile = files[1];
 		if (!MainWindow::guessModelTypeFromFilename(info.m_saveAsFile, info.m_save_type))
 		{
 			std::cerr << "Could not guess save model type from filename. Only PIE and OBJ formats are supported!" << std::endl;
@@ -91,6 +128,25 @@ int main(int argc, char *argv[])
 		{
 			printf("Could not load model\n");
 			return 1;
+		}
+
+		if (isPieFileType(info.m_save_type))
+		{
+			if (forcedPieVersion)
+			{
+				pieVersionToFileType(forcedPieVersion, info.m_save_type);
+			}
+			else if (isPieFileType(info.m_read_type))
+			{
+				// Keep the version the file came with.
+				info.m_save_type = info.m_read_type;
+			}
+
+			const QString downgrade = MainWindow::describePieDowngrade(info);
+			if (!downgrade.isEmpty())
+			{
+				std::cerr << downgrade.toStdString() << std::endl;
+			}
 		}
 
 		info.defaultPieCapsIfNeeded();
@@ -118,10 +174,9 @@ int main(int argc, char *argv[])
 		MainWindow w(model);
 		w.show();
 
-		if (argc == 2)
+		if (!files.isEmpty())
 		{
-			QString inname = argv[1];
-			w.openFile(inname);
+			w.openFile(files[0]);
 		}
 
 		return a.exec();
