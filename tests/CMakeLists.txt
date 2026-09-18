@@ -30,9 +30,13 @@ add_test(NAME Compare_PIE4_to_PIE4_tcmask COMMAND diff ${PROJECT_SOURCE_DIR}/tes
 add_test(NAME Convert_PIE4_to_PIE4_tilesets COMMAND wmit ${PROJECT_SOURCE_DIR}/tests/pie/pie4_tilesets.pie out_pie4_tilesets.pie)
 add_test(NAME Compare_PIE4_to_PIE4_tilesets COMMAND diff ${PROJECT_SOURCE_DIR}/tests/pie/pie4_tilesets.pie out_pie4_tilesets.pie)
 
-### Test that comments are read and that they leave the model data alone
+### Test that comments survive a round trip
 add_test(NAME Convert_PIE4_comments COMMAND wmit ${PROJECT_SOURCE_DIR}/tests/pie/pie4_comments.pie out_pie4_comments.pie)
-add_test(NAME Compare_PIE4_comments COMMAND diff ${PROJECT_SOURCE_DIR}/tests/pie/pie4_simple.pie out_pie4_comments.pie)
+add_test(NAME Compare_PIE4_comments COMMAND diff ${PROJECT_SOURCE_DIR}/tests/pie/pie4_comments.pie out_pie4_comments.pie)
+
+### Test that comments survive in every position they can appear in
+add_test(NAME Convert_PIE4_comments_full COMMAND wmit ${PROJECT_SOURCE_DIR}/tests/pie/pie4_comments_full.pie out_pie4_comments_full.pie)
+add_test(NAME Compare_PIE4_comments_full COMMAND diff ${PROJECT_SOURCE_DIR}/tests/pie/pie4_comments_full.pie out_pie4_comments_full.pie)
 
 ### Test that Windows line endings survive a round trip
 add_test(NAME Convert_PIE4_crlf COMMAND wmit ${PROJECT_SOURCE_DIR}/tests/pie/pie4_crlf.pie out_pie4_crlf.pie)

@@ -65,9 +65,10 @@ class PieExportDialog : public ExportDialog
 {
 	Q_OBJECT
 public:
-	PieExportDialog(const PieCaps& caps, QWidget* parent = nullptr);
+	PieExportDialog(const PieCaps& caps, bool hasComments, QWidget* parent = nullptr);
 
 	const PieCaps& getCaps() const {return m_caps;}
+	bool getKeepComments() const;
 
 private:
 	void changeSelectAll(bool selected);

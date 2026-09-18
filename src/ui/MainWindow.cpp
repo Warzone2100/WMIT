@@ -291,6 +291,24 @@ bool MainWindow::guessModelTypeFromFilename(const QString& fname, wmit_filetype_
 	return true;
 }
 
+static std::string finishPieFile(const std::string& text, const ModelInfo& info)
+{
+	std::string result = text;
+
+	if (info.m_keepComments && !info.m_comments.empty())
+	{
+		size_t dropped = 0;
+		result = info.m_comments.apply(result, &dropped);
+		if (dropped)
+		{
+			std::cerr << "Dropped " << dropped
+				  << " comment(s) whose directive is no longer in the file." << std::endl;
+		}
+	}
+
+	return applyPieLineEnding(result, info.m_lineEnding);
+}
+
 QString MainWindow::describePieDowngrade(const ModelInfo& info)
 {
 	if (info.m_read_type != WMIT_FT_PIE4 || info.m_save_type == WMIT_FT_PIE4)
@@ -318,8 +336,7 @@ bool MainWindow::saveModel(const WZM &model, const ModelInfo &info)
 
 	out.open(info.m_saveAsFile.toLocal8Bit().constData(), std::ios::out | std::ios::binary);
 
-	// The writers always end lines with a newline, so build the file first and
-	// convert it afterwards if the model came with Windows line endings.
+	// The writers work from the model alone, so comments go back in afterwards.
 	std::ostringstream pie;
 
 	switch (info.m_save_type)
@@ -333,7 +350,7 @@ bool MainWindow::saveModel(const WZM &model, const ModelInfo &info)
 		Pie3Model p3 = model;
 		p3.setVersion(info.m_save_type == WMIT_FT_PIE4 ? PIE_MODEL_VERSION_PIE4 : 3);
 		p3.write(pie, &info.m_pieCaps);
-		out << applyPieLineEnding(pie.str(), info.m_lineEnding);
+		out << finishPieFile(pie.str(), info);
 		break;
 	}
 	case WMIT_FT_PIE2:
@@ -341,7 +358,7 @@ bool MainWindow::saveModel(const WZM &model, const ModelInfo &info)
 		Pie3Model p3 = model;
 		Pie2Model p2 = p3;
 		p2.write(pie, &info.m_pieCaps);
-		out << applyPieLineEnding(pie.str(), info.m_lineEnding);
+		out << finishPieFile(pie.str(), info);
 		break;
 	}
 	default:
@@ -450,6 +467,7 @@ bool MainWindow::loadModel(const QString& file, WZM& model, ModelInfo &info, boo
 		if (!source.load(f))
 			break;
 		info.m_lineEnding = source.lineEnding();
+		info.m_comments = source.comments();
 
 		std::istringstream pie(source.text());
 		int pieversion = pieVersion(pie);
@@ -681,10 +699,11 @@ void MainWindow::actionSaveAs()
 			}
 		}
 
-		dlg = new PieExportDialog(tmpModelinfo.m_pieCaps, this);
+		dlg = new PieExportDialog(tmpModelinfo.m_pieCaps, !tmpModelinfo.m_comments.empty(), this);
 		if (dlg->exec() == QDialog::Accepted)
 		{
 			tmpModelinfo.m_pieCaps = static_cast<PieExportDialog*>(dlg.data())->getCaps();
+			tmpModelinfo.m_keepComments = static_cast<PieExportDialog*>(dlg.data())->getKeepComments();
 		}
 
 		if (finfo.suffix().toLower() != "pie")
