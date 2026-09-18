@@ -53,6 +53,17 @@
 #define PIE_MODEL_DIRECTIVE_ANIMOBJECT "ANIMOBJECT" // WZ 3.3
 #define PIE_MODEL_DIRECTIVE_NORMALS "NORMALS" // WZ 4.0
 #define PIE_MODEL_DIRECTIVE_INTERPOLATE "INTERPOLATE" // WZ 4.0
+#define PIE_MODEL_DIRECTIVE_TCMASK "TCMASK" // PIE 4
+
+#define PIE_MODEL_MIN_VERSION 2
+#define PIE_MODEL_MAX_VERSION 4
+
+// PIE 4 added the TCMASK directive, per tileset texture overrides and
+// repeatable texture directives, and dropped MATERIALS and SHADERS.
+#define PIE_MODEL_VERSION_PIE4 4
+
+// Default (arizona), urban and rockies.
+#define PIE_MODEL_TILESETS 3
 
 #define PIE_MODEL_FEATURE_TEXTURED 0x200
 #define PIE_MODEL_FEATURE_TCMASK 0x10000
@@ -125,6 +136,7 @@ enum class PIE_OPT_DIRECTIVES
 	podNORMALS,
 	podCONNECTORS,
 	podANIMOBJECT,
+	podTCMASK,
 
 	pod_MAXVAL
 };
@@ -144,8 +156,12 @@ struct EnumTraits<PIE_OPT_DIRECTIVES>
 typedef EnumClassBitset<PIE_OPT_DIRECTIVES> PieCaps;
 
 // Note that string bits are reversed and pod_MAXVAL is "before" first char of caps string
-const static PieCaps PIE2_CAPS("110101110");
-const static PieCaps PIE3_CAPS("110101110");
+const static PieCaps PIE2_CAPS("0110101110");
+const static PieCaps PIE3_CAPS("0110101110");
+// PIE 4 adds TCMASK and normals, and drops MATERIALS and SHADERS.
+const static PieCaps PIE4_CAPS("1111001110");
+
+bool isPieTextureDirective(const std::string& directive);
 
 class ApieAnimFrame
 {
@@ -224,10 +240,10 @@ template <typename L>
 class APieModel
 {
 public:
-	APieModel(const PieCaps& def_caps);
+	APieModel(const PieCaps& def_caps, unsigned version);
 	virtual ~APieModel();
 
-	virtual unsigned version() const =0;
+	unsigned version() const {return m_version;}
 
 	virtual bool read(std::istream& in);
 	virtual void write(std::ostream& out, const PieCaps* piecaps = nullptr) const;
@@ -253,6 +269,10 @@ protected:
 	bool readTextureDirective(std::istream& in);
 	bool readNormalmapDirective(std::istream& in);
 	bool readSpecmapDirective(std::istream& in);
+	bool readTextureDirectives(std::istream& in);
+	bool storeTextureDirective(const std::string& directive, unsigned tileset, const std::string& name);
+	void applyTCMaskFallback();
+	void writeTextureDirectives(std::ostream& out, const PieCaps& caps) const;
 
 	virtual bool readLevelsBlock(std::istream& in);
 	bool readEventsDirective(std::istream& in);
@@ -264,11 +284,19 @@ protected:
 	std::string m_texture_normalmap;
 	std::string m_texture_tcmask;
 	std::string m_texture_specmap;
+
+	/** Texture overrides for the urban and rockies tilesets (PIE 4), keyed by
+	  * tileset index and then by directive name. The default tileset is held in
+	  * the members above.
+	  */
+	std::map<unsigned, std::map<std::string, std::string> > m_tileset_textures;
+
 	std::map<int, std::string> m_events; // Animation events associated with this model
 
 	std::vector<L> m_levels;
 
 	unsigned int m_read_type;
+	unsigned int m_version;
 	const PieCaps m_def_caps;
 	PieCaps m_caps;
 	unsigned int m_ani_interpolate;
@@ -321,8 +349,6 @@ class Pie2Model : public APieModel<Pie2Level>
 public:
 	Pie2Model();
 	virtual ~Pie2Model();
-
-	unsigned version() const;
 
 	unsigned textureHeight() const;
 	unsigned textureWidth() const;
@@ -401,11 +427,12 @@ public:
 	Pie3Model(const Pie2Model& pie2);
 	virtual ~Pie3Model();
 
-	unsigned version() const;
-
 	operator Pie2Model() const;
 
 	bool setType(int type);
+
+	/// Accepts 3 and 4.
+	bool setVersion(unsigned version);
 
 protected:
 	unsigned textureHeight() const;

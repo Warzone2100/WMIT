@@ -134,8 +134,14 @@ protected:
 
 	std::vector<Mesh> m_meshes;
 	std::map<wzm_texture_type_t, std::string> m_textures;
+
+	/** Texture overrides for the urban and rockies tilesets, carried through
+	  * unchanged so that they survive a PIE 4 load and save.
+	  */
+	std::map<unsigned, std::map<std::string, std::string> > m_tileset_textures;
 	WZMaterial m_material;
 	unsigned int m_pie_read_type;
+	unsigned int m_pie_version;
 	std::map<int, std::string> m_events;
 	unsigned int m_ani_interpolate;
 };

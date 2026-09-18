@@ -30,6 +30,20 @@
   *
 */
 
+/// PIE 2 and PIE 3 carry a page size that PIE 4 leaves out and the game ignores.
+static inline void skipOptionalTextureSize(std::istream& in)
+{
+	std::streampos mark = in.tellg();
+	unsigned width, height;
+
+	in >> width >> height;
+	if (in.fail())
+	{
+		in.clear();
+		in.seekg(mark);
+	}
+}
+
 template<typename V, typename P, typename C>
 APieLevel< V, P, C>::APieLevel(): m_material(true)
 {
@@ -336,12 +350,13 @@ void APieModel<L>::clearAll()
 	m_texture_tcmask.clear();
 	m_texture_normalmap.clear();
 	m_texture_specmap.clear();
+	m_tileset_textures.clear();
 	m_events.clear();
 }
 
 template <typename L>
-APieModel<L>::APieModel(const PieCaps& def_caps):
-	m_def_caps(def_caps), m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
+APieModel<L>::APieModel(const PieCaps& def_caps, unsigned version):
+	m_version(version), m_def_caps(def_caps), m_ani_interpolate(PIE_MODEL_DEF_INTERPOLATE)
 {
 }
 
@@ -414,6 +429,12 @@ bool APieModel<L>::readHeaderBlock(std::istream& in)
 		return false;
 	}
 
+	if (uint < PIE_MODEL_MIN_VERSION || uint > PIE_MODEL_MAX_VERSION)
+	{
+		return false;
+	}
+	m_version = uint;
+
 	// TYPE %x
 	in >> str >> std::hex >> m_read_type >> std::dec;
 	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_TYPE) != 0)
@@ -443,20 +464,122 @@ bool APieModel<L>::readHeaderBlock(std::istream& in)
 template <typename L>
 bool APieModel<L>::readTexturesBlock(std::istream& in)
 {
-    return readTextureDirective(in) && readNormalmapDirective(in) && readSpecmapDirective(in);
+	if (version() >= PIE_MODEL_VERSION_PIE4)
+	{
+		return readTextureDirectives(in);
+	}
+
+	return readTextureDirective(in) && readNormalmapDirective(in) && readSpecmapDirective(in);
 }
 
-/// PIE 2 and PIE 3 carry a page size that PIE 4 leaves out and the game ignores.
-static inline void skipOptionalTextureSize(std::istream& in)
+/**
+  * Reads the PIE 4 texture directives, which may appear in any order, more than
+  * once, and for any of the tilesets.
+  */
+template <typename L>
+bool APieModel<L>::readTextureDirectives(std::istream& in)
 {
-	std::streampos mark = in.tellg();
-	unsigned width, height;
+	bool foundDiffuse = false;
 
-	in >> width >> height;
-	if (in.fail())
+	for (;;)
 	{
-		in.clear();
-		in.seekg(mark);
+		std::string directive, name;
+		unsigned tileset;
+		std::streampos entrypoint = in.tellg();
+
+		in >> directive >> tileset >> name;
+		if (in.fail())
+		{
+			in.clear();
+			in.seekg(entrypoint);
+			break;
+		}
+
+		if (!isPieTextureDirective(directive))
+		{
+			in.seekg(entrypoint);
+			break;
+		}
+
+		if (tileset >= PIE_MODEL_TILESETS)
+		{
+			return false;
+		}
+
+		// Accept the page size that PIE 3 files carry, in case one is present.
+		if (directive.compare(PIE_MODEL_DIRECTIVE_TEXTURE) == 0)
+		{
+			skipOptionalTextureSize(in);
+			if (tileset == 0)
+			{
+				if (!isValidWzName(name))
+					return false;
+				foundDiffuse = true;
+			}
+		}
+
+		if (!storeTextureDirective(directive, tileset, name))
+		{
+			return false;
+		}
+	}
+
+	if (!foundDiffuse)
+	{
+		return false;
+	}
+
+	applyTCMaskFallback();
+	return true;
+}
+
+template <typename L>
+bool APieModel<L>::storeTextureDirective(const std::string& directive, unsigned tileset, const std::string& name)
+{
+	if (tileset != 0)
+	{
+		m_tileset_textures[tileset][directive] = name;
+		return true;
+	}
+
+	if (directive.compare(PIE_MODEL_DIRECTIVE_TEXTURE) == 0)
+	{
+		m_texture = name;
+	}
+	else if (directive.compare(PIE_MODEL_DIRECTIVE_TCMASK) == 0)
+	{
+		m_texture_tcmask = name;
+		m_caps.set(PIE_OPT_DIRECTIVES::podTCMASK);
+	}
+	else if (directive.compare(PIE_MODEL_DIRECTIVE_NORMALMAP) == 0)
+	{
+		m_texture_normalmap = name;
+		m_caps.set(PIE_OPT_DIRECTIVES::podNORMALMAP);
+	}
+	else if (directive.compare(PIE_MODEL_DIRECTIVE_SPECULARMAP) == 0)
+	{
+		m_texture_specmap = name;
+		m_caps.set(PIE_OPT_DIRECTIVES::podSPECULARMAP);
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
+/**
+  * Before PIE 4 the tcmask page had no directive of its own and its name was
+  * derived from the texture name whenever the tcmask flag was set. PIE 4 files
+  * that leave TCMASK out are still read that way.
+  */
+template <typename L>
+void APieModel<L>::applyTCMaskFallback()
+{
+	if (m_texture_tcmask.empty() && isFeatureSet(PIE_MODEL_FEATURE_TCMASK))
+	{
+		m_texture_tcmask = makeWzTCMaskName(m_texture);
 	}
 }
 
@@ -480,10 +603,7 @@ bool APieModel<L>::readTextureDirective(std::istream& in)
 		return false;
 	}
 
-	if (isFeatureSet(PIE_MODEL_FEATURE_TCMASK))
-	{
-		m_texture_tcmask = makeWzTCMaskName(m_texture);
-	}
+	applyTCMaskFallback();
 
 	return true;
 }
@@ -627,6 +747,59 @@ int APieModel<L>::readLevelsDirective(std::istream& in)
 	return static_cast<int>(uint);
 }
 
+/// PIE 4 drops the page size, names the tcmask page directly and allows tileset overrides.
+template <typename L>
+void APieModel<L>::writeTextureDirectives(std::ostream& out, const PieCaps& caps) const
+{
+	const bool pie4 = version() >= PIE_MODEL_VERSION_PIE4;
+
+	out << PIE_MODEL_DIRECTIVE_TEXTURE << " 0 " << m_texture;
+	if (!pie4)
+	{
+		out << ' ' << textureWidth() << ' ' << textureHeight();
+	}
+	out << '\n';
+
+	if (pie4 && caps.test(PIE_OPT_DIRECTIVES::podTCMASK) && !m_texture_tcmask.empty())
+	{
+		out << PIE_MODEL_DIRECTIVE_TCMASK << " 0 " << m_texture_tcmask << '\n';
+	}
+
+	if (caps.test(PIE_OPT_DIRECTIVES::podNORMALMAP) && !m_texture_normalmap.empty())
+	{
+		out << PIE_MODEL_DIRECTIVE_NORMALMAP << " 0 " << m_texture_normalmap << '\n';
+	}
+
+	if (caps.test(PIE_OPT_DIRECTIVES::podSPECULARMAP) && !m_texture_specmap.empty())
+	{
+		out << PIE_MODEL_DIRECTIVE_SPECULARMAP << " 0 " << m_texture_specmap << '\n';
+	}
+
+	if (!pie4)
+	{
+		return;
+	}
+
+	static const char* const order[] = {
+		PIE_MODEL_DIRECTIVE_TEXTURE,
+		PIE_MODEL_DIRECTIVE_TCMASK,
+		PIE_MODEL_DIRECTIVE_NORMALMAP,
+		PIE_MODEL_DIRECTIVE_SPECULARMAP
+	};
+
+	for (const auto& tileset : m_tileset_textures)
+	{
+		for (const char* const directive : order)
+		{
+			auto found = tileset.second.find(directive);
+			if (found != tileset.second.end() && !found->second.empty())
+			{
+				out << directive << ' ' << tileset.first << ' ' << found->second << '\n';
+			}
+		}
+	}
+}
+
 template <typename L>
 void APieModel<L>::write(std::ostream& out, const PieCaps *piecaps) const
 {
@@ -644,19 +817,7 @@ void APieModel<L>::write(std::ostream& out, const PieCaps *piecaps) const
 		out << PIE_MODEL_DIRECTIVE_INTERPOLATE << ' ' << m_ani_interpolate << '\n';
 	}
 
-	out << PIE_MODEL_DIRECTIVE_TEXTURE << " 0 " << m_texture << ' '
-			<< textureWidth() << ' '
-			<< textureHeight() << '\n';
-
-	if (caps.test(PIE_OPT_DIRECTIVES::podNORMALMAP) && !m_texture_normalmap.empty())
-	{
-		out << PIE_MODEL_DIRECTIVE_NORMALMAP << " 0 " << m_texture_normalmap << '\n';
-	}
-
-	if (caps.test(PIE_OPT_DIRECTIVES::podSPECULARMAP) && !m_texture_specmap.empty())
-	{
-		out << PIE_MODEL_DIRECTIVE_SPECULARMAP << " 0 " << m_texture_specmap << '\n';
-	}
+	writeTextureDirectives(out, caps);
 
 	if (caps.test(PIE_OPT_DIRECTIVES::podEVENT) && !m_events.empty())
 	{
