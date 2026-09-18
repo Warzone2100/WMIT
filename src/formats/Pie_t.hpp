@@ -446,18 +446,34 @@ bool APieModel<L>::readTexturesBlock(std::istream& in)
     return readTextureDirective(in) && readNormalmapDirective(in) && readSpecmapDirective(in);
 }
 
+/// PIE 2 and PIE 3 carry a page size that PIE 4 leaves out and the game ignores.
+static inline void skipOptionalTextureSize(std::istream& in)
+{
+	std::streampos mark = in.tellg();
+	unsigned width, height;
+
+	in >> width >> height;
+	if (in.fail())
+	{
+		in.clear();
+		in.seekg(mark);
+	}
+}
+
 template <typename L>
 bool APieModel<L>::readTextureDirective(std::istream& in)
 {
 	std::string str;
 	unsigned uint;
 
-	// TEXTURE 0 %s %u %u
-	in >> str >> uint >> m_texture >> uint >> uint;
+	// TEXTURE 0 %s [%u %u]
+	in >> str >> uint >> m_texture;
 	if ( in.fail() || str.compare(PIE_MODEL_DIRECTIVE_TEXTURE) != 0)
 	{
 		return false;
 	}
+
+	skipOptionalTextureSize(in);
 
 	if (!isValidWzName(m_texture))
 	{
