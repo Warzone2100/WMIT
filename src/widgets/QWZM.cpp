@@ -20,6 +20,8 @@
 #include "QWZM.h"
 #include "Pie.h"
 
+#include <QFileInfo>
+
 #include "QtGLView.h"
 #include "WZLight.h"
 
@@ -163,7 +165,7 @@ void QWZM::render(const float* mtxModelView, const float* mtxProj, const float* 
 		}
 
 		// prepare shader data
-		setupTextureUnits(activeShader);
+		setupTextureUnits(activeShader, static_cast<int>(i));
 
 		if (!isFixedPipelineRenderer())
 		{
@@ -402,6 +404,56 @@ void QWZM::loadGLRenderTexture(wzm_texture_type_t type, QString fileName)
 	m_gl_textures[type] = createTexture(fileName).id();
 }
 
+void QWZM::loadGLRenderTextureOverrides()
+{
+	for (auto& loaded : m_gl_override_textures)
+	{
+		if (loaded.second)
+			deleteTexture(loaded.second);
+	}
+	m_gl_override_textures.clear();
+
+	// The pages a mesh asks for live beside the ones already loaded.
+	QString searchDir;
+	auto diffuse = m_gl_textures.find(WZM_TEX_DIFFUSE);
+	if (diffuse != m_gl_textures.end() && diffuse->second)
+	{
+		searchDir = QFileInfo(idToFilePath(diffuse->second)).absolutePath();
+	}
+
+	if (searchDir.isEmpty())
+		return;
+
+	for (size_t mesh = 0; mesh < m_meshes.size(); ++mesh)
+	{
+		for (int type = WZM_TEX__FIRST; type < WZM_TEX__LAST; ++type)
+		{
+			const wzm_texture_type_t texType = static_cast<wzm_texture_type_t>(type);
+			const std::string name = resolveTextureName(static_cast<int>(mesh), texType);
+
+			if (name.empty() || name == getTextureName(texType))
+				continue;
+			if (m_gl_override_textures.find(name) != m_gl_override_textures.end())
+				continue;
+
+			const QString path = searchDir + "/" + QString::fromStdString(name);
+			if (!QFileInfo::exists(path))
+				continue;
+
+			m_gl_override_textures[name] = createTexture(path).id();
+		}
+	}
+}
+
+void QWZM::setTileset(unsigned tileset)
+{
+	if (tileset == getTileset())
+		return;
+
+	WZM::setTileset(tileset);
+	loadGLRenderTextureOverrides();
+}
+
 void QWZM::unloadGLRenderTexture(wzm_texture_type_t type)
 {
 	std::map<wzm_texture_type_t, GLuint>::iterator it;
@@ -426,6 +478,13 @@ bool QWZM::hasGLRenderTexture(wzm_texture_type_t type) const
 void QWZM::clearGLRenderTextures()
 {
 	std::map<wzm_texture_type_t, GLuint>::iterator it;
+	for (auto& loaded : m_gl_override_textures)
+	{
+		if (loaded.second)
+			deleteTexture(loaded.second);
+	}
+	m_gl_override_textures.clear();
+
 	for (it = m_gl_textures.begin(); it != m_gl_textures.end(); it++)
 	{
 		if (it->second)
@@ -556,7 +615,23 @@ static inline void deactivateTexture(int unit)
 	glDisable(GL_TEXTURE_2D);
 }
 
-bool QWZM::setupTextureUnits(int type)
+GLuint QWZM::glTextureForMesh(wzm_texture_type_t type, int mesh) const
+{
+	if (mesh >= 0 && !m_gl_override_textures.empty())
+	{
+		const std::string name = resolveTextureName(mesh, type);
+		auto found = m_gl_override_textures.find(name);
+		if (found != m_gl_override_textures.end() && found->second)
+		{
+			return found->second;
+		}
+	}
+
+	auto found = m_gl_textures.find(type);
+	return found == m_gl_textures.end() ? 0 : found->second;
+}
+
+bool QWZM::setupTextureUnits(int type, int mesh)
 {
 	switch (type)
 	{
@@ -565,23 +640,23 @@ bool QWZM::setupTextureUnits(int type)
 	case WZ_SHADER_WZ33:
 	case WZ_SHADER_WZ40:
 		if (hasGLRenderTexture(WZM_TEX_DIFFUSE))
-			activateAndBindTexture(0, m_gl_textures[WZM_TEX_DIFFUSE]);
+			activateAndBindTexture(0, glTextureForMesh(WZM_TEX_DIFFUSE, mesh));
 		else
 			return false;
 
 		if (hasGLRenderTexture(WZM_TEX_TCMASK))
-			activateAndBindTexture(1, m_gl_textures[WZM_TEX_TCMASK]);
+			activateAndBindTexture(1, glTextureForMesh(WZM_TEX_TCMASK, mesh));
 
 		if (hasGLRenderTexture(WZM_TEX_NORMALMAP))
-			activateAndBindTexture(2, m_gl_textures[WZM_TEX_NORMALMAP]);
+			activateAndBindTexture(2, glTextureForMesh(WZM_TEX_NORMALMAP, mesh));
 
 		if (hasGLRenderTexture(WZM_TEX_SPECULAR))
-			activateAndBindTexture(3, m_gl_textures[WZM_TEX_SPECULAR]);
+			activateAndBindTexture(3, glTextureForMesh(WZM_TEX_SPECULAR, mesh));
 
 		break;
 	default:
 		if (hasGLRenderTexture(WZM_TEX_DIFFUSE))
-			activateAndBindTexture(0, m_gl_textures[WZM_TEX_DIFFUSE]);
+			activateAndBindTexture(0, glTextureForMesh(WZM_TEX_DIFFUSE, mesh));
 		else
 			return false;
 	}

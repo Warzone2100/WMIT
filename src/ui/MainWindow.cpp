@@ -183,6 +183,10 @@ MainWindow::MainWindow(QWZM &model, QWidget *parent) : QMainWindow(parent),
 	m_meshDock->toggleViewAction()->setShortcut(QKeySequence(Qt::Key_M));
 	m_ui->menuModel->insertAction(m_ui->menuModel->actions().value(0), m_meshDock->toggleViewAction());
 
+	connect(m_meshDock, &MeshDock::levelSettingsWereUpdated, this, [this]() {
+		m_model->loadGLRenderTextureOverrides();
+		updateModelRender();
+	});
 	connect(m_meshDock, SIGNAL(connectorsWereUpdated()), this, SLOT(updateModelRender()));
 	connect(m_model, SIGNAL(meshCountChanged(int,QStringList)), m_meshDock, SLOT(setMeshCount(int,QStringList)));
 
@@ -536,6 +540,8 @@ bool MainWindow::fireTextureDialog(const bool reinit)
 			}
 		}
 
+		m_model->loadGLRenderTextureOverrides();
+
 		updateModelRender();
 
 		return true;
@@ -854,6 +860,28 @@ void MainWindow::viewerInitialized()
 
 	m_ui->actionRenderer->setMenu(rendererMenu);
 
+	// A model may carry a different texture page per tileset.
+	static const char* const tilesetNames[PIE_MODEL_TILESETS] = {"Arizona (default)", "Urban", "Rockies"};
+
+	m_tilesetGroup = new QActionGroup(this);
+	QMenu* tilesetMenu = new QMenu(this);
+
+	for (unsigned i = 0; i < PIE_MODEL_TILESETS; ++i)
+	{
+		QAction* act = new QAction(tr(tilesetNames[i]), this);
+
+		act->setActionGroup(m_tilesetGroup);
+		act->setCheckable(true);
+		act->setChecked(i == 0);
+
+		connect(act, &QAction::triggered, this, [this, i]() { tilesetAction(i); });
+		tilesetMenu->addAction(act);
+	}
+
+	QAction* tilesetAct = new QAction(tr("Tileset"), this);
+	tilesetAct->setMenu(tilesetMenu);
+	m_ui->menuView->addAction(tilesetAct);
+
 	connect(m_ui->actionShowModelCenter, SIGNAL(triggered(bool)),
 		m_model, SLOT(setDrawCenterPointFlag(bool)));
 	connect(m_ui->actionShowNormals, SIGNAL(triggered(bool)),
@@ -1073,6 +1101,12 @@ void MainWindow::actionReloadUserShader()
 void MainWindow::actionClose()
 {
 	clear();
+}
+
+void MainWindow::tilesetAction(unsigned tileset)
+{
+	m_model->setTileset(tileset);
+	updateModelRender();
 }
 
 void MainWindow::actionSetupTextures()

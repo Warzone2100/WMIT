@@ -1,6 +1,8 @@
 #include "meshdock.h"
 #include "ui_meshdock.h"
 
+#include "Pie.h"
+
 MeshDock::MeshDock(QWidget *parent) :
 	QDockWidget(parent),
 	m_model(nullptr),
@@ -35,10 +37,26 @@ void MeshDock::resetConnectorViewModel()
 	m_ui->gbConnectors->setEnabled(true);
 }
 
+void MeshDock::resetLevelSettingsViewModel()
+{
+	if ((m_selected_mesh < 0) || !m_model || (m_model->meshes() == 0))
+	{
+		m_ui->meshLevelSettings->setModel(nullptr);
+		m_ui->gbLevelSettings->setEnabled(false);
+		return;
+	}
+
+	auto settingsModel = new WzmLevelSettingsModel(m_model->getMesh(m_selected_mesh), m_ui->meshLevelSettings);
+	connect(settingsModel, SIGNAL(levelSettingsWereUpdated()), this, SIGNAL(levelSettingsWereUpdated()));
+	m_ui->meshLevelSettings->setModel(settingsModel);
+	m_ui->gbLevelSettings->setEnabled(true);
+}
+
 void MeshDock::setModel(WZM *model)
 {
 	m_model = model;
 	resetConnectorViewModel();
+	resetLevelSettingsViewModel();
 }
 
 void MeshDock::setMeshCount(int value, QStringList names)
@@ -74,6 +92,7 @@ void MeshDock::selectMesh(int index)
 {
 	m_selected_mesh = index;
 	resetConnectorViewModel();
+	resetLevelSettingsViewModel();
 }
 
 void MeshDock::rmSelConnector()
@@ -224,4 +243,150 @@ Qt::ItemFlags WzmConnectorsModel::flags(const QModelIndex &index) const
 		return Qt::ItemIsEnabled;
 
 	return QAbstractTableModel::flags(index) | (index.column() > 0 ? Qt::ItemIsEditable : Qt::NoItemFlags);
+}
+
+enum level_setting_row_t
+{
+	LEVEL_ROW_TYPE = 0,
+	LEVEL_ROW_INTERPOLATE,
+	LEVEL_ROW_TEXTURE,
+	LEVEL_ROW__TEXTURE_LAST = LEVEL_ROW_TEXTURE + (PIE_MODEL_TILESETS * (WZM_TEX__LAST - WZM_TEX__FIRST)) - 1,
+	LEVEL_ROW__LAST
+};
+
+static wzm_texture_type_t levelRowTexType(int row)
+{
+	const int offset = row - LEVEL_ROW_TEXTURE;
+	return static_cast<wzm_texture_type_t>(WZM_TEX__FIRST + offset / PIE_MODEL_TILESETS);
+}
+
+static unsigned levelRowTileset(int row)
+{
+	const int offset = row - LEVEL_ROW_TEXTURE;
+	return static_cast<unsigned>(offset % PIE_MODEL_TILESETS);
+}
+
+static QString levelRowName(int row)
+{
+	static const char* const tilesets[PIE_MODEL_TILESETS] = {"arizona", "urban", "rockies"};
+
+	switch (row)
+	{
+	case LEVEL_ROW_TYPE: return QObject::tr("TYPE (hex)");
+	case LEVEL_ROW_INTERPOLATE: return QObject::tr("INTERPOLATE");
+	default:
+		break;
+	}
+
+	return QString::fromStdString(WZM::texTypeToPieDirective(levelRowTexType(row))) +
+			" " + tilesets[levelRowTileset(row)];
+}
+
+WzmLevelSettingsModel::WzmLevelSettingsModel(Mesh &mesh, QObject *parent): QAbstractTableModel(parent),
+	m_mesh(mesh)
+{
+}
+
+int WzmLevelSettingsModel::rowCount(const QModelIndex &) const
+{
+	return LEVEL_ROW__LAST;
+}
+
+int WzmLevelSettingsModel::columnCount(const QModelIndex &) const
+{
+	return 2;
+}
+
+QVariant WzmLevelSettingsModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
+		return QVariant();
+
+	return section == 0 ? tr("Setting") : tr("Override");
+}
+
+QVariant WzmLevelSettingsModel::data(const QModelIndex &index, int role) const
+{
+	if (!index.isValid() || (role != Qt::DisplayRole && role != Qt::EditRole))
+		return QVariant();
+
+	const int row = index.row();
+
+	if (index.column() == 0)
+		return levelRowName(row);
+
+	switch (row)
+	{
+	case LEVEL_ROW_TYPE:
+	{
+		const auto type = m_mesh.getPieType();
+		return type ? QString::number(*type, 16) : QString();
+	}
+	case LEVEL_ROW_INTERPOLATE:
+	{
+		const auto interpolate = m_mesh.getPieInterpolate();
+		return interpolate ? QString::number(*interpolate) : QString();
+	}
+	default:
+		break;
+	}
+
+	const std::string directive = WZM::texTypeToPieDirective(levelRowTexType(row));
+	return QString::fromStdString(m_mesh.getPieTextureOverride(levelRowTileset(row), directive));
+}
+
+bool WzmLevelSettingsModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+	if (!index.isValid() || role != Qt::EditRole || index.column() != 1)
+		return false;
+
+	const int row = index.row();
+	const QString text = value.toString().trimmed();
+
+	switch (row)
+	{
+	case LEVEL_ROW_TYPE:
+	{
+		bool ok = false;
+		const unsigned type = text.toUInt(&ok, 16);
+		if (text.isEmpty())
+			m_mesh.setPieType(std::optional<unsigned>());
+		else if (ok)
+			m_mesh.setPieType(type);
+		else
+			return false;
+		break;
+	}
+	case LEVEL_ROW_INTERPOLATE:
+	{
+		bool ok = false;
+		const unsigned interpolate = text.toUInt(&ok);
+		if (text.isEmpty())
+			m_mesh.setPieInterpolate(std::optional<unsigned>());
+		else if (ok)
+			m_mesh.setPieInterpolate(interpolate);
+		else
+			return false;
+		break;
+	}
+	default:
+	{
+		const std::string directive = WZM::texTypeToPieDirective(levelRowTexType(row));
+		m_mesh.setPieTextureOverride(levelRowTileset(row), directive, text.toStdString());
+		break;
+	}
+	}
+
+	emit levelSettingsWereUpdated();
+	emit dataChanged(index, index, {role});
+
+	return true;
+}
+
+Qt::ItemFlags WzmLevelSettingsModel::flags(const QModelIndex &index) const
+{
+	if (!index.isValid())
+		return Qt::ItemIsEnabled;
+
+	return QAbstractTableModel::flags(index) | (index.column() == 1 ? Qt::ItemIsEditable : Qt::NoItemFlags);
 }
