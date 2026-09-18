@@ -53,3 +53,7 @@ add_test(NAME Compare_PIE3_to_PIE4 COMMAND diff ${PROJECT_SOURCE_DIR}/tests/pie/
 ### Test that settings a level overrides for itself are preserved
 add_test(NAME Convert_PIE4_level_overrides COMMAND wmit ${PROJECT_SOURCE_DIR}/tests/pie/pie4_level_overrides.pie out_pie4_level_overrides.pie)
 add_test(NAME Compare_PIE4_level_overrides COMMAND diff ${PROJECT_SOURCE_DIR}/tests/pie/pie4_level_overrides.pie out_pie4_level_overrides.pie)
+
+### Test that flags the model does not derive for itself are preserved
+add_test(NAME Convert_PIE3_type_flags COMMAND wmit ${PROJECT_SOURCE_DIR}/tests/pie/pie3_type_flags.pie out_pie3_type_flags.pie)
+add_test(NAME Compare_PIE3_type_flags COMMAND diff ${PROJECT_SOURCE_DIR}/tests/pie/pie3_type_flags.pie out_pie3_type_flags.pie)

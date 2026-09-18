@@ -416,8 +416,8 @@ APieModel<L>::~APieModel()
 template <typename L>
 unsigned APieModel<L>::getType() const
 {
-	// keep "effects"-related flags
-	unsigned type = m_read_type & 0xFF;
+	// Only the textured and tcmask flags follow from what the model has.
+	unsigned type = m_read_type & ~(PIE_MODEL_FEATURE_TEXTURED | PIE_MODEL_FEATURE_TCMASK);
 
 	if (!m_texture.empty())
 	{
