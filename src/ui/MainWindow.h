@@ -55,6 +55,7 @@ struct ModelInfo
 	ModelInfo() {clear();}
 
 	PieCaps m_pieCaps;
+	PieLineEnding m_lineEnding;
 	wmit_filetype_t m_save_type;
 	wmit_filetype_t m_read_type;
 	QString m_currentFile;
@@ -64,6 +65,7 @@ struct ModelInfo
 	{
 		m_save_type = m_read_type = WMIT_FT_PIE;
 		m_pieCaps.reset();
+		m_lineEnding = PIE_MODEL_DEF_LINE_ENDING;
 		m_currentFile.clear();
 		m_saveAsFile.clear();
 	}
